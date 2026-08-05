@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 
 /* Premium Bank Brand Gradients & Color Accents */
 function getBankBrandSkin(bank) {
-  const bankName = bank.toLowerCase();
+  const bankName = String(bank || '').toLowerCase();
   let gradient = 'linear-gradient(135deg, #1E0B16 0%, #7A0F52 50%, #C21875 100%)';
   let accent = '#C21875';
   let shadow = 'rgba(194, 24, 117, 0.4)';
@@ -94,10 +94,10 @@ function DebitCardVisual({ card, mode = "grid", finish = "classic", tilt = { x: 
         {/* Shimmer sweep */}
         <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/10 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 pointer-events-none" />
         <div className="flex justify-between items-start text-[5.5px] font-black uppercase text-white/95 leading-none">
-          <span>{(card.bank || "").replace("Bank", "").trim().slice(0, 4)}</span>
+          <span>{String(card?.bank || "").replace("Bank", "").trim().slice(0, 4)}</span>
         </div>
         <div className="flex justify-between items-end text-[5px] font-extrabold text-white/80 leading-none">
-          <span className="truncate max-w-[70%]">{(card.cardName || "").split(" ")[0]}</span>
+          <span className="truncate max-w-[70%]">{String(card?.cardName || "").split(" ")[0]}</span>
           <span className="text-[4.5px] opacity-75 font-black uppercase">{networkLabel.slice(0, 3)}</span>
         </div>
       </div>
@@ -128,7 +128,7 @@ function DebitCardVisual({ card, mode = "grid", finish = "classic", tilt = { x: 
       <div className="flex justify-between items-start z-10">
         <div className="flex flex-col min-w-0">
           <span className={`tracking-wide font-black uppercase drop-shadow-sm truncate leading-tight font-serif ${mode === 'compare' ? 'text-[10px]' : mode === 'details' ? 'text-base md:text-lg' : 'text-sm sm:text-base md:text-lg'}`}>
-            {(card.bank || "").replace("Bank", "").trim()}
+            {String(card?.bank || "").replace("Bank", "").trim() || "Unknown Bank"}
           </span>
           {mode !== 'compare' && (
             <span className={`text-[#ffffff80] font-black tracking-widest leading-none mt-1 ${mode === 'details' ? 'text-[10px] md:text-xs' : 'text-[9px] sm:text-[10px]'}`}>PREMIUM MEMBER</span>

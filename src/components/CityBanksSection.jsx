@@ -134,14 +134,14 @@ function CityBanksSection() {
   // 3. Handle City Search Form Submit
   const handleCitySearch = async (e) => {
     e.preventDefault();
-    if (!searchQuery.trim()) return;
+    if (!String(searchQuery || '').trim()) return;
 
     setIsSearching(true);
     setError(null);
     try {
       const results = await searchCityCoordinates(searchQuery);
       setUserCoords({ lat: results.lat, lng: results.lng });
-      setLocationName(results.displayName.split(',')[0] || searchQuery);
+      setLocationName(String(results.displayName || searchQuery).split(',')[0] || searchQuery);
       setSearchQuery('');
       setPermissionDenied(false);
     } catch (err) {
@@ -155,7 +155,7 @@ function CityBanksSection() {
   const groupedBranches = useMemo(() => {
     const map = new Map();
     branches.forEach((b) => {
-      const bankGroup = b.brand || b.name.replace(/(Branch|ATM|Main Branch|IFSC).*/i, '').trim() || 'Other Banks';
+      const bankGroup = b.brand || String(b.name || '').replace(/(Branch|ATM|Main Branch|IFSC).*/i, '').trim() || 'Other Banks';
       if (!map.has(bankGroup)) {
         map.set(bankGroup, []);
       }

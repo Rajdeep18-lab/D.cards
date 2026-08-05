@@ -176,13 +176,13 @@ export const adminAnalyticsService = {
       // Map support tickets from contact_messages collection
       const supportTickets = contactList.length > 0
         ? contactList.map(item => ({
-            id: item.id.substring(0, 8).toUpperCase(),
-            user: item.name || 'Anonymous User',
-            city: item.email || item.phone || 'Contact Inquiry',
-            subject: item.subject || item.message?.substring(0, 45) + '...' || 'Support Request',
-            status: item.status || 'Open',
-            date: item.createdAt ? new Date(item.createdAt).toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Recently',
-            message: item.message || ''
+            id: item && item.id ? String(item.id).substring(0, 8).toUpperCase() : 'TICKET-' + Math.random().toString(36).substring(2, 6).toUpperCase(),
+            user: item?.name || 'Anonymous User',
+            city: item?.email || item?.phone || 'Contact Inquiry',
+            subject: item?.subject || (item?.message ? String(item.message).substring(0, 45) + '...' : 'Support Request'),
+            status: item?.status || 'Open',
+            date: item?.createdAt ? new Date(item.createdAt).toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Recently',
+            message: item?.message || ''
           }))
         : MOCK_ANALYTICS.supportTickets;
 

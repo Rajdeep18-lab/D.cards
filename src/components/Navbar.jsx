@@ -192,11 +192,11 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, onOpenWishlist, onOpen
                     {profile?.profile_image ? (
                       <img src={profile.profile_image} alt="Avatar" className="w-full h-full object-cover" />
                     ) : (
-                      <span>{profile?.full_name ? profile.full_name.charAt(0).toUpperCase() : user.email?.charAt(0).toUpperCase() || 'U'}</span>
+                      <span>{String(profile?.full_name || user?.email || 'U').charAt(0).toUpperCase()}</span>
                     )}
                   </div>
                   <span className="max-w-[85px] truncate inline-block font-sans font-black">
-                    {profile?.full_name ? profile.full_name.split(' ')[0] : 'Member'}
+                    {profile?.full_name ? String(profile.full_name).split(' ')[0] : 'Member'}
                   </span>
                   <span className="text-[8px] opacity-75 font-sans font-black">▼</span>
                 </motion.button>

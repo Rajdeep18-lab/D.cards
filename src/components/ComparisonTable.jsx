@@ -1,24 +1,31 @@
 import { useMemo, memo } from "react";
 import DebitCardVisual from "./DebitCardVisual";
 
-function ComparisonTable({ cards }) {
-  const lowestFee = cards.length > 0 ? Math.min(...cards.map(c => c.annualFee)) : 0;
-  const highestCashback = cards.length > 0 ? Math.max(...cards.map(c => c.cashbackPct)) : 0;
-  const highestLimit = cards.length > 0 ? Math.max(...cards.map(c => c.maxLimit || 0)) : 0;
+function ComparisonTable({ cards = [] }) {
+  const safeCards = Array.isArray(cards) ? cards.filter(Boolean) : [];
+
+  const lowestFee = safeCards.length > 0 
+    ? Math.min(...safeCards.map(c => typeof c.annualFee === 'number' ? c.annualFee : parseFloat(String(c.annualFee || '').replace(/[^0-9.]/g, '')) || 0)) 
+    : 0;
+  const highestCashback = safeCards.length > 0 ? Math.max(...safeCards.map(c => c.cashbackPct || 0)) : 0;
+  const highestLimit = safeCards.length > 0 ? Math.max(...safeCards.map(c => c.maxLimit || 0)) : 0;
 
   // Algorithmic Overall Winner Calculator
   const winnerCard = useMemo(() => {
-    if (cards.length < 2) return null;
-    let best = cards[0];
+    if (safeCards.length < 2) return null;
+    let best = safeCards[0];
     let maxScore = -1000;
     
-    cards.forEach(card => {
+    safeCards.forEach(card => {
+      if (!card) return;
       let score = 0;
-      score += card.rating * 15;
-      score += card.cashbackPct * 20;
-      score += card.interestRate * 12;
-      score -= (card.annualFee / 50); // fee penalty
-      score -= (card.minBalance / 10000); // min balance penalty
+      score += (card.rating || 0) * 15;
+      score += (card.cashbackPct || 0) * 20;
+      score += (card.interestRate || 0) * 12;
+      const fee = typeof card.annualFee === 'number' ? card.annualFee : parseFloat(String(card.annualFee || '').replace(/[^0-9.]/g, '')) || 0;
+      const minBal = typeof card.minBalance === 'number' ? card.minBalance : parseFloat(String(card.minBalance || '').replace(/[^0-9.]/g, '')) || 0;
+      score -= (fee / 50); // fee penalty
+      score -= (minBal / 10000); // min balance penalty
       if (card.studentFriendly) score += 8;
       if (card.travelZeroForex) score += 12;
       if (card.healthcareFriendly) score += 10;
@@ -30,9 +37,9 @@ function ComparisonTable({ cards }) {
       }
     });
     return best;
-  }, [cards]);
+  }, [safeCards]);
 
-  if (cards.length === 0) {
+  if (safeCards.length === 0) {
     return (
       <div className="text-center py-10 text-textMuted dark:text-slate-400 font-bold select-none leading-relaxed">
         📊 Select cards above to populate the comparative analytics matrix.
@@ -55,11 +62,15 @@ function ComparisonTable({ cards }) {
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100 dark:divide-secondary/10">
-          {cards.map((card, i) => {
+          {safeCards.map((card, i) => {
+            if (!card) return null;
             const isWinner = winnerCard && card.id === winnerCard.id;
+            const feeNum = typeof card.annualFee === 'number' ? card.annualFee : parseFloat(String(card.annualFee || '').replace(/[^0-9.]/g, '')) || 0;
+            const minBalNum = typeof card.minBalance === 'number' ? card.minBalance : (card.minBalance != null ? parseFloat(String(card.minBalance).replace(/[^0-9.]/g, '')) : null);
+
             return (
               <tr 
-                key={card.id}
+                key={card.id || i}
                 className={`transition-all duration-300 ${
                   isWinner 
                     ? "bg-secondary/5 dark:bg-secondary/10 hover:bg-secondary/10 dark:hover:bg-secondary/15" 
@@ -72,7 +83,7 @@ function ComparisonTable({ cards }) {
               >
                 <td className="px-5 py-5 font-extrabold text-slate-800 dark:text-slate-100 whitespace-nowrap">
                   <div className="flex items-center gap-1.5">
-                    {card.bank}
+                    {card.bank || "Unknown Bank"}
                     {isWinner && (
                       <span className="text-[10px] animate-bounce" title="Overall Best Matrix Score">👑</span>
                     )}
@@ -82,7 +93,7 @@ function ComparisonTable({ cards }) {
                   <div className="mb-3 w-full flex justify-center transform hover:scale-105 transition-transform duration-300">
                     <DebitCardVisual mode="compare" card={card} />
                   </div>
-                  <div className="font-extrabold text-slate-800 dark:text-slate-100 text-center">{card.cardName}</div>
+                  <div className="font-extrabold text-slate-800 dark:text-slate-100 text-center">{card.cardName || "Debit Card"}</div>
                   
                   {/* Dynamic Winner Medals */}
                   <div className="flex flex-wrap gap-1 mt-2.5 justify-center">
@@ -91,12 +102,12 @@ function ComparisonTable({ cards }) {
                         👑 Matrix Winner
                       </span>
                     )}
-                    {card.annualFee === lowestFee && (
+                    {feeNum === lowestFee && (
                       <span className="bg-green-500/15 border border-green-500/35 text-green-600 dark:text-green-400 text-[8px] font-black px-2.5 py-0.5 rounded-lg select-none whitespace-nowrap tracking-wide uppercase">
                         🏆 Lowest Fee
                       </span>
                     )}
-                    {card.cashbackPct === highestCashback && card.cashbackPct > 0 && (
+                    {(card.cashbackPct || 0) === highestCashback && (card.cashbackPct || 0) > 0 && (
                       <span className="bg-pink-500/15 border border-pink-500/35 text-pink-600 dark:text-pink-400 text-[8px] font-black px-2.5 py-0.5 rounded-lg select-none whitespace-nowrap tracking-wide uppercase">
                         🏆 Best Cashback
                       </span>
@@ -124,22 +135,22 @@ function ComparisonTable({ cards }) {
                   </div>
                 </td>
                 <td className="px-5 py-5 font-black text-slate-800 dark:text-slate-100 whitespace-nowrap text-sm">
-                  {card.annualFee === 0 ? "Lifetime Free" : `₹${card.annualFee}`}
+                  {feeNum === 0 ? "Lifetime Free" : (card.annualFee ? (typeof card.annualFee === 'number' ? `₹${card.annualFee.toLocaleString('en-IN')}` : String(card.annualFee)) : "N/A")}
                 </td>
                 <td className="px-5 py-5 font-bold text-secondary dark:text-roseGold whitespace-nowrap text-sm">
-                  {card.interestRate}% p.a.
+                  {card.interestRate != null ? `${card.interestRate}% p.a.` : "N/A"}
                 </td>
                 <td className="px-5 py-5 font-semibold text-slate-600 dark:text-slate-300 max-w-[150px]">
-                  {card.cashback}
+                  {card.cashback || "N/A"}
                 </td>
                 <td className="px-5 py-5 font-bold text-slate-800 dark:text-slate-100 whitespace-nowrap text-sm">
-                  {card.minBalance === 0 ? "Zero Balance" : `₹${card.minBalance.toLocaleString('en-IN')}`}
+                  {minBalNum === 0 ? "Zero Balance" : (minBalNum != null && !isNaN(minBalNum) ? `₹${minBalNum.toLocaleString('en-IN')}` : "N/A")}
                 </td>
                 <td className="px-5 py-5 text-textSoft dark:text-slate-400 text-[11px] leading-relaxed max-w-[200px] font-sans">
-                  {card.benefits}
+                  {card.benefits || "N/A"}
                 </td>
                 <td className="px-5 py-5 font-black text-secondary dark:text-roseGold whitespace-nowrap text-sm">
-                  ★ {card.rating}
+                  ★ {card.rating ?? "N/A"}
                 </td>
               </tr>
             );

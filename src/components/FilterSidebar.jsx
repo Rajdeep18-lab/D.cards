@@ -194,26 +194,28 @@ function FilterSidebar({
   }, [isMobile]);
 
   const filteredBanks = useMemo(() => {
-    return BANKS.filter(b => b.toLowerCase().includes(bankSearch.toLowerCase()));
+    const search = String(bankSearch || '').toLowerCase().trim();
+    const bankList = Array.isArray(BANKS) ? BANKS : [];
+    return bankList.filter(b => String(b || '').toLowerCase().includes(search));
   }, [bankSearch]);
 
   // Aggregate active filter count
   const totalActiveCount = useMemo(() => {
-    return (selectedUserTypes?.length || 0) +
-      (selectedNetworks?.length || 0) +
-      (selectedCategories?.length || 0) +
-      (selectedFeatures?.length || 0) +
-      (selectedBankTypes?.length || 0) +
-      (selectedBanks?.length || 0) +
+    return (Array.isArray(selectedUserTypes) ? selectedUserTypes.length : 0) +
+      (Array.isArray(selectedNetworks) ? selectedNetworks.length : 0) +
+      (Array.isArray(selectedCategories) ? selectedCategories.length : 0) +
+      (Array.isArray(selectedFeatures) ? selectedFeatures.length : 0) +
+      (Array.isArray(selectedBankTypes) ? selectedBankTypes.length : 0) +
+      (Array.isArray(selectedBanks) ? selectedBanks.length : 0) +
       (selectedFeeTier ? 1 : 0) +
       (selectedAtmLimitTier ? 1 : 0) +
       (selectedPosLimitTier ? 1 : 0) +
-      (feeRange < 2000 ? 1 : 0) +
-      (balanceRange < 500000 ? 1 : 0) +
-      (minRating > 0 ? 1 : 0) +
-      (minCashback > 0 ? 1 : 0) +
-      (atmRange[0] > 0 || atmRange[1] < 1000000 ? 1 : 0) +
-      (posRange[0] > 0 || posRange[1] < 1500000 ? 1 : 0);
+      ((feeRange ?? 2000) < 2000 ? 1 : 0) +
+      ((balanceRange ?? 500000) < 500000 ? 1 : 0) +
+      ((minRating ?? 0) > 0 ? 1 : 0) +
+      ((minCashback ?? 0) > 0 ? 1 : 0) +
+      (Array.isArray(atmRange) && (atmRange[0] > 0 || atmRange[1] < 1000000) ? 1 : 0) +
+      (Array.isArray(posRange) && (posRange[0] > 0 || posRange[1] < 1500000) ? 1 : 0);
   }, [
     selectedUserTypes, selectedNetworks, selectedCategories, selectedFeatures,
     selectedBankTypes, selectedBanks, selectedFeeTier, selectedAtmLimitTier,
@@ -246,7 +248,7 @@ function FilterSidebar({
             { label: "Minor Account", icon: "👶", sub: "Junior & youth" },
             { label: "Premium Banking", icon: "💎", sub: "Elite & Wealth" }
           ].map(ut => {
-            const active = selectedUserTypes.includes(ut.label);
+            const active = Array.isArray(selectedUserTypes) && selectedUserTypes.includes(ut.label);
             return (
               <motion.button
                 key={ut.label}
@@ -275,7 +277,7 @@ function FilterSidebar({
       </FilterSection>
 
       {/* ── 2. SMART FEATURE FILTERS (18 Features) ── */}
-      <FilterSection title="Features & Perks" icon="✨" activeCount={selectedFeatures.length} defaultOpen={true}>
+      <FilterSection title="Features & Perks" icon="✨" activeCount={selectedFeatures?.length || 0} defaultOpen={true}>
         <div className="grid grid-cols-2 gap-2 pt-1">
           {[
             { label: "Zero Annual Fee", icon: "💰" },
@@ -297,7 +299,7 @@ function FilterSidebar({
             { label: "International Usage", icon: "🌍" },
             { label: "Domestic Only", icon: "🇮🇳" }
           ].map(feat => {
-            const active = selectedFeatures.includes(feat.label);
+            const active = Array.isArray(selectedFeatures) && selectedFeatures.includes(feat.label);
             return (
               <motion.button
                 key={feat.label}
@@ -323,7 +325,7 @@ function FilterSidebar({
       </FilterSection>
 
       {/* ── 3. CATEGORIZED BANK FILTERS ── */}
-      <FilterSection title="Bank Categories" icon="🏦" activeCount={selectedBankTypes.length} defaultOpen={true}>
+      <FilterSection title="Bank Categories" icon="🏦" activeCount={selectedBankTypes?.length || 0} defaultOpen={true}>
         <div className="grid grid-cols-2 gap-2 pt-1">
           {[
             { label: "Government Banks", icon: "🏛️" },
@@ -333,7 +335,7 @@ function FilterSidebar({
             { label: "Regional Rural Banks", icon: "🌾" },
             { label: "Co-operative Banks", icon: "🤝" }
           ].map(bt => {
-            const active = selectedBankTypes.includes(bt.label);
+            const active = Array.isArray(selectedBankTypes) && selectedBankTypes.includes(bt.label);
             return (
               <motion.button
                 key={bt.label}
@@ -369,7 +371,7 @@ function FilterSidebar({
 
           <div className="mt-2.5 flex flex-wrap gap-1.5 max-h-36 overflow-y-auto custom-scrollbar">
             {(showAllBanks ? filteredBanks : filteredBanks.slice(0, 8)).map(b => {
-              const active = selectedBanks.includes(b);
+              const active = Array.isArray(selectedBanks) && selectedBanks.includes(b);
               return (
                 <button
                   key={b}
@@ -399,14 +401,14 @@ function FilterSidebar({
       </FilterSection>
 
       {/* ── 4. CARD NETWORK ── */}
-      <FilterSection title="Card Network" icon="💳" activeCount={selectedNetworks.length} defaultOpen={true}>
+      <FilterSection title="Card Network" icon="💳" activeCount={selectedNetworks?.length || 0} defaultOpen={true}>
         <div className="flex gap-2 w-full pt-1">
           {[
             { label: "RuPay", icon: "🇮🇳", color: "border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10" },
             { label: "Visa", icon: "🌐", color: "border-blue-500 text-blue-600 dark:text-blue-400 bg-blue-500/10" },
             { label: "Mastercard", icon: "🔴", color: "border-secondary text-secondary dark:text-roseGold bg-secondary/10" }
           ].map(net => {
-            const active = selectedNetworks.includes(net.label);
+            const active = Array.isArray(selectedNetworks) && selectedNetworks.includes(net.label);
             return (
               <motion.button
                 key={net.label}
@@ -430,7 +432,7 @@ function FilterSidebar({
       </FilterSection>
 
       {/* ── 5. CARD CATEGORY & TIER ── */}
-      <FilterSection title="Card Category" icon="🏷️" activeCount={selectedCategories.length} defaultOpen={true}>
+      <FilterSection title="Card Category" icon="🏷️" activeCount={selectedCategories?.length || 0} defaultOpen={true}>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 pt-1">
           {[
             { label: "Classic", icon: "⭐" },
@@ -442,7 +444,7 @@ function FilterSidebar({
             { label: "Business", icon: "💼" },
             { label: "Premium", icon: "👑" }
           ].map(cat => {
-            const active = selectedCategories.includes(cat.label);
+            const active = Array.isArray(selectedCategories) && selectedCategories.includes(cat.label);
             return (
               <motion.button
                 key={cat.label}

@@ -67,13 +67,21 @@ function DebitCardCard({ card, onCompare, isQueued, onViewDetails, userProfile =
 
   /* Proprietary D.Card Score™ & AI Match Engines */
   const scoreMetrics = useMemo(() => {
-    let chargesScore = Math.round(98 - (card.annualFee / 35) - (card.minBalance / 9000));
+    if (!card) return { dcardScore: 70, chargesScore: 70, benefitsScore: 70, trustScore: 70, studentFitScore: 60, travelScore: 60, digitalExperienceScore: 70, risk: "Low", recReason: "Standard debit card setup.", aiMatchScore: 70 };
+
+    const feeNum = typeof card.annualFee === 'number' ? card.annualFee : parseFloat(String(card.annualFee || '').replace(/[^0-9.]/g, '')) || 0;
+    const minBalNum = typeof card.minBalance === 'number' ? card.minBalance : parseFloat(String(card.minBalance || '').replace(/[^0-9.]/g, '')) || 0;
+
+    let chargesScore = Math.round(98 - (feeNum / 35) - (minBalNum / 9000));
     chargesScore = Math.min(98, Math.max(45, chargesScore));
 
-    let perksCount = (card.loungeAccess && !card.loungeAccess.toLowerCase().startsWith('no') ? 1.5 : 0) + 
+    const loungeStr = String(card.loungeAccess || '').toLowerCase();
+    const categoryStr = String(card.category || '').toLowerCase();
+
+    let perksCount = (loungeStr && !loungeStr.startsWith('no') ? 1.5 : 0) + 
                      (card.travelZeroForex ? 1.5 : 0) + 
                      (card.healthcareFriendly ? 1.5 : 0) + 
-                     (card.cashbackPct >= 1.0 ? 1 : 0) + 
+                     ((card.cashbackPct || 0) >= 1.0 ? 1 : 0) + 
                      (card.contactless ? 0.5 : 0) + 
                      (card.fuelWaiver ? 0.5 : 0);
     let benefitsScore = Math.round(55 + (perksCount * 6.5));
@@ -81,16 +89,16 @@ function DebitCardCard({ card, onCompare, isQueued, onViewDetails, userProfile =
 
     let trustScoreVal = card.rating ? Math.round(card.rating * 19.5) : 88;
     let studentFitScore = card.studentFriendly ? 96 : 60;
-    let travelScore = card.travelZeroForex ? 98 : (card.loungeAccess && !card.loungeAccess.toLowerCase().startsWith('no') ? 85 : 55);
+    let travelScore = card.travelZeroForex ? 98 : (loungeStr && !loungeStr.startsWith('no') ? 85 : 55);
     let digitalExperienceScore = card.verificationStatus === 'Verified' ? 95 : 82;
 
     let risk = "Low";
     let recReason = "Low fee structures and balanced lifestyle benefits.";
 
-    if (card.annualFee > 1000 || card.minBalance > 50000) {
+    if (feeNum > 1000 || minBalNum > 50000) {
       risk = "High";
       recReason = "High balance tier requirement for premium benefits waiver.";
-    } else if (card.annualFee > 300 || card.minBalance > 10000) {
+    } else if (feeNum > 300 || minBalNum > 10000) {
       risk = "Medium";
       recReason = "Moderate balance maintenance required for rewards.";
     }
@@ -103,8 +111,8 @@ function DebitCardCard({ card, onCompare, isQueued, onViewDetails, userProfile =
     else if (userProfile === "Women" && card.womenSpecial) matchPct += 25;
     else if (userProfile === "Senior Citizen" && card.seniorCitizen) matchPct += 25;
     else if (userProfile === "Traveler" && card.travelZeroForex) matchPct += 25;
-    else if (userProfile === "Premium User" && card.category === "Premium") matchPct += 22;
-    else if (userProfile === "Working Professional" && card.category === "Rewards") matchPct += 18;
+    else if (userProfile === "Premium User" && categoryStr === "premium") matchPct += 22;
+    else if (userProfile === "Working Professional" && categoryStr === "rewards") matchPct += 18;
 
     if (card.minBalance === 0) matchPct += 5;
     if (card.annualFee <= 250) matchPct += 4;

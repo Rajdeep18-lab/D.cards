@@ -411,8 +411,8 @@ function AdminDashboardModal({ isOpen, onClose, currentUser }) {
     const totalQueries = contactQueriesList.length;
     const totalImports = importHistoryList.length;
     
-    const jsonImports = importHistoryList.filter(h => (h.file_name || h.fileName || '').toLowerCase().endsWith('.json')).length;
-    const csvImports = importHistoryList.filter(h => (h.file_name || h.fileName || '').toLowerCase().endsWith('.csv')).length;
+    const jsonImports = importHistoryList.filter(h => String(h?.file_name || h?.fileName || '').toLowerCase().endsWith('.json')).length;
+    const csvImports = importHistoryList.filter(h => String(h?.file_name || h?.fileName || '').toLowerCase().endsWith('.csv')).length;
 
     return {
       totalUsers,
@@ -1109,7 +1109,7 @@ function AdminDashboardModal({ isOpen, onClose, currentUser }) {
                             try {
                               const report = await importDataService.executeBatchImport(importAnalysis, importFile?.name || 'import.json', currentUser?.email);
                               setImportAnalysis(null);
-                              activityLoggerService.logActivity(importFile?.name.endsWith('.csv') ? 'import_csv' : 'import_json', `Imported ${report.totalImported} records`, currentUser?.email);
+                              activityLoggerService.logActivity(String(importFile?.name || '').endsWith('.csv') ? 'import_csv' : 'import_json', `Imported ${report.totalImported} records`, currentUser?.email);
                               toast("Batch import completed successfully! 🚀", "success");
                             } catch (err) {
                               toast(err.message, "error");

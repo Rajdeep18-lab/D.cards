@@ -7,7 +7,7 @@ export const referralService = {
   async logReferralClick(userId, card, clickedUrl, referralCode = null, sourcePage = 'Card Application Link') {
     try {
       const nowTimestamp = new Date().toISOString();
-      const code = referralCode || (card ? `REF_${card.id}_${(card.bank || 'BANK').replace(/\s+/g, '_').toUpperCase()}` : 'REF_DCARD');
+      const code = referralCode || (card ? `REF_${card?.id || '0'}_${String(card?.bank || 'BANK').replace(/\s+/g, '_').toUpperCase()}` : 'REF_DCARD');
 
       const payload = {
         // Requirement 5 fields:

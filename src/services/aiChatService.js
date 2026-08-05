@@ -176,8 +176,13 @@ export const aiChatService = {
     const hasMastercard = lowerMsg.includes("mastercard") || lowerMsg.includes("master card");
 
     // Bank filters
-    const bankMatches = allBanks.filter(b => lowerMsg.includes(b.name.toLowerCase()) || lowerMsg.includes(b.name.split(' ')[0].toLowerCase()));
-    const bankNamesFound = bankMatches.map(b => b.name.toLowerCase());
+    const bankMatches = (allBanks || []).filter(b => {
+      if (!b || !b.name) return false;
+      const bName = String(b.name).toLowerCase();
+      const bFirstName = String(b.name).split(' ')[0].toLowerCase();
+      return lowerMsg.includes(bName) || lowerMsg.includes(bFirstName);
+    });
+    const bankNamesFound = bankMatches.map(b => String(b.name).toLowerCase());
     const explicitBankMention = ["sbi", "hdfc", "icici", "axis", "kotak", "idfc", "canara", "indusind", "fi money", "niyo", "pnb", "bob", "bank of baroda"].filter(b => lowerMsg.includes(b));
     const combinedBankNames = [...new Set([...bankNamesFound, ...explicitBankMention])];
 
@@ -190,7 +195,7 @@ export const aiChatService = {
     const isPlatinum = lowerMsg.includes("platinum");
 
     // Contextual Follow-Up Refinement
-    let candidateCards = allCards;
+    let candidateCards = Array.isArray(allCards) ? allCards : [];
     if (chatContext && Array.isArray(chatContext.lastMatchedCards) && chatContext.lastMatchedCards.length > 0) {
       if (lowerMsg.includes("these") || lowerMsg.includes("them") || lowerMsg.includes("which of") || lowerMsg.includes("among")) {
         candidateCards = chatContext.lastMatchedCards;
@@ -199,13 +204,14 @@ export const aiChatService = {
 
     // Execute Strict Filtering over retrieved Firestore records
     let matchedCards = candidateCards.filter(c => {
-      const cName = (c.cardName || "").toLowerCase();
-      const cBank = (c.bank || "").toLowerCase();
-      const cNetwork = (c.network || "").toLowerCase();
-      const cCat = (c.category || "").toLowerCase();
-      const cBenefits = (c.benefits || "").toLowerCase();
-      const cFeatures = Array.isArray(c.features) ? c.features.join(" ").toLowerCase() : "";
-      const cLounge = (c.loungeAccess || "").toLowerCase();
+      if (!c) return false;
+      const cName = String(c.cardName || "").toLowerCase();
+      const cBank = String(c.bank || "").toLowerCase();
+      const cNetwork = String(c.network || "").toLowerCase();
+      const cCat = String(c.category || "").toLowerCase();
+      const cBenefits = String(c.benefits || "").toLowerCase();
+      const cFeatures = Array.isArray(c.features) ? c.features.map(f => String(f || '').toLowerCase()).join(" ") : "";
+      const cLounge = String(c.loungeAccess || "").toLowerCase();
       const cFee = c.annualFee || 0;
 
       let match = true;
@@ -223,7 +229,7 @@ export const aiChatService = {
 
       // Zero Fee Filter
       if (isZeroFee) {
-        const isFree = cFee === 0 || c.zeroFeeOrLowFee || (c.joiningFee && c.joiningFee.toLowerCase().includes("free")) || cName.includes("zero") || cName.includes("811") || cName.includes("fi");
+        const isFree = cFee === 0 || Boolean(c.zeroFeeOrLowFee) || (c.joiningFee && String(c.joiningFee).toLowerCase().includes("free")) || cName.includes("zero") || cName.includes("811") || cName.includes("fi");
         if (!isFree) match = false;
       }
 
@@ -256,15 +262,17 @@ export const aiChatService = {
 
     // Check specific keyword matching if no specific feature filters were activated
     if (matchedCards.length === 0 && !isZeroFee && !isLounge && !isContactless && !isCashback && !isPlatinum && combinedBankNames.length === 0 && !hasRuPay && !hasVisa && !hasMastercard) {
-      matchedCards = allCards.filter(c => {
-        const fullStr = `${c.cardName} ${c.bank} ${c.category} ${c.bestFor || ''} ${c.benefits || ''}`.toLowerCase();
+      matchedCards = (allCards || []).filter(c => {
+        if (!c) return false;
+        const fullStr = `${c.cardName || ''} ${c.bank || ''} ${c.category || ''} ${c.bestFor || ''} ${c.benefits || ''}`.toLowerCase();
         return lowerMsg.split(' ').some(word => word.length > 3 && fullStr.includes(word));
       });
     }
 
     // Check FAQ matches in Firestore faq collection
-    const faqMatch = allFaqs.find(f => {
-      const qLower = (f.q || f.question || "").toLowerCase();
+    const faqMatch = (allFaqs || []).find(f => {
+      if (!f) return false;
+      const qLower = String(f.q || f.question || "").toLowerCase();
       return lowerMsg.includes(qLower) || qLower.split(' ').some(w => w.length > 4 && lowerMsg.includes(w));
     });
 
@@ -276,7 +284,7 @@ export const aiChatService = {
       let compareText = `📊 **Firestore Side-by-Side Card Comparison**:\n\n`;
       topCards.forEach((c, idx) => {
         const feeStr = c.annualFee === 0 ? "FREE (₹0)" : `₹${c.annualFee}/yr`;
-        const atmStr = c.limits?.atmLimit ? `₹${c.limits.atmLimit.toLocaleString()}/day` : (c.features?.find(f => f.toLowerCase().includes("atm")) || "Standard");
+        const atmStr = typeof c.limits?.atmLimit === 'number' ? `₹${c.limits.atmLimit.toLocaleString()}/day` : ((Array.isArray(c.features) ? c.features.find(f => String(f || '').toLowerCase().includes("atm")) : null) || "Standard");
         const loungeStr = c.loungeAccess || "Check Spend Qualifier";
 
         compareText += `**${idx + 1}. ${c.cardName} (${c.bank})**\n`;
@@ -303,8 +311,8 @@ export const aiChatService = {
 
       cardsToShow.forEach((c, idx) => {
         const feeStr = c.annualFee === 0 ? "FREE (Zero Fee)" : `₹${c.annualFee}/year`;
-        const atmStr = c.limits?.atmLimit ? `₹${c.limits.atmLimit.toLocaleString()}/day` : "Standard Limit";
-        const posStr = c.limits?.posLimit ? `₹${c.limits.posLimit.toLocaleString()}/day` : (c.maxLimit ? `₹${c.maxLimit.toLocaleString()}/day` : "Standard");
+        const atmStr = typeof c.limits?.atmLimit === 'number' ? `₹${c.limits.atmLimit.toLocaleString()}/day` : "Standard Limit";
+        const posStr = typeof c.limits?.posLimit === 'number' ? `₹${c.limits.posLimit.toLocaleString()}/day` : (typeof c.maxLimit === 'number' ? `₹${c.maxLimit.toLocaleString()}/day` : "Standard");
         const loungeStr = c.loungeAccess ? c.loungeAccess : "N/A";
         const contactlessStr = c.contactless ? "Yes ✅" : "No";
 

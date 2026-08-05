@@ -42,7 +42,7 @@ function TopCardItem({ card, index, onViewDetails }) {
     ? (fullCard.annualFee === 0 ? 'FREE' : `₹${fullCard.annualFee}`) 
     : (fullCard.fee || 'FREE');
   const cashbackText = fullCard.cashbackPct ? `${fullCard.cashbackPct}%` : 'Rewards';
-  const benefitHighlight = (fullCard.benefits || "Premium bank perks & rewards").split(',')[0];
+  const benefitHighlight = String(fullCard.benefits || "Premium bank perks & rewards").split(',')[0];
 
   const handleWishlist = (e) => {
     e.stopPropagation();

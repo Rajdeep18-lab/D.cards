@@ -148,8 +148,8 @@ export const importDataService = {
         return { index, record: rec, status: 'Invalid', reason: 'Missing Card Name or Bank' };
       }
 
-      const cardId = rec.card_id || rec.id || `card_${bank.toLowerCase().replace(/\s+/g, '_')}_${cardName.toLowerCase().replace(/\s+/g, '_')}`;
-      const uniqueFileKey = `${cardName.toLowerCase()}_${bank.toLowerCase()}`;
+      const cardId = rec.card_id || rec.id || `card_${String(bank || 'bank').toLowerCase().replace(/\s+/g, '_')}_${String(cardName || 'card').toLowerCase().replace(/\s+/g, '_')}`;
+      const uniqueFileKey = `${String(cardName || '').toLowerCase()}_${String(bank || '').toLowerCase()}`;
 
       if (seenInFileKeys.has(uniqueFileKey)) {
         duplicateCount++;
@@ -207,8 +207,8 @@ export const importDataService = {
         const bankName = rec.bank || rec.bank_name || rec.bankName || 'Partner Bank';
         const cardName = rec.cardName || rec.name || rec.title || 'Debit Card';
 
-        const bankId = rec.bank_id || `bank_${bankName.toLowerCase().replace(/\s+/g, '_')}`;
-        const cardId = item.cardId || rec.card_id || rec.id || `card_${bankName.toLowerCase().replace(/\s+/g, '_')}_${cardName.toLowerCase().replace(/\s+/g, '_')}`;
+        const bankId = rec.bank_id || `bank_${String(bankName).toLowerCase().replace(/\s+/g, '_')}`;
+        const cardId = item.cardId || rec.card_id || rec.id || `card_${String(bankName).toLowerCase().replace(/\s+/g, '_')}_${String(cardName).toLowerCase().replace(/\s+/g, '_')}`;
 
         // Ensure Bank document is prepared in batch if not seen
         if (!uniqueBanksToEnsure.has(bankId)) {

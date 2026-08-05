@@ -49,7 +49,7 @@ const BANK_PROFILES = {
 
 /* Dynamic premium bank card skins */
 function getBankCardSkin(bank) {
-  const bankName = bank ? bank.toLowerCase() : "";
+  const bankName = bank ? String(bank).toLowerCase() : "";
   let gradient = 'linear-gradient(135deg, #070308 0%, #7a0f52 60%, #040206 100%)';
   let accent = '#C21875';
   let shadow = 'rgba(194, 24, 117, 0.25)';
@@ -190,19 +190,19 @@ function CardDetailsModal({ isOpen, onClose, card, compareQueue, toggleCompareQu
     const bestForText = typeof card.bestFor === 'string' ? card.bestFor : "";
     const text = `${benefitsText} ${featuresText} ${bestForText}`.toLowerCase();
 
-    const contactlessVal = contactless.toLowerCase();
-    const fuelWaiverVal = fuelWaiver.toLowerCase();
-    const loungeVal = loungeAccess.toLowerCase();
-    const intUsageVal = internationalUsage.toLowerCase();
+    const contactlessVal = String(contactless || "").toLowerCase();
+    const fuelWaiverVal = String(fuelWaiver || "").toLowerCase();
+    const loungeVal = String(loungeAccess || "").toLowerCase();
+    const intUsageVal = String(internationalUsage || "").toLowerCase();
     const cashbackVal = cashbackPct;
 
-    switch (feat.toLowerCase()) {
-      case "contactless": return contactlessVal.includes("yes") || text.includes("nfc") || text.includes("tap");
+    switch (String(feat || "").toLowerCase()) {
+      case "contactless": return contactlessVal.includes("yes") || contactless === true || text.includes("nfc") || text.includes("tap");
       case "fuel waiver": return fuelWaiverVal.includes("yes") || text.includes("fuel") || text.includes("surcharge");
-      case "lounge access": return loungeVal.includes("yes") || text.includes("lounge") || text.includes("airport");
+      case "lounge access": return loungeVal.includes("yes") || (loungeAccess && !loungeVal.startsWith("no")) || text.includes("lounge") || text.includes("airport");
       case "rewards": return cashbackVal > 0 || text.includes("reward") || text.includes("point");
       case "insurance": return text.includes("insurance") || text.includes("liability") || text.includes("accident");
-      case "international usage": return intUsageVal.includes("yes") || text.includes("global") || text.includes("forex");
+      case "international usage": return intUsageVal.includes("yes") || card.international === true || text.includes("global") || text.includes("forex");
       default: return false;
     }
   };
@@ -250,7 +250,7 @@ function CardDetailsModal({ isOpen, onClose, card, compareQueue, toggleCompareQu
     chargesScore = Math.min(98, Math.max(45, chargesScore));
 
     // 2. Benefits Score (50 to 98)
-    let perksCount = (loungeAccess && !loungeAccess.toLowerCase().startsWith('no') ? 1.5 : 0) + 
+    let perksCount = (loungeAccess && !String(loungeAccess).toLowerCase().startsWith('no') ? 1.5 : 0) + 
                      (card.travelZeroForex ? 1.5 : 0) + 
                      (card.healthcareFriendly ? 1.5 : 0) + 
                      (cashbackPct >= 1.0 ? 1 : 0) + 
@@ -264,7 +264,7 @@ function CardDetailsModal({ isOpen, onClose, card, compareQueue, toggleCompareQu
 
     // Hidden Charges Risk Assessment
     let risk = "Low";
-    if (hiddenCharges.toLowerCase().includes("decline") || hiddenCharges.toLowerCase().includes("non-maintenance")) {
+    if (String(hiddenCharges || "").toLowerCase().includes("decline") || String(hiddenCharges || "").toLowerCase().includes("non-maintenance")) {
       risk = "High";
     } else if (annualFee >= 1000 || minBalance >= 10000) {
       risk = "Medium";
@@ -506,7 +506,7 @@ function CardDetailsModal({ isOpen, onClose, card, compareQueue, toggleCompareQu
                           <div>
                             <span className="block text-[9px] font-black text-slate-400 uppercase">Minimum Balance Required</span>
                             <span className="text-xs font-black text-white mt-0.5 leading-snug">
-                              {card.minBalance === 0 ? "Zero Balance Account" : `₹${card.minBalance.toLocaleString('en-IN')}`}
+                              {card.minBalance === 0 ? "Zero Balance Account" : (typeof card.minBalance === 'number' ? `₹${card.minBalance.toLocaleString('en-IN')}` : "N/A")}
                             </span>
                           </div>
                         </div>
@@ -633,7 +633,7 @@ function CardDetailsModal({ isOpen, onClose, card, compareQueue, toggleCompareQu
                         { title: "Airport Lounges", desc: card.loungeAccess || "Not Active", icon: "✈️", active: checkFeature("lounge access") },
                         { title: "Fuel Surcharge", desc: card.fuelWaiver || "Not Active", icon: "⛽", active: checkFeature("fuel waiver") },
                         { title: "Cashback Rate", desc: card.cashback || `Standard rate of ${card.cashbackPct}%`, icon: "🎁", active: checkFeature("rewards") },
-                        { title: "Contactless Support", desc: card.contactless?.toLowerCase().includes("yes") ? "Active Tap to Pay" : "No NFC", icon: "📶", active: checkFeature("contactless") }
+                        { title: "Contactless Support", desc: (card.contactless === true || String(card.contactless || '').toLowerCase().includes("yes")) ? "Active Tap to Pay" : "No NFC", icon: "📶", active: checkFeature("contactless") }
                       ].map((item, idx) => (
                         <div key={idx} className={`p-4 rounded-2xl border flex items-center justify-between gap-4 ${
                           item.active 
@@ -735,7 +735,7 @@ function CardDetailsModal({ isOpen, onClose, card, compareQueue, toggleCompareQu
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {[
                         { label: "Age Threshold", val: "18 Years & Above", desc: "Accounts for minors under 18 require parental supervision." },
-                        { label: "Minimum Monthly Balance", val: card.minBalance === 0 ? "Zero Balance Link" : `₹${card.minBalance.toLocaleString('en-IN')}`, desc: "Fees applicable if account balance average falls below threshold." },
+                        { label: "Minimum Monthly Balance", val: card.minBalance === 0 ? "Zero Balance Link" : (typeof card.minBalance === 'number' ? `₹${card.minBalance.toLocaleString('en-IN')}` : "N/A"), desc: "Fees applicable if account balance average falls below threshold." },
                         { label: "Documents Required", val: "Aadhaar Card, PAN Card & KYC", desc: "Standard regulatory KYC documentation is required for account opening." },
                         { label: "Bank Account Relationship", val: card.eligibility || "Standard Savings Relationship", desc: "Certain premium debit cards require specific account categories." }
                       ].map((item, idx) => (

@@ -31,11 +31,11 @@ export const contactService = {
 
       const payload = {
         query_id: queryId,
-        name: formData.name ? formData.name.trim() : '',
-        email: formData.email ? formData.email.trim().toLowerCase() : '',
-        mobile: formData.mobile ? formData.mobile.trim() : '',
-        subject: formData.subject ? formData.subject.trim() : 'General Inquiry',
-        message: formData.message ? formData.message.trim() : '',
+        name: String(formData?.name || '').trim(),
+        email: String(formData?.email || '').trim().toLowerCase(),
+        mobile: String(formData?.mobile || '').trim(),
+        subject: String(formData?.subject || '').trim() || 'General Inquiry',
+        message: String(formData?.message || '').trim(),
         created_at: nowIso,
         status: 'Pending', // Pending | In Progress | Replied | Closed
         assigned_to: 'Founder / Support Team',

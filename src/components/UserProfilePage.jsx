@@ -110,14 +110,14 @@ function UserProfilePage({ activeTab = "profile", onSelectCard, onCompareCards, 
     if (occ.includes("student")) {
       cards = cards.filter(c => c.studentFriendly || c.annualFee <= 250);
     } else if (occ.includes("travel")) {
-      cards = cards.filter(c => c.travelZeroForex || (c.loungeAccess && !c.loungeAccess.toLowerCase().startsWith('no')));
+      cards = cards.filter(c => c.travelZeroForex || (c.loungeAccess && !String(c.loungeAccess).toLowerCase().startsWith('no')));
     } else if (occ.includes("senior")) {
       cards = cards.filter(c => c.seniorCitizen || c.interestRate >= 6.5);
     } else if (occ.includes("women")) {
       cards = cards.filter(c => c.womenSpecial || c.rating >= 4.5);
     } else {
       // Working Professional / Premium User
-      cards = cards.filter(c => c.rating >= 4.4 || c.category.toLowerCase() === 'rewards' || c.category.toLowerCase() === 'premium');
+      cards = cards.filter(c => (c.rating || 0) >= 4.4 || String(c.category || '').toLowerCase() === 'rewards' || String(c.category || '').toLowerCase() === 'premium');
     }
     return cards.slice(0, 6);
   }, [occupation]);
@@ -136,13 +136,13 @@ function UserProfilePage({ activeTab = "profile", onSelectCard, onCompareCards, 
     const currentOcc = profile?.occupation || 'Working Professional';
 
     const hasChanged =
-      fullName.trim() !== currentName.trim() ||
-      phoneNumber.trim() !== currentPhone.trim() ||
-      country.trim() !== currentCountry.trim() ||
-      state.trim() !== currentState.trim() ||
-      city.trim() !== currentCity.trim() ||
-      profileImage.trim() !== currentImage.trim() ||
-      occupation.trim() !== currentOcc.trim();
+      String(fullName || '').trim() !== String(currentName || '').trim() ||
+      String(phoneNumber || '').trim() !== String(currentPhone || '').trim() ||
+      String(country || '').trim() !== String(currentCountry || '').trim() ||
+      String(state || '').trim() !== String(currentState || '').trim() ||
+      String(city || '').trim() !== String(currentCity || '').trim() ||
+      String(profileImage || '').trim() !== String(currentImage || '').trim() ||
+      String(occupation || '').trim() !== String(currentOcc || '').trim();
 
     if (!hasChanged) {
       toast("No changes detected.", "info");
@@ -152,14 +152,14 @@ function UserProfilePage({ activeTab = "profile", onSelectCard, onCompareCards, 
     setSavingProfile(true);
     try {
       const updated = await updateProfile({
-        full_name: fullName.trim(),
-        name: fullName.trim(),
-        phone: phoneNumber.trim(),
-        country: country.trim(),
-        state: state.trim(),
-        city: city.trim(),
-        profile_image: profileImage.trim(),
-        occupation: occupation.trim(),
+        full_name: String(fullName || '').trim(),
+        name: String(fullName || '').trim(),
+        phone: String(phoneNumber || '').trim(),
+        country: String(country || '').trim(),
+        state: String(state || '').trim(),
+        city: String(city || '').trim(),
+        profile_image: String(profileImage || '').trim(),
+        occupation: String(occupation || '').trim(),
         notification_preferences: notificationPrefs
       });
       if (updated) {
@@ -228,7 +228,7 @@ function UserProfilePage({ activeTab = "profile", onSelectCard, onCompareCards, 
             {profileImage ? (
               <img src={profileImage} alt="Profile Avatar" className="w-full h-full object-cover" />
             ) : (
-              <span>{(fullName || user?.email || 'U').charAt(0).toUpperCase()}</span>
+              <span>{String(fullName || user?.email || 'U').charAt(0).toUpperCase()}</span>
             )}
           </div>
 
@@ -570,7 +570,7 @@ function UserProfilePage({ activeTab = "profile", onSelectCard, onCompareCards, 
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-500 font-semibold">Min Balance:</span>
-                        <span className="font-bold text-slate-800 dark:text-white">{card.minBalance === 0 ? 'Zero Balance' : `₹${card.minBalance.toLocaleString('en-IN')}`}</span>
+                        <span className="font-bold text-slate-800 dark:text-white">{card.minBalance === 0 ? 'Zero Balance' : (typeof card.minBalance === 'number' ? `₹${card.minBalance.toLocaleString('en-IN')}` : 'N/A')}</span>
                       </div>
                     </div>
                   </div>

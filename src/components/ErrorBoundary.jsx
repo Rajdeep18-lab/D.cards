@@ -21,6 +21,13 @@ class ErrorBoundary extends React.Component {
           <p className="text-sm font-bold text-slate-700 dark:text-slate-200">
             Something went wrong while rendering this section.
           </p>
+          {this.state.error && (
+            <pre className="mt-2 p-3 bg-red-500/10 border border-red-500/30 text-red-500 text-xs font-mono text-left overflow-auto max-h-40 rounded-xl">
+              {this.state.error.toString()}
+              {'\n'}
+              {this.state.error.stack}
+            </pre>
+          )}
           <button
             onClick={() => this.setState({ hasError: false, error: null })}
             className="mt-3 px-4 py-1.5 rounded-full bg-secondary text-white text-xs font-bold shadow"

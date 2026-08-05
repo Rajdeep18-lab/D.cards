@@ -26,23 +26,25 @@ function SavingsCalculator({ onViewDetails }) {
 
       // 2. Fuel waiver calculations
       let fuelSavings = 0;
-      const hasFuelWaiver = card.fuelWaiver && card.fuelWaiver !== "No" && !card.fuelWaiver.includes("verify");
+      const fuelStr = String(card?.fuelWaiver || "");
+      const hasFuelWaiver = fuelStr && fuelStr !== "No" && !fuelStr.toLowerCase().includes("verify");
       if (hasFuelWaiver) {
         fuelSavings = Math.min(250, fuel * 0.01); // 1% surcharge waiver capped at ₹250
       }
 
       // 3. Lounge access rewards
       let loungeValue = 0;
-      const hasLounge = card.loungeAccess && card.loungeAccess !== "No" && !card.loungeAccess.includes("No ");
+      const loungeStr = String(card?.loungeAccess || "");
+      const hasLounge = loungeStr && loungeStr !== "No" && !loungeStr.toLowerCase().startsWith("no");
       if (hasLounge) {
         loungeValue = 350; // estimated lifestyle value per month
       }
 
       // 4. Zero Forex savings
       let forexSavings = 0;
-      const hasZeroForex = (card.features && card.features.some(f => f.toLowerCase().includes("zero forex"))) || 
-                           (card.bestFor && card.bestFor.toLowerCase().includes("forex")) || 
-                           (card.cardName && card.cardName.toLowerCase().includes("global"));
+      const hasZeroForex = (card.features && Array.isArray(card.features) && card.features.some(f => String(f || '').toLowerCase().includes("zero forex"))) || 
+                           (card.bestFor && String(card.bestFor).toLowerCase().includes("forex")) || 
+                           (card.cardName && String(card.cardName).toLowerCase().includes("global"));
       if (hasZeroForex && travel > 0) {
         forexSavings = travel * 0.025; // 2.5% markup saved on travel spends
       }
@@ -105,7 +107,7 @@ function SavingsCalculator({ onViewDetails }) {
                     <span className="text-base select-none">{icon}</span>{label}
                   </span>
                   <span className="text-xs font-black text-secondary dark:text-roseGold bg-secondary/10 dark:bg-secondary/20 px-2.5 py-0.5 rounded-full select-none border border-secondary/10">
-                    ₹{val.toLocaleString('en-IN')}
+                    ₹{(val ?? 0).toLocaleString('en-IN')}
                   </span>
                 </div>
                 <div className="relative h-6 flex items-center">
@@ -133,10 +135,10 @@ function SavingsCalculator({ onViewDetails }) {
         <div className="flex flex-col bg-white/40 dark:bg-[#060309]/30 p-6 rounded-[24px] border border-slate-200 dark:border-secondary/15 justify-between select-none">
           <div className="text-center pb-6 border-b border-slate-200 dark:border-secondary/15 flex-shrink-0">
             <p className="text-[10px] sm:text-[11px] font-black text-textSoft dark:text-roseGold uppercase tracking-widest font-serif">Estimated Annual Benefit</p>
-            <h4 className="text-3xl font-black text-gradient mt-1 tracking-tight">₹{topRecommendations[0]?.netYearlyBenefit.toLocaleString('en-IN')}</h4>
+            <h4 className="text-3xl font-black text-gradient mt-1 tracking-tight">₹{(topRecommendations[0]?.netYearlyBenefit ?? 0).toLocaleString('en-IN')}</h4>
             <p className="text-xs text-textMuted dark:text-slate-400 font-semibold mt-1">Net yearly savings linked to top recommendation</p>
             <div className="mt-4 py-2 px-3 bg-secondary/5 dark:bg-secondary/15 rounded-xl inline-flex items-center gap-1.5 border border-secondary/15 text-xs text-secondary dark:text-roseGold font-black uppercase tracking-wider">
-              <span>💳</span> Monthly Spend Pool: ₹{totalMonthlySpend.toLocaleString('en-IN')}
+              <span>💳</span> Monthly Spend Pool: ₹{(totalMonthlySpend ?? 0).toLocaleString('en-IN')}
             </div>
           </div>
 
