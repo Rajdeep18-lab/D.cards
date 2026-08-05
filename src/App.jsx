@@ -845,7 +845,7 @@ function AppInner() {
         />
       ) : (
         <>
-          <HeroSection query={query} setQuery={setQuery} />
+          <HeroSection query={query} setQuery={setQuery} onViewDetails={handleSelectCardFromItem} />
 
           <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-12 mt-0 sm:-mt-8 relative z-20">
             <TopCardsSection 
