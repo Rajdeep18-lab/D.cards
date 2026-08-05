@@ -1,0 +1,29 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "contact_queries",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "created_at", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "debit_cards",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "bank", "order": "ASCENDING" },
+        { "fieldPath": "annualFee", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "compare_history",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "userId", "order": "ASCENDING" },
+        { "fieldPath": "comparedAt", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

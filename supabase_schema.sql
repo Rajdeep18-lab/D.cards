@@ -1,0 +1,1 @@
+-- Supabase schema removed. Project migrated to Firebase Firestore.

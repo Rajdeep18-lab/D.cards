@@ -1,0 +1,1 @@
+-- Supabase cleanup removed. Project migrated to Firebase Firestore.

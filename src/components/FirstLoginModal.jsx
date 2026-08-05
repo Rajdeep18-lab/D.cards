@@ -1,0 +1,56 @@
+import React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+
+function FirstLoginModal({ isOpen, onClose, userName }) {
+  if (!isOpen) return null;
+
+  return (
+    <AnimatePresence>
+      <div className="fixed inset-0 z-[1300] flex items-center justify-center bg-black/75 backdrop-blur-md p-4">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.85, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.9, y: 20 }}
+          className="relative max-w-lg w-full rounded-[36px] bg-[#160817] border border-secondary/30 p-8 sm:p-10 text-center shadow-[0_30px_90px_rgba(194,24,117,0.4)] overflow-hidden text-white"
+        >
+          {/* Confetti Background Sparkles */}
+          <div className="absolute -top-20 -left-20 w-44 h-44 rounded-full bg-secondary/30 blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-20 -right-20 w-44 h-44 rounded-full bg-primary/30 blur-3xl pointer-events-none" />
+
+          {/* Welcome Badge Icon */}
+          <motion.div
+            initial={{ rotate: -15, scale: 0 }}
+            animate={{ rotate: 0, scale: 1 }}
+            transition={{ type: "spring", stiffness: 400, damping: 20 }}
+            className="mx-auto w-24 h-24 rounded-3xl bg-gradient-to-br from-[#860038] via-[#C21875] to-[#7A0F52] border border-white/30 flex items-center justify-center shadow-2xl mb-6 text-5xl select-none"
+          >
+            🎉
+          </motion.div>
+
+          <h2 className="text-3xl font-black font-serif text-white tracking-tight mb-2">
+            Welcome to D.Card{userName ? `, ${userName}` : ''}!
+          </h2>
+
+          <p className="text-base text-roseGold font-bold font-serif mb-4">
+            "Let's help you find the perfect debit card."
+          </p>
+
+          <p className="text-xs sm:text-sm text-gray-300 font-sans leading-relaxed mb-8 max-w-md mx-auto">
+            Your personalized dashboard is ready. Filter cards by your life segment, calculate cashback rewards, audit hidden bank charges, and bookmark top cards.
+          </p>
+
+          <motion.button
+            whileHover={{ scale: 1.04, boxShadow: "0 10px 30px rgba(194,24,117,0.4)" }}
+            whileTap={{ scale: 0.96 }}
+            onClick={onClose}
+            className="w-full py-4 rounded-full bg-gradient-to-r from-secondary to-primary text-white font-extrabold text-sm tracking-widest uppercase shadow-xl border border-white/20 cursor-pointer"
+          >
+            Start Exploring Now 💳
+          </motion.button>
+        </motion.div>
+      </div>
+    </AnimatePresence>
+  );
+}
+
+export default FirstLoginModal;
