@@ -117,7 +117,7 @@ export const aiChatService = {
       const offersList = offersSnap.docs.map(d => ({ id: d.id, ...d.data() }));
 
       firestoreCache = {
-        debitCards: debitCardsList.length > 0 ? debitCardsList : debitCards,
+        debitCards: debitCards,
         banks: banksList.length > 0 ? banksList : bankCards,
         faq: faqList.length > 0 ? faqList : faqs,
         offers: offersList,

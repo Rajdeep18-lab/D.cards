@@ -13,7 +13,7 @@ const CACHE_TTL = 5 * 60 * 1000; // 5 minutes TTL
  */
 export const cardService = {
   /**
-   * Fetch all debit cards from Firestore `debit_cards` collection (with in-memory TTL caching and mock fallback)
+   * Fetch all debit cards, ensuring dataset is rolled back to stable verified 34 cards
    */
   async getDebitCards(forceRefresh = false) {
     const now = Date.now();
@@ -24,12 +24,28 @@ export const cardService = {
     try {
       const querySnapshot = await getDocs(collection(db, DEBIT_CARDS_COLLECTION));
       if (!querySnapshot.empty) {
-        cachedCards = querySnapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+        const firestoreCards = querySnapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+        // Map and validate against original stable IDs 1..34
+        const validStableCards = debitCards.map(baseCard => {
+          const fsMatch = firestoreCards.find(fc => String(fc.id) === String(baseCard.id));
+          if (fsMatch && fsMatch.bank && fsMatch.cardName) {
+            return {
+              ...baseCard,
+              ...fsMatch,
+              id: baseCard.id, // preserve numeric ID 1..34
+              bank: fsMatch.bank || baseCard.bank,
+              cardName: fsMatch.cardName || baseCard.cardName
+            };
+          }
+          return baseCard;
+        });
+
+        cachedCards = validStableCards;
         lastCacheTime = now;
         return cachedCards;
       }
     } catch (err) {
-      console.warn("Firestore fetch notice for debit_cards collection, using fallback dataset:", err.message || err);
+      console.warn("Firestore fetch notice for debit_cards collection, using stable dataset:", err.message || err);
     }
 
     cachedCards = debitCards;
@@ -38,24 +54,11 @@ export const cardService = {
   },
 
   /**
-   * Fetch a single debit card by ID from `debit_cards` collection
+   * Fetch a single debit card by ID from stable dataset
    */
   async getDebitCardById(cardId) {
-    if (cachedCards) {
-      const found = cachedCards.find(c => String(c.id) === String(cardId));
-      if (found) return found;
-    }
-
-    try {
-      const docRef = doc(db, DEBIT_CARDS_COLLECTION, String(cardId));
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        return { id: docSnap.id, ...docSnap.data() };
-      }
-    } catch (err) {
-      console.warn(`Firestore fetch notice for card ${cardId}:`, err.message || err);
-    }
-    return debitCards.find(c => String(c.id) === String(cardId)) || null;
+    const all = await this.getDebitCards();
+    return all.find(c => String(c.id) === String(cardId)) || debitCards.find(c => String(c.id) === String(cardId)) || null;
   },
 
   /**
