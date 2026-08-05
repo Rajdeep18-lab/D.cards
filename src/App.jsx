@@ -17,7 +17,6 @@ import QuickFilterChips from "./components/QuickFilterChips";
 
 // Lazy Loaded Heavy Components & Modals for Code Splitting
 const UserProfilePage = lazy(() => import("./components/UserProfilePage"));
-const CityBanksSection = lazy(() => import("./components/CityBanksSection"));
 const LeadershipSection = lazy(() => import("./components/LeadershipSection"));
 const AboutModal = lazy(() => import("./components/AboutModal"));
 const LegalModal = lazy(() => import("./components/LegalModal"));
@@ -852,11 +851,6 @@ function AppInner() {
             <TopCardsSection 
               onViewDetails={handleSelectCardFromItem} 
             />
-
-            {/* Nearby Banks Available in User's City */}
-            <Suspense fallback={null}>
-              <CityBanksSection />
-            </Suspense>
 
             {/* Find Cards by Life Stage */}
             <section className="mt-14 mb-10 select-none">

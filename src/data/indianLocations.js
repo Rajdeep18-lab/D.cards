@@ -44,9 +44,10 @@ export const COUNTRY_CODES = [
   { code: "+81", country: "Japan", flag: "🇯🇵" }
 ];
 
-/**
- * Reverse Geocode coordinates to detect Country, State, and City
- */
+/*
+ * TEMPORARILY DISABLED: Reverse Geocode coordinates to detect Country, State, and City
+ * To re-enable auto location detection in the future, uncomment this function and restore import in SignupPage.jsx.
+ *
 export async function detectUserLocation() {
   if (!navigator.geolocation) {
     throw new Error("Geolocation is not supported by your browser.");
@@ -57,7 +58,6 @@ export async function detectUserLocation() {
       async (position) => {
         try {
           const { latitude, longitude } = position.coords;
-          // Use OpenStreetMap Nominatim reverse geocoding API
           const response = await fetch(
             `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10`
           );
@@ -71,7 +71,6 @@ export async function detectUserLocation() {
           const rawState = address.state || address.region || "";
           const rawCity = address.city || address.town || address.village || address.suburb || address.county || "";
 
-          // Match closest state in Indian Locations
           let matchedState = "";
           let matchedCity = "";
 
@@ -117,3 +116,4 @@ export async function detectUserLocation() {
     );
   });
 }
+*/

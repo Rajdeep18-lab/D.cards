@@ -1,3 +1,10 @@
+/**
+ * TEMPORARILY DISABLED FEATURE MODULE: CityBanksSection
+ * To re-enable Nearby Banks section in the app:
+ * 1. Import CityBanksSection in src/App.jsx: `const CityBanksSection = lazy(() => import("./components/CityBanksSection"));`
+ * 2. Add `<CityBanksSection />` back into main layout in src/App.jsx.
+ */
+
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth';

@@ -1,6 +1,6 @@
 /**
+ * TEMPORARILY DISABLED SERVICE MODULE: Bank Location Service
  * Real-time Bank Location Service using Geolocation API, Overpass API, and OpenStreetMap Nominatim
- * STRICTLY 100% LIVE REAL DATA - NO MOCK / FALLBACK DATA GENERATED.
  */
 
 const OVERPASS_ENDPOINTS = [

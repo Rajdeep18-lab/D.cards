@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth';
 import { useToast } from '../context/ToastContext';
-import { INDIAN_LOCATIONS, COUNTRY_CODES, detectUserLocation } from '../data/indianLocations';
+import { INDIAN_LOCATIONS, COUNTRY_CODES } from '../data/indianLocations';
 
 function evaluatePasswordStrength(pass) {
   if (!pass) return { score: 0, label: 'None', color: 'bg-gray-300' };
@@ -38,7 +38,6 @@ function SignupPage({ onSwitchToLogin, onSuccess }) {
   const [agreePrivacy, setAgreePrivacy] = useState(false);
 
   const [showPassword, setShowPassword] = useState(false);
-  const [isDetectingLocation, setIsDetectingLocation] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -72,24 +71,6 @@ function SignupPage({ onSwitchToLogin, onSuccess }) {
   const availableCities = useMemo(() => {
     return INDIAN_LOCATIONS[state] || ["Other"];
   }, [state]);
-
-  const handleDetectLocation = async () => {
-    setIsDetectingLocation(true);
-    setErrorMsg('');
-    try {
-      const loc = await detectUserLocation();
-      if (loc.country) setCountry(loc.country);
-      if (loc.state) {
-        setState(loc.state);
-        if (loc.city) setCity(loc.city);
-      }
-      toast(`Location auto-detected: ${loc.city || loc.state}, ${loc.country} 📍`, 'success');
-    } catch (err) {
-      toast(err.message || 'Unable to detect location. You can select manually.', 'warning');
-    } finally {
-      setIsDetectingLocation(false);
-    }
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -246,26 +227,12 @@ function SignupPage({ onSwitchToLogin, onSuccess }) {
           </div>
         </div>
 
-        {/* Location Section Header & Auto-Detect Trigger */}
+        {/* Location Section Header */}
         <div className="pt-1">
-          <div className="flex justify-between items-center mb-1.5 px-0.5">
+          <div className="mb-1.5 px-0.5">
             <label className="block text-[10px] font-black text-secondary dark:text-roseGold uppercase tracking-widest">
               Location Setup
             </label>
-            <button
-              type="button"
-              onClick={handleDetectLocation}
-              disabled={isDetectingLocation}
-              aria-label="Auto-detect current location via browser"
-              className="text-[11px] font-bold text-secondary dark:text-roseGold hover:underline flex items-center gap-1 cursor-pointer disabled:opacity-50"
-            >
-              {isDetectingLocation ? (
-                <span className="w-3 h-3 border-2 border-secondary border-t-transparent rounded-full animate-spin" />
-              ) : (
-                '📍'
-              )}
-              <span>Use Current Location</span>
-            </button>
           </div>
 
           <div className="grid grid-cols-2 gap-2">
