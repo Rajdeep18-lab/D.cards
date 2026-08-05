@@ -223,20 +223,61 @@ function DebitCardCard({ card, onCompare, isQueued, onViewDetails, userProfile =
         </div>
       </div>
 
-      {/* ── CORE METRICS TILES ── */}
-      <div className="grid grid-cols-2 gap-2 my-3.5 select-none z-10 relative">
-        <div className="p-2.5 rounded-2xl border border-slate-200/60 dark:border-secondary/15 bg-slate-50/60 dark:bg-[#0f0714]/40 backdrop-blur-md flex flex-col justify-between min-h-[56px] transition-all duration-300">
-          <p className="text-[10px] text-textMuted dark:text-[#D89AB6]/80 font-bold uppercase tracking-wider">Annual Fee</p>
-          <p className="text-xs sm:text-sm font-black text-slate-700 dark:text-slate-200 mt-0.5">
-            {card.annualFee === 0 ? "Lifetime Free" : `₹${card.annualFee}`}
-          </p>
+      {/* ── 12 SPECIFIED FIELDS DATA TILES ── */}
+      <div className="grid grid-cols-2 gap-2 my-3 select-none z-10 relative">
+        <div className="p-2 rounded-2xl border border-slate-200/60 dark:border-secondary/15 bg-slate-50/60 dark:bg-[#0f0714]/40 backdrop-blur-md">
+          <p className="text-[9.5px] text-textMuted dark:text-[#D89AB6]/80 font-bold uppercase tracking-wider">Annual Fee</p>
+          <p className="text-xs font-black text-slate-800 dark:text-slate-100 truncate mt-0.5">{card.annualFee ?? "Not Available"}</p>
         </div>
         
-        <div className="p-2.5 rounded-2xl border border-slate-200/60 dark:border-secondary/15 bg-slate-50/60 dark:bg-[#0f0714]/40 backdrop-blur-md flex flex-col justify-between min-h-[56px] transition-all duration-300">
-          <p className="text-[10px] text-textMuted dark:text-[#D89AB6]/80 font-bold uppercase tracking-wider">Min Balance</p>
-          <p className="text-xs sm:text-sm font-black text-slate-700 dark:text-slate-200 mt-0.5">
-            {card.minBalance === 0 ? "Zero Balance" : `₹${(card.minBalance / 1000).toFixed(0)}K`}
+        <div className="p-2 rounded-2xl border border-slate-200/60 dark:border-secondary/15 bg-slate-50/60 dark:bg-[#0f0714]/40 backdrop-blur-md">
+          <p className="text-[9.5px] text-textMuted dark:text-[#D89AB6]/80 font-bold uppercase tracking-wider">Joining Fee</p>
+          <p className="text-xs font-black text-slate-800 dark:text-slate-100 truncate mt-0.5">{card.joiningFee ?? "Not Available"}</p>
+        </div>
+
+        <div className="p-2 rounded-2xl border border-slate-200/60 dark:border-secondary/15 bg-slate-50/60 dark:bg-[#0f0714]/40 backdrop-blur-md">
+          <p className="text-[9.5px] text-textMuted dark:text-[#D89AB6]/80 font-bold uppercase tracking-wider">International</p>
+          <p className="text-xs font-black text-slate-800 dark:text-slate-100 truncate mt-0.5">
+            {card.international !== undefined ? (card.international ? "Yes ✈️" : "No ❌") : (card.internationalUsage ?? "Not Available")}
           </p>
+        </div>
+
+        <div className="p-2 rounded-2xl border border-slate-200/60 dark:border-secondary/15 bg-slate-50/60 dark:bg-[#0f0714]/40 backdrop-blur-md">
+          <p className="text-[9.5px] text-textMuted dark:text-[#D89AB6]/80 font-bold uppercase tracking-wider">Contactless</p>
+          <p className="text-xs font-black text-slate-800 dark:text-slate-100 truncate mt-0.5">
+            {card.contactless !== undefined ? (card.contactless ? "Yes 📶" : "No ❌") : "Not Available"}
+          </p>
+        </div>
+
+        <div className="p-2 rounded-2xl border border-slate-200/60 dark:border-secondary/15 bg-slate-50/60 dark:bg-[#0f0714]/40 backdrop-blur-md">
+          <p className="text-[9.5px] text-textMuted dark:text-[#D89AB6]/80 font-bold uppercase tracking-wider">Lounge Access</p>
+          <p className="text-xs font-black text-slate-800 dark:text-slate-100 truncate mt-0.5">{card.loungeAccess ?? "Not Available"}</p>
+        </div>
+
+        <div className="p-2 rounded-2xl border border-slate-200/60 dark:border-secondary/15 bg-slate-50/60 dark:bg-[#0f0714]/40 backdrop-blur-md">
+          <p className="text-[9.5px] text-textMuted dark:text-[#D89AB6]/80 font-bold uppercase tracking-wider">Forex Markup</p>
+          <p className="text-xs font-black text-slate-800 dark:text-slate-100 truncate mt-0.5">{card.forexMarkup ?? "Not Available"}</p>
+        </div>
+
+        <div className="p-2 rounded-2xl border border-slate-200/60 dark:border-secondary/15 bg-slate-50/60 dark:bg-[#0f0714]/40 backdrop-blur-md">
+          <p className="text-[9.5px] text-textMuted dark:text-[#D89AB6]/80 font-bold uppercase tracking-wider">Cashback</p>
+          <p className="text-xs font-black text-slate-800 dark:text-slate-100 truncate mt-0.5">{card.cashback ?? "Not Available"}</p>
+        </div>
+
+        <div className="p-2 rounded-2xl border border-slate-200/60 dark:border-secondary/15 bg-slate-50/60 dark:bg-[#0f0714]/40 backdrop-blur-md">
+          <p className="text-[9.5px] text-textMuted dark:text-[#D89AB6]/80 font-bold uppercase tracking-wider">Network</p>
+          <p className="text-xs font-black text-slate-800 dark:text-slate-100 truncate mt-0.5">{card.network ?? "Not Available"}</p>
+        </div>
+
+        <div className="col-span-2 p-2 rounded-2xl border border-slate-200/60 dark:border-secondary/15 bg-slate-50/60 dark:bg-[#0f0714]/40 backdrop-blur-md flex items-center justify-between">
+          <div className="min-w-0 pr-2">
+            <p className="text-[9.5px] text-textMuted dark:text-[#D89AB6]/80 font-bold uppercase tracking-wider">Best For</p>
+            <p className="text-xs font-black text-[#A30D62] dark:text-[#E0629A] truncate mt-0.5">{card.bestFor ?? "Not Available"}</p>
+          </div>
+          <div className="text-right flex-shrink-0">
+            <p className="text-[9.5px] text-textMuted dark:text-[#D89AB6]/80 font-bold uppercase tracking-wider">Rating</p>
+            <p className="text-xs font-black text-amber-500 mt-0.5">{card.rating !== undefined ? `⭐ ${card.rating}` : "Not Available"}</p>
+          </div>
         </div>
       </div>
 

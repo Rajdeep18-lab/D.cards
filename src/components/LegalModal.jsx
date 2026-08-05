@@ -47,49 +47,27 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop */}
-          <motion.div
-            key="legal-backdrop"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={onClose}
-            style={{
-              position: 'fixed',
-              inset: 0,
-              background: 'rgba(30,11,22,0.65)',
-              backdropFilter: 'blur(8px)',
-              zIndex: 1200
-            }}
-          />
+          {/* Modal Overlay Container */}
+          <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4 sm:p-6 overflow-y-auto pointer-events-auto">
+            {/* Backdrop */}
+            <motion.div
+              key="legal-backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={onClose}
+              className="fixed inset-0 bg-[#1E0B16]/65 backdrop-blur-md z-0"
+            />
 
-          {/* Modal Container */}
-          <motion.div
-            key="legal-modal"
-            initial={{ opacity: 0, y: 50, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 30, scale: 0.96 }}
-            transition={{ type: 'spring', stiffness: 350, damping: 28 }}
-            className="custom-scrollbar"
-            style={{
-              position: 'fixed',
-              top: '8%',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              width: 'min(720px, 92vw)',
-              maxHeight: '82vh',
-              zIndex: 1201,
-              borderRadius: '28px',
-              background: 'var(--modal-bg)',
-              border: '1px solid rgba(194, 24, 117, 0.22)',
-              boxShadow: '0 24px 80px rgba(122,15,82,0.3), 0 4px 24px rgba(0,0,0,0.15)',
-              backdropFilter: 'blur(20px)',
-              display: 'flex',
-              flexDirection: 'column',
-              boxSizing: 'border-box',
-              overflow: 'hidden'
-            }}
-          >
+            {/* Modal Box */}
+            <motion.div
+              key="legal-modal"
+              initial={{ opacity: 0, y: 30, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 20, scale: 0.96 }}
+              transition={{ type: 'spring', stiffness: 350, damping: 28 }}
+              className="relative z-10 w-full max-w-[720px] max-h-[85vh] my-auto flex flex-col rounded-[28px] bg-[var(--modal-bg)] border border-[#C21875]/22 shadow-[0_24px_80px_rgba(122,15,82,0.3)] backdrop-blur-xl overflow-hidden custom-scrollbar"
+            >
             {/* Header */}
             <div style={{ padding: '24px 24px 16px', display: 'flex', alignItems: 'center', justifyContent: 'between', flexShrink: 0 }}>
               <div style={{ display: 'flex', gap: '14px', alignItems: 'center', width: '100%' }}>
@@ -326,7 +304,8 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
               </button>
             </div>
           </motion.div>
-        </>
+        </div>
+      </>
       )}
     </AnimatePresence>
   );

@@ -789,25 +789,23 @@ function AppInner() {
       );
     });
 
-    // 13. All 10 Sorting Options
+    // 13. All Sorting Options
     if (sortBy === "most-popular") {
       cards = [...cards].sort((a, b) => (b.isPopular ? 1 : 0) - (a.isPopular ? 1 : 0) || (b.rating || 0) - (a.rating || 0));
-    } else if (sortBy === "most-viewed") {
-      cards = [...cards].sort((a, b) => (b.maxLimit || b.posLimit || 0) - (a.maxLimit || a.posLimit || 0) || (b.rating || 0) - (a.rating || 0));
-    } else if (sortBy === "highest-rated") {
+    } else if (sortBy === "highest-rated" || sortBy === "rating-desc") {
       cards = [...cards].sort((a, b) => (b.rating || 0) - (a.rating || 0));
-    } else if (sortBy === "fee-low" || sortBy === "lowest-fee") {
-      cards = [...cards].sort((a, b) => (a.annualFee || 0) - (b.annualFee || 0));
-    } else if (sortBy === "highest-atm") {
-      cards = [...cards].sort((a, b) => (b.atmLimit ?? b.limits?.atmLimit ?? 50000) - (a.atmLimit ?? a.limits?.atmLimit ?? 50000));
-    } else if (sortBy === "highest-pos") {
-      cards = [...cards].sort((a, b) => (b.posLimit ?? b.limits?.posLimit ?? 100000) - (a.posLimit ?? a.limits?.posLimit ?? 100000));
+    } else if (sortBy === "rating-asc") {
+      cards = [...cards].sort((a, b) => (a.rating || 0) - (b.rating || 0));
+    } else if (sortBy === "fee-low" || sortBy === "lowest-fee" || sortBy === "annual-fee-asc") {
+      cards = [...cards].sort((a, b) => (a.numAnnualFee ?? (parseFloat(String(a.annualFee).replace(/[^0-9.]/g, '')) || 0)) - (b.numAnnualFee ?? (parseFloat(String(b.annualFee).replace(/[^0-9.]/g, '')) || 0)));
+    } else if (sortBy === "fee-high" || sortBy === "highest-fee" || sortBy === "annual-fee-desc") {
+      cards = [...cards].sort((a, b) => (b.numAnnualFee ?? (parseFloat(String(b.annualFee).replace(/[^0-9.]/g, '')) || 0)) - (a.numAnnualFee ?? (parseFloat(String(a.annualFee).replace(/[^0-9.]/g, '')) || 0)));
+    } else if (sortBy === "bank-asc" || sortBy === "alphabetical-asc") {
+      cards = [...cards].sort((a, b) => (a.bank || '').localeCompare(b.bank || ''));
+    } else if (sortBy === "bank-desc" || sortBy === "alphabetical-desc") {
+      cards = [...cards].sort((a, b) => (b.bank || '').localeCompare(a.bank || ''));
     } else if (sortBy === "newest-cards" || sortBy === "recently-added" || sortBy === "newest-updated") {
       cards = [...cards].sort((a, b) => (b.id || 0) - (a.id || 0));
-    } else if (sortBy === "alphabetical-asc") {
-      cards = [...cards].sort((a, b) => (a.cardName || a.name || '').localeCompare(b.cardName || b.name || ''));
-    } else if (sortBy === "alphabetical-desc") {
-      cards = [...cards].sort((a, b) => (b.cardName || b.name || '').localeCompare(a.cardName || a.name || ''));
     }
 
     return cards;
