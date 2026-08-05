@@ -285,7 +285,7 @@ export async function fetchNearbyBankBranches(lat, lng, radius = 5000, externalS
     // Ignore quota errors
   }
 
-  return sortAndEnrichBranches(normalized, lat, lng);
+  return sortAndEnrichBranches(normalized, lat, lng).slice(0, 10);
 }
 
 /**
@@ -293,12 +293,14 @@ export async function fetchNearbyBankBranches(lat, lng, radius = 5000, externalS
  */
 function generateFallbackBranches(userLat, userLng) {
   const bankNames = [
-    { name: 'State Bank of India (SBI)', brand: 'SBI', offsetLat: 0.008, offsetLng: 0.006, phone: '1800-11-2211' },
-    { name: 'HDFC Bank Branch & ATM', brand: 'HDFC Bank', offsetLat: -0.006, offsetLng: 0.009, phone: '1800-202-6161' },
-    { name: 'ICICI Bank Branch', brand: 'ICICI Bank', offsetLat: 0.012, offsetLng: -0.007, phone: '1800-1080' },
-    { name: 'Axis Bank Branch', brand: 'Axis Bank', offsetLat: -0.011, offsetLng: -0.008, phone: '1860-419-5555' },
-    { name: 'Punjab National Bank (PNB)', brand: 'PNB', offsetLat: 0.015, offsetLng: 0.011, phone: '1800-180-2222' },
-    { name: 'Bank of Baroda Branch', brand: 'Bank of Baroda', offsetLat: -0.014, offsetLng: 0.014, phone: '1800-570-0' }
+    { name: 'State Bank of India (SBI)', brand: 'SBI', offsetLat: 0.005, offsetLng: 0.004, phone: '1800-11-2211' },
+    { name: 'HDFC Bank Branch', brand: 'HDFC Bank', offsetLat: -0.006, offsetLng: 0.007, phone: '1800-202-6161' },
+    { name: 'ICICI Bank Branch', brand: 'ICICI Bank', offsetLat: 0.009, offsetLng: -0.005, phone: '1800-1080' },
+    { name: 'Axis Bank Branch', brand: 'Axis Bank', offsetLat: -0.008, offsetLng: -0.006, phone: '1860-419-5555' },
+    { name: 'Punjab National Bank (PNB)', brand: 'PNB', offsetLat: 0.012, offsetLng: 0.009, phone: '1800-180-2222' },
+    { name: 'Bank of Baroda Branch', brand: 'Bank of Baroda', offsetLat: -0.010, offsetLng: 0.011, phone: '1800-570-0' },
+    { name: 'Kotak Mahindra Bank', brand: 'Kotak', offsetLat: 0.014, offsetLng: -0.012, phone: '1860-266-2666' },
+    { name: 'Canara Bank Branch', brand: 'Canara Bank', offsetLat: -0.013, offsetLng: -0.015, phone: '1800-425-0018' }
   ];
 
   return bankNames.map((bank, index) => {
@@ -309,7 +311,7 @@ function generateFallbackBranches(userLat, userLng) {
     return {
       id: `fallback_bank_${index}_${bLat.toFixed(4)}_${bLng.toFixed(4)}`,
       name: bank.name,
-      address: `Main Road, Central Area (${bLat.toFixed(3)}, ${bLng.toFixed(3)})`,
+      address: `Main Road, Central Sector (${bLat.toFixed(3)}, ${bLng.toFixed(3)})`,
       lat: bLat,
       lng: bLng,
       distanceKm: distanceKm,
@@ -319,7 +321,7 @@ function generateFallbackBranches(userLat, userLng) {
       phone: bank.phone,
       website: null,
       googleMapsUrl: `https://www.google.com/maps?q=${bLat},${bLng}`,
-      directionsUrl: `https://www.google.com/maps/dir/?api=1&origin=${userLat},${userLng}&destination=${bLat},${bLng}`
+      directionsUrl: `https://www.google.com/maps/dir/?api=1&destination=${bLat},${bLng}`
     };
   });
 }
@@ -385,12 +387,12 @@ function normalizeOverpassElements(elements, userLat, userLng) {
       lng: bLng,
       distanceKm: distanceKm,
       distanceFormatted: formatDistance(distanceKm),
-      brand: tags.brand || tags.operator || null,
+      brand: tags.brand || tags.operator || bankName,
       openingHours: tags.opening_hours || null,
       phone: tags.phone || tags['contact:phone'] || null,
       website: tags.website || tags['contact:website'] || null,
       googleMapsUrl: `https://www.google.com/maps?q=${bLat},${bLng}`,
-      directionsUrl: `https://www.google.com/maps/dir/?api=1&origin=${userLat},${userLng}&destination=${bLat},${bLng}`
+      directionsUrl: `https://www.google.com/maps/dir/?api=1&destination=${bLat},${bLng}`
     });
   }
 
@@ -408,7 +410,8 @@ function sortAndEnrichBranches(branches, userLat, userLng) {
         ...branch,
         distanceKm: distanceKm,
         distanceFormatted: formatDistance(distanceKm),
-        directionsUrl: `https://www.google.com/maps/dir/?api=1&origin=${userLat},${userLng}&destination=${branch.lat},${branch.lng}`
+        googleMapsUrl: `https://www.google.com/maps?q=${branch.lat},${branch.lng}`,
+        directionsUrl: `https://www.google.com/maps/dir/?api=1&destination=${branch.lat},${branch.lng}`
       };
     })
     .sort((a, b) => a.distanceKm - b.distanceKm);
