@@ -1,16 +1,19 @@
 /**
- * Real-time Bank Location Service using Geolocation API, Overpass API, and Nominatim
+ * Real-time Bank Location Service using Geolocation API, Overpass API, and OpenStreetMap Nominatim
+ * STRICTLY 100% LIVE REAL DATA - NO MOCK / FALLBACK DATA GENERATED.
  */
 
 const OVERPASS_ENDPOINTS = [
-  'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
+  'https://overpass-api.de/api/interpreter',
   'https://overpass.kumi.systems/api/interpreter',
   'https://lz4.overpass-api.de/api/interpreter',
-  'https://overpass-api.de/api/interpreter'
+  'https://overpass.private.coffee/api/interpreter',
+  'https://maps.mail.ru/osm/tools/overpass/api/interpreter'
 ];
 
 const CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes cache
 const memoryCache = new Map();
+const nominatimCache = new Map();
 
 /**
  * Calculates distance between two coordinates in kilometers using Haversine formula
@@ -42,9 +45,8 @@ export function formatDistance(distanceKm) {
 
 /**
  * Get current coordinates from Browser Geolocation API
- * Tries fast standard accuracy first, falling back if needed.
  */
-export function getUserPosition(timeoutMs = 8000) {
+export function getUserPosition(timeoutMs = 10000) {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
       reject(new Error('Geolocation is not supported by your browser.'));
@@ -56,7 +58,7 @@ export function getUserPosition(timeoutMs = 8000) {
       if (!isSettled) {
         isSettled = true;
         const err = new Error('Location request timed out. Please search for your city manually.');
-        err.code = 3; // TIMEOUT
+        err.code = 3;
         reject(err);
       }
     }, timeoutMs);
@@ -90,16 +92,48 @@ export function getUserPosition(timeoutMs = 8000) {
         }
       },
       {
-        enableHighAccuracy: false, // Low accuracy is much faster on desktop and mobile without GPS delays
+        enableHighAccuracy: true,
         timeout: timeoutMs,
-        maximumAge: 300000 // 5 minutes cached position
+        maximumAge: 180000 // 3 minutes cache
       }
     );
   });
 }
 
 /**
- * Search city coordinates using Nominatim API with timeout and retries
+ * Reverse Geocode coordinates via Nominatim to obtain full real address if OSM tags lack full street details
+ */
+export async function reverseGeocodeNominatim(lat, lng) {
+  const cacheKey = `${lat.toFixed(5)}_${lng.toFixed(5)}`;
+  if (nominatimCache.has(cacheKey)) {
+    return nominatimCache.get(cacheKey);
+  }
+
+  try {
+    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`;
+    const res = await fetch(url, {
+      headers: {
+        'Accept': 'application/json',
+        'Accept-Language': 'en',
+        'User-Agent': 'CardsApp/1.0 (BankBranchFinder)'
+      }
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.display_name) {
+        nominatimCache.set(cacheKey, data.display_name);
+        return data.display_name;
+      }
+    }
+  } catch (e) {
+    console.warn('Nominatim reverse geocode error:', e);
+  }
+  return null;
+}
+
+/**
+ * Search city coordinates using Nominatim API
  */
 export async function searchCityCoordinates(query, signal = null) {
   if (!query || !query.trim()) {
@@ -112,7 +146,7 @@ export async function searchCityCoordinates(query, signal = null) {
   let response;
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 6000);
+    const timeoutId = setTimeout(() => controller.abort(), 7000);
     const combinedSignal = signal ? AbortSignal.any([signal, controller.signal]) : controller.signal;
 
     response = await fetch(url, {
@@ -155,16 +189,17 @@ export async function searchCityCoordinates(query, signal = null) {
 }
 
 /**
- * Generates cache key based on spatial grid and radius
+ * Generates spatial cache key
  */
 function getCacheKey(lat, lng, radius) {
-  const gridLat = lat.toFixed(2);
-  const gridLng = lng.toFixed(2);
-  return `bank_cache_${gridLat}_${gridLng}_r${radius}`;
+  const gridLat = lat.toFixed(3);
+  const gridLng = lng.toFixed(3);
+  return `real_bank_cache_${gridLat}_${gridLng}_r${radius}`;
 }
 
 /**
- * Fetches nearby bank branches from Overpass API with retry logic and fallback
+ * Fetches REAL nearby bank branches from Overpass API
+ * NEVER GENERATES MOCK OR FALLBACK DATA.
  */
 export async function fetchNearbyBankBranches(lat, lng, radius = 5000, externalSignal = null) {
   const cacheKey = getCacheKey(lat, lng, radius);
@@ -174,7 +209,7 @@ export async function fetchNearbyBankBranches(lat, lng, radius = 5000, externalS
   if (memoryCache.has(cacheKey)) {
     const cached = memoryCache.get(cacheKey);
     if (now - cached.timestamp < CACHE_TTL_MS) {
-      return sortAndEnrichBranches(cached.data, lat, lng);
+      return sortAndEnrichBranches(cached.data, lat, lng).slice(0, 10);
     }
   }
 
@@ -185,27 +220,28 @@ export async function fetchNearbyBankBranches(lat, lng, radius = 5000, externalS
       const parsed = JSON.parse(item);
       if (now - parsed.timestamp < CACHE_TTL_MS) {
         memoryCache.set(cacheKey, parsed);
-        return sortAndEnrichBranches(parsed.data, lat, lng);
+        return sortAndEnrichBranches(parsed.data, lat, lng).slice(0, 10);
       }
     }
   } catch (e) {
     // Ignore storage errors
   }
 
-  // 3. Build Optimized Overpass Query (node & way, no heavy relation)
+  // 3. Overpass QL Query for real bank nodes & ways
   const query = `
-    [out:json][timeout:15];
+    [out:json][timeout:20];
     (
       node["amenity"="bank"](around:${radius},${lat},${lng});
       way["amenity"="bank"](around:${radius},${lat},${lng});
+      node["building"="bank"](around:${radius},${lat},${lng});
+      way["building"="bank"](around:${radius},${lat},${lng});
     );
     out body center;
   `;
 
   let rawData = null;
-  let lastError = null;
 
-  // Try endpoints in sequence with exponential backoff & fast timeout per request
+  // Try endpoints in sequence
   for (const endpoint of OVERPASS_ENDPOINTS) {
     if (externalSignal?.aborted) {
       const abortErr = new Error('Request aborted');
@@ -216,7 +252,7 @@ export async function fetchNearbyBankBranches(lat, lng, radius = 5000, externalS
     for (let attempt = 0; attempt < 2; attempt++) {
       try {
         const controller = new AbortController();
-        const timeoutMs = 4000; // 4 seconds timeout per attempt
+        const timeoutMs = 5000;
         const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
         const combinedSignal = externalSignal
           ? AbortSignal.any([externalSignal, controller.signal])
@@ -235,99 +271,71 @@ export async function fetchNearbyBankBranches(lat, lng, radius = 5000, externalS
 
         if (response.ok) {
           rawData = await response.json();
-          if (rawData && Array.isArray(rawData.elements)) {
+          if (rawData && Array.isArray(rawData.elements) && rawData.elements.length > 0) {
             break;
           }
         } else if (response.status === 429 || response.status === 504 || response.status === 503) {
-          // Rate limit or server load error, pause briefly before retrying
           await new Promise((r) => setTimeout(r, 400 * (attempt + 1)));
         }
       } catch (err) {
         if (err.name === 'AbortError' && externalSignal?.aborted) {
           throw err;
         }
-        lastError = err;
       }
     }
 
-    if (rawData && Array.isArray(rawData.elements)) {
+    if (rawData && Array.isArray(rawData.elements) && rawData.elements.length > 0) {
       break;
     }
   }
 
-  // If initial search returned no elements or failed, try 10km radius ONCE if initial radius was 5km
+  // If initial 5km radius returned 0 elements, expand search once to 10km
   if ((!rawData || !rawData.elements || rawData.elements.length === 0) && radius < 10000) {
-    try {
-      return await fetchNearbyBankBranches(lat, lng, 10000, externalSignal);
-    } catch (e) {
-      if (e.name === 'AbortError') throw e;
-      // Fall through to fallback generator
-    }
+    return await fetchNearbyBankBranches(lat, lng, 10000, externalSignal);
   }
 
-  // 4. Processing Results or Generating Safe Fallback Data
-  let normalized = [];
-  if (rawData && Array.isArray(rawData.elements)) {
-    normalized = normalizeOverpassElements(rawData.elements, lat, lng);
+  // If still no raw elements, return empty array (STRICTLY NO MOCK DATA)
+  if (!rawData || !rawData.elements || rawData.elements.length === 0) {
+    return [];
   }
 
-  // Fallback: If OSM network fails entirely or returns 0 results, generate verified local bank branches
-  if (normalized.length === 0) {
-    normalized = generateFallbackBranches(lat, lng);
-  }
+  // 4. Process real OSM elements
+  let branches = normalizeOverpassElements(rawData.elements, lat, lng);
 
-  // Store in cache
-  const cacheObj = { timestamp: now, data: normalized };
+  // Sort by distance and select top 10
+  branches = sortAndEnrichBranches(branches, lat, lng).slice(0, 10);
+
+  // 5. Enrich addresses with Nominatim Reverse Geocoding where OSM tags lack street details
+  const enrichedBranches = await Promise.all(
+    branches.map(async (b) => {
+      if (b.isAddressIncomplete) {
+        const fullAddress = await reverseGeocodeNominatim(b.lat, b.lng);
+        if (fullAddress) {
+          return {
+            ...b,
+            address: fullAddress,
+            isAddressIncomplete: false
+          };
+        }
+      }
+      return b;
+    })
+  );
+
+  // Cache final real results
+  const cacheObj = { timestamp: now, data: enrichedBranches };
   memoryCache.set(cacheKey, cacheObj);
   try {
     sessionStorage.setItem(cacheKey, JSON.stringify(cacheObj));
   } catch (e) {
-    // Ignore quota errors
+    // Ignore storage quota error
   }
 
-  return sortAndEnrichBranches(normalized, lat, lng).slice(0, 10);
+  return enrichedBranches;
 }
 
 /**
- * Fallback bank branch generator when live OSM servers are unreachable
- */
-function generateFallbackBranches(userLat, userLng) {
-  const bankNames = [
-    { name: 'State Bank of India (SBI)', brand: 'SBI', offsetLat: 0.005, offsetLng: 0.004, phone: '1800-11-2211' },
-    { name: 'HDFC Bank Branch', brand: 'HDFC Bank', offsetLat: -0.006, offsetLng: 0.007, phone: '1800-202-6161' },
-    { name: 'ICICI Bank Branch', brand: 'ICICI Bank', offsetLat: 0.009, offsetLng: -0.005, phone: '1800-1080' },
-    { name: 'Axis Bank Branch', brand: 'Axis Bank', offsetLat: -0.008, offsetLng: -0.006, phone: '1860-419-5555' },
-    { name: 'Punjab National Bank (PNB)', brand: 'PNB', offsetLat: 0.012, offsetLng: 0.009, phone: '1800-180-2222' },
-    { name: 'Bank of Baroda Branch', brand: 'Bank of Baroda', offsetLat: -0.010, offsetLng: 0.011, phone: '1800-570-0' },
-    { name: 'Kotak Mahindra Bank', brand: 'Kotak', offsetLat: 0.014, offsetLng: -0.012, phone: '1860-266-2666' },
-    { name: 'Canara Bank Branch', brand: 'Canara Bank', offsetLat: -0.013, offsetLng: -0.015, phone: '1800-425-0018' }
-  ];
-
-  return bankNames.map((bank, index) => {
-    const bLat = userLat + bank.offsetLat;
-    const bLng = userLng + bank.offsetLng;
-    const distanceKm = calculateDistance(userLat, userLng, bLat, bLng);
-
-    return {
-      id: `fallback_bank_${index}_${bLat.toFixed(4)}_${bLng.toFixed(4)}`,
-      name: bank.name,
-      address: `Main Road, Central Sector (${bLat.toFixed(3)}, ${bLng.toFixed(3)})`,
-      lat: bLat,
-      lng: bLng,
-      distanceKm: distanceKm,
-      distanceFormatted: formatDistance(distanceKm),
-      brand: bank.brand,
-      openingHours: '10:00 AM - 4:00 PM (Mon-Sat)',
-      phone: bank.phone,
-      website: null,
-      googleMapsUrl: `https://www.google.com/maps?q=${bLat},${bLng}`,
-      directionsUrl: `https://www.google.com/maps/dir/?api=1&destination=${bLat},${bLng}`
-    };
-  });
-}
-
-/**
- * Normalizes raw Overpass XML/JSON elements into clean bank branch objects
+ * Normalizes raw Overpass elements into clean real bank branch objects
  */
 function normalizeOverpassElements(elements, userLat, userLng) {
   const branches = [];
@@ -336,7 +344,6 @@ function normalizeOverpassElements(elements, userLat, userLng) {
   for (const el of elements) {
     const tags = el.tags || {};
 
-    // Extract coordinates
     let bLat = el.lat;
     let bLng = el.lon;
 
@@ -349,16 +356,17 @@ function normalizeOverpassElements(elements, userLat, userLng) {
 
     if (bLat === undefined || bLng === undefined) continue;
 
-    // Deduplicate by key or coordinate proximity
+    // Deduplicate by coordinates (4 decimal places ~ 11 meters precision)
     const uniqueKey = `${bLat.toFixed(4)}_${bLng.toFixed(4)}`;
     if (seenKeys.has(uniqueKey)) continue;
     seenKeys.add(uniqueKey);
 
-    // Extract Bank Name
-    const rawName = tags.name || tags['name:en'] || tags.brand || tags.operator || tags.official_name;
+    // Extract real bank name
+    const rawName = tags.name || tags['name:en'] || tags.operator || tags.brand || tags.official_name;
     const bankName = rawName ? rawName.trim() : 'Bank Branch';
+    const branchName = tags.branch || tags['branch:en'] || tags.ref || null;
 
-    // Construct Address
+    // Construct address from available tags
     const addressParts = [];
     if (tags['addr:housenumber']) addressParts.push(tags['addr:housenumber']);
     if (tags['addr:street']) addressParts.push(tags['addr:street']);
@@ -367,13 +375,15 @@ function normalizeOverpassElements(elements, userLat, userLng) {
     if (tags['addr:postcode']) addressParts.push(tags['addr:postcode']);
 
     let address = addressParts.join(', ');
+    let isAddressIncomplete = false;
+
     if (!address) {
       if (tags['addr:full']) {
         address = tags['addr:full'];
-      } else if (tags.branch) {
-        address = `Branch: ${tags.branch}`;
       } else {
-        address = `Near ${tags['addr:street'] || 'Main Road'} (${bLat.toFixed(3)}, ${bLng.toFixed(3)})`;
+        // Mark for reverse geocoding via Nominatim
+        address = `${bLat.toFixed(5)}, ${bLng.toFixed(5)}`;
+        isAddressIncomplete = true;
       }
     }
 
@@ -382,7 +392,9 @@ function normalizeOverpassElements(elements, userLat, userLng) {
     branches.push({
       id: `osm_${el.type}_${el.id}`,
       name: bankName,
+      branchName: branchName,
       address: address,
+      isAddressIncomplete: isAddressIncomplete,
       lat: bLat,
       lng: bLng,
       distanceKm: distanceKm,
@@ -400,7 +412,7 @@ function normalizeOverpassElements(elements, userLat, userLng) {
 }
 
 /**
- * Re-sorts branches and updates directionsUrl based on latest user coordinates
+ * Re-sorts branches and updates distance formatted & URLs
  */
 function sortAndEnrichBranches(branches, userLat, userLng) {
   return branches

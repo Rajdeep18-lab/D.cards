@@ -7,23 +7,31 @@ import {
   searchCityCoordinates
 } from '../services/bankLocationService';
 
+const SAMPLE_CITIES = [
+  { name: 'Ranchi', lat: 23.3441, lng: 85.3096 },
+  { name: 'Kolkata', lat: 22.5726, lng: 88.3639 },
+  { name: 'Delhi', lat: 28.6139, lng: 77.2090 },
+  { name: 'Mumbai', lat: 19.0760, lng: 72.8777 },
+  { name: 'Bengaluru', lat: 12.9716, lng: 77.5946 },
+  { name: 'Patna', lat: 25.5941, lng: 85.1376 }
+];
+
 function CityBanksSection() {
   const { profile } = useAuth();
   const userCity = profile?.city || '';
 
   // Core State
   const [userCoords, setUserCoords] = useState(null); // { lat, lng }
-  const [locationName, setLocationName] = useState('Your Current Location');
+  const [locationName, setLocationName] = useState('Your Location');
   const [branches, setBranches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [permissionDenied, setPermissionDenied] = useState(false);
-  const [retryCount, setRetryCount] = useState(0);
 
   // Grouping State: 'nearest' | 'grouped'
   const [viewMode, setViewMode] = useState('nearest');
 
-  // Manual City Search State
+  // Search State
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
 
@@ -46,15 +54,12 @@ function CityBanksSection() {
         // Enforce maximum 10 nearest branches
         const top10 = (data || []).slice(0, 10);
         setBranches(top10);
-        if (top10.length === 0) {
-          setError('No nearby banks found');
-        }
       }
     } catch (err) {
       if (err.name === 'AbortError') return;
-      console.error('Error fetching nearby bank branches:', err);
+      console.error('Error fetching real bank branches:', err);
       setBranches([]);
-      setError('Unable to fetch live bank locations. Please check your network or try again.');
+      setError('Unable to fetch live bank locations. Please check your connection or try again.');
     } finally {
       if (!controller.signal.aborted) {
         setLoading(false);
@@ -73,21 +78,21 @@ function CityBanksSection() {
     };
   }, [userCoords, loadNearbyBranches]);
 
-  // 2. Detect Current Location via Browser Geolocation API
+  // 2. Initial Location Detection via Browser Geolocation API
   const handleDetectLocation = useCallback(async () => {
     setLoading(true);
     setError(null);
     setPermissionDenied(false);
     try {
-      const coords = await getUserPosition(8000);
+      const coords = await getUserPosition(9000);
       setUserCoords(coords);
-      setLocationName('Your Current Location');
+      setLocationName('Your Live Geolocation');
     } catch (err) {
       console.warn('Geolocation failed or denied:', err.message);
       const isDenied = err.code === 1 || (err.message && err.message.toLowerCase().includes('denied'));
       setPermissionDenied(isDenied);
 
-      // Automatic fallback to profile city if available
+      // Fallback to user profile city if set
       if (userCity) {
         try {
           const cityCoords = await searchCityCoordinates(userCity);
@@ -95,34 +100,31 @@ function CityBanksSection() {
           setLocationName(userCity);
           return;
         } catch (e) {
-          // Fall through to default
+          // Fall through to default city
         }
       }
 
-      // Default fallback (Mumbai)
-      setUserCoords({ lat: 19.0760, lng: 72.8777 });
-      setLocationName('Mumbai Central Area');
+      // Default fallback city (Ranchi)
+      setUserCoords({ lat: 23.3441, lng: 85.3096 });
+      setLocationName('Ranchi');
     } finally {
       setLoading(false);
     }
   }, [userCity]);
 
-  // Trigger location detection on initial component mount
+  // Trigger location detection on mount
   useEffect(() => {
     handleDetectLocation();
   }, [handleDetectLocation]);
 
-  // Manual Retry Handler
-  const handleRetry = () => {
-    setRetryCount((prev) => prev + 1);
-    if (userCoords) {
-      loadNearbyBranches(userCoords.lat, userCoords.lng);
-    } else {
-      handleDetectLocation();
-    }
+  // City Switcher Handler
+  const handleSelectCity = (cityObj) => {
+    setUserCoords({ lat: cityObj.lat, lng: cityObj.lng });
+    setLocationName(cityObj.name);
+    setPermissionDenied(false);
   };
 
-  // 3. Handle Manual City Search
+  // 3. Handle City Search Form Submit
   const handleCitySearch = async (e) => {
     e.preventDefault();
     if (!searchQuery.trim()) return;
@@ -134,8 +136,9 @@ function CityBanksSection() {
       setUserCoords({ lat: results.lat, lng: results.lng });
       setLocationName(results.displayName.split(',')[0] || searchQuery);
       setSearchQuery('');
+      setPermissionDenied(false);
     } catch (err) {
-      setError(err.message || 'Location search failed. Try entering a city name or postal code.');
+      setError(err.message || 'Location search failed. Try entering a city name or pincode.');
     } finally {
       setIsSearching(false);
     }
@@ -145,7 +148,6 @@ function CityBanksSection() {
   const groupedBranches = useMemo(() => {
     const map = new Map();
     branches.forEach((b) => {
-      // Normalize brand/bank name for grouping
       const bankGroup = b.brand || b.name.replace(/(Branch|ATM|Main Branch|IFSC).*/i, '').trim() || 'Other Banks';
       if (!map.has(bankGroup)) {
         map.set(bankGroup, []);
@@ -161,16 +163,16 @@ function CityBanksSection() {
   return (
     <section id="city-banks" className="mt-12 mb-14 select-none text-left font-sans">
       {/* Top Header & Search Bar */}
-      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-5 mb-8">
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-5 mb-6">
         <div>
-          <span className="mb-2.5 inline-flex items-center gap-1.5 px-3.5 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-black tracking-widest uppercase rounded-full border border-emerald-500/20 select-none">
-            ⚡ FREE OVERPASS API LOCATOR • NO GOOGLE MAPS API
+          <span className="mb-2 inline-flex items-center gap-1.5 px-3.5 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-black tracking-widest uppercase rounded-full border border-emerald-500/20 select-none">
+            🟢 LIVE OPENSTREETMAP DATA • REAL BRANCH LOCATIONS
           </span>
           <h2 className="text-2xl sm:text-3xl font-black font-serif text-slate-900 dark:text-roseGold tracking-tight mt-1 flex items-center gap-2.5">
-            <span className="text-2xl sm:text-3xl">🏦</span> Nearby Banks
+            <span className="text-2xl sm:text-3xl">🏦</span> Live Nearby Banks
           </h2>
           <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1 max-w-2xl font-medium leading-relaxed">
-            Real-time bank branches near <strong className="text-secondary dark:text-roseGold font-bold">{locationName}</strong>. Completely free, fast, and sorted by nearest distance.
+            Real bank branches near <strong className="text-secondary dark:text-roseGold font-bold">{locationName}</strong>. Directly fetched from OpenStreetMap Overpass & Reverse Geocoded.
           </p>
         </div>
 
@@ -200,12 +202,33 @@ function CityBanksSection() {
             onClick={handleDetectLocation}
             disabled={loading}
             className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-secondary to-primary hover:opacity-95 text-white text-xs font-bold rounded-2xl shadow-md transition-all cursor-pointer active:scale-98 disabled:opacity-50"
-            title="Detect current location using Geolocation API"
+            title="Detect current browser position"
           >
             <span>📍</span>
-            <span>{loading ? 'Locating...' : 'Use My Location'}</span>
+            <span>{loading ? 'Locating...' : 'Use My Geolocation'}</span>
           </button>
         </div>
+      </div>
+
+      {/* Quick City Selector Bar for Testing Multi-City Real Data */}
+      <div className="flex flex-wrap items-center gap-2 mb-6 p-2.5 rounded-2xl bg-slate-100/80 dark:bg-black/30 border border-slate-200/80 dark:border-white/5">
+        <span className="text-[11px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider pl-1">
+          Quick City Test:
+        </span>
+        {SAMPLE_CITIES.map((c) => (
+          <button
+            key={c.name}
+            type="button"
+            onClick={() => handleSelectCity(c)}
+            className={`px-3 py-1 text-xs font-bold rounded-xl transition-all cursor-pointer ${
+              locationName.toLowerCase().includes(c.name.toLowerCase())
+                ? 'bg-secondary text-white shadow-sm'
+                : 'bg-white/80 dark:bg-white/10 text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-white/20'
+            }`}
+          >
+            📍 {c.name}
+          </button>
+        ))}
       </div>
 
       {/* Permission Denied Notice */}
@@ -218,9 +241,9 @@ function CityBanksSection() {
           <div className="flex items-center gap-3">
             <span className="text-2xl">⚠️</span>
             <div>
-              <p className="font-bold">Location Permission Needed</p>
+              <p className="font-bold">Location Permission Denied</p>
               <p className="text-[11px] font-normal text-amber-800 dark:text-amber-400">
-                Please allow location permission in your browser to discover live nearby bank branches, or search for your city above.
+                Please allow browser location permission or tap a quick city test button above.
               </p>
             </div>
           </div>
@@ -234,7 +257,7 @@ function CityBanksSection() {
         </motion.div>
       )}
 
-      {/* Network / Retrying Notice */}
+      {/* Network / Error Notice */}
       {error && !loading && branches.length > 0 && (
         <div className="mb-5 p-3.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-800 dark:text-blue-300 text-xs flex items-center justify-between">
           <span className="flex items-center gap-2 font-medium">
@@ -242,10 +265,10 @@ function CityBanksSection() {
           </span>
           <button
             type="button"
-            onClick={handleRetry}
+            onClick={() => loadNearbyBranches(userCoords.lat, userCoords.lng)}
             className="px-3 py-1 bg-blue-600 text-white rounded-lg text-[11px] font-bold hover:bg-blue-700 transition-all cursor-pointer"
           >
-            Retry 🔄
+            Refresh 🔄
           </button>
         </div>
       )}
@@ -255,10 +278,10 @@ function CityBanksSection() {
         <div className="flex flex-wrap items-center justify-between gap-3 mb-5 px-1">
           <div className="flex items-center gap-2">
             <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
-              Showing top {branches.length} nearest bank branches
+              Showing top {branches.length} nearest real bank branches
             </span>
-            <span className="px-2 py-0.5 rounded-md bg-secondary/10 dark:bg-secondary/20 text-secondary dark:text-roseGold text-[10px] font-black uppercase tracking-wide">
-              Max 10
+            <span className="px-2 py-0.5 rounded-md bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[10px] font-black uppercase tracking-wide">
+              Verified OSM Data
             </span>
           </div>
 
@@ -317,7 +340,7 @@ function CityBanksSection() {
           ))}
         </div>
       ) : branches.length === 0 ? (
-        /* Empty State: No Nearby Banks Found */
+        /* Empty State: Exact Requirement #7 */
         <motion.div
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -327,10 +350,10 @@ function CityBanksSection() {
             🏦
           </div>
           <h3 className="text-xl font-black text-slate-900 dark:text-slate-100 font-serif">
-            No nearby banks found
+            No nearby bank branches found in your area.
           </h3>
           <p className="text-xs sm:text-sm text-slate-600 dark:text-gray-400 mt-2 max-w-md leading-relaxed font-medium">
-            We couldn't detect any bank branches in your immediate vicinity. Try searching for a nearby city or enabling location access.
+            Try searching for a major city, tapping one of the quick city test buttons above, or expanding location access.
           </p>
           <div className="pt-5 flex flex-wrap justify-center gap-3">
             <button
@@ -338,12 +361,12 @@ function CityBanksSection() {
               onClick={handleDetectLocation}
               className="px-5 py-2.5 bg-secondary text-white text-xs font-bold rounded-xl hover:bg-secondary/90 transition-all shadow-md cursor-pointer"
             >
-              📍 Retry Location Detection
+              📍 Retry Geolocation
             </button>
           </div>
         </motion.div>
       ) : viewMode === 'grouped' ? (
-        /* Grouped View: Accordion / Sectioned by Bank Name */
+        /* Grouped View by Bank Name */
         <div className="space-y-6">
           {groupedBranches.map((group) => (
             <div key={group.bankName} className="space-y-3">
@@ -365,7 +388,7 @@ function CityBanksSection() {
           ))}
         </div>
       ) : (
-        /* Standard View: Clean Grid Sorted Strictly by Nearest Distance */
+        /* Standard Grid Sorted Strictly by Distance */
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           <AnimatePresence>
             {branches.map((branch) => (
@@ -379,18 +402,17 @@ function CityBanksSection() {
 }
 
 /**
- * Individual Bank Card Component
- * Strictly presenting:
- * 🏦 Bank Name
- * 📍 Branch Address
- * 📏 Distance from user (meters/km)
- * 🧭 Get Directions button (https://www.google.com/maps/dir/?api=1&destination=LAT,LNG)
- * 📍 Open in Google Maps button (https://www.google.com/maps?q=LAT,LNG)
+ * Individual Real Bank Card Component
+ * Displays real:
+ * - 🏦 Bank Name & Branch Name
+ * - 📍 Full Address
+ * - 🌐 Exact Coordinates (Latitude, Longitude)
+ * - 📏 Distance from user (meters/km)
+ * - 🧭 Get Directions button (https://www.google.com/maps/dir/?api=1&destination=LAT,LNG)
+ * - 📍 Open in Google Maps button (https://www.google.com/maps?q=LAT,LNG)
  */
 function BankCardItem({ branch }) {
-  // Direct Google Maps Directions URL as specified
   const directionsUrl = branch.directionsUrl || `https://www.google.com/maps/dir/?api=1&destination=${branch.lat},${branch.lng}`;
-  // Direct Google Maps View URL
   const googleMapsUrl = branch.googleMapsUrl || `https://www.google.com/maps?q=${branch.lat},${branch.lng}`;
 
   return (
@@ -412,23 +434,35 @@ function BankCardItem({ branch }) {
               <h3 className="text-sm font-black text-slate-900 dark:text-slate-100 tracking-tight leading-snug font-serif">
                 {branch.name}
               </h3>
-              <p className="text-[10px] text-secondary dark:text-roseGold font-bold uppercase tracking-wider">
-                {branch.brand || 'Bank Branch'}
-              </p>
+              {branch.branchName && (
+                <p className="text-[11px] font-bold text-secondary dark:text-roseGold">
+                  Branch: {branch.branchName}
+                </p>
+              )}
             </div>
           </div>
 
-          {/* Distance Badge (meters / km) */}
+          {/* Distance Badge */}
           <span className="px-2.5 py-1 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 text-[11px] font-black border border-emerald-500/20 flex-shrink-0 whitespace-nowrap">
             📏 {branch.distanceFormatted}
           </span>
         </div>
 
-        {/* Branch Address */}
-        <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-medium pt-1 flex items-start gap-1.5">
+        {/* Full Real Address */}
+        <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed font-medium pt-1 flex items-start gap-1.5">
           <span className="flex-shrink-0 text-secondary">📍</span>
           <span>{branch.address}</span>
         </p>
+
+        {/* Exact Coordinates */}
+        <div className="flex items-center gap-2 text-[10px] font-mono text-slate-500 dark:text-slate-400 pt-1">
+          <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-white/10 border border-slate-200 dark:border-white/5">
+            Lat: {branch.lat.toFixed(5)}
+          </span>
+          <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-white/10 border border-slate-200 dark:border-white/5">
+            Lng: {branch.lng.toFixed(5)}
+          </span>
+        </div>
       </div>
 
       {/* Action Buttons */}
