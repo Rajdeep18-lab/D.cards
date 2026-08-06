@@ -148,7 +148,7 @@ function AIChatAssistant({ onOpenContact, embeddedPage = false }) {
               opacity: 1, 
               y: 0, 
               scale: 1,
-              height: isMinimized ? '64px' : '530px'
+              height: isMinimized ? '64px' : 'min(530px, 80vh)'
             }}
             exit={{ opacity: 0, y: 30, scale: 0.95 }}
             transition={{ type: "spring", stiffness: 350, damping: 28 }}

@@ -191,10 +191,10 @@ function SavingsCalculator({ onViewDetails, cards }) {
                     ₹{val.toLocaleString('en-IN')}
                   </span>
                 </div>
-                <div className="relative h-6 flex items-center">
-                  <div className="absolute w-full h-[5px] rounded-full bg-slate-200 dark:bg-slate-700" />
+                <div className="relative h-7 flex items-center touch-action-pan-x">
+                  <div className="absolute w-full h-[6px] rounded-full bg-slate-200 dark:bg-slate-700" />
                   <div 
-                    className={`absolute h-[5px] rounded-full bg-gradient-to-r ${color} transition-all duration-100`} 
+                    className={`absolute h-[6px] rounded-full bg-gradient-to-r ${color} transition-all duration-75`} 
                     style={{ width: `${pct}%` }} 
                   />
                   <input
@@ -204,7 +204,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
                     step={max <= 20000 ? 500 : 1000}
                     value={val} 
                     onChange={e => setVal(safeNumber(e.target.value))}
-                    className="absolute w-full appearance-none bg-transparent cursor-pointer z-10"
+                    className="absolute w-full appearance-none bg-transparent cursor-pointer z-10 touch-none py-1"
                   />
                 </div>
               </div>

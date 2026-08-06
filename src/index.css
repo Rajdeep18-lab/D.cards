@@ -113,9 +113,15 @@
 
   /* ── Mobile Performance Overrides (< 768px) ── */
   @media (max-width: 768px) {
+    * {
+      -webkit-tap-highlight-color: transparent;
+    }
+    button, a, input, select {
+      touch-action: manipulation;
+    }
     .backdrop-blur-2xl, .backdrop-blur-xl, .backdrop-blur-3xl, .backdrop-blur-md {
-      backdrop-filter: blur(4px) !important;
-      -webkit-backdrop-filter: blur(4px) !important;
+      backdrop-filter: blur(6px) !important;
+      -webkit-backdrop-filter: blur(6px) !important;
     }
     .shadow-2xl, .shadow-xl, .shadow-lg {
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;

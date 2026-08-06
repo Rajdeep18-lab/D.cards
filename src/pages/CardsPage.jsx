@@ -62,6 +62,17 @@ function CardsPage({
 }) {
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
+  React.useEffect(() => {
+    if (isMobileFilterOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMobileFilterOpen]);
+
   return (
     <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 relative z-20">
       {/* Header Banner */}

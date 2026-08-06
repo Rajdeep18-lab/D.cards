@@ -111,7 +111,7 @@ function QuickFilterChips({
         )}
       </div>
 
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 custom-scrollbar no-scrollbar scroll-smooth">
+      <div className="flex items-center gap-2 overflow-x-auto pb-2 custom-scrollbar no-scrollbar scroll-smooth touch-scroll">
         {CHIPS.map((chip) => {
           const active = isChipActive(chip);
           const IconComp = chip.icon;
