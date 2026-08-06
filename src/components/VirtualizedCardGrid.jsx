@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef, memo } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import DebitCardCard from './DebitCardCard';
 
 /**
- * High-Performance Progressive Viewport Windowed Card Grid
- * Renders cards in chunks to maintain 60 FPS scrolling and low DOM node count on mobile.
+ * Top Cards Viewport Grid Component
+ * Displays Top 12 Cards initially, with user controls to load more or expand all cards.
  */
 function VirtualizedCardGrid({
   cards = [],
@@ -14,41 +14,18 @@ function VirtualizedCardGrid({
   activeFilters = [],
   STATIC_RANKINGS
 }) {
-  const CHUNK_SIZE = 12;
-  const [visibleCount, setVisibleCount] = useState(CHUNK_SIZE);
-  const observerRef = useRef(null);
+  const INITIAL_TOP_COUNT = 12;
+  const CHUNK_INCREMENT = 12;
+  const [visibleCount, setVisibleCount] = useState(INITIAL_TOP_COUNT);
 
-  // Reset window count when card list/filters change
+  // Reset to Top 12 cards when search/filters change
   useEffect(() => {
-    setVisibleCount(CHUNK_SIZE);
+    setVisibleCount(INITIAL_TOP_COUNT);
   }, [cards]);
-
-  // Infinite viewport scroll trigger for smooth 60 FPS rendering
-  useEffect(() => {
-    if (visibleCount >= cards.length) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          setVisibleCount(prev => Math.min(prev + CHUNK_SIZE, cards.length));
-        }
-      },
-      { rootMargin: '400px 0px 400px 0px', threshold: 0.1 }
-    );
-
-    if (observerRef.current) {
-      observer.observe(observerRef.current);
-    }
-
-    return () => {
-      if (observerRef.current) {
-        observer.unobserve(observerRef.current);
-      }
-    };
-  }, [visibleCount, cards.length]);
 
   const visibleCards = cards.slice(0, visibleCount);
   const isQueuedSet = new Set(compareQueue.map(c => String(c.id)));
+  const remainingCount = cards.length - visibleCount;
 
   return (
     <div className="w-full">
@@ -71,16 +48,36 @@ function VirtualizedCardGrid({
         })}
       </div>
 
-      {/* Viewport Bottom Sentinel for Progressive Chunking */}
+      {/* Manual Load Controls: Top Cards Only by default */}
       {visibleCount < cards.length && (
-        <div 
-          ref={observerRef} 
-          className="w-full py-8 flex flex-col items-center justify-center gap-2 select-none"
-        >
-          <div className="w-6 h-6 border-2 border-secondary/30 border-t-secondary rounded-full animate-spin" />
-          <p className="text-xs font-bold text-textSoft dark:text-slate-400">
-            Loading more cards ({visibleCount} of {cards.length})...
-          </p>
+        <div className="w-full py-10 flex flex-col sm:flex-row items-center justify-center gap-3 select-none">
+          <button
+            onClick={() => setVisibleCount(prev => Math.min(prev + CHUNK_INCREMENT, cards.length))}
+            className="px-6 py-3 rounded-full bg-gradient-to-r from-secondary to-primary text-white font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-secondary/20 hover:brightness-110 active:scale-95 transition-all cursor-pointer"
+          >
+            Show More Cards (+{Math.min(CHUNK_INCREMENT, remainingCount)})
+          </button>
+
+          <button
+            onClick={() => setVisibleCount(cards.length)}
+            className="px-6 py-3 rounded-full bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/20 border border-slate-200 dark:border-secondary/20 text-slate-800 dark:text-slate-100 font-extrabold text-xs uppercase tracking-wider transition-all cursor-pointer"
+          >
+            View All {cards.length} Cards ➔
+          </button>
+        </div>
+      )}
+
+      {visibleCount > INITIAL_TOP_COUNT && cards.length > INITIAL_TOP_COUNT && (
+        <div className="w-full pt-4 pb-8 flex justify-center">
+          <button
+            onClick={() => {
+              setVisibleCount(INITIAL_TOP_COUNT);
+              document.getElementById('cards')?.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="text-xs font-bold text-secondary dark:text-roseGold hover:underline cursor-pointer flex items-center gap-1"
+          >
+            ↑ Collapse Back to Top 12 Cards
+          </button>
         </div>
       )}
     </div>
