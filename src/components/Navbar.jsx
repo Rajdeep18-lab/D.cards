@@ -28,6 +28,7 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0 }) {
     { name: "Favorites", path: "/favorites" },
     { name: "Banks", path: "/banks" },
     { name: "About", path: "/about" },
+    { name: "Founders", path: "/founders" },
     { name: "Contact", path: "/contact" },
   ];
 
