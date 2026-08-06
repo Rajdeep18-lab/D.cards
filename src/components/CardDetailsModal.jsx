@@ -82,10 +82,38 @@ function getBankCardSkin(bank) {
     gradient = 'linear-gradient(135deg, #1b0c01 0%, #452203 60%, #0c0500 100%)';
     accent = '#f97316';
     shadow = 'rgba(249, 115, 22, 0.25)';
-  } else if (bankName.includes("fi money") || bankName.includes("niyo") || bankName.includes("federal")) {
+  } else if (bankName.includes("fi money") || bankName.includes("niyo") || bankName.includes("federal") || bankName.includes("jupiter") || bankName.includes("freo")) {
     gradient = 'linear-gradient(135deg, #021a11 0%, #093a26 60%, #03140e 100%)';
     accent = '#10b981';
     shadow = 'rgba(16, 185, 129, 0.25)';
+  } else if (bankName.includes("baroda") || bankName.includes("bob")) {
+    gradient = 'linear-gradient(135deg, #2D0E03 0%, #612106 60%, #C2410C 100%)';
+    accent = '#f97316';
+    shadow = 'rgba(249, 115, 22, 0.25)';
+  } else if (bankName.includes("punjab") || bankName.includes("pnb")) {
+    gradient = 'linear-gradient(135deg, #1C0A19 0%, #4A0E2E 60%, #9F1239 100%)';
+    accent = '#f43f5e';
+    shadow = 'rgba(244, 63, 94, 0.25)';
+  } else if (bankName.includes("canara")) {
+    gradient = 'linear-gradient(135deg, #031E2E 0%, #064566 60%, #0284C7 100%)';
+    accent = '#38bdf8';
+    shadow = 'rgba(56, 189, 248, 0.25)';
+  } else if (bankName.includes("yes bank") || bankName.includes("yes")) {
+    gradient = 'linear-gradient(135deg, #1E070F 0%, #520F1D 60%, #B91C1C 100%)';
+    accent = '#ef4444';
+    shadow = 'rgba(239, 68, 68, 0.25)';
+  } else if (bankName.includes("au small") || bankName.includes("au bank")) {
+    gradient = 'linear-gradient(135deg, #1E0B2B 0%, #431407 60%, #D97706 100%)';
+    accent = '#f59e0b';
+    shadow = 'rgba(245, 158, 11, 0.25)';
+  } else if (bankName.includes("paytm") || bankName.includes("airtel")) {
+    gradient = 'linear-gradient(135deg, #021B29 0%, #043E5E 60%, #0284C7 100%)';
+    accent = '#06b6d4';
+    shadow = 'rgba(6, 182, 212, 0.25)';
+  } else if (bankName.includes("rbl") || bankName.includes("equitas") || bankName.includes("ujjivan") || bankName.includes("jana") || bankName.includes("esaf")) {
+    gradient = 'linear-gradient(135deg, #0F172A 0%, #1E293B 60%, #0F766E 100%)';
+    accent = '#14b8a6';
+    shadow = 'rgba(20, 184, 166, 0.25)';
   }
 
   return { gradient, accent, shadow };
@@ -104,22 +132,36 @@ function CardDetailsModal({ isOpen, onClose, card, compareQueue, toggleCompareQu
     }
   }, [card?.id]);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen, onClose]);
+
   // Safe Property Lookups with Fallbacks
   const cardId = card?.id || 0;
   const cardName = card?.cardName || card?.name || "Debit Card";
   const bankName = card?.bank || "Partner Bank";
-  const annualFee = typeof card?.annualFee === 'number' ? card.annualFee : 0;
-  const minBalance = typeof card?.minBalance === 'number' ? card.minBalance : 0;
+  const annualFee = typeof card?.numAnnualFee === 'number' ? card.numAnnualFee : (typeof card?.annualFee === 'number' ? card.annualFee : parseFloat(String(card?.annualFee || '').replace(/[^0-9.]/g, '')) || 0);
+  const minBalance = typeof card?.minBalance === 'number' ? card.minBalance : parseFloat(String(card?.minBalance || '').replace(/[^0-9.]/g, '')) || 0;
   const applyUrl = card?.applyUrl || "#";
   const officialSource = card?.officialSource || "";
-  const bestFor = card?.bestFor || "general usage";
+  const bestFor = Array.isArray(card?.bestFor) ? card.bestFor.join(", ") : (card?.bestFor ? String(card.bestFor) : "general usage");
   const verificationStatus = card?.verificationStatus || "Needs Verification";
   const hiddenCharges = card?.hiddenCharges || "Standard bank charges apply";
   const loungeAccess = card?.loungeAccess || "No";
   const contactless = card?.contactless || "No";
   const fuelWaiver = card?.fuelWaiver || "No";
   const internationalUsage = card?.internationalUsage || "No";
-  const cashbackPct = typeof card?.cashbackPct === 'number' ? card.cashbackPct : 0;
+  const cashbackPct = typeof card?.cashbackPct === 'number' ? card.cashbackPct : parseFloat(String(card?.cashbackPct || '').replace(/[^0-9.]/g, '')) || 0;
 
   const { gradient: brandGradient, accent, shadow } = getBankCardSkin(bankName);
   const isCardWishlisted = isWishlisted(cardId);

@@ -17,6 +17,20 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
     }
   }, [isOpen, initialTab]);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen, onClose]);
+
   // Prevent scroll propagation
   useEffect(() => {
     if (isOpen) {

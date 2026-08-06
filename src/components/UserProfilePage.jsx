@@ -108,7 +108,7 @@ function UserProfilePage({ activeTab = "profile", onSelectCard, onCompareCards, 
     let cards = [...debitCards];
     const occ = (occupation || '').toLowerCase();
     if (occ.includes("student")) {
-      cards = cards.filter(c => c.studentFriendly || c.annualFee <= 250);
+      cards = cards.filter(c => c.studentFriendly || (typeof c.numAnnualFee === 'number' ? c.numAnnualFee : (typeof c.annualFee === 'number' ? c.annualFee : parseFloat(String(c.annualFee || '').replace(/[^0-9.]/g, '')) || 0)) <= 250);
     } else if (occ.includes("travel")) {
       cards = cards.filter(c => c.travelZeroForex || (c.loungeAccess && !String(c.loungeAccess).toLowerCase().startsWith('no')));
     } else if (occ.includes("senior")) {

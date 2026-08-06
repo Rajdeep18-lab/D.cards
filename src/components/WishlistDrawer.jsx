@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useWishlist } from "../context/WishlistContext";
 import DebitCardVisual from "./DebitCardVisual";
@@ -80,6 +81,20 @@ function WishlistCardItem({ card, onViewDetails, onClose }) {
 
 function WishlistDrawer({ isOpen, onClose, onViewDetails }) {
   const { wishlist, clearWishlist } = useWishlist();
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen, onClose]);
 
   const handleClear = () => {
     clearWishlist();

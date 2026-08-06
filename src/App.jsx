@@ -11,13 +11,10 @@ import LoadingSkeleton from "./components/LoadingSkeleton";
 import Footer from "./components/Footer";
 import TopCardsSection from "./components/TopCardsSection";
 import AuthModal from "./components/AuthModal";
-import ComparisonDock from "./components/ComparisonDock";
-import EmailVerificationPage from "./components/EmailVerificationPage";
 import QuickFilterChips from "./components/QuickFilterChips";
 
 // Lazy Loaded Heavy Components & Modals for Code Splitting
 const UserProfilePage = lazy(() => import("./components/UserProfilePage"));
-const LeadershipSection = lazy(() => import("./components/LeadershipSection"));
 const AboutModal = lazy(() => import("./components/AboutModal"));
 const LegalModal = lazy(() => import("./components/LegalModal"));
 const ContactModal = lazy(() => import("./components/ContactModal"));
@@ -33,13 +30,11 @@ const PickOfTheMonth = lazy(() => import("./components/PickOfTheMonth"));
 const FirstLoginModal = lazy(() => import("./components/FirstLoginModal"));
 const AccessDeniedModal = lazy(() => import("./components/AccessDeniedModal"));
 
-import { adminAuthService } from "./services/adminAuthService";
 import { cardService } from "./services/cardService";
 import { ToastProvider, useToast } from "./context/ToastContext";
 import { WishlistProvider, useWishlist } from "./context/WishlistContext";
 import { AuthProvider } from "./context/AuthContext";
 import { useAuth } from "./hooks/useAuth";
-import { compareService } from "./services/compareService";
 import { bankCards, debitCards } from "./data/mockData";
 
 /* Dynamic limit extractor from card features */
@@ -661,7 +656,7 @@ function AppInner() {
     // 5. Annual Fee Tier Filter
     if (selectedFeeTier) {
       cards = cards.filter(card => {
-        const fee = card.annualFee || 0;
+        const fee = typeof card.numAnnualFee === 'number' ? card.numAnnualFee : (typeof card.annualFee === 'number' ? card.annualFee : parseFloat(String(card.annualFee || '').replace(/[^0-9.]/g, '')) || 0);
         if (selectedFeeTier === "free") return fee === 0;
         if (selectedFeeTier === "under-250") return fee > 0 && fee <= 250;
         if (selectedFeeTier === "250-500") return fee >= 250 && fee <= 500;

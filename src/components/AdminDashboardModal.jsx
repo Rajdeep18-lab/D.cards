@@ -28,6 +28,19 @@ function SkeletonLoader({ className = "h-16 w-full" }) {
 }
 
 function AdminDashboardModal({ isOpen, onClose, currentUser }) {
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen, onClose]);
   const toast = useToast();
   const [activeTab, setActiveTab] = useState("overview");
   const [timeRange, setTimeRange] = useState("30d");

@@ -36,10 +36,38 @@ function getBankBrandSkin(bank) {
     gradient = 'linear-gradient(135deg, #2E1803 0%, #5C3209 60%, #A15917 100%)';
     accent = '#fb923c';
     shadow = 'rgba(251, 146, 60, 0.35)';
-  } else if (bankName.includes("fi money") || bankName.includes("niyo") || bankName.includes("federal")) {
+  } else if (bankName.includes("fi money") || bankName.includes("niyo") || bankName.includes("federal") || bankName.includes("jupiter") || bankName.includes("freo")) {
     gradient = 'linear-gradient(135deg, #031710 0%, #073827 60%, #0E9F6E 100%)';
     accent = '#10B981';
     shadow = 'rgba(16, 185, 129, 0.35)';
+  } else if (bankName.includes("baroda") || bankName.includes("bob")) {
+    gradient = 'linear-gradient(135deg, #2D0E03 0%, #612106 60%, #C2410C 100%)';
+    accent = '#f97316';
+    shadow = 'rgba(249, 115, 22, 0.35)';
+  } else if (bankName.includes("punjab") || bankName.includes("pnb")) {
+    gradient = 'linear-gradient(135deg, #1C0A19 0%, #4A0E2E 60%, #9F1239 100%)';
+    accent = '#f43f5e';
+    shadow = 'rgba(244, 63, 94, 0.35)';
+  } else if (bankName.includes("canara")) {
+    gradient = 'linear-gradient(135deg, #031E2E 0%, #064566 60%, #0284C7 100%)';
+    accent = '#38bdf8';
+    shadow = 'rgba(56, 189, 248, 0.35)';
+  } else if (bankName.includes("yes bank") || bankName.includes("yes")) {
+    gradient = 'linear-gradient(135deg, #1E070F 0%, #520F1D 60%, #B91C1C 100%)';
+    accent = '#ef4444';
+    shadow = 'rgba(239, 68, 68, 0.35)';
+  } else if (bankName.includes("au small") || bankName.includes("au bank")) {
+    gradient = 'linear-gradient(135deg, #1E0B2B 0%, #431407 60%, #D97706 100%)';
+    accent = '#f59e0b';
+    shadow = 'rgba(245, 158, 11, 0.35)';
+  } else if (bankName.includes("paytm") || bankName.includes("airtel")) {
+    gradient = 'linear-gradient(135deg, #021B29 0%, #043E5E 60%, #0284C7 100%)';
+    accent = '#06b6d4';
+    shadow = 'rgba(6, 182, 212, 0.35)';
+  } else if (bankName.includes("rbl") || bankName.includes("equitas") || bankName.includes("ujjivan") || bankName.includes("jana") || bankName.includes("esaf")) {
+    gradient = 'linear-gradient(135deg, #0F172A 0%, #1E293B 60%, #0F766E 100%)';
+    accent = '#14b8a6';
+    shadow = 'rgba(20, 184, 166, 0.35)';
   }
 
   return { gradient, accent, shadow };

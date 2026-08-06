@@ -35,6 +35,20 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, onOpenWishlist, onOpen
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (!isMobileMenuOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") setIsMobileMenuOpen(false);
+    };
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isMobileMenuOpen]);
+
   const handleNavClick = (viewName, targetHash, profileTab = "profile") => {
     if (onNavigateView) {
       onNavigateView(viewName, profileTab);

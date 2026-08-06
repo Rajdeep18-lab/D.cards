@@ -50,7 +50,8 @@ function SavingsCalculator({ onViewDetails }) {
       }
 
       const grossMonthlyBenefit = cashback + fuelSavings + loungeValue + forexSavings;
-      const monthlyFee = card.annualFee / 12;
+      const annualFeeNum = typeof card.numAnnualFee === 'number' ? card.numAnnualFee : (typeof card.annualFee === 'number' ? card.annualFee : parseFloat(String(card.annualFee || '').replace(/[^0-9.]/g, '')) || 0);
+      const monthlyFee = annualFeeNum / 12;
       const netMonthlyBenefit = Math.round(grossMonthlyBenefit - monthlyFee);
       const netYearlyBenefit = netMonthlyBenefit * 12;
 
