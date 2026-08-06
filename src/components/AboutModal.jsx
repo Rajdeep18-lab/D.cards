@@ -1,6 +1,24 @@
 import { useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Building2, ShieldCheck, Target, Rocket, X } from 'lucide-react';
+import { 
+  Building2, 
+  Target, 
+  Globe, 
+  Eye, 
+  ShieldCheck, 
+  Zap, 
+  Lock, 
+  Sparkles, 
+  UserCheck, 
+  TrendingUp, 
+  CheckCircle2, 
+  Scale, 
+  Filter, 
+  RefreshCw, 
+  AlertCircle, 
+  CreditCard, 
+  X 
+} from 'lucide-react';
 
 function AboutModal({ isOpen, onClose }) {
   useEffect(() => {
@@ -16,6 +34,17 @@ function AboutModal({ isOpen, onClose }) {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [isOpen, onClose]);
+
+  const coreValues = [
+    { title: "Transparency", desc: "100% clear fee disclosures.", icon: Eye },
+    { title: "Trust", desc: "Verified bank disclosures.", icon: ShieldCheck },
+    { title: "Innovation", desc: "AI-driven recommendation engines.", icon: Zap },
+    { title: "Security", desc: "Bank-grade data protection.", icon: Lock },
+    { title: "Simplicity", desc: "Intuitive visual metrics.", icon: Sparkles },
+    { title: "User First", desc: "Designed around user goals.", icon: UserCheck },
+    { title: "Continuous Improvement", desc: "Real-time card database updates.", icon: TrendingUp },
+    { title: "Financial Inclusion", desc: "Accessible for everyone.", icon: Globe }
+  ];
 
   return (
     <AnimatePresence>
@@ -40,7 +69,7 @@ function AboutModal({ isOpen, onClose }) {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.96 }}
               transition={{ type: 'spring', stiffness: 350, damping: 28 }}
-              className="relative z-10 w-full max-w-[820px] max-h-[90vh] my-auto flex flex-col rounded-[28px] bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-700 shadow-2xl backdrop-blur-xl overflow-hidden custom-scrollbar"
+              className="relative z-10 w-full max-w-[840px] max-h-[90vh] my-auto flex flex-col rounded-[28px] bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-700 shadow-2xl backdrop-blur-xl overflow-hidden custom-scrollbar text-left"
             >
               {/* Modal Header */}
               <div className="p-6 sm:px-8 sm:py-6 flex items-center justify-between flex-shrink-0 border-b border-[#E5E7EB] dark:border-slate-800">
@@ -48,12 +77,12 @@ function AboutModal({ isOpen, onClose }) {
                   <div className="w-11 h-11 rounded-2xl bg-[#2563EB] text-white flex items-center justify-center shadow-md shadow-[#2563EB]/25 flex-shrink-0">
                     <Building2 className="w-6 h-6 text-white" />
                   </div>
-                  <div className="text-left">
+                  <div>
                     <h2 className="text-xl sm:text-2xl font-bold text-[#1F2937] dark:text-white leading-tight">
-                      About D.CARD & Platform Profile
+                      About D.CARD
                     </h2>
                     <p className="text-xs text-[#2563EB] dark:text-[#60A5FA] font-semibold mt-0.5">
-                      Independent Banking Discovery & Financial Information Platform
+                      India's Independent Debit Card Comparison & Information Platform
                     </p>
                   </div>
                 </div>
@@ -68,22 +97,16 @@ function AboutModal({ isOpen, onClose }) {
 
               {/* Scrollable Content Area */}
               <div className="p-6 sm:p-8 overflow-y-auto text-left space-y-6 flex-grow custom-scrollbar">
-                {/* Platform Story */}
-                <div className="p-6 rounded-3xl bg-[#EFF6FF] dark:bg-slate-800/80 border border-[#2563EB]/20 space-y-3">
-                  <div className="flex items-center gap-2">
-                    <ShieldCheck className="w-5 h-5 text-[#2563EB]" />
-                    <h3 className="text-base font-bold text-[#1F2937] dark:text-white">
-                      Our Core Purpose
-                    </h3>
-                  </div>
-                  <p className="text-xs sm:text-sm text-[#2563EB] dark:text-[#60A5FA] font-semibold leading-relaxed">
-                    "Most Indians open bank accounts without understanding debit cards. D.CARD helps consumers choose the right debit card before opening an account."
+                {/* Who We Are */}
+                <div className="p-6 rounded-3xl bg-[#EFF6FF] dark:bg-slate-800/80 border border-[#2563EB]/20 space-y-2">
+                  <h3 className="text-base font-bold text-[#1F2937] dark:text-white">
+                    Who We Are
+                  </h3>
+                  <p className="text-xs sm:text-sm text-[#1F2937] dark:text-slate-200 leading-relaxed font-normal">
+                    D.CARD is an independent fintech information platform built to help users compare, understand, and explore debit cards offered by various banks across India.
                   </p>
-                  <p className="text-xs text-[#6B7280] dark:text-slate-300 leading-relaxed font-normal">
-                    Every day, thousands of account holders apply for banking services attracted by high-decibel advertisements showcasing complimentary airport lounge access, dining vouchers, or cashback rewards. But the reality is buried inside 60-page PDF schedules of charges.
-                  </p>
-                  <p className="text-xs text-[#6B7280] dark:text-slate-300 leading-relaxed font-normal">
-                    Average balance non-maintenance penalties, hidden quarterly SMS charges, transaction decline fees, and foreign currency markup fees slice away savings. D.CARD was built to level the playing field through algorithmic, unbiased auditing.
+                  <p className="text-xs sm:text-sm text-[#6B7280] dark:text-slate-300 leading-relaxed font-normal">
+                    Our goal is to simplify banking decisions by presenting verified information in an easy-to-understand format.
                   </p>
                 </div>
 
@@ -97,21 +120,43 @@ function AboutModal({ isOpen, onClose }) {
                       </h4>
                     </div>
                     <p className="text-xs text-[#6B7280] dark:text-slate-400 leading-relaxed font-normal">
-                      To empower every Indian banking customer with 100% transparent fee breakdowns, audited debit card limits, and real-time algorithmic feature match scores before signing account agreements.
+                      To simplify banking decisions by providing transparent, accurate, and AI-powered debit card comparisons that help every user choose the right financial product with confidence.
                     </p>
                   </div>
 
                   <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-[#E5E7EB] dark:border-slate-800 shadow-sm space-y-2">
                     <div className="flex items-center gap-2">
-                      <Rocket className="w-5 h-5 text-[#2563EB]" />
+                      <Globe className="w-5 h-5 text-[#2563EB]" />
                       <h4 className="text-sm font-bold text-[#1F2937] dark:text-white">
                         Our Vision
                       </h4>
                     </div>
                     <p className="text-xs text-[#6B7280] dark:text-slate-400 leading-relaxed font-normal">
-                      To become India's primary independent capital discovery engine, eliminating hidden banking penalties and elevating consumer financial awareness nationwide.
+                      To become India's most trusted debit card comparison platform by making financial information accessible, transparent, and easy to understand for everyone.
                     </p>
                   </div>
+                </div>
+
+                {/* Core Values */}
+                <div>
+                  <h4 className="text-sm font-bold text-[#1F2937] dark:text-white mb-3">Our Core Values</h4>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    {coreValues.map((v, i) => {
+                      const IconC = v.icon;
+                      return (
+                        <div key={i} className="p-3 rounded-xl bg-[#F8FAFC] dark:bg-slate-900 border border-[#E5E7EB] dark:border-slate-800 text-xs">
+                          <IconC className="w-4 h-4 text-[#2563EB] mb-1" />
+                          <p className="font-bold text-[#1F2937] dark:text-white">{v.title}</p>
+                          <p className="text-[10px] text-[#6B7280] dark:text-slate-400 mt-0.5">{v.desc}</p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Disclaimer */}
+                <div className="p-4 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-[#E5E7EB] dark:border-slate-700 text-xs text-[#6B7280] dark:text-slate-300 font-normal italic">
+                  "D.CARD is an independent debit card comparison and information platform. We are not a bank and are not officially affiliated or partnered with any listed bank. All information is collected from publicly available sources and official bank websites."
                 </div>
               </div>
 
@@ -121,7 +166,7 @@ function AboutModal({ isOpen, onClose }) {
                   onClick={onClose}
                   className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white text-xs font-bold hover:opacity-95 transition-all shadow-md cursor-pointer"
                 >
-                  Close Profile
+                  Close
                 </button>
               </div>
             </motion.div>
@@ -132,4 +177,4 @@ function AboutModal({ isOpen, onClose }) {
   );
 }
 
-export default AboutModal;fault AboutModal;
+export default AboutModal;
