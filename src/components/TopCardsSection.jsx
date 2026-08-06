@@ -1,27 +1,29 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import { motion } from 'framer-motion';
-import { topCards, debitCards } from '../data/mockData';
+import { Trophy, Star, Heart, ArrowLeft, ArrowRight, ShieldCheck } from 'lucide-react';
+import { debitCards } from '../data/mockData';
 import { useWishlist } from '../context/WishlistContext';
 import { useAuth } from '../hooks/useAuth';
 
 const RANK_STYLES = [
-  { bg: 'linear-gradient(135deg,#FFD700,#FFA500)', shadow: 'rgba(255,185,0,0.5)', crown: '👑', textColor: '#7a5500', label: 'Gold Pick' },
-  { bg: 'linear-gradient(135deg,#C0C0C0,#9E9E9E)', shadow: 'rgba(180,180,180,0.45)', crown: '🥈', textColor: '#444', label: 'Silver Pick' },
-  { bg: 'linear-gradient(135deg,#CD7F32,#A0522D)', shadow: 'rgba(180,100,30,0.45)', crown: '🥉', textColor: '#6b3a1f', label: 'Bronze Pick' },
+  { bg: 'linear-gradient(135deg,#FFD700,#FFA500)', shadow: 'rgba(255,185,0,0.5)', textColor: '#7a5500', label: 'Gold Pick' },
+  { bg: 'linear-gradient(135deg,#C0C0C0,#9E9E9E)', shadow: 'rgba(180,180,180,0.45)', textColor: '#444', label: 'Silver Pick' },
+  { bg: 'linear-gradient(135deg,#CD7F32,#A0522D)', shadow: 'rgba(180,100,30,0.45)', textColor: '#6b3a1f', label: 'Bronze Pick' },
 ];
 
 function RatingBar({ value }) {
   const pct = (value / 5) * 100;
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px' }}>
-      <div style={{ flex: 1, height: '4px', borderRadius: '99px', background: 'rgba(122,15,82,0.1)', overflow: 'hidden' }}>
+    <div className="flex items-center gap-1.5 mt-1.5">
+      <div className="flex-1 h-1 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
         <motion.div
-          initial={{ width: 0 }} animate={{ width: `${pct}%` }}
+          initial={{ width: 0 }} 
+          animate={{ width: `${pct}%` }}
           transition={{ duration: 0.9, ease: 'easeOut', delay: 0.15 }}
-          style={{ height: '100%', borderRadius: '99px', background: pct >= 94 ? 'linear-gradient(90deg,#FFD700,#FFA500)' : 'linear-gradient(90deg,#A30D62,#C21875)' }}
+          className="h-full rounded-full bg-gradient-to-r from-[#2563EB] to-[#60A5FA]"
         />
       </div>
-      <span style={{ fontSize: '10px', fontWeight: '800', color: '#7A0F52' }}>{value}★</span>
+      <span className="text-[10px] font-semibold text-[#2563EB] dark:text-[#60A5FA]">{value}★</span>
     </div>
   );
 }
@@ -36,7 +38,7 @@ function TopCardItem({ card, index, onViewDetails }) {
   const rs = RANK_STYLES[index] || RANK_STYLES[2];
 
   const cardName = fullCard.cardName || fullCard.name || "Debit Card";
-  const bankName = fullCard.bank || "Partner Bank";
+  const bankName = fullCard.bank || "Listed Bank";
   const ratingVal = fullCard.rating || 4.5;
   const feeText = typeof fullCard.annualFee === 'number' 
     ? (fullCard.annualFee === 0 ? 'FREE' : `₹${fullCard.annualFee}`) 
@@ -58,76 +60,43 @@ function TopCardItem({ card, index, onViewDetails }) {
       initial={{ opacity: 0, y: 28 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.055, type: 'spring', stiffness: 230, damping: 22 }}
-      whileHover={{ y: -7, scale: 1.022, transition: { duration: 0.25 } }}
+      whileHover={{ y: -6 }}
       onClick={() => onViewDetails && onViewDetails(fullCard)}
-      style={{
-        minWidth: isTop3 ? '296px' : '264px',
-        flexShrink: 0,
-        position: 'relative',
-        borderRadius: '20px',
-        padding: isTop3 ? '22px 18px 16px' : '18px 16px 14px',
-        cursor: 'pointer',
-        background: isTop3
-          ? 'var(--bg-card-top3)'
-          : 'var(--bg-card)',
-        border: isTop3
-          ? `1.5px solid ${index === 0 ? 'rgba(255,185,0,0.4)' : index === 1 ? 'rgba(190,190,190,0.4)' : 'rgba(180,100,30,0.35)'}`
-          : '1px solid var(--border-color)',
-        backdropFilter: 'blur(16px)',
-        boxShadow: isTop3
-          ? `0 8px 32px ${rs.shadow}, 0 2px 8px rgba(122,15,82,0.07)`
-          : 'var(--card-shadow)',
-        scrollSnapAlign: 'start',
-        display: 'flex',
-        flexDirection: 'column',
-      }}
+      className={`min-w-[270px] sm:min-w-[290px] flex-shrink-0 relative rounded-3xl p-5 cursor-pointer bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-700 shadow-soft hover:shadow-cardHover transition-all flex flex-col justify-between text-left snap-start ${
+        isTop3 ? 'border-[#2563EB]/40 dark:border-[#60A5FA]/40' : ''
+      }`}
     >
-      {/* Top accent line */}
-      {isTop3 && (
-        <div style={{ position: 'absolute', top: 0, left: '20%', right: '20%', height: '2.5px', borderRadius: '99px', background: rs.bg }} />
-      )}
+      {/* Top rank badge */}
+      <div className="flex items-center justify-between mb-3">
+        <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-semibold tracking-wider uppercase border shadow-sm ${
+          isTop3 
+            ? 'bg-[#EFF6FF] text-[#2563EB] border-[#2563EB]/20 dark:bg-slate-800 dark:text-[#60A5FA]' 
+            : 'bg-slate-100 text-[#6B7280] border-slate-200 dark:bg-slate-800 dark:text-slate-400'
+        }`}>
+          <Trophy className="w-3 h-3 text-[#2563EB] dark:text-[#60A5FA]" />
+          <span>#{index + 1} {isTop3 ? rs.label : 'Ranked'}</span>
+        </span>
 
-      {/* Rank badge */}
-      <motion.div
-        initial={{ scale: 0, rotate: -15 }} animate={{ scale: 1, rotate: 0 }}
-        transition={{ delay: index * 0.055 + 0.25, type: 'spring', stiffness: 400, damping: 18 }}
-        style={{
-          position: 'absolute', top: '-13px', left: '16px',
-          background: isTop3 ? rs.bg : 'linear-gradient(135deg,#7A0F52,#C21875)',
-          borderRadius: '99px', padding: '3px 11px',
-          fontSize: isTop3 ? '12px' : '10px', fontWeight: '900',
-          color: isTop3 ? rs.textColor : 'white',
-          boxShadow: `0 3px 10px ${isTop3 ? rs.shadow : 'rgba(122,15,82,0.4)'}`,
-          border: '2px solid rgba(255,255,255,0.8)',
-          letterSpacing: '0.04em', zIndex: 3,
-        }}
-      >
-        {isTop3 ? `${rs.crown} #${index + 1} ${rs.label}` : `#${index + 1}`}
-      </motion.div>
+        {/* Wishlist Button */}
+        <button
+          onClick={handleWishlist}
+          title={wishlisted ? 'Saved in Favorites' : 'Add to Favorites'}
+          className={`p-1.5 rounded-full border transition-all cursor-pointer ${
+            wishlisted 
+              ? 'bg-[#EFF6FF] border-[#2563EB]/30 text-[#2563EB]' 
+              : 'bg-slate-50 dark:bg-slate-800 border-[#E5E7EB] dark:border-slate-700 text-[#6B7280] hover:text-[#2563EB]'
+          }`}
+        >
+          <Heart className={`w-4 h-4 ${wishlisted ? 'fill-[#2563EB] text-[#2563EB]' : ''}`} />
+        </button>
+      </div>
 
-      {/* Wishlist Button */}
-      <motion.button
-        whileTap={{ scale: 0.75 }}
-        onClick={handleWishlist}
-        title={wishlisted ? 'Saved in Wishlist' : 'Add to Wishlist'}
-        style={{
-          position: 'absolute', top: '12px', right: '12px', zIndex: 3,
-          width: '32px', height: '32px', borderRadius: '99px',
-          border: '1px solid rgba(122,15,82,0.18)',
-          background: wishlisted ? 'rgba(194,24,117,0.12)' : 'var(--bg-chip)',
-          cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: '14px', transition: 'all 0.2s ease',
-        }}
-      >
-        {wishlisted ? '❤️' : '🤍'}
-      </motion.button>
-
-      {/* Bank name + Card title */}
-      <div style={{ marginTop: '12px', marginBottom: '8px' }}>
-        <span style={{ fontSize: '10px', fontWeight: '800', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-soft)' }}>
+      {/* Bank name & Card title */}
+      <div>
+        <span className="text-[10px] font-semibold tracking-wider uppercase text-[#6B7280] dark:text-slate-400 block">
           {bankName}
         </span>
-        <h3 style={{ fontSize: isTop3 ? '15px' : '13.5px', fontWeight: '800', margin: '2px 0 0', lineHeight: '1.25', color: 'var(--text-dark)' }}>
+        <h3 className="text-sm sm:text-base font-bold text-[#1F2937] dark:text-white leading-tight mt-0.5">
           {cardName}
         </h3>
       </div>
@@ -135,30 +104,26 @@ function TopCardItem({ card, index, onViewDetails }) {
       <RatingBar value={ratingVal} />
 
       {/* Key metric highlights */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', margin: '12px 0', padding: '8px 10px', borderRadius: '12px', background: 'var(--bg-chip)', border: '1px solid var(--border-subtle)' }}>
+      <div className="grid grid-cols-2 gap-2 my-3 p-2.5 rounded-xl bg-[#F8FAFC] dark:bg-slate-900 border border-[#E5E7EB] dark:border-slate-800">
         <div>
-          <span style={{ fontSize: '9px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Annual Fee</span>
-          <div style={{ fontSize: '12px', fontWeight: '800', color: 'var(--text-dark)', marginTop: '1px' }}>
-            {feeText}
-          </div>
+          <span className="text-[9px] font-semibold text-[#6B7280] dark:text-slate-400 uppercase block">Annual Fee</span>
+          <span className="text-xs font-bold text-[#1F2937] dark:text-white mt-0.5 block">{feeText}</span>
         </div>
         <div>
-          <span style={{ fontSize: '9px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Cashback</span>
-          <div style={{ fontSize: '12px', fontWeight: '800', color: '#C21875', marginTop: '1px' }}>
-            {cashbackText}
-          </div>
+          <span className="text-[9px] font-semibold text-[#6B7280] dark:text-slate-400 uppercase block">Rewards</span>
+          <span className="text-xs font-bold text-[#2563EB] dark:text-[#60A5FA] mt-0.5 block">{cashbackText}</span>
         </div>
       </div>
 
       {/* Benefit highlight tag */}
-      <p style={{ fontSize: '11px', color: 'var(--text-soft)', margin: '0 0 14px', lineHeight: '1.4', flex: 1, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+      <p className="text-xs text-[#6B7280] dark:text-slate-400 leading-relaxed font-normal flex-1 line-clamp-2 mb-3">
         🎁 {benefitHighlight}
       </p>
 
-      {/* Footer Specs link */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto', paddingTop: '10px', borderTop: '1px solid var(--border-subtle)' }}>
-        <span style={{ fontSize: '11px', fontWeight: '700', color: '#A30D62' }}>View Specs & Limits</span>
-        <span style={{ fontSize: '14px', color: '#C21875', fontWeight: '900' }}>→</span>
+      {/* Footer link */}
+      <div className="pt-2.5 border-t border-[#E5E7EB] dark:border-slate-800 flex items-center justify-between text-xs font-semibold text-[#2563EB] dark:text-[#60A5FA]">
+        <span>View Specs & Limits</span>
+        <ArrowRight className="w-3.5 h-3.5" />
       </div>
     </motion.div>
   );
@@ -168,41 +133,38 @@ export default function TopCardsSection({ onViewDetails }) {
   const scrollRef = useRef(null);
 
   return (
-    <section style={{ margin: '36px 0 28px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+    <section className="my-10 text-left select-none">
+      <div className="flex items-center justify-between mb-4 border-b border-[#E5E7EB] dark:border-slate-800 pb-3">
         <div>
-          <span className="mb-1 inline-flex items-center gap-1.5 px-3 py-1 bg-secondary/10 text-secondary dark:text-roseGold text-[10px] font-black tracking-widest uppercase rounded-full select-none">
-            ⭐ EDITORS' CHOICE
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] text-xs font-semibold tracking-widest uppercase rounded-full mb-1">
+            <Star className="w-3.5 h-3.5" />
+            EDITORS' CHOICE
           </span>
-          <h2 style={{ fontSize: '22px', fontWeight: '900', color: 'var(--text-dark)', margin: '4px 0 0', fontFamily: 'Georgia, serif' }}>
+          <h2 className="text-2xl font-bold text-[#1F2937] dark:text-white">
             Highest Ranked Debit Cards
           </h2>
         </div>
-        <div style={{ display: 'flex', gap: '6px' }}>
+        <div className="flex items-center gap-2">
           <button
             onClick={() => scrollRef.current?.scrollBy({ left: -300, behavior: 'smooth' })}
-            style={{ width: '34px', height: '34px', borderRadius: '99px', border: '1px solid var(--border-color)', background: 'var(--bg-chip)', cursor: 'pointer', fontWeight: '900' }}
+            className="w-9 h-9 rounded-xl border border-[#E5E7EB] dark:border-slate-700 bg-white dark:bg-slate-800 flex items-center justify-center text-[#1F2937] dark:text-white hover:border-[#2563EB] transition-colors cursor-pointer shadow-sm"
           >
-            ←
+            <ArrowLeft className="w-4 h-4" />
           </button>
           <button
             onClick={() => scrollRef.current?.scrollBy({ left: 300, behavior: 'smooth' })}
-            style={{ width: '34px', height: '34px', borderRadius: '99px', border: '1px solid var(--border-color)', background: 'var(--bg-chip)', cursor: 'pointer', fontWeight: '900' }}
+            className="w-9 h-9 rounded-xl border border-[#E5E7EB] dark:border-slate-700 bg-white dark:bg-slate-800 flex items-center justify-center text-[#1F2937] dark:text-white hover:border-[#2563EB] transition-colors cursor-pointer shadow-sm"
           >
-            →
+            <ArrowRight className="w-4 h-4" />
           </button>
         </div>
       </div>
 
       <div
         ref={scrollRef}
-        className="custom-scrollbar"
-        style={{
-          display: 'flex', gap: '14px', overflowX: 'auto', padding: '14px 4px',
-          scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch',
-        }}
+        className="flex gap-4 overflow-x-auto py-2 custom-scrollbar snap-x snap-mandatory"
       >
-        {(debitCards || []).slice(0, 5).map((card, idx) => (
+        {(debitCards || []).slice(0, 6).map((card, idx) => (
           <TopCardItem key={card.id} card={card} index={idx} onViewDetails={onViewDetails} />
         ))}
       </div>

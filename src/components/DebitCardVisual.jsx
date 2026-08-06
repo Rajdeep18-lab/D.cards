@@ -4,9 +4,9 @@ import { motion } from 'framer-motion';
 /* Premium Bank Brand Gradients & Color Accents */
 function getBankBrandSkin(bank) {
   const bankName = String(bank || '').toLowerCase();
-  let gradient = 'linear-gradient(135deg, #1E0B16 0%, #7A0F52 50%, #C21875 100%)';
-  let accent = '#C21875';
-  let shadow = 'rgba(194, 24, 117, 0.4)';
+  let gradient = 'linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #2563EB 100%)';
+  let accent = '#2563EB';
+  let shadow = 'rgba(37, 99, 235, 0.4)';
 
   if (bankName.includes("hdfc")) {
     gradient = 'linear-gradient(135deg, #1A0D3E 0%, #30105C 60%, #631B99 100%)';
@@ -155,7 +155,7 @@ function DebitCardVisual({ card, mode = "grid", finish = "classic", tilt = { x: 
       {/* Top Row: Bank branding & Network badge */}
       <div className="flex justify-between items-start z-10">
         <div className="flex flex-col min-w-0">
-          <span className={`tracking-wide font-black uppercase drop-shadow-sm truncate leading-tight font-serif ${mode === 'compare' ? 'text-[10px]' : mode === 'details' ? 'text-base md:text-lg' : 'text-sm sm:text-base md:text-lg'}`}>
+          <span className={`tracking-wide font-black uppercase drop-shadow-sm truncate leading-tight  ${mode === 'compare' ? 'text-[10px]' : mode === 'details' ? 'text-base md:text-lg' : 'text-sm sm:text-base md:text-lg'}`}>
             {String(card?.bank || "").replace("Bank", "").trim() || "Unknown Bank"}
           </span>
           {mode !== 'compare' && (
@@ -169,10 +169,10 @@ function DebitCardVisual({ card, mode = "grid", finish = "classic", tilt = { x: 
             <span className="text-[#000080] font-black mr-0.5">🇮🇳</span>RuPay
           </span>
         ) : networkLabel === 'Mastercard' ? (
-          <div className="flex items-center gap-0.5 select-none bg-black/30 px-1.5 py-0.5 rounded border border-white/10 shadow-sm leading-none font-mono">
+          <div className="flex items-center gap-0.5 select-none bg-black/30 px-1.5 py-0.5 rounded border border-white/10 shadow-sm leading-none">
             <span className={`${mode === 'compare' ? 'w-2 h-2 mr-[-4px]' : 'w-2.5 h-2.5 mr-[-5px]'} rounded-full bg-red-500 inline-block opacity-90`} />
             <span className={`${mode === 'compare' ? 'w-2 h-2' : 'w-2.5 h-2.5'} rounded-full bg-amber-500 inline-block opacity-90`} />
-            <span className={`font-black text-white ml-1 font-mono tracking-tighter ${mode === 'compare' ? 'text-[7.5px]' : 'text-[8.5px]'}`}>MC</span>
+            <span className={`font-black text-white ml-1  tracking-tighter ${mode === 'compare' ? 'text-[7.5px]' : 'text-[8.5px]'}`}>MC</span>
           </div>
         ) : (
           <span className={`italic font-black text-[#0066c4] bg-white px-2 py-0.5 rounded border border-slate-200/50 shadow-sm leading-none flex items-center select-none font-sans ${mode === 'compare' ? 'text-[8px]' : 'text-[10px]'}`}>
@@ -203,7 +203,7 @@ function DebitCardVisual({ card, mode = "grid", finish = "classic", tilt = { x: 
 
       {/* Bottom Row: Embossed card number & Card Name */}
       <div className="flex flex-col z-10">
-        <p className={`font-mono font-bold drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.65)] ${mode === 'compare' ? 'text-[10px] tracking-[0.12em]' : mode === 'details' ? 'text-lg md:text-xl tracking-[0.18em]' : 'text-sm sm:text-base tracking-[0.16em]'}`}>
+        <p className={` font-bold drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.65)] ${mode === 'compare' ? 'text-[10px] tracking-[0.12em]' : mode === 'details' ? 'text-lg md:text-xl tracking-[0.18em]' : 'text-sm sm:text-base tracking-[0.16em]'}`}>
           5412 8899 0041 3302
         </p>
         

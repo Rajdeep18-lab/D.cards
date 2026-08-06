@@ -44,7 +44,7 @@ export function WishlistProvider({ children }) {
             return match || item.card || { 
               id: cardId, 
               cardName: item.card_name || 'Debit Card', 
-              bank: item.bank_name || 'Partner Bank', 
+              bank: item.bank_name || 'Listed Bank', 
               annualFee: 0,
               rating: 4.0,
               benefits: "" 

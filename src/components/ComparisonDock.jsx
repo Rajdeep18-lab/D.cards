@@ -38,13 +38,13 @@ function ComparisonDock({ compareQueue = [], onRemove, onCompareNow, onClear }) 
             <div className="flex flex-wrap gap-2">
               {queueList.map((card, i) => (
                 <div key={card.id || i} className="relative group">
-                  <div className="rounded-xl px-3 py-1.5 text-xs font-black flex items-center gap-1.5 bg-secondary/5 dark:bg-secondary/10 border border-secondary/15 text-secondary dark:text-[#f3d9e8] shadow-sm">
-                    <span className="w-1.5 h-1.5 rounded-full bg-secondary dark:bg-[#C21875]" />
+                  <div className="rounded-xl px-3 py-1.5 text-xs font-bold flex items-center gap-1.5 bg-[#2563EB]/10 border border-[#2563EB]/20 text-[#2563EB] dark:text-[#60A5FA] shadow-sm">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#2563EB]" />
                     {card.cardName || "Debit Card"}
                   </div>
                   <button
                     onClick={() => onRemove && onRemove(card.id)}
-                    className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full flex items-center justify-center text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity shadow-md cursor-pointer bg-gradient-to-r from-primary to-secondary border border-white/10"
+                    className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full flex items-center justify-center text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity shadow-md cursor-pointer bg-gradient-to-r from-[#2563EB] to-[#3B82F6] border border-white/10"
                     title="Remove card"
                   >
                     ×

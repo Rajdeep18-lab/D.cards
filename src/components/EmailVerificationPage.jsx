@@ -94,7 +94,7 @@ function EmailVerificationPage({ onVerificationComplete }) {
           ⚠️ VERIFICATION REQUIRED
         </span>
 
-        <h2 className="text-2xl sm:text-3xl font-black font-serif text-white tracking-tight mb-2">
+        <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight mb-2">
           Verify Your Email
         </h2>
 

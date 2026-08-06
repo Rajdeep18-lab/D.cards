@@ -14,7 +14,7 @@ function evaluatePasswordStrength(pass) {
   if (/[0-9]/.test(pass)) score += 1;
   if (/[^A-Za-z0-9]/.test(pass)) score += 1;
 
-  if (score <= 2) return { score, label: 'Weak', color: 'bg-rose-500' };
+  if (score <= 2) return { score, label: 'Weak', color: 'bg-[#EF4444]' };
   if (score <= 4) return { score, label: 'Medium', color: 'bg-amber-500' };
   return { score, label: 'Strong', color: 'bg-emerald-500' };
 }
@@ -124,7 +124,7 @@ function SignupPage({ onSwitchToLogin, onSuccess }) {
       className="w-full text-left select-none"
     >
       <div className="text-center mb-4">
-        <h2 className="text-2xl sm:text-3xl font-black font-serif text-primary dark:text-accent tracking-tight">
+        <h2 className="text-2xl sm:text-3xl font-black text-primary dark:text-accent tracking-tight">
           Create D.Card Account
         </h2>
         <p className="text-xs text-textSoft dark:text-gray-400 font-semibold mt-1 flex items-center justify-center gap-1.5">
@@ -328,7 +328,7 @@ function SignupPage({ onSwitchToLogin, onSuccess }) {
             <div className="mt-2 space-y-1">
               <div className="flex items-center justify-between text-[10px] font-bold">
                 <span className="text-gray-400">Password Strength:</span>
-                <span className={passwordStrength.label === 'Strong' ? 'text-emerald-500' : passwordStrength.label === 'Medium' ? 'text-amber-500' : 'text-rose-500'}>
+                <span className={passwordStrength.label === 'Strong' ? 'text-emerald-500' : passwordStrength.label === 'Medium' ? 'text-amber-500' : 'text-[#EF4444]'}>
                   {passwordStrength.label}
                 </span>
               </div>

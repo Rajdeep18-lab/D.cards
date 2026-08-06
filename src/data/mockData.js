@@ -779,7 +779,7 @@ export const debitCards = [
     "cashback": "Rewards on utility bills and merchant spends",
     "cashbackPct": 0.75,
     "atmCharges": "Free x5 ATM transactions",
-    "benefits": "Contactless payments, international ATM access, YES bank partner merchant offers",
+    "benefits": "Contactless payments, international ATM access, YES bank merchant offers",
     "tags": [
       "Cashback",
       "Premium Features"
@@ -1228,7 +1228,7 @@ export const debitCards = [
     "maxLimit": 500000,
     "eligibility": "Canara eligible account holders",
     "hiddenCharges": "Replacement ₹150, GST/charges as applicable",
-    "verifyNote": "Verify latest partner list for medical benefits.",
+    "verifyNote": "Verify latest merchant list for medical benefits.",
     "officialSource": "https://canarabank.com",
     "bestFor": "RuPay Select, travel, premium PSU card",
     "loungeAccess": "Yes, RuPay Select terms",
@@ -1336,7 +1336,7 @@ export const debitCards = [
     "rating": 4.7,
     "cashback": "Global travel rewards and lounge coins",
     "cashbackPct": 1,
-    "atmCharges": "Partner bank standard ATM charges",
+    "atmCharges": "Supported bank standard ATM charges",
     "benefits": "Zero forex markup, supports 180+ countries and 130+ currencies, free international lounge access",
     "tags": [
       "Zero Balance",
@@ -1351,7 +1351,7 @@ export const debitCards = [
       "Complimentary international lounge access"
     ],
     "cons": [
-      "ATM withdrawal abroad fees are subject to partner bank DCB Bank terms"
+      "ATM withdrawal abroad fees are subject to issuing bank DCB Bank terms"
     ],
     "features": [
       "ATM Limit: High International",
@@ -1362,7 +1362,7 @@ export const debitCards = [
     "verificationStatus": "Verified",
     "maxLimit": 300000,
     "eligibility": "Indian residents above 18 with Aadhaar, PAN, passport",
-    "hiddenCharges": "ATM charges, partner-bank charges, replacement fees",
+    "hiddenCharges": "ATM charges, network-bank charges, replacement fees",
     "verifyNote": "",
     "officialSource": "https://www.goniyo.com",
     "bestFor": "International travel, students abroad, zero forex",
@@ -1404,7 +1404,7 @@ export const debitCards = [
     "cashback": "Premium Federal reward points",
     "cashbackPct": 0.75,
     "atmCharges": "Free x5 ATM transactions",
-    "benefits": "Contactless tap-to-pay speed, premium bank partner deals, dining rewards",
+    "benefits": "Contactless tap-to-pay speed, premium bank merchant deals, dining rewards",
     "tags": [
       "Premium Features"
     ],
@@ -1638,7 +1638,7 @@ export const debitCards = [
     ],
     "healthcareBenefits": [
       "Complimentary annual health screening",
-      "Up to 15% discount at partner pharmacies",
+      "Up to 15% discount at listed pharmacies",
       "Discounted doctor teleconsultation"
     ],
     "dataConfidence": "Verified"
@@ -5128,7 +5128,7 @@ export const debitCards = [
     "bank": "Fi Money",
     "cardName": "Fi Debit Card",
     "network": "Visa",
-    "annualFee": "Free (via Federal Bank partnership)",
+    "annualFee": "Free (via Federal Bank account)",
     "numAnnualFee": 0,
     "joiningFee": "Free",
     "international": true,
@@ -5145,14 +5145,14 @@ export const debitCards = [
     "interestRate": 3,
     "cashbackPct": 1,
     "atmCharges": "Daily Limit: Not Available",
-    "benefits": "Neobank debit card issued in partnership with Federal Bank, focused on a mobile-first savings and rewards experience.",
+    "benefits": "Neobank debit card issued via Federal Bank, focused on a mobile-first savings and rewards experience.",
     "tags": [
       "Lowest Charges",
       "Student Friendly",
       "Cashback"
     ],
     "pros": [
-      "Neobank debit card issued in partnership with Federal Bank, focused on a mobile-first savings and rewards experience.",
+      "Neobank debit card issued via Federal Bank, focused on a mobile-first savings and rewards experience.",
       "Contactless tap & pay supported"
     ],
     "cons": [
@@ -5195,7 +5195,7 @@ export const debitCards = [
     "bank": "Jupiter",
     "cardName": "Jupiter Debit Card",
     "network": "Visa/RuPay",
-    "annualFee": "Free (via Federal Bank partnership)",
+    "annualFee": "Free (via Federal Bank account)",
     "numAnnualFee": 0,
     "joiningFee": "Free",
     "international": true,
@@ -5212,14 +5212,14 @@ export const debitCards = [
     "interestRate": 3,
     "cashbackPct": 1,
     "atmCharges": "Daily Limit: Not Available",
-    "benefits": "Neobank debit card issued in partnership with Federal Bank, offering cashback and a mobile-first banking app.",
+    "benefits": "Neobank debit card issued via Federal Bank, offering cashback and a mobile-first banking app.",
     "tags": [
       "Lowest Charges",
       "Student Friendly",
       "Cashback"
     ],
     "pros": [
-      "Neobank debit card issued in partnership with Federal Bank, offering cashback and a mobile-first banking app.",
+      "Neobank debit card issued via Federal Bank, offering cashback and a mobile-first banking app.",
       "Contactless tap & pay supported"
     ],
     "cons": [
@@ -5262,7 +5262,7 @@ export const debitCards = [
     "bank": "Niyo",
     "cardName": "Niyo Bharat RuPay Debit Card",
     "network": "RuPay",
-    "annualFee": "Free (via partner bank)",
+    "annualFee": "Free (via issuing bank)",
     "numAnnualFee": 0,
     "joiningFee": "Free",
     "international": false,
@@ -5321,11 +5321,11 @@ export const debitCards = [
   },
   {
     "id": 91,
-    "image": "Neobank debit card from Freo offering a mobile-first savings and spending experience via a partner bank.",
+    "image": "Neobank debit card from Freo offering a mobile-first savings and spending experience via an issuing bank.",
     "bank": "Freo",
     "cardName": "Freo Debit Card",
     "network": "Visa/RuPay",
-    "annualFee": "Free (via partner bank)",
+    "annualFee": "Free (via issuing bank)",
     "numAnnualFee": 0,
     "joiningFee": "Free",
     "international": true,
@@ -6294,7 +6294,7 @@ export const faqs = [
   { q: "How does D.Card compare debit cards?", a: "We aggregate real-time data from top banks, focusing on hidden charges, annual fees, minimum balance requirements, and reward programs to give you an unbiased comparison." },
   { q: "Are the debit card details updated regularly?", a: "Yes, our team and automated systems update the comparison matrices weekly to ensure all fees, limits, and features are accurate." },
   { q: "Is it safe to apply for a bank account through D.Card?", a: "Absolutely. We do not process applications ourselves. When you click 'Apply', you are securely redirected to the official bank's website to complete your application." },
-  { q: "Do you charge any fees for comparison?", a: "No, our comparison tool is 100% free for users. We make our revenue through official banking partnerships." },
+  { q: "Do you charge any fees for comparison?", a: "No, our comparison tool is 100% free for users. D.CARD is an independent platform created for educational and informational purposes." },
   { q: "Can I filter cards by student or zero-balance criteria?", a: "Yes! Our dynamic filtering system allows you to sort by Zero Balance, Student Friendly, High Interest, and Premium Features." },
   { q: "What does 'Highest Interest' filter mean?", a: "It filters cards whose linked savings accounts offer an interest rate of 4% p.a. or above—helping you earn more on your idle balance." },
 ];

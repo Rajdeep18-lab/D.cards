@@ -28,7 +28,7 @@ export const wishlistService = {
     const savedAtTimestamp = new Date().toISOString();
     const cardId = card.id;
     const cardName = card.cardName || card.name || 'Debit Card';
-    const bankName = card.bank || card.bank_name || 'Partner Bank';
+    const bankName = card.bank || card.bank_name || 'Listed Bank';
 
     const cardItem = {
       card_id: cardId,
@@ -95,7 +95,7 @@ export const wishlistService = {
       const itemsToSync = localWishlist.map(card => ({
         card_id: card.id,
         card_name: card.cardName || card.name || 'Debit Card',
-        bank_name: card.bank || card.bank_name || 'Partner Bank',
+        bank_name: card.bank || card.bank_name || 'Listed Bank',
         saved_at: new Date().toISOString(),
         card
       }));

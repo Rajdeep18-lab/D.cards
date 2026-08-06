@@ -595,7 +595,7 @@ function AdminDashboardModal({ isOpen, onClose, currentUser }) {
                 🔴
               </div>
               <div>
-                <h2 className="text-base sm:text-lg font-black font-serif tracking-tight flex items-center gap-2">
+                <h2 className="text-base sm:text-lg font-black tracking-tight flex items-center gap-2">
                   D.Card Real-Time SaaS Analytics Dashboard
                 </h2>
                 <p className="text-[11px] text-gray-400">
@@ -605,7 +605,7 @@ function AdminDashboardModal({ isOpen, onClose, currentUser }) {
             </div>
 
             <div className="flex items-center gap-2 sm:gap-3 self-end sm:self-auto">
-              <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-mono font-bold flex items-center gap-1.5">
+              <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-bold flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                 Live onSnapshot Active
               </span>
@@ -681,10 +681,10 @@ function AdminDashboardModal({ isOpen, onClose, currentUser }) {
                   <div className="space-y-6">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                       <div>
-                        <h3 className="text-lg font-black font-serif text-white">🔴 Live Firestore Dashboard Overview</h3>
+                        <h3 className="text-lg font-black text-white">🔴 Live Firestore Dashboard Overview</h3>
                         <p className="text-xs text-gray-400">Updating live via Firebase Firestore `onSnapshot` snapshot listeners.</p>
                       </div>
-                      <span className="px-3 py-1 rounded-xl bg-white/5 border border-white/10 text-gray-300 font-mono text-[11px]">
+                      <span className="px-3 py-1 rounded-xl bg-white/5 border border-white/10 text-gray-300 text-[11px]">
                         Project: <strong className="text-white">d-card-71933</strong>
                       </span>
                     </div>
@@ -706,10 +706,10 @@ function AdminDashboardModal({ isOpen, onClose, currentUser }) {
                           { label: "Debit Cards", val: liveMetrics.totalCards, icon: "💳", color: "text-amber-300" },
                           { label: "Total Banks", val: liveMetrics.totalBanks, icon: "🏦", color: "text-blue-400" },
                           { label: "Favorites", val: liveMetrics.totalFavorites, icon: "❤️", color: "text-rose-400" },
-                          { label: "Compares", val: liveMetrics.totalCompares, icon: "⚖️", color: "text-purple-400" },
+                          { label: "Compares", val: liveMetrics.totalCompares, icon: "⚖️", color: "text-[#60A5FA]" },
                           { label: "Searches", val: liveMetrics.totalSearches, icon: "🔍", color: "text-cyan-400" },
                           { label: "Card Views", val: liveMetrics.totalCardViews, icon: "📄", color: "text-sky-300" },
-                          { label: "AI Chats", val: liveMetrics.totalConversations, icon: "🤖", color: "text-pink-400" },
+                          { label: "AI Chats", val: liveMetrics.totalConversations, icon: "🤖", color: "text-[#3B82F6]" },
                           { label: "Contact Tickets", val: liveMetrics.totalQueries, icon: "📩", color: "text-amber-400" },
                           { label: "JSON Imports", val: liveMetrics.jsonImports, icon: "📂", color: "text-emerald-300" },
                           { label: "CSV Imports", val: liveMetrics.csvImports, icon: "📊", color: "text-indigo-300" }
@@ -719,8 +719,8 @@ function AdminDashboardModal({ isOpen, onClose, currentUser }) {
                               <span>{card.label}</span>
                               <span>{card.icon}</span>
                             </div>
-                            <div className={`text-xl font-black font-serif ${card.color}`}>{card.val}</div>
-                            <span className="text-[9px] text-gray-500 font-mono">Live Firestore</span>
+                            <div className={`text-xl font-black  ${card.color}`}>{card.val}</div>
+                            <span className="text-[9px] text-gray-500">Live Firestore</span>
                           </div>
                         ))}
                       </div>
@@ -739,7 +739,7 @@ function AdminDashboardModal({ isOpen, onClose, currentUser }) {
                             {activityLogsList.slice(0, 4).map(log => (
                               <div key={log.id} className="p-2.5 rounded-xl bg-black/40 border border-white/5 flex items-center justify-between text-[11px]">
                                 <span className="font-bold text-white truncate max-w-[70%]">{log.text}</span>
-                                <span className="text-gray-400 font-mono text-[9px]">
+                                <span className="text-gray-400 text-[9px]">
                                   {log.timestamp ? new Date(log.timestamp).toLocaleTimeString() : 'Recently'}
                                 </span>
                               </div>
@@ -759,7 +759,7 @@ function AdminDashboardModal({ isOpen, onClose, currentUser }) {
                             {contactQueriesList.slice(0, 4).map(q => (
                               <div key={q.id} className="p-2.5 rounded-xl bg-black/40 border border-white/5 flex items-center justify-between text-[11px]">
                                 <span className="font-bold text-white truncate">{q.name || q.email}: {q.subject || q.message}</span>
-                                <span className="px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 font-mono text-[9px]">Pending</span>
+                                <span className="px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 text-[9px]">Pending</span>
                               </div>
                             ))}
                           </div>
@@ -773,7 +773,7 @@ function AdminDashboardModal({ isOpen, onClose, currentUser }) {
                 {activeTab === "analytics" && (
                   <div className="space-y-6">
                     <div>
-                      <h3 className="text-lg font-black font-serif text-white">📈 Live SaaS Analytics & Visual Intelligence</h3>
+                      <h3 className="text-lg font-black text-white">📈 Live SaaS Analytics & Visual Intelligence</h3>
                       <p className="text-xs text-gray-400">Charts generated dynamically from live Firestore database collections.</p>
                     </div>
 
@@ -795,7 +795,7 @@ function AdminDashboardModal({ isOpen, onClose, currentUser }) {
                                 <div key={i} className="space-y-1">
                                   <div className="flex justify-between text-xs font-bold text-gray-300">
                                     <span>{b.bank}</span>
-                                    <span className="font-mono text-emerald-400">{b.count} Cards</span>
+                                    <span className="text-emerald-400">{b.count} Cards</span>
                                   </div>
                                   <div className="w-full h-3 bg-black/50 rounded-full overflow-hidden p-0.5 border border-white/10">
                                     <div
@@ -825,7 +825,7 @@ function AdminDashboardModal({ isOpen, onClose, currentUser }) {
                                     <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color }} />
                                     {item.label}
                                   </span>
-                                  <span className="font-mono text-white">{item.count} ({pct}%)</span>
+                                  <span className="text-white">{item.count} ({pct}%)</span>
                                 </div>
                                 <div className="w-full h-2.5 bg-black/50 rounded-full overflow-hidden border border-white/5">
                                   <div
@@ -851,7 +851,7 @@ function AdminDashboardModal({ isOpen, onClose, currentUser }) {
                             {locationAnalytics.topStates.map((st, i) => (
                               <div key={i} className="flex justify-between items-center p-2.5 rounded-xl bg-black/30 text-xs border border-white/5">
                                 <span className="font-bold text-white">{st.state}</span>
-                                <span className="font-mono text-emerald-400 font-bold">{st.count} Users</span>
+                                <span className="text-emerald-400 font-bold">{st.count} Users</span>
                               </div>
                             ))}
                           </div>
@@ -870,7 +870,7 @@ function AdminDashboardModal({ isOpen, onClose, currentUser }) {
                             {locationAnalytics.topCities.map((ct, i) => (
                               <div key={i} className="flex justify-between items-center p-2.5 rounded-xl bg-black/30 text-xs border border-white/5">
                                 <span className="font-bold text-white">{ct.city}</span>
-                                <span className="font-mono text-roseGold font-bold">{ct.count} Users</span>
+                                <span className="text-roseGold font-bold">{ct.count} Users</span>
                               </div>
                             ))}
                           </div>
@@ -885,7 +885,7 @@ function AdminDashboardModal({ isOpen, onClose, currentUser }) {
                 {activeTab === "activity" && (
                   <div className="space-y-6">
                     <div>
-                      <h3 className="text-lg font-black font-serif text-white">⚡ Live Real-Time Activity Feed</h3>
+                      <h3 className="text-lg font-black text-white">⚡ Live Real-Time Activity Feed</h3>
                       <p className="text-xs text-gray-400">Streaming real-time events from Firestore `activity_logs` collection.</p>
                     </div>
 
@@ -901,7 +901,7 @@ function AdminDashboardModal({ isOpen, onClose, currentUser }) {
                               <p className="font-bold text-white">{log.text}</p>
                               <p className="text-[10px] text-gray-400">User: <span className="text-emerald-400">{log.user_email || 'Guest'}</span></p>
                             </div>
-                            <span className="text-[10px] font-mono text-roseGold bg-black/30 px-2.5 py-1 rounded-lg border border-white/10">
+                            <span className="text-[10px] text-roseGold bg-black/30 px-2.5 py-1 rounded-lg border border-white/10">
                               {log.timestamp ? new Date(log.timestamp).toLocaleTimeString() : 'Recently'}
                             </span>
                           </div>
@@ -915,7 +915,7 @@ function AdminDashboardModal({ isOpen, onClose, currentUser }) {
                 {activeTab === "users" && (
                   <div className="space-y-6">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                      <h3 className="text-lg font-black font-serif">👥 User Directory ({usersList.length})</h3>
+                      <h3 className="text-lg font-black">👥 User Directory ({usersList.length})</h3>
                       <input
                         type="text"
                         value={userSearch}
@@ -945,9 +945,9 @@ function AdminDashboardModal({ isOpen, onClose, currentUser }) {
                               {paginatedUsers.map((u) => (
                                 <tr key={u.id} className="hover:bg-white/5 transition-all">
                                   <td className="p-3.5 font-bold text-white">{u.name || u.full_name || 'Member'}</td>
-                                  <td className="p-3.5 text-emerald-400 font-mono">{u.email}</td>
+                                  <td className="p-3.5 text-emerald-400">{u.email}</td>
                                   <td className="p-3.5 text-gray-300">{u.city ? `${u.city}, ${u.state || ''}` : 'India'}</td>
-                                  <td className="p-3.5 text-gray-400 font-mono text-[10px]">
+                                  <td className="p-3.5 text-gray-400 text-[10px]">
                                     {u.createdAt || u.created_at ? new Date(u.createdAt || u.created_at).toLocaleDateString() : 'Active'}
                                   </td>
                                 </tr>
@@ -984,7 +984,7 @@ function AdminDashboardModal({ isOpen, onClose, currentUser }) {
                 {/* 5. BANK MANAGEMENT */}
                 {activeTab === "banks" && (
                   <div className="space-y-6">
-                    <h3 className="text-lg font-black font-serif">🏦 Bank Directory ({banksList.length})</h3>
+                    <h3 className="text-lg font-black">🏦 Bank Directory ({banksList.length})</h3>
                     {banksList.length === 0 ? (
                       <div className="p-8 text-center rounded-2xl bg-white/5 text-gray-400">
                         No banks currently in Firestore.
@@ -1006,7 +1006,7 @@ function AdminDashboardModal({ isOpen, onClose, currentUser }) {
                 {activeTab === "cards" && (
                   <div className="space-y-6">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                      <h3 className="text-lg font-black font-serif">💳 Debit Cards ({cardsList.length})</h3>
+                      <h3 className="text-lg font-black">💳 Debit Cards ({cardsList.length})</h3>
                       <input
                         type="text"
                         value={cardSearch}
@@ -1072,7 +1072,7 @@ function AdminDashboardModal({ isOpen, onClose, currentUser }) {
                 {activeTab === "import" && (
                   <div className="space-y-6">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                      <h3 className="text-lg font-black font-serif">📂 Import Data Engine</h3>
+                      <h3 className="text-lg font-black">📂 Import Data Engine</h3>
                       <div className="flex items-center gap-2">
                         <button onClick={() => importDataService.downloadSampleJSON()} className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-[11px] cursor-pointer">
                           📄 Sample JSON
@@ -1142,7 +1142,7 @@ function AdminDashboardModal({ isOpen, onClose, currentUser }) {
                 {/* 8. CONTACT TICKETS */}
                 {activeTab === "support" && (
                   <div className="space-y-6">
-                    <h3 className="text-lg font-black font-serif">📬 Contact Tickets ({contactQueriesList.length})</h3>
+                    <h3 className="text-lg font-black">📬 Contact Tickets ({contactQueriesList.length})</h3>
                     {contactQueriesList.length === 0 ? (
                       <div className="p-8 text-center rounded-2xl bg-white/5 text-gray-400">
                         No contact tickets submitted yet.
@@ -1153,7 +1153,7 @@ function AdminDashboardModal({ isOpen, onClose, currentUser }) {
                           <div key={q.id} className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-1 hover:border-white/20 transition-all">
                             <div className="flex justify-between items-center">
                               <div className="font-bold text-white">{q.name || 'Visitor'} ({q.email || 'No email'})</div>
-                              <span className="text-[10px] text-gray-400 font-mono">
+                              <span className="text-[10px] text-gray-400">
                                 {q.created_at || q.createdAt ? new Date(q.created_at || q.createdAt).toLocaleDateString() : 'Recent'}
                               </span>
                             </div>
@@ -1168,16 +1168,16 @@ function AdminDashboardModal({ isOpen, onClose, currentUser }) {
                 {/* 9. FIREBASE SYSTEM STATUS */}
                 {activeTab === "settings" && (
                   <div className="space-y-6">
-                    <h3 className="text-lg font-black font-serif">⚙️ Firebase Real-Time Connection</h3>
+                    <h3 className="text-lg font-black">⚙️ Firebase Real-Time Connection</h3>
                     <div className="p-5 rounded-2xl bg-white/5 border border-white/10 space-y-3">
                       <p className="text-xs text-gray-300">Project ID: <strong className="text-white">d-card-71933</strong></p>
                       <p className="text-xs text-emerald-400 font-bold">100% Live Firestore onSnapshot Listeners Active ✅</p>
                       <div className="pt-2 text-[11px] text-gray-400 space-y-1 border-t border-white/10">
-                        <div>User Directory: <span className="text-white font-mono">{usersList.length} docs</span></div>
-                        <div>Debit Cards: <span className="text-white font-mono">{cardsList.length} docs</span></div>
-                        <div>Banks Directory: <span className="text-white font-mono">{banksList.length} docs</span></div>
-                        <div>Contact Queries: <span className="text-white font-mono">{contactQueriesList.length} docs</span></div>
-                        <div>Import History: <span className="text-white font-mono">{importHistoryList.length} docs</span></div>
+                        <div>User Directory: <span className="text-white">{usersList.length} docs</span></div>
+                        <div>Debit Cards: <span className="text-white">{cardsList.length} docs</span></div>
+                        <div>Banks Directory: <span className="text-white">{banksList.length} docs</span></div>
+                        <div>Contact Queries: <span className="text-white">{contactQueriesList.length} docs</span></div>
+                        <div>Import History: <span className="text-white">{importHistoryList.length} docs</span></div>
                       </div>
                     </div>
                   </div>
@@ -1186,7 +1186,7 @@ function AdminDashboardModal({ isOpen, onClose, currentUser }) {
                 {/* 10. REPORT EXPORTER */}
                 {activeTab === "reports" && (
                   <div className="space-y-6">
-                    <h3 className="text-lg font-black font-serif">📑 Executive Report Center</h3>
+                    <h3 className="text-lg font-black">📑 Executive Report Center</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <button disabled={!!exportingFormat} onClick={() => handleExport('csv')} className="p-6 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-center space-y-2 cursor-pointer transition-all">
                         <div className="text-3xl">📄</div>

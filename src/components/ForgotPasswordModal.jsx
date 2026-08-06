@@ -90,7 +90,7 @@ function ForgotPasswordModal({ isOpen, onClose, onSwitchToLogin }) {
           <div className="w-14 h-14 rounded-2xl bg-secondary/10 border border-secondary/20 flex items-center justify-center mx-auto mb-3 text-2xl">
             🔑
           </div>
-          <h2 className="text-2xl font-black font-serif text-primary dark:text-accent tracking-tight">
+          <h2 className="text-2xl font-black text-primary dark:text-accent tracking-tight">
             {isPasswordRecoveryActive ? 'Set New Password' : 'Reset Password'}
           </h2>
           <p className="text-xs text-textSoft dark:text-gray-400 font-semibold mt-1">

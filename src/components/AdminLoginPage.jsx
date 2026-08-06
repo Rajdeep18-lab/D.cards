@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ShieldCheck, Lock, Eye, EyeOff, X } from 'lucide-react';
 import { firebaseAuthService } from '../services/firebaseAuthService';
 import { adminAuthService } from '../services/adminAuthService';
 import { useToast } from '../context/ToastContext';
@@ -20,6 +21,7 @@ function AdminLoginPage({ isOpen, onClose, onSuccessAdminLogin }) {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [isOpen, onClose]);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -34,21 +36,17 @@ function AdminLoginPage({ isOpen, onClose, onSuccessAdminLogin }) {
 
     setLoading(true);
     try {
-      // 1. Authenticate with Firebase Auth
       const { user: authUser } = await firebaseAuthService.login(email.trim(), password);
-
-      // 2. Check if user is authorized
       const allowed = await adminAuthService.checkIsAdmin(authUser);
 
       if (allowed) {
-        toast("Admin Authentication Verified! Opening Executive Dashboard... 🛡️", "success");
+        toast("Admin Authentication Verified! Opening Dashboard...", "success");
         if (onSuccessAdminLogin) {
           onSuccessAdminLogin(authUser);
         }
         onClose();
         window.location.hash = "#admin/dashboard";
       } else {
-        // Sign out unauthorized user
         await firebaseAuthService.logout();
         toast("Access Denied. You are not authorized to access the Admin Dashboard.", "error");
         onClose();
@@ -72,48 +70,45 @@ function AdminLoginPage({ isOpen, onClose, onSuccessAdminLogin }) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
-          className="fixed inset-0 bg-[#0a0312]/85 backdrop-blur-xl"
+          className="fixed inset-0 bg-[#0F172A]/85 backdrop-blur-md"
         />
 
         {/* Admin Login Card */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 30 }}
+          initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 20 }}
+          exit={{ opacity: 0, scale: 0.95, y: 10 }}
           transition={{ type: 'spring', stiffness: 350, damping: 28 }}
-          className="relative w-full max-w-md p-7 sm:p-8 rounded-3xl bg-[#0f0817] border border-secondary/30 shadow-[0_24px_80px_rgba(194,24,117,0.35)] backdrop-blur-2xl text-white font-sans text-left overflow-hidden"
+          className="relative w-full max-w-md p-7 sm:p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-700 shadow-2xl text-[#1F2937] dark:text-white text-left overflow-hidden"
         >
-          {/* Top Decorative Ambient Glow */}
-          <div className="absolute -top-20 -right-20 w-40 h-40 rounded-full bg-secondary/20 blur-3xl pointer-events-none" />
-
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#860038] via-[#C21875] to-[#7A0F52] flex items-center justify-center text-xl shadow-md shadow-secondary/30">
-                🛡️
+              <div className="w-11 h-11 rounded-2xl bg-[#EFF6FF] dark:bg-slate-800 border border-[#2563EB]/20 text-[#2563EB] dark:text-[#60A5FA] flex items-center justify-center shadow-sm">
+                <ShieldCheck className="w-6 h-6" />
               </div>
               <div>
-                <h2 className="text-xl font-black font-serif text-white tracking-tight">
+                <h2 className="text-xl font-bold text-[#1F2937] dark:text-white tracking-tight">
                   Admin Portal Login
                 </h2>
-                <p className="text-xs text-roseGold font-bold tracking-wider uppercase">
-                  D.Card Executive Security
+                <p className="text-xs text-[#2563EB] dark:text-[#60A5FA] font-semibold tracking-wider uppercase">
+                  Executive Access Controls
                 </p>
               </div>
             </div>
 
             <button
               onClick={onClose}
-              className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-xs cursor-pointer transition-colors"
+              className="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-[#6B7280] hover:text-[#1F2937] dark:hover:text-white transition-colors cursor-pointer"
             >
-              ✕
+              <X className="w-5 h-5" />
             </button>
           </div>
 
           {/* Login Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-semibold text-[#1F2937] dark:text-slate-300 uppercase tracking-wider mb-1.5">
                 Admin Email Address
               </label>
               <input
@@ -122,12 +117,12 @@ function AdminLoginPage({ isOpen, onClose, onSuccessAdminLogin }) {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="ritikanshu072@gmail.com"
                 required
-                className="w-full rounded-xl bg-white/5 border border-white/15 px-4 py-3 text-xs text-white placeholder-gray-500 outline-none focus:border-secondary transition-colors"
+                className="w-full rounded-xl bg-[#F8FAFC] dark:bg-slate-900 border border-[#E5E7EB] dark:border-slate-700 px-4 py-3 text-xs text-[#1F2937] dark:text-white placeholder-[#9CA3AF] outline-none focus:border-[#2563EB] transition-colors"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-semibold text-[#1F2937] dark:text-slate-300 uppercase tracking-wider mb-1.5">
                 Password
               </label>
               <div className="relative">
@@ -137,14 +132,14 @@ function AdminLoginPage({ isOpen, onClose, onSuccessAdminLogin }) {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••••••"
                   required
-                  className="w-full rounded-xl bg-white/5 border border-white/15 px-4 py-3 text-xs text-white placeholder-gray-500 outline-none focus:border-secondary transition-colors pr-10"
+                  className="w-full rounded-xl bg-[#F8FAFC] dark:bg-slate-900 border border-[#E5E7EB] dark:border-slate-700 px-4 py-3 text-xs text-[#1F2937] dark:text-white placeholder-[#9CA3AF] outline-none focus:border-[#2563EB] transition-colors pr-10"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-3 text-xs text-gray-400 hover:text-white"
+                  className="absolute right-3 top-3 text-[#6B7280] hover:text-[#1F2937] dark:hover:text-white cursor-pointer"
                 >
-                  {showPassword ? "👁️" : "🙈"}
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
             </div>
@@ -153,7 +148,7 @@ function AdminLoginPage({ isOpen, onClose, onSuccessAdminLogin }) {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-secondary to-primary hover:opacity-95 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-secondary/30 transition-all cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
+                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:opacity-95 text-white font-semibold text-xs uppercase tracking-wider shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50 active:scale-98"
               >
                 {loading ? (
                   <>
@@ -162,16 +157,16 @@ function AdminLoginPage({ isOpen, onClose, onSuccessAdminLogin }) {
                   </>
                 ) : (
                   <>
-                    <span>🔐 Login to Admin Dashboard</span>
+                    <Lock className="w-4 h-4" />
+                    <span>Login to Admin Dashboard</span>
                   </>
                 )}
               </button>
             </div>
           </form>
 
-          <p className="text-[10px] text-gray-500 text-center mt-6 leading-relaxed">
+          <p className="text-[10px] text-[#6B7280] dark:text-slate-400 text-center mt-6 leading-relaxed font-normal">
             Protected by Firebase Authentication & Role-Based Access Control.
-            Unauthorized access attempts are logged and monitored.
           </p>
         </motion.div>
       </div>

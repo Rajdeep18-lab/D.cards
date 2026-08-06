@@ -69,7 +69,7 @@ function LoginPage({ onSwitchToSignup, onSwitchToForgot, onSuccess }) {
       className="w-full text-left select-none"
     >
       <div className="text-center mb-5">
-        <h2 className="text-2xl sm:text-3xl font-black font-serif text-primary dark:text-accent tracking-tight">
+        <h2 className="text-2xl sm:text-3xl font-black text-primary dark:text-accent tracking-tight">
           Sign In to D.Card
         </h2>
         <p className="text-xs text-textSoft dark:text-gray-400 font-semibold mt-1 flex items-center justify-center gap-1.5">

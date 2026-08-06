@@ -297,7 +297,7 @@ function FilterSummaryBar({
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-md bg-white dark:bg-[#0c0612] backdrop-blur-2xl rounded-3xl p-6 border border-slate-200 dark:border-secondary/20 shadow-[0_20px_50px_rgba(0,0,0,0.4)] z-[2001]"
             >
-              <h3 className="font-serif font-black text-xl text-slate-800 dark:text-slate-100 mb-2">
+              <h3 className="font-black text-xl text-slate-800 dark:text-slate-100 mb-2">
                 Save Current Filter Preset
               </h3>
               <p className="text-xs text-textSoft dark:text-slate-400 mb-4 leading-relaxed font-medium">

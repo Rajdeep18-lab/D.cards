@@ -1,4 +1,5 @@
 import { useMemo, memo } from "react";
+import { Scale, CheckCircle2, XCircle, Star, Trophy, Bot, Plane, Globe } from "lucide-react";
 import DebitCardVisual from "./DebitCardVisual";
 import {
   normalizeCard,
@@ -26,14 +27,14 @@ function ComparisonTable({ cards = [] }) {
   // 1. Zero cards selected state
   if (normalizedCards.length === 0) {
     return (
-      <div className="text-center py-12 px-4 rounded-3xl border border-dashed border-slate-300 dark:border-secondary/20 bg-slate-50/50 dark:bg-[#0a060d]/50 backdrop-blur-xl">
-        <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-secondary/10 flex items-center justify-center text-2xl select-none">
-          📊
+      <div className="text-center py-12 px-4 rounded-3xl border border-dashed border-[#E5E7EB] dark:border-slate-800 bg-[#F8FAFC] dark:bg-slate-900">
+        <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-[#EFF6FF] dark:bg-slate-800 text-[#2563EB] flex items-center justify-center text-2xl">
+          <Scale className="w-6 h-6" />
         </div>
-        <h3 className="text-base font-extrabold text-slate-800 dark:text-slate-100 mb-1">
+        <h3 className="text-base font-bold text-[#1F2937] dark:text-white mb-1">
           No Cards Selected for Comparison
         </h3>
-        <p className="text-xs text-textSoft dark:text-slate-400 max-w-md mx-auto leading-relaxed font-sans font-medium">
+        <p className="text-xs text-[#6B7280] dark:text-slate-400 max-w-md mx-auto leading-relaxed font-normal">
           Select up to 3 debit cards using the "Add to Compare" button to view side-by-side analytics.
         </p>
       </div>
@@ -44,32 +45,32 @@ function ComparisonTable({ cards = [] }) {
   if (normalizedCards.length === 1) {
     const singleCard = normalizedCards[0];
     return (
-      <div className="py-8 px-5 rounded-3xl border border-amber-500/25 bg-amber-500/5 dark:bg-amber-500/10 backdrop-blur-xl text-center shadow-soft">
-        <div className="max-w-xs mx-auto mb-5 p-4 rounded-2xl border border-slate-200 dark:border-secondary/15 bg-white dark:bg-black/60 shadow-sm flex items-center justify-center gap-3">
+      <div className="py-8 px-5 rounded-3xl border border-amber-500/25 bg-amber-500/5 text-center shadow-soft">
+        <div className="max-w-xs mx-auto mb-5 p-4 rounded-2xl border border-[#E5E7EB] dark:border-slate-800 bg-white dark:bg-[#1E293B] shadow-sm flex items-center justify-center gap-3">
           <DebitCardVisual mode="mini" card={singleCard} />
           <div className="text-left">
-            <span className="text-[10px] font-black text-secondary dark:text-roseGold uppercase tracking-wider block">
+            <span className="text-[10px] font-semibold text-[#2563EB] dark:text-[#60A5FA] uppercase tracking-wider block">
               {singleCard.bank || "Debit Card"}
             </span>
-            <span className="text-xs font-extrabold text-slate-800 dark:text-slate-100 block">
+            <span className="text-xs font-bold text-[#1F2937] dark:text-white block">
               {singleCard.cardName || "Queued Card"}
             </span>
           </div>
         </div>
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs font-black tracking-wide">
-          <span>💡</span> Select one more card to compare.
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs font-semibold tracking-wide">
+          <span>💡 Select one more card to compare side by side.</span>
         </div>
       </div>
     );
   }
 
-  // 3. Side-by-side Matrix rows definitions for 16 required fields
+  // 3. Side-by-side Matrix rows definitions
   const rowDefinitions = [
     {
       key: "bank",
       label: "Bank",
       render: (card) => (
-        <span className="font-extrabold text-slate-900 dark:text-slate-100">
+        <span className="font-bold text-[#1F2937] dark:text-white">
           {card.bank || "N/A"}
         </span>
       )
@@ -78,7 +79,7 @@ function ComparisonTable({ cards = [] }) {
       key: "cardName",
       label: "Card Name",
       render: (card) => (
-        <span className="font-bold text-slate-800 dark:text-slate-200">
+        <span className="font-bold text-[#1F2937] dark:text-[#60A5FA]">
           {card.cardName || "N/A"}
         </span>
       )
@@ -87,7 +88,7 @@ function ComparisonTable({ cards = [] }) {
       key: "network",
       label: "Network",
       render: (card) => (
-        <span className="inline-block px-2.5 py-1 rounded-md text-[11px] font-black bg-slate-100 dark:bg-secondary/15 text-slate-700 dark:text-roseGold">
+        <span className="inline-block px-2.5 py-1 rounded-md text-[11px] font-semibold bg-[#EFF6FF] dark:bg-slate-800 text-[#2563EB] dark:text-[#60A5FA]">
           {card.network || "N/A"}
         </span>
       )
@@ -99,10 +100,10 @@ function ComparisonTable({ cards = [] }) {
         const text = card.joiningFee || "Free";
         const isWaived = card.joiningFeeWaived;
         return (
-          <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="font-bold">{text}</span>
+          <div className="flex items-center gap-1.5 flex-wrap justify-center">
+            <span className="font-semibold">{text}</span>
             {isWaived && (
-              <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+              <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
                 Waived
               </span>
             )}
@@ -120,12 +121,13 @@ function ComparisonTable({ cards = [] }) {
 
         if (isBestFee) {
           return (
-            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-black bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/35">
-              <span>🏆</span> {text}
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/35">
+              <Trophy className="w-3.5 h-3.5 text-emerald-600" />
+              <span>{text}</span>
             </span>
           );
         }
-        return <span className="font-bold">{text}</span>;
+        return <span className="font-semibold">{text}</span>;
       }
     },
     {
@@ -138,19 +140,20 @@ function ComparisonTable({ cards = [] }) {
 
         if (isBestCb) {
           return (
-            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-black bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/35">
-              <span>🏆</span> {text}
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/35">
+              <Trophy className="w-3.5 h-3.5 text-emerald-600" />
+              <span>{text}</span>
             </span>
           );
         }
-        return <span className="font-medium text-slate-700 dark:text-slate-300">{text}</span>;
+        return <span className="font-normal text-[#1F2937] dark:text-slate-300">{text}</span>;
       }
     },
     {
       key: "rewards",
       label: "Rewards",
       render: (card) => (
-        <span className="text-xs font-medium leading-relaxed text-slate-700 dark:text-slate-300">
+        <span className="text-xs font-normal leading-relaxed text-[#1F2937] dark:text-slate-300">
           {card.rewards || "N/A"}
         </span>
       )
@@ -165,12 +168,13 @@ function ComparisonTable({ cards = [] }) {
 
         if (isBestLounge) {
           return (
-            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-black bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/35">
-              <span>✈️</span> {text}
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/35">
+              <Plane className="w-3.5 h-3.5 text-emerald-600" />
+              <span>{text}</span>
             </span>
           );
         }
-        return <span className="font-medium text-slate-700 dark:text-slate-300">{text}</span>;
+        return <span className="font-normal text-[#1F2937] dark:text-slate-300">{text}</span>;
       }
     },
     {
@@ -183,24 +187,25 @@ function ComparisonTable({ cards = [] }) {
 
         if (isBestFx) {
           return (
-            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-black bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/35">
-              <span>💱</span> {text}
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/35">
+              <Globe className="w-3.5 h-3.5 text-emerald-600" />
+              <span>{text}</span>
             </span>
           );
         }
-        return <span className="font-semibold text-slate-700 dark:text-slate-300">{text}</span>;
+        return <span className="font-semibold text-[#1F2937] dark:text-slate-300">{text}</span>;
       }
     },
     {
       key: "contactless",
       label: "Contactless",
       render: (card) => (
-        <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase ${
+        <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase ${
           card.contactless 
             ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20" 
-            : "bg-slate-100 dark:bg-slate-800 text-slate-400"
+            : "bg-slate-100 dark:bg-slate-800 text-[#6B7280]"
         }`}>
-          {card.contactless ? "Supported ✓" : "Not Supported ✗"}
+          {card.contactless ? <><CheckCircle2 className="w-3 h-3 text-emerald-500" /> Supported</> : <><XCircle className="w-3 h-3 text-slate-400" /> Not Supported</>}
         </span>
       )
     },
@@ -208,12 +213,12 @@ function ComparisonTable({ cards = [] }) {
       key: "internationalUsage",
       label: "International Usage",
       render: (card) => (
-        <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase ${
+        <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase ${
           card.internationalUsage 
             ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20" 
-            : "bg-slate-100 dark:bg-slate-800 text-slate-400"
+            : "bg-slate-100 dark:bg-slate-800 text-[#6B7280]"
         }`}>
-          {card.internationalUsage ? "Supported ✓" : "Domestic Only ✗"}
+          {card.internationalUsage ? <><CheckCircle2 className="w-3 h-3 text-emerald-500" /> Supported</> : <><XCircle className="w-3 h-3 text-slate-400" /> Domestic Only</>}
         </span>
       )
     },
@@ -222,11 +227,11 @@ function ComparisonTable({ cards = [] }) {
       label: "Best For",
       render: (card) => {
         const list = Array.isArray(card.bestFor) ? card.bestFor : [];
-        if (list.length === 0) return <span className="text-slate-400">N/A</span>;
+        if (list.length === 0) return <span className="text-[#6B7280]">N/A</span>;
         return (
-          <div className="flex flex-wrap gap-1">
+          <div className="flex flex-wrap gap-1 justify-center">
             {list.map((item, idx) => (
-              <span key={idx} className="bg-secondary/10 text-secondary dark:text-roseGold border border-secondary/15 text-[10px] font-bold px-2 py-0.5 rounded-md">
+              <span key={idx} className="bg-[#EFF6FF] dark:bg-slate-800 text-[#2563EB] dark:text-[#60A5FA] border border-[#2563EB]/15 text-[10px] font-semibold px-2 py-0.5 rounded-md">
                 {item}
               </span>
             ))}
@@ -243,13 +248,14 @@ function ComparisonTable({ cards = [] }) {
 
         if (isBestAi) {
           return (
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-black bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/35 shadow-sm">
-              <span>🤖</span> {score} / 100
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/35 shadow-sm">
+              <Bot className="w-3.5 h-3.5 text-emerald-600" />
+              <span>{score} / 100</span>
             </span>
           );
         }
         return (
-          <span className="font-extrabold text-secondary dark:text-roseGold">
+          <span className="font-bold text-[#2563EB] dark:text-[#60A5FA]">
             {score} / 100
           </span>
         );
@@ -259,8 +265,9 @@ function ComparisonTable({ cards = [] }) {
       key: "rating",
       label: "Rating",
       render: (card) => (
-        <span className="font-black text-amber-500 dark:text-amber-400 text-xs">
-          ★ {card.rating ? card.rating.toFixed(1) : "N/A"}
+        <span className="font-bold text-amber-500 text-xs flex items-center gap-1 justify-center">
+          <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
+          <span>{card.rating ? card.rating.toFixed(1) : "N/A"}</span>
         </span>
       )
     },
@@ -268,7 +275,7 @@ function ComparisonTable({ cards = [] }) {
       key: "eligibility",
       label: "Eligibility",
       render: (card) => (
-        <span className="text-xs text-slate-700 dark:text-slate-300 font-medium">
+        <span className="text-xs text-[#1F2937] dark:text-slate-300 font-normal">
           {card.eligibility || "Standard Bank Customer"}
         </span>
       )
@@ -278,11 +285,14 @@ function ComparisonTable({ cards = [] }) {
       label: "Features",
       render: (card) => {
         const list = Array.isArray(card.features) ? card.features : [];
-        if (list.length === 0) return <span className="text-slate-400">N/A</span>;
+        if (list.length === 0) return <span className="text-[#6B7280]">N/A</span>;
         return (
-          <ul className="space-y-1 list-disc list-inside text-[11px] text-slate-600 dark:text-slate-300">
+          <ul className="space-y-1 text-[11px] text-[#6B7280] dark:text-slate-300 text-left pl-2">
             {list.map((feat, idx) => (
-              <li key={idx}>{feat}</li>
+              <li key={idx} className="flex items-start gap-1">
+                <span className="text-[#2563EB] font-bold">•</span>
+                <span>{feat}</span>
+              </li>
             ))}
           </ul>
         );
@@ -291,11 +301,11 @@ function ComparisonTable({ cards = [] }) {
   ];
 
   return (
-    <div className="overflow-x-auto rounded-3xl border border-slate-200 dark:border-secondary/15 bg-white/60 dark:bg-[#09050a]/60 backdrop-blur-xl shadow-lg">
-      <table className="w-full text-left text-xs text-slate-800 dark:text-slate-200 border-collapse min-w-[600px]">
+    <div className="overflow-x-auto rounded-3xl border border-[#E5E7EB] dark:border-slate-800 bg-white dark:bg-[#1E293B] shadow-soft">
+      <table className="w-full text-left text-xs text-[#1F2937] dark:text-slate-200 border-collapse min-w-[600px]">
         <thead>
-          <tr className="bg-slate-100/90 dark:bg-secondary/10 border-b border-slate-200 dark:border-secondary/20">
-            <th className="sticky left-0 z-20 bg-slate-100 dark:bg-[#120a17] px-4 py-4 text-slate-500 dark:text-slate-400 font-black uppercase text-[10px] tracking-wider min-w-[140px]">
+          <tr className="bg-[#F8FAFC] dark:bg-slate-900 border-b border-[#E5E7EB] dark:border-slate-800">
+            <th className="sticky left-0 z-20 bg-[#F8FAFC] dark:bg-slate-900 px-4 py-4 text-[#6B7280] dark:text-slate-400 font-semibold uppercase text-[10px] tracking-wider min-w-[140px]">
               Features Matrix
             </th>
             {normalizedCards.map((card, idx) => (
@@ -303,20 +313,20 @@ function ComparisonTable({ cards = [] }) {
                 <div className="flex justify-center mb-2 transform hover:scale-105 transition-transform duration-300">
                   <DebitCardVisual mode="compare" card={card} />
                 </div>
-                <div className="font-black text-slate-800 dark:text-slate-100 text-xs">
+                <div className="font-bold text-[#1F2937] dark:text-white text-xs">
                   {card.cardName}
                 </div>
-                <div className="text-[10px] font-bold text-secondary dark:text-roseGold mt-0.5">
+                <div className="text-[10px] font-semibold text-[#2563EB] dark:text-[#60A5FA] mt-0.5">
                   {card.bank}
                 </div>
               </th>
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-100 dark:divide-secondary/10">
+        <tbody className="divide-y divide-[#E5E7EB] dark:divide-slate-800">
           {rowDefinitions.map((row) => (
-            <tr key={row.key} className="hover:bg-slate-50/60 dark:hover:bg-secondary/5 transition-colors">
-              <td className="sticky left-0 z-10 bg-white/95 dark:bg-[#0d0712]/95 px-4 py-3.5 font-black text-slate-700 dark:text-slate-300 text-[11px] uppercase tracking-wide border-r border-slate-100 dark:border-secondary/10">
+            <tr key={row.key} className="hover:bg-[#F8FAFC] dark:hover:bg-slate-800/50 transition-colors">
+              <td className="sticky left-0 z-10 bg-white dark:bg-[#1E293B] px-4 py-3.5 font-semibold text-[#1F2937] dark:text-slate-300 text-[11px] uppercase tracking-wide border-r border-[#E5E7EB] dark:border-slate-800">
                 {row.label}
               </td>
               {normalizedCards.map((card, idx) => (

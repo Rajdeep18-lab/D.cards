@@ -204,7 +204,7 @@ export const importDataService = {
     for (const item of itemsToImport) {
       try {
         const rec = item.record;
-        const bankName = rec.bank || rec.bank_name || rec.bankName || 'Partner Bank';
+        const bankName = rec.bank || rec.bank_name || rec.bankName || 'Listed Bank';
         const cardName = rec.cardName || rec.name || rec.title || 'Debit Card';
 
         const bankId = rec.bank_id || `bank_${String(bankName).toLowerCase().replace(/\s+/g, '_')}`;

@@ -18,8 +18,8 @@ const BANK_PROFILES = {
     segment: "Premium & Professional"
   },
   "ICICI Bank": {
-    overview: "ICICI Bank is a premier private sector bank in India, known for its technologically advanced digital platforms and massive merchant partnerships.",
-    trustScore: "9.6 / 10",
+    overview: "ICICI Bank is a premier private sector bank in India, known for its technologically advanced digital platforms and massive merchant networks.",
+    trustScore: "9.6/10",
     topCards: ["Coral Debit Card", "Sapphiro Debit Card"],
     pros: ["Extensive online shopping discounts", "Best-in-class movie rewards (BOGO deals)", "Zero-maintenance virtual cards support"],
     cons: ["Slightly high card reissuance fees", "Confusing reward tiers structure"],
@@ -28,7 +28,7 @@ const BANK_PROFILES = {
   },
   "SBI": {
     overview: "State Bank of India is the country's largest public sector bank, boasting an unmatched rural-urban footprint and absolute capital security.",
-    trustScore: "9.5 / 10",
+    trustScore: "9.5/10",
     topCards: ["Global International Debit Card", "Platinum International Debit Card"],
     pros: ["Lowest annual maintenance charges", "Widest ATM network footprint in India", "Beginner and student-friendly account linkage"],
     cons: ["Basic reward rates", "Slower customer support channels"],
@@ -37,7 +37,7 @@ const BANK_PROFILES = {
   },
   "Axis Bank": {
     overview: "Axis Bank is a high-growth private sector bank in India, particularly celebrated for its elite relationship programs (Burgundy & Priority Banking).",
-    trustScore: "9.7 / 10",
+    trustScore: "9.7/10",
     topCards: ["Burgundy Debit Card", "Priority Debit Card"],
     pros: ["Ultra-high transaction limits on top tiers", "Premium concierge and lifestyle support", "Zero forex markup on elite cards"],
     cons: ["Extremely high balance relationships required for waivers", "Paid cards have high joining fee"],
@@ -50,14 +50,14 @@ const BANK_PROFILES = {
 /* Dynamic premium bank card skins */
 function getBankCardSkin(bank) {
   const bankName = bank ? String(bank).toLowerCase() : "";
-  let gradient = 'linear-gradient(135deg, #070308 0%, #7a0f52 60%, #040206 100%)';
-  let accent = '#C21875';
-  let shadow = 'rgba(194, 24, 117, 0.25)';
+  let gradient = 'linear-gradient(135deg, #0F172A 0%, #1E293B 60%, #2563EB 100%)';
+  let accent = '#2563EB';
+  let shadow = 'rgba(37, 99, 235, 0.25)';
 
   if (bankName.includes("hdfc")) {
-    gradient = 'linear-gradient(135deg, #0f172a 0%, #3b0764 60%, #020617 100%)';
-    accent = '#c084fc';
-    shadow = 'rgba(192, 132, 252, 0.25)';
+    gradient = 'linear-gradient(135deg, #0F172A 0%, #1E40AF 60%, #2563EB 100%)';
+    accent = '#60A5FA';
+    shadow = 'rgba(37, 99, 235, 0.25)';
   } else if (bankName.includes("icici")) {
     gradient = 'linear-gradient(135deg, #0b132b 0%, #1c2541 60%, #3a506b 100%)';
     accent = '#60a5fa';
@@ -149,7 +149,7 @@ function CardDetailsModal({ isOpen, onClose, card, compareQueue, toggleCompareQu
   // Safe Property Lookups with Fallbacks
   const cardId = card?.id || 0;
   const cardName = card?.cardName || card?.name || "Debit Card";
-  const bankName = card?.bank || "Partner Bank";
+  const bankName = card?.bank || "Listed Bank";
   const annualFee = typeof card?.numAnnualFee === 'number' ? card.numAnnualFee : (typeof card?.annualFee === 'number' ? card.annualFee : parseFloat(String(card?.annualFee || '').replace(/[^0-9.]/g, '')) || 0);
   const minBalance = typeof card?.minBalance === 'number' ? card.minBalance : parseFloat(String(card?.minBalance || '').replace(/[^0-9.]/g, '')) || 0;
   const applyUrl = card?.applyUrl || "#";
@@ -448,7 +448,7 @@ function CardDetailsModal({ isOpen, onClose, card, compareQueue, toggleCompareQu
                   {[
                     { label: "Charges Score", score: scoreMetrics.chargesScore, color: "bg-blue-500" },
                     { label: "Benefits Score", score: scoreMetrics.benefitsScore, color: "bg-emerald-500" },
-                    { label: "Trust Score", score: scoreMetrics.trustScore, color: "bg-[#C21875]" }
+                    { label: "Trust Score", score: scoreMetrics.trustScore, color: "bg-[#3B82F6]" }
                   ].map(stat => (
                     <div key={stat.label}>
                       <div className="flex justify-between text-[8.5px] font-black text-slate-300">
@@ -835,7 +835,7 @@ function CardDetailsModal({ isOpen, onClose, card, compareQueue, toggleCompareQu
                       >
                         <div>
                           <span className="block text-[8px] font-black text-slate-400 uppercase tracking-widest">{relatedCard.bank}</span>
-                          <h5 className="text-xs font-extrabold text-white truncate mt-1 leading-tight font-serif">{relatedCard.cardName}</h5>
+                          <h5 className="text-xs font-extrabold text-white truncate mt-1 leading-tight">{relatedCard.cardName}</h5>
                         </div>
                         <div className="flex justify-between items-center text-[10px] text-slate-400 font-bold border-t border-white/5 pt-2 mt-2">
                           <span>₹{relatedCard.annualFee} AMC</span>

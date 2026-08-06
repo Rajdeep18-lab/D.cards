@@ -5,53 +5,54 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
-        serif: ['"Playfair Display"', 'Georgia', 'serif'],
+        sans: ['Poppins', 'sans-serif'],
+        serif: ['Poppins', 'sans-serif'],
+        display: ['Poppins', 'sans-serif'],
+        mono: ['Poppins', 'sans-serif'],
       },
 
       colors: {
-        // ── Primary Palette ──────────────────────────────
-        primary:     "#860038",   // Axis Burgundy
-        primaryHover:"#70002E",   // Darker Burgundy
-        secondary:   "#AE1D58",   // Burgundy Rose
-        accent:      "#F9E6EE",   // Soft Blush Pink
- 
-        // ── CTA ──────────────────────────────────────────
-        cta:         "#96003F",   // Maroon/Burgundy
-        ctaHover:    "#70002E",   // Darker Burgundy
- 
-        // ── Text ─────────────────────────────────────────
-        textDark:    "#1E040D",   // Rich Black Burgundy
-        textSoft:    "#6B7280",   // Cool Gray
- 
-        // ── Borders & Backgrounds ────────────────────────
-        highlight:   "#EDD6E0",   // Soft Burgundy Border
-        neutralBg:   "#FAF5F7",   // Light Blush background
-        cardBg:      "rgba(255, 255, 255, 0.85)", // Frosted white card
- 
-        // ── Icon / Decorative ────────────────────────────
-        roseGold:    "#E0B2C4",   // Light Rose Gold Accent
- 
-        // ── Dark Mode ────────────────────────────────────
-        darkBg:      "#0B0508",   // Obsidian Burgundy Dark Space
-        darkCard:    "#16080E",   // Frosted obsidian burgundy card
-        darkHighlight:"#2A0E17",  // Subtle elegant dark burgundy highlight
+        // ── Unified Fintech Blue Palette ──────────────────
+        primary:      "#2563EB",   // Primary Blue
+        secondary:    "#3B82F6",   // Secondary Blue
+        accent:       "#60A5FA",   // Light Accent Blue
+        darkNavy:     "#0F172A",   // Dark Navy
+        lightBg:      "#F8FAFC",   // Clean Background
+        cardBg:       "#FFFFFF",   // Cards Background
+        borderLine:   "#E5E7EB",   // Border Line
+        textDark:     "#1F2937",   // Primary Text
+        textSoft:     "#6B7280",   // Muted Text
+        hoverBlue:    "#1D4ED8",   // Darker Blue for Hover
+
+        // Helper aliases (Purged Pink & Plum)
+        cta:          "#2563EB",
+        ctaHover:     "#1D4ED8",
+        highlight:    "#E5E7EB",
+        neutralBg:    "#F8FAFC",
+        roseGold:     "#60A5FA",   // Mapped to Light Accent Blue for backward safety
+
+        // Dark Mode Slate & Navy
+        darkBg:       "#0F172A",
+        darkCard:     "#1E293B",
+        darkHighlight:"#334155",
       },
- 
+
       boxShadow: {
-        soft:      "0 4px 20px rgba(134,0,56,0.08)",
-        card:      "0 4px 24px rgba(134,0,56,0.06)",
-        cardHover: "0 20px 50px rgba(134,0,56,0.18)",
-        indigo:    "0 8px 32px rgba(174,29,88,0.2)",
-        glow:      "0 0 24px rgba(174,29,88,0.35), 0 0 48px rgba(134,0,56,0.15)",
-        magenta:   "0 8px 24px rgba(150,0,63,0.25)",
+        soft:      "0 4px 20px rgba(37, 99, 235, 0.06)",
+        card:      "0 4px 24px rgba(37, 99, 235, 0.05)",
+        cardHover: "0 20px 40px rgba(37, 99, 235, 0.12)",
+        indigo:    "0 8px 32px rgba(37, 99, 235, 0.15)",
+        glow:      "0 0 24px rgba(37, 99, 235, 0.25), 0 0 48px rgba(96, 165, 250, 0.15)",
+        blueGlow:  "0 10px 30px rgba(37, 99, 235, 0.3)",
       },
- 
+
       backgroundImage: {
-        'card-gradient': 'linear-gradient(135deg, #860038, #AE1D58)',
-        'page-gradient': 'linear-gradient(135deg, #FAF5F7, #F5ECF0)',
-        'plum-rose':     'linear-gradient(135deg, #860038, #AE1D58)',
-        'blush-fade':    'linear-gradient(135deg, #F9E6EE, #F5ECF0)',
+        'card-gradient': 'linear-gradient(135deg, #2563EB, #3B82F6)',
+        'page-gradient': 'linear-gradient(180deg, #F8FAFC 0%, #EFF6FF 100%)',
+        'blue-gradient': 'linear-gradient(135deg, #2563EB 0%, #3B82F6 50%, #60A5FA 100%)',
+        'navy-gradient': 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)',
+        'plum-rose':     'linear-gradient(135deg, #2563EB, #60A5FA)',
+        'blush-fade':    'linear-gradient(135deg, #EFF6FF, #F8FAFC)',
       },
 
       keyframes: {
@@ -72,8 +73,8 @@ export default {
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
         'pulse-glow': {
-          '0%, 100%': { boxShadow: '0 0 10px rgba(194,24,117,0.3)' },
-          '50%':       { boxShadow: '0 0 28px rgba(194,24,117,0.65), 0 0 50px rgba(122,15,82,0.25)' },
+          '0%, 100%': { boxShadow: '0 0 10px rgba(37, 99, 235, 0.2)' },
+          '50%':       { boxShadow: '0 0 28px rgba(37, 99, 235, 0.5), 0 0 50px rgba(96, 165, 250, 0.2)' },
         },
         shimmer: {
           '0%':   { backgroundPosition: '-1000px 0' },

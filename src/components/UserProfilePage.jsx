@@ -178,7 +178,7 @@ function UserProfilePage({ activeTab = "profile", onSelectCard, onCompareCards, 
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 text-left select-none space-y-6">
       
       {/* ── PROFILE TOP HERO EXECUTIVE DASHBOARD ── */}
-      <div className="relative rounded-[32px] bg-gradient-to-r from-[#860038] via-[#C21875] to-[#7A0F52] p-6 sm:p-8 text-white shadow-xl overflow-hidden flex flex-col lg:flex-row items-center justify-between gap-6">
+      <div className="relative rounded-[32px] bg-gradient-to-r from-[#0F172A] via-[#1E293B] to-[#2563EB] p-6 sm:p-8 text-white shadow-xl overflow-hidden flex flex-col lg:flex-row items-center justify-between gap-6">
         <div className="absolute right-0 top-0 w-80 h-80 rounded-full bg-white/10 blur-3xl pointer-events-none" />
 
         <div className="relative z-10 flex flex-col sm:flex-row items-center gap-5">
@@ -192,7 +192,7 @@ function UserProfilePage({ activeTab = "profile", onSelectCard, onCompareCards, 
 
           <div className="text-center sm:text-left space-y-1">
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
-              <h1 className="text-2xl sm:text-3xl font-black font-serif tracking-tight">
+              <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
                 {fullName || 'Valued Member'}
               </h1>
               <span className="px-3 py-0.5 rounded-full bg-white/20 text-white text-[10px] font-black uppercase tracking-wider">
@@ -269,7 +269,7 @@ function UserProfilePage({ activeTab = "profile", onSelectCard, onCompareCards, 
           >
             {/* Avatar Selector */}
             <div className="p-6 rounded-3xl bg-white/40 dark:bg-black/30 backdrop-blur-xl border border-slate-200 dark:border-secondary/20 shadow-soft">
-              <h3 className="text-base font-black font-serif text-slate-800 dark:text-slate-100 mb-3 flex items-center gap-2">
+              <h3 className="text-base font-black text-slate-800 dark:text-slate-100 mb-3 flex items-center gap-2">
                 <span>🖼️</span> Profile Picture / Avatar Presets
               </h3>
               <div className="flex items-center gap-3 overflow-x-auto pb-2 mb-3">
@@ -293,7 +293,7 @@ function UserProfilePage({ activeTab = "profile", onSelectCard, onCompareCards, 
 
             {/* Account Info Form Grid */}
             <div className="p-6 rounded-3xl bg-white/40 dark:bg-black/30 backdrop-blur-xl border border-slate-200 dark:border-secondary/20 shadow-soft space-y-4">
-              <h3 className="text-base font-black font-serif text-slate-800 dark:text-slate-100 mb-2 flex items-center gap-2">
+              <h3 className="text-base font-black text-slate-800 dark:text-slate-100 mb-2 flex items-center gap-2">
                 <span>📋</span> Personal Details
               </h3>
 
@@ -383,7 +383,7 @@ function UserProfilePage({ activeTab = "profile", onSelectCard, onCompareCards, 
             className="space-y-6"
           >
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-black font-serif text-slate-800 dark:text-slate-100 flex items-center gap-2">
+              <h3 className="text-lg font-black text-slate-800 dark:text-slate-100 flex items-center gap-2">
                 <span>💳</span> My Saved Debit Card Portfolio ({savedCardObjects.length})
               </h3>
             </div>
@@ -410,7 +410,7 @@ function UserProfilePage({ activeTab = "profile", onSelectCard, onCompareCards, 
                       </button>
                       <button
                         onClick={() => removeFromWishlist(card.id)}
-                        className="text-xs font-bold text-rose-500 hover:underline cursor-pointer"
+                        className="text-xs font-bold text-red-500 hover:underline cursor-pointer"
                       >
                         Remove 🗑️
                       </button>
@@ -432,7 +432,7 @@ function UserProfilePage({ activeTab = "profile", onSelectCard, onCompareCards, 
             className="space-y-6"
           >
             <div className="p-6 rounded-3xl bg-gradient-to-r from-secondary/10 to-primary/10 border border-secondary/20 text-left">
-              <h3 className="text-lg font-black font-serif text-slate-900 dark:text-slate-100 flex items-center gap-2">
+              <h3 className="text-lg font-black text-slate-900 dark:text-slate-100 flex items-center gap-2">
                 <span>✨</span> AI Curated Matches for {occupation}
               </h3>
               <p className="text-xs text-textSoft dark:text-slate-300 mt-1">
@@ -465,7 +465,7 @@ function UserProfilePage({ activeTab = "profile", onSelectCard, onCompareCards, 
             exit={{ opacity: 0, y: -15 }}
             className="p-6 rounded-3xl bg-white/40 dark:bg-black/30 backdrop-blur-xl border border-slate-200 dark:border-secondary/20 shadow-soft space-y-4"
           >
-            <h3 className="text-lg font-black font-serif text-slate-800 dark:text-slate-100 flex items-center gap-2">
+            <h3 className="text-lg font-black text-slate-800 dark:text-slate-100 flex items-center gap-2">
               <span>🔄</span> Compare Audit Log
             </h3>
             {compareLogs.length === 0 ? (

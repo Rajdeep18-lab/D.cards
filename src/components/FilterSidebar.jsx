@@ -536,7 +536,7 @@ function FilterSidebar({
             <div className="w-12 h-1.5 rounded-full bg-slate-300 dark:bg-white/20 mx-auto mb-3" />
             <div className="flex justify-between items-center">
               <div>
-                <h3 className="text-lg font-black font-serif text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                <h3 className="text-lg font-black text-slate-900 dark:text-slate-100 flex items-center gap-2">
                   <span>🎯</span> Smart Card Filters
                 </h3>
                 <p className="text-xs text-textSoft dark:text-gray-400 font-medium">
@@ -587,7 +587,7 @@ function FilterSidebar({
       {/* Top Header Card */}
       <div className="p-4 rounded-3xl bg-white/60 dark:bg-black/35 backdrop-blur-xl border border-slate-200/90 dark:border-secondary/20 shadow-soft flex items-center justify-between">
         <div>
-          <h3 className="text-sm font-black font-serif text-slate-900 dark:text-slate-100 tracking-tight flex items-center gap-1.5">
+          <h3 className="text-sm font-black text-slate-900 dark:text-slate-100 tracking-tight flex items-center gap-1.5">
             <span>🎯</span> Smart Filters
           </h3>
           <p className="text-[11px] text-textSoft dark:text-gray-400 font-semibold mt-0.5">

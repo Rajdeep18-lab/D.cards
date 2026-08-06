@@ -406,16 +406,16 @@ export const adminAnalyticsService = {
             <head>
               <title>${filename}</title>
               <style>
-                body { font-family: sans-serif; padding: 24px; color: #1e0b16; }
-                h1 { color: #C21875; border-bottom: 2px solid #C21875; padding-bottom: 8px; }
+                body { font-family: 'Poppins', sans-serif; padding: 24px; color: #1F2937; }
+                h1 { color: #2563EB; border-bottom: 2px solid #2563EB; padding-bottom: 8px; }
                 table { width: 100%; border-collapse: collapse; margin-top: 16px; margin-bottom: 24px; }
-                th, td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 12px; }
-                th { background-color: #f8eef5; color: #7A0F52; }
-                .meta { font-size: 12px; color: #666; margin-bottom: 20px; }
+                th, td { border: 1px solid #E5E7EB; padding: 8px; text-align: left; font-size: 12px; }
+                th { background-color: #EFF6FF; color: #1E40AF; }
+                .meta { font-size: 12px; color: #6B7280; margin-bottom: 20px; }
               </style>
             </head>
             <body>
-              <h1>🛡️ D.Card Executive Intelligence Report</h1>
+              <h1>D.CARD Executive Intelligence Report</h1>
               <div class="meta">
                 <p><strong>Export Date:</strong> ${new Date().toLocaleString()}</p>
                 <p><strong>Timeframe:</strong> ${timeRange}</p>

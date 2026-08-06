@@ -52,9 +52,9 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
     transition: 'all 0.25s ease',
     border: 'none',
     outline: 'none',
-    background: activeTab === tabId ? 'linear-gradient(135deg, #A30D62, #C21875)' : 'var(--bg-chip)',
+    background: activeTab === tabId ? 'linear-gradient(135deg, #2563EB, #3B82F6)' : 'var(--bg-chip)',
     color: activeTab === tabId ? '#ffffff' : 'var(--text-soft)',
-    boxShadow: activeTab === tabId ? '0 4px 12px rgba(194, 24, 117, 0.25)' : 'none',
+    boxShadow: activeTab === tabId ? '0 4px 12px rgba(37, 99, 235, 0.25)' : 'none',
   });
 
   return (
@@ -70,7 +70,7 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={onClose}
-              className="fixed inset-0 bg-[#1E0B16]/65 backdrop-blur-md z-0"
+              className="fixed inset-0 bg-[#0F172A]/70 backdrop-blur-md z-0"
             />
 
             {/* Modal Box */}
@@ -80,7 +80,7 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.96 }}
               transition={{ type: 'spring', stiffness: 350, damping: 28 }}
-              className="relative z-10 w-full max-w-[720px] max-h-[85vh] my-auto flex flex-col rounded-[28px] bg-[var(--modal-bg)] border border-[#C21875]/22 shadow-[0_24px_80px_rgba(122,15,82,0.3)] backdrop-blur-xl overflow-hidden custom-scrollbar"
+              className="relative z-10 w-full max-w-[720px] max-h-[85vh] my-auto flex flex-col rounded-[28px] bg-[var(--modal-bg)] border border-[#2563EB]/25 shadow-[0_24px_80px_rgba(15,23,42,0.3)] backdrop-blur-xl overflow-hidden custom-scrollbar"
             >
             {/* Header */}
             <div style={{ padding: '24px 24px 16px', display: 'flex', alignItems: 'center', justifyContent: 'between', flexShrink: 0 }}>
@@ -89,12 +89,12 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
                   width: '46px',
                   height: '46px',
                   borderRadius: '14px',
-                  background: 'linear-gradient(135deg,#A30D62,#C21875)',
+                  background: 'linear-gradient(135deg, #2563EB, #3B82F6)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontSize: '22px',
-                  boxShadow: '0 6px 18px rgba(163,13,98,0.35)',
+                  boxShadow: '0 6px 18px rgba(37,99,235,0.35)',
                   color: 'white',
                   flexShrink: 0
                 }}>
@@ -116,7 +116,7 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
                     borderRadius: '50%',
                     border: '1px solid var(--border-color)',
                     background: 'var(--bg-chip)',
-                    color: '#7A0F52',
+                    color: '#2563EB',
                     fontSize: '16px',
                     cursor: 'pointer',
                     display: 'flex',
@@ -126,7 +126,7 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
                     transition: 'all 0.2s',
                     outline: 'none'
                   }}
-                  onMouseEnter={e => { e.currentTarget.style.transform = 'rotate(90deg)'; e.currentTarget.style.background = 'rgba(194,24,117,0.1)'; }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = 'rotate(90deg)'; e.currentTarget.style.background = 'rgba(37,99,235,0.1)'; }}
                   onMouseLeave={e => { e.currentTarget.style.transform = 'rotate(0deg)'; e.currentTarget.style.background = 'var(--bg-chip)'; }}
                 >
                   ✕
@@ -143,8 +143,8 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
                   style={activeTabStyle(tab.id)}
                   onMouseEnter={e => {
                     if (activeTab !== tab.id) {
-                      e.currentTarget.style.background = 'rgba(194, 24, 117, 0.12)';
-                      e.currentTarget.style.color = '#C21875';
+                      e.currentTarget.style.background = 'rgba(37, 99, 235, 0.12)';
+                      e.currentTarget.style.color = '#2563EB';
                     }
                   }}
                   onMouseLeave={e => {
@@ -160,7 +160,7 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
             </div>
 
             {/* Divider */}
-            <div style={{ height: '1px', background: 'linear-gradient(90deg,transparent,rgba(194,24,117,0.2),transparent)', margin: '16px 0 0', flexShrink: 0 }} />
+            <div style={{ height: '1px', background: 'linear-gradient(90deg,transparent,rgba(37,99,235,0.2),transparent)', margin: '16px 0 0', flexShrink: 0 }} />
 
             {/* Scrollable Content Area */}
             <div
@@ -177,12 +177,12 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
             >
               {activeTab === 'privacy' && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
-                  <h3 className="font-serif text-lg font-black text-slate-800 dark:text-slate-100 mb-3">Privacy Policy</h3>
+                  <h3 className="text-lg font-black text-slate-800 dark:text-slate-100 mb-3">Privacy Policy</h3>
                   <p className="mb-4">
                     At <strong>D.Card</strong>, we believe in radical transparency. D.Card operates as a debit card discovery and optimization platform, designed to help users evaluate and compare debit card charges, rates, and features prior to opening a bank account. This policy outlines exactly what data we collect, where it resides, and what sensitive information we strictly do not collect.
                   </p>
 
-                  <h4 className="font-bold text-slate-850 dark:text-slate-200 mt-5 mb-2 uppercase text-xs tracking-wider text-[#A30D62] dark:text-[#E0B2C4]">
+                  <h4 className="font-bold text-slate-850 dark:text-slate-200 mt-5 mb-2 uppercase text-xs tracking-wider text-[#2563EB] dark:text-[#60A5FA]">
                     1. Information We Collect
                   </h4>
                   <p className="mb-3">
@@ -196,7 +196,7 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
                     <li><strong>Referral & Action Clicks:</strong> Timestamps of clickouts leading from our engine to official banking landing portals.</li>
                   </ul>
 
-                  <h4 className="font-bold text-slate-850 dark:text-slate-200 mt-5 mb-2 uppercase text-xs tracking-wider text-[#A30D62] dark:text-[#E0B2C4]">
+                  <h4 className="font-bold text-slate-850 dark:text-slate-200 mt-5 mb-2 uppercase text-xs tracking-wider text-[#2563EB] dark:text-[#60A5FA]">
                     2. Data Stored Securely in Firebase
                   </h4>
                   <p className="mb-4">
@@ -220,7 +220,7 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
                     </ul>
                   </div>
 
-                  <h4 className="font-bold text-slate-850 dark:text-slate-200 mt-5 mb-2 uppercase text-xs tracking-wider text-[#A30D62] dark:text-[#E0B2C4]">
+                  <h4 className="font-bold text-slate-850 dark:text-slate-200 mt-5 mb-2 uppercase text-xs tracking-wider text-[#2563EB] dark:text-[#60A5FA]">
                     3. Contacting Us
                   </h4>
                   <p className="mb-2">
@@ -232,33 +232,33 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
 
               {activeTab === 'terms' && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
-                  <h3 className="font-serif text-lg font-black text-slate-800 dark:text-slate-100 mb-3">Terms & Conditions</h3>
+                  <h3 className="text-lg font-black text-slate-800 dark:text-slate-100 mb-3">Terms & Conditions</h3>
                   <p className="mb-4">
                     Welcome to <strong>D.Card</strong>. These Terms & Conditions govern your access to and usage of the D.Card web interface. By browsing, comparison-shopping, or logging into our application, you formally accept these terms.
                   </p>
 
-                  <h4 className="font-bold text-slate-850 dark:text-slate-200 mt-5 mb-2 uppercase text-xs tracking-wider text-[#A30D62] dark:text-[#E0B2C4]">
+                  <h4 className="font-bold text-slate-850 dark:text-slate-200 mt-5 mb-2 uppercase text-xs tracking-wider text-[#2563EB] dark:text-[#60A5FA]">
                     1. Scope of Service
                   </h4>
                   <p className="mb-3">
                     D.Card provides informational debit card matrices, fees, and feature comparisons. D.Card is not a bank, broker, or direct card distributor. We do not approve applications, nor do we issue cards.
                   </p>
 
-                  <h4 className="font-bold text-slate-850 dark:text-slate-200 mt-5 mb-2 uppercase text-xs tracking-wider text-[#A30D62] dark:text-[#E0B2C4]">
+                  <h4 className="font-bold text-slate-850 dark:text-slate-200 mt-5 mb-2 uppercase text-xs tracking-wider text-[#2563EB] dark:text-[#60A5FA]">
                     2. User Conduct & Accounts
                   </h4>
                   <p className="mb-3">
                     You are solely responsible for maintaining the privacy of your account login information. You agree not to engage in malicious scraping of card rates, scraping database content, or deploying automated bots to query the platform features.
                   </p>
 
-                  <h4 className="font-bold text-slate-850 dark:text-slate-200 mt-5 mb-2 uppercase text-xs tracking-wider text-[#A30D62] dark:text-[#E0B2C4]">
+                  <h4 className="font-bold text-slate-850 dark:text-slate-200 mt-5 mb-2 uppercase text-xs tracking-wider text-[#2563EB] dark:text-[#60A5FA]">
                     3. Third-Party Banking Services
                   </h4>
                   <p className="mb-3">
                     Our platform references links and redirect coordinates to official banking pages. We have no authority over the service level agreements, underwriting guidelines, interest structures, or operations of third-party banks. Your relationships with external banks are governed strictly by their respective terms of service.
                   </p>
 
-                  <h4 className="font-bold text-slate-850 dark:text-slate-200 mt-5 mb-2 uppercase text-xs tracking-wider text-[#A30D62] dark:text-[#E0B2C4]">
+                  <h4 className="font-bold text-slate-850 dark:text-slate-200 mt-5 mb-2 uppercase text-xs tracking-wider text-[#2563EB] dark:text-[#60A5FA]">
                     4. Limitation of Liability
                   </h4>
                   <p className="mb-4">
@@ -271,7 +271,7 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
 
               {activeTab === 'disclaimer' && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
-                  <h3 className="font-serif text-lg font-black text-slate-800 dark:text-slate-100 mb-3">Regulatory & Information Disclaimer</h3>
+                  <h3 className="text-lg font-black text-slate-800 dark:text-slate-100 mb-3">Regulatory & Information Disclaimer</h3>
                   
                   <div className="p-4 rounded-2xl mb-5 text-amber-900 dark:text-amber-300" style={{ background: 'rgba(245, 158, 11, 0.08)', border: '1px solid rgba(245, 158, 11, 0.2)' }}>
                     <p className="text-xs font-black uppercase tracking-wider mb-2">
@@ -282,25 +282,25 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
                     </p>
                   </div>
 
-                  <h4 className="font-bold text-slate-850 dark:text-slate-200 mt-5 mb-2 uppercase text-xs tracking-wider text-[#A30D62] dark:text-[#E0B2C4]">
+                  <h4 className="font-bold text-slate-850 dark:text-slate-200 mt-5 mb-2 uppercase text-xs tracking-wider text-[#2563EB] dark:text-[#60A5FA]">
                     1. No Warranties
                   </h4>
                   <p className="mb-3">
                     The database parameters on D.Card are aggregated periodically from public bank schedules and user submissions. While we strive to maintain clean, audited directories, we do not warrant the timeliness, completeness, accuracy, or reliability of any information displayed.
                   </p>
 
-                  <h4 className="font-bold text-slate-850 dark:text-slate-200 mt-5 mb-2 uppercase text-xs tracking-wider text-[#A30D62] dark:text-[#E0B2C4]">
+                  <h4 className="font-bold text-slate-850 dark:text-slate-200 mt-5 mb-2 uppercase text-xs tracking-wider text-[#2563EB] dark:text-[#60A5FA]">
                     2. Informational Purpose Only
                   </h4>
                   <p className="mb-3">
                     The content provided on D.Card is for educational and comparison purposes only. It does not constitute financial, investment, legal, or banking advice. You should seek independent consultation or do direct bank diligence before finalizing financial relationship decisions.
                   </p>
 
-                  <h4 className="font-bold text-slate-850 dark:text-slate-200 mt-5 mb-2 uppercase text-xs tracking-wider text-[#A30D62] dark:text-[#E0B2C4]">
+                  <h4 className="font-bold text-slate-850 dark:text-slate-200 mt-5 mb-2 uppercase text-xs tracking-wider text-[#2563EB] dark:text-[#60A5FA]">
                     3. Intellectual Property Disclaimer
                   </h4>
                   <p className="mb-4">
-                    All bank brand logos, product tags, registered trademarks (Visa, Mastercard, RuPay, etc.) remain the exclusive property of their respective corporate owners. D.Card does not claim ownership, nor does listing them imply any form of official brand partnership or direct financial compensation from primary banks listed here.
+                    All bank brand logos, product tags, registered trademarks (Visa, Mastercard, RuPay, etc.) remain the exclusive property of their respective corporate owners. D.Card does not claim ownership, nor does listing them imply any form of official bank sponsorship or direct financial compensation from primary banks listed here.
                   </p>
 
                   <p className="text-xs text-slate-400 dark:text-slate-500 italic mt-6">Last updated: June 2026</p>

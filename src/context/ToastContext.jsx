@@ -24,10 +24,10 @@ const COLORS = {
     text: "#b91c1c",
   },
   info: {
-    bg: "linear-gradient(135deg, rgba(194,24,117,0.12), rgba(122,15,82,0.08))",
-    border: "rgba(194,24,117,0.3)",
-    icon: "#C21875",
-    text: "#7A0F52",
+    bg: "linear-gradient(135deg, rgba(37,99,235,0.12), rgba(59,130,246,0.08))",
+    border: "rgba(37,99,235,0.3)",
+    icon: "#2563EB",
+    text: "#1D4ED8",
   },
   warning: {
     bg: "linear-gradient(135deg, rgba(234,179,8,0.15), rgba(161,98,7,0.1))",

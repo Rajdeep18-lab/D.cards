@@ -175,7 +175,7 @@ function CityBanksSection() {
           <span className="mb-2 inline-flex items-center gap-1.5 px-3.5 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-black tracking-widest uppercase rounded-full border border-emerald-500/20 select-none">
             🟢 LIVE OPENSTREETMAP DATA • REAL BRANCH LOCATIONS
           </span>
-          <h2 className="text-2xl sm:text-3xl font-black font-serif text-slate-900 dark:text-roseGold tracking-tight mt-1 flex items-center gap-2.5">
+          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-roseGold tracking-tight mt-1 flex items-center gap-2.5">
             <span className="text-2xl sm:text-3xl">🏦</span> Live Nearby Banks
           </h2>
           <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1 max-w-2xl font-medium leading-relaxed">
@@ -356,7 +356,7 @@ function CityBanksSection() {
           <div className="w-16 h-16 rounded-full bg-secondary/10 flex items-center justify-center text-3xl mb-4 text-secondary">
             🏦
           </div>
-          <h3 className="text-xl font-black text-slate-900 dark:text-slate-100 font-serif">
+          <h3 className="text-xl font-black text-slate-900 dark:text-slate-100">
             No nearby bank branches found in your area.
           </h3>
           <p className="text-xs sm:text-sm text-slate-600 dark:text-gray-400 mt-2 max-w-md leading-relaxed font-medium">
@@ -379,7 +379,7 @@ function CityBanksSection() {
             <div key={group.bankName} className="space-y-3">
               <div className="flex items-center gap-2 border-b border-slate-200 dark:border-white/10 pb-2">
                 <span className="text-lg">🏛️</span>
-                <h3 className="text-base font-black text-slate-900 dark:text-roseGold font-serif">
+                <h3 className="text-base font-black text-slate-900 dark:text-roseGold">
                   {group.bankName}
                 </h3>
                 <span className="ml-auto text-xs font-bold text-slate-500 dark:text-slate-400">
@@ -438,7 +438,7 @@ function BankCardItem({ branch }) {
               🏦
             </div>
             <div>
-              <h3 className="text-sm font-black text-slate-900 dark:text-slate-100 tracking-tight leading-snug font-serif">
+              <h3 className="text-sm font-black text-slate-900 dark:text-slate-100 tracking-tight leading-snug">
                 {branch.name}
               </h3>
               {branch.branchName && (
@@ -462,7 +462,7 @@ function BankCardItem({ branch }) {
         </p>
 
         {/* Exact Coordinates */}
-        <div className="flex items-center gap-2 text-[10px] font-mono text-slate-500 dark:text-slate-400 pt-1">
+        <div className="flex items-center gap-2 text-[10px] text-slate-500 dark:text-slate-400 pt-1">
           <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-white/10 border border-slate-200 dark:border-white/5">
             Lat: {branch.lat.toFixed(5)}
           </span>
