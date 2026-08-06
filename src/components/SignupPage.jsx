@@ -124,8 +124,9 @@ function SignupPage({ onSwitchToLogin, onSuccess }) {
       className="w-full text-left select-none"
     >
       <div className="text-center mb-4">
-        <h2 className="text-2xl sm:text-3xl font-black text-primary dark:text-accent tracking-tight">
-          Create D.Card Account
+        <img src="/logo-mark.png" alt="D.CARD Mark" className="w-12 h-12 object-contain mx-auto mb-2" />
+        <h2 className="text-2xl sm:text-3xl font-bold text-[#1F2937] dark:text-white tracking-tight">
+          Create D.CARD Account
         </h2>
         <p className="text-xs text-textSoft dark:text-gray-400 font-semibold mt-1 flex items-center justify-center gap-1.5">
           <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />

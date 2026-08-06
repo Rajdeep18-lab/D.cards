@@ -591,9 +591,7 @@ function AdminDashboardModal({ isOpen, onClose, currentUser }) {
           {/* Header */}
           <div className="px-5 py-4 border-b border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-black/40">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-secondary via-primary to-roseGold flex items-center justify-center font-black text-xl shadow-lg">
-                🔴
-              </div>
+              <img src="/logo-mark.png" alt="D.CARD Mark" className="w-10 h-10 object-contain" />
               <div>
                 <h2 className="text-base sm:text-lg font-black tracking-tight flex items-center gap-2">
                   D.Card Real-Time SaaS Analytics Dashboard

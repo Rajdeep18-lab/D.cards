@@ -74,9 +74,7 @@ function AboutModal({ isOpen, onClose }) {
               {/* Modal Header */}
               <div className="p-6 sm:px-8 sm:py-6 flex items-center justify-between flex-shrink-0 border-b border-[#E5E7EB] dark:border-slate-800">
                 <div className="flex items-center gap-3.5">
-                  <div className="w-11 h-11 rounded-2xl bg-[#2563EB] text-white flex items-center justify-center shadow-md shadow-[#2563EB]/25 flex-shrink-0">
-                    <Building2 className="w-6 h-6 text-white" />
-                  </div>
+                  <img src="/logo-mark.png" alt="D.CARD Mark" className="w-11 h-11 object-contain flex-shrink-0" />
                   <div>
                     <h2 className="text-xl sm:text-2xl font-bold text-[#1F2937] dark:text-white leading-tight">
                       About D.CARD

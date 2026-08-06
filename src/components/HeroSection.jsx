@@ -45,7 +45,7 @@ const HeroVisual = memo(({ isMobile }) => {
           <div className="flex justify-between items-start">
             <div>
               <div className="flex items-center gap-1.5">
-                <CreditCard className="w-5 h-5 text-white/90" />
+                <img src="/logo-mark.png" alt="D.CARD Mark" className="w-6 h-6 object-contain filter brightness-200" />
                 <span className="text-xs font-bold tracking-widest uppercase text-white/90">D.CARD ELITE</span>
               </div>
               <span className="text-[10px] text-white/70 tracking-wider uppercase font-normal">Financial Platform Layer</span>

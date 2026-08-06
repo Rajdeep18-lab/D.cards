@@ -27,17 +27,24 @@ function Footer({ onOpenLegal }) {
  
         {/* Logo & Description & Social Links */}
         <div className="space-y-4">
-          <Link to="/" className="flex items-center gap-2.5 group w-fit">
-            <div className="w-9 h-9 rounded-xl bg-[#2563EB] text-white flex items-center justify-center font-bold shadow-md shadow-[#2563EB]/20">
-              <CreditCard className="w-5 h-5" />
+          <Link to="/" className="flex items-center gap-3 group w-fit">
+            <img 
+              src="/logo-mark.png" 
+              alt="D.CARD Mark" 
+              className="h-10 w-auto object-contain group-hover:scale-105 transition-transform duration-300"
+            />
+            <div className="flex flex-col">
+              <span className="text-xl font-bold tracking-tight text-[#0F172A] dark:text-white">
+                D.<span className="text-[#2563EB]">CARD</span>
+              </span>
+              <span className="text-[9px] font-semibold text-[#2563EB] dark:text-[#60A5FA] tracking-widest uppercase mt-0.5">
+                COMPARE. CHOOSE. BENEFIT MORE.
+              </span>
             </div>
-            <span className="text-xl font-bold tracking-tight text-[#1F2937] dark:text-white">
-              D.<span className="text-[#2563EB]">CARD</span>
-            </span>
           </Link>
           
           <p className="text-xs leading-relaxed text-[#6B7280] dark:text-slate-400 max-w-[280px]">
-            Independent Debit Card Comparison & Financial Information Platform. Make informed banking decisions with zero commission bias.
+            Independent Debit Card Comparison & Financial Information Platform. Compare. Choose. Benefit More.
           </p>
 
           {/* Social Links */}

@@ -55,11 +55,9 @@ function AuthLandingScreen({ onOpenLogin, onOpenSignup }) {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ type: "spring", stiffness: 350, damping: 25, delay: 0.1 }}
-            className="mx-auto w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-gradient-to-br from-[#2563EB] via-[#3B82F6] to-[#60A5FA] border border-white/20 p-0.5 flex items-center justify-center shadow-lg shadow-[#2563EB]/30 mb-6"
+            className="mx-auto w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-white dark:bg-slate-800 border border-[#2563EB]/20 p-2 flex items-center justify-center shadow-lg shadow-[#2563EB]/20 mb-6"
           >
-            <div className="w-full h-full rounded-[22px] bg-[#0F172A] flex items-center justify-center">
-              <CreditCard className="w-8 h-8 text-[#60A5FA]" />
-            </div>
+            <img src="/logo-mark.png" alt="D.CARD Mark" className="w-full h-full object-contain" />
           </motion.div>
 
           {/* Tagline Badge */}

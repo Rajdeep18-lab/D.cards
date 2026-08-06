@@ -84,9 +84,7 @@ function AdminLoginPage({ isOpen, onClose, onSuccessAdminLogin }) {
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-2xl bg-[#EFF6FF] dark:bg-slate-800 border border-[#2563EB]/20 text-[#2563EB] dark:text-[#60A5FA] flex items-center justify-center shadow-sm">
-                <ShieldCheck className="w-6 h-6" />
-              </div>
+              <img src="/logo-mark.png" alt="D.CARD Mark" className="w-11 h-11 object-contain flex-shrink-0" />
               <div>
                 <h2 className="text-xl font-bold text-[#1F2937] dark:text-white tracking-tight">
                   Admin Portal Login

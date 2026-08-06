@@ -37,9 +37,9 @@ function FirstLoginModal({ isOpen, onClose, userName }) {
             initial={{ rotate: -15, scale: 0 }}
             animate={{ rotate: 0, scale: 1 }}
             transition={{ type: "spring", stiffness: 400, damping: 20 }}
-            className="mx-auto w-20 h-20 rounded-3xl bg-gradient-to-br from-[#2563EB] to-[#3B82F6] border border-white/30 flex items-center justify-center shadow-lg shadow-[#2563EB]/30 mb-6 select-none"
+            className="mx-auto w-20 h-20 rounded-3xl bg-white/10 border border-white/30 p-3 flex items-center justify-center shadow-lg shadow-[#2563EB]/30 mb-6 select-none"
           >
-            <Sparkles className="w-10 h-10 text-white" />
+            <img src="/logo-mark.png" alt="D.CARD Mark" className="w-full h-full object-contain" />
           </motion.div>
 
           <h2 className="text-3xl font-bold text-white tracking-tight mb-2">

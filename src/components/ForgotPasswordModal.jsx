@@ -87,8 +87,8 @@ function ForgotPasswordModal({ isOpen, onClose, onSwitchToLogin }) {
         </button>
 
         <div className="text-center mb-6">
-          <div className="w-14 h-14 rounded-2xl bg-secondary/10 border border-secondary/20 flex items-center justify-center mx-auto mb-3 text-2xl">
-            🔑
+          <div className="w-14 h-14 rounded-2xl bg-[#2563EB]/10 border border-[#2563EB]/20 flex items-center justify-center mx-auto mb-3 p-2">
+            <img src="/logo-mark.png" alt="D.CARD Mark" className="w-full h-full object-contain" />
           </div>
           <h2 className="text-2xl font-black text-primary dark:text-accent tracking-tight">
             {isPasswordRecoveryActive ? 'Set New Password' : 'Reset Password'}

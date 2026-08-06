@@ -92,9 +92,7 @@ function AuthModal({ isOpen, onClose, onSuccessAction }) {
           {/* Top Brand Tag */}
           <div className="relative z-10">
             <div className="flex items-center gap-2 mb-6">
-              <div className="w-8 h-8 rounded-xl bg-[#2563EB] flex items-center justify-center shadow-md shadow-[#2563EB]/30">
-                <span className="text-sm font-bold text-white">D</span>
-              </div>
+              <img src="/logo-mark.png" alt="D.CARD Mark" className="w-8 h-8 object-contain" />
               <span className="text-lg font-bold tracking-tight text-gradient">D.CARD Privilege</span>
             </div>
 

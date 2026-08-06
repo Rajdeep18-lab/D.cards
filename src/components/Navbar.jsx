@@ -45,18 +45,29 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0 }) {
         {/* Brand Logo */}
         <Link
           to="/"
-          className="flex items-center gap-2.5 group select-none text-left bg-transparent border-0 cursor-pointer focus:outline-none"
+          className="flex items-center gap-3 group select-none text-left bg-transparent border-0 cursor-pointer focus:outline-none"
         >
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] flex items-center justify-center shadow-md text-white group-hover:scale-105 transition-transform duration-300">
-            <CreditCard className="w-5 h-5 text-white" />
-          </div>
-          <div className="flex flex-col">
-            <span className="text-lg font-bold tracking-tight leading-none text-[#1F2937] dark:text-white">
-              D.<span className="text-[#2563EB]">CARD</span>
-            </span>
-            <span className="text-[9px] font-semibold text-[#6B7280] dark:text-slate-400 tracking-widest uppercase mt-0.5">
-              FINANCIAL PLATFORM
-            </span>
+          {/* Compact / Mobile Mark */}
+          <img 
+            src="/logo-mark.png" 
+            alt="D.CARD Mark" 
+            className="h-10 w-auto object-contain md:hidden group-hover:scale-105 transition-transform duration-300"
+          />
+          {/* Desktop Mark + Text */}
+          <div className="hidden md:flex items-center gap-3">
+            <img 
+              src="/logo-mark.png" 
+              alt="D.CARD Logo" 
+              className="h-12 w-auto object-contain group-hover:scale-105 transition-transform duration-300"
+            />
+            <div className="flex flex-col">
+              <span className="text-xl font-bold tracking-tight leading-none text-[#0F172A] dark:text-white font-sans">
+                D.<span className="text-[#2563EB]">CARD</span>
+              </span>
+              <span className="text-[9px] font-semibold text-[#6B7280] dark:text-slate-400 tracking-widest uppercase mt-0.5">
+                COMPARE. CHOOSE. BENEFIT MORE.
+              </span>
+            </div>
           </div>
         </Link>
 
