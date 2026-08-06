@@ -13,7 +13,7 @@ import Footer from "./components/Footer";
 import TopCardsSection from "./components/TopCardsSection";
 import AuthModal from "./components/AuthModal";
 import QuickFilterChips from "./components/QuickFilterChips";
-import { normalizeCard, deduplicateCards } from "./utils/compareUtils";
+import { normalizeCard, deduplicateCards, parseAnnualFeeVal, parseCashbackVal, safeLower, safeIncludes, safeStr, safeMap } from "./utils/compareUtils";
 
 // Lazy Loaded Heavy Components & Modals for Code Splitting
 const UserProfilePage = lazy(() => import("./components/UserProfilePage"));
@@ -252,7 +252,7 @@ function AppInner() {
     return () => clearTimeout(timer);
   }, []);
 
-  const [rawLiveCards, setRawLiveCards] = useState(allDebitCards);
+  const [rawLiveCards, setRawLiveCards] = useState(debitCards);
 
   const fetchLiveCards = useCallback(async () => {
     try {
@@ -275,12 +275,13 @@ function AppInner() {
   }, [fetchLiveCards]);
 
   const activeCardsList = useMemo(() => {
-    return rawLiveCards.map(c => {
-      const limits = getCardLimits(c);
+    return safeMap(rawLiveCards, c => {
+      const norm = normalizeCard(c);
+      const limits = getCardLimits(norm);
       return {
-        ...c,
-        atmLimit: limits.atmLimit,
-        posLimit: limits.posLimit
+        ...norm,
+        atmLimit: norm.atmLimit || limits.atmLimit,
+        posLimit: norm.posLimit || limits.posLimit
       };
     });
   }, [rawLiveCards]);
@@ -583,87 +584,111 @@ function AppInner() {
   ]);
 
   const filteredCards = useMemo(() => {
-    const q = (query || "").toLowerCase().trim();
-    let cards = activeCardsList;
-    
-    // 1. Multi-term Smart Search ("SBI RuPay", "HDFC Platinum", "Student Card", "Women Debit Card")
+    let cards = safeMap(activeCardsList, c => normalizeCard(c));
+    console.log(`[Filter Debug] Step 0 - Initial Cards: ${cards.length}`);
+
+    // 1. Search Query Filter
+    const q = safeLower(query).trim();
     if (q) {
       const terms = q.split(/\s+/).filter(Boolean);
       cards = cards.filter((card) => {
+        const bank = safeLower(card.bank);
+        const cardName = safeLower(card.cardName);
+        const benefits = safeLower(card.benefits);
+        const bestForStr = Array.isArray(card.bestFor) ? card.bestFor.map(safeLower).join(' ') : safeLower(card.bestFor);
+        const network = safeLower(card.network);
+        const category = safeLower(card.category);
+        const featuresStr = Array.isArray(card.features) ? card.features.map(safeLower).join(' ') : safeLower(card.features);
+        const elig = safeLower(card.eligibility);
+
         return terms.every(term => {
-          const matchBank = String(card.bank || '').toLowerCase().includes(term);
-          const matchCardName = String(card.cardName || '').toLowerCase().includes(term);
-          const matchBenefits = String(card.benefits || '').toLowerCase().includes(term);
-          const matchBestFor = String(card.bestFor || '').toLowerCase().includes(term);
-          const matchNetwork = String(card.network || '').toLowerCase().includes(term);
-          const matchCategory = String(card.category || '').toLowerCase().includes(term);
-          const matchTags = Array.isArray(card.tags) ? card.tags.some(t => String(t || '').toLowerCase().includes(term)) : false;
-          const matchFeatures = Array.isArray(card.features) ? card.features.some(f => String(f || '').toLowerCase().includes(term)) : false;
+          const matchBank = bank.includes(term);
+          const matchCardName = cardName.includes(term);
+          const matchBenefits = benefits.includes(term);
+          const matchBestFor = bestForStr.includes(term);
+          const matchNetwork = network.includes(term);
+          const matchCategory = category.includes(term);
+          const matchFeatures = featuresStr.includes(term);
+          const matchElig = elig.includes(term);
 
           let matchUserType = false;
-          if (term.includes("student")) matchUserType = card.studentFriendly === true || matchBestFor.includes("student");
-          if (term.includes("women") || term.includes("woman")) matchUserType = card.womenSpecial === true || matchBestFor.includes("women");
-          if (term.includes("senior")) matchUserType = card.seniorCitizen === true || matchBestFor.includes("senior");
+          if (term.includes("student")) matchUserType = card.studentFriendly === true || bestForStr.includes("student");
+          if (term.includes("women") || term.includes("woman")) matchUserType = card.womenSpecial === true || bestForStr.includes("women");
+          if (term.includes("senior")) matchUserType = card.seniorCitizen === true || bestForStr.includes("senior");
 
-          return matchBank || matchCardName || matchBenefits || matchBestFor || matchNetwork || matchCategory || matchTags || matchFeatures || matchUserType;
+          return matchBank || matchCardName || matchBenefits || matchBestFor || matchNetwork || matchCategory || matchFeatures || matchElig || matchUserType;
         });
       });
+      console.log(`[Filter Debug] Step 1 - Search Query ("${q}"): ${cards.length} cards`);
+    } else {
+      console.log(`[Filter Debug] Step 1 - Search Query (none): ${cards.length} cards`);
     }
 
     // 2. User Type Filter
-    if (selectedUserTypes.length > 0) {
+    if (Array.isArray(selectedUserTypes) && selectedUserTypes.length > 0) {
       cards = cards.filter(card => {
-        const bestFor = (card.bestFor || '').toLowerCase();
-        const category = (card.category || '').toLowerCase();
-        const elig = (card.eligibility || '').toLowerCase();
-        const name = (card.cardName || '').toLowerCase();
-        const fee = card.annualFee || 0;
-        const minBal = card.minBalance || 0;
+        const bestForStr = Array.isArray(card.bestFor) ? card.bestFor.map(safeLower).join(' ') : safeLower(card.bestFor);
+        const category = safeLower(card.category);
+        const elig = safeLower(card.eligibility);
+        const name = safeLower(card.cardName);
+        const fee = parseAnnualFeeVal(card.annualFee);
+        const minBal = card.minimumBalance;
 
         return selectedUserTypes.some(ut => {
-          if (ut === "Student") return card.studentFriendly === true || bestFor.includes("student") || category.includes("student");
-          if (ut === "Women") return card.womenSpecial === true || bestFor.includes("women") || bestFor.includes("woman");
-          if (ut === "Senior Citizen") return card.seniorCitizen === true || bestFor.includes("senior") || bestFor.includes("pension");
-          if (ut === "Salaried") return bestFor.includes("salaried") || elig.includes("salary") || fee > 0;
-          if (ut === "Business Owner") return bestFor.includes("business") || category === "premium" || (card.maxLimit || 0) >= 200000;
-          if (ut === "Freelancer") return bestFor.includes("freelance") || category === "digital" || card.travelZeroForex === true || minBal === 0;
-          if (ut === "NRI") return elig.includes("nri") || card.internationalUsage === "Yes";
+          if (ut === "Student") return card.studentFriendly === true || bestForStr.includes("student") || category.includes("student");
+          if (ut === "Women") return card.womenSpecial === true || bestForStr.includes("women") || bestForStr.includes("woman");
+          if (ut === "Senior Citizen") return card.seniorCitizen === true || bestForStr.includes("senior") || bestForStr.includes("pension");
+          if (ut === "Salaried") return bestForStr.includes("salaried") || elig.includes("salary") || fee > 0;
+          if (ut === "Business Owner") return bestForStr.includes("business") || category.includes("premium") || name.includes("business") || (card.posLimit || 0) >= 200000;
+          if (ut === "Freelancer") return bestForStr.includes("freelance") || category.includes("digital") || card.contactless || minBal === 0;
+          if (ut === "NRI") return elig.includes("nri") || card.internationalUsage === true;
           if (ut === "Minor Account") return name.includes("minor") || name.includes("junior") || card.studentFriendly === true;
-          if (ut === "Premium Customer") return category === "premium" || fee >= 1000 || minBal >= 25000;
+          if (ut === "Premium Customer") return category.includes("premium") || category.includes("wealth") || category.includes("private") || fee >= 1000 || minBal >= 25000;
           return true;
         });
       });
+      console.log(`[Filter Debug] Step 2 - User Types (${selectedUserTypes.join(', ')}): ${cards.length} cards`);
+    } else {
+      console.log(`[Filter Debug] Step 2 - User Types (none): ${cards.length} cards`);
     }
 
     // 3. Card Network Filter
-    if (selectedNetworks.length > 0) {
-      cards = cards.filter(card => card && selectedNetworks.some(net => String(card.network || '').toLowerCase().includes(String(net || '').toLowerCase())));
+    if (Array.isArray(selectedNetworks) && selectedNetworks.length > 0) {
+      cards = cards.filter(card => {
+        return selectedNetworks.some(net => safeIncludes(card.network, net));
+      });
+      console.log(`[Filter Debug] Step 3 - Networks (${selectedNetworks.join(', ')}): ${cards.length} cards`);
+    } else {
+      console.log(`[Filter Debug] Step 3 - Networks (none): ${cards.length} cards`);
     }
 
     // 4. Card Category Filter
-    if (selectedCategories.length > 0) {
+    if (Array.isArray(selectedCategories) && selectedCategories.length > 0) {
       cards = cards.filter(card => {
-        const name = (card.cardName || '').toLowerCase();
-        const cat = (card.category || '').toLowerCase();
-        const net = (card.network || '').toLowerCase();
+        const name = safeLower(card.cardName);
+        const cat = safeLower(card.category);
+        const net = safeLower(card.network);
 
         return selectedCategories.some(c => {
-          const cl = c.toLowerCase();
-          if (cl === "classic") return name.includes("classic") || cat === "savings";
-          if (cl === "silver") return name.includes("silver");
-          if (cl === "gold") return name.includes("gold");
-          if (cl === "platinum") return name.includes("platinum");
-          if (cl === "signature") return name.includes("signature") || net.includes("signature");
-          if (cl === "infinite") return name.includes("infinite") || net.includes("infinite");
+          const cl = safeLower(c);
+          if (cl === "classic") return name.includes("classic") || cat.includes("classic") || cat.includes("savings");
+          if (cl === "silver") return name.includes("silver") || cat.includes("silver");
+          if (cl === "gold") return name.includes("gold") || cat.includes("gold");
+          if (cl === "platinum") return name.includes("platinum") || cat.includes("platinum");
+          if (cl === "signature") return name.includes("signature") || net.includes("signature") || cat.includes("signature");
+          if (cl === "infinite") return name.includes("infinite") || net.includes("infinite") || cat.includes("infinite");
           return cat.includes(cl) || name.includes(cl);
         });
       });
+      console.log(`[Filter Debug] Step 4 - Categories (${selectedCategories.join(', ')}): ${cards.length} cards`);
+    } else {
+      console.log(`[Filter Debug] Step 4 - Categories (none): ${cards.length} cards`);
     }
 
     // 5. Annual Fee Tier Filter
     if (selectedFeeTier) {
       cards = cards.filter(card => {
-        const fee = typeof card.numAnnualFee === 'number' ? card.numAnnualFee : (typeof card.annualFee === 'number' ? card.annualFee : parseFloat(String(card.annualFee || '').replace(/[^0-9.]/g, '')) || 0);
+        const fee = parseAnnualFeeVal(card.annualFee);
         if (selectedFeeTier === "free") return fee === 0;
         if (selectedFeeTier === "under-250") return fee > 0 && fee <= 250;
         if (selectedFeeTier === "250-500") return fee >= 250 && fee <= 500;
@@ -671,131 +696,169 @@ function AppInner() {
         if (selectedFeeTier === "above-1000") return fee > 1000;
         return true;
       });
+      console.log(`[Filter Debug] Step 5 - Fee Tier (${selectedFeeTier}): ${cards.length} cards`);
+    } else {
+      console.log(`[Filter Debug] Step 5 - Fee Tier (none): ${cards.length} cards`);
     }
 
     // 6. ATM Limit Tier Filter
     if (selectedAtmLimitTier) {
       cards = cards.filter(card => {
-        const limit = card.atmLimit ?? card.limits?.atmLimit ?? 50000;
+        const limit = card.atmLimit || 50000;
         if (selectedAtmLimitTier === "25k") return limit >= 25000;
         if (selectedAtmLimitTier === "50k") return limit >= 50000;
         if (selectedAtmLimitTier === "100k") return limit >= 100000;
         if (selectedAtmLimitTier === "200k") return limit >= 200000;
         return true;
       });
+      console.log(`[Filter Debug] Step 6 - ATM Limit Tier (${selectedAtmLimitTier}): ${cards.length} cards`);
+    } else {
+      console.log(`[Filter Debug] Step 6 - ATM Limit Tier (none): ${cards.length} cards`);
     }
 
-    // 7. Daily Purchase Limit (POS) Tier Filter
+    // 7. POS Limit Tier Filter
     if (selectedPosLimitTier) {
       cards = cards.filter(card => {
-        const limit = card.posLimit ?? card.limits?.posLimit ?? 100000;
+        const limit = card.posLimit || 100000;
         if (selectedPosLimitTier === "50k") return limit >= 50000;
         if (selectedPosLimitTier === "100k") return limit >= 100000;
         if (selectedPosLimitTier === "200k") return limit >= 200000;
         if (selectedPosLimitTier === "500k") return limit >= 500000;
         return true;
       });
+      console.log(`[Filter Debug] Step 7 - POS Limit Tier (${selectedPosLimitTier}): ${cards.length} cards`);
+    } else {
+      console.log(`[Filter Debug] Step 7 - POS Limit Tier (none): ${cards.length} cards`);
     }
 
     // 8. Features & Benefits Filter
-    if (selectedFeatures.length > 0) {
+    if (Array.isArray(selectedFeatures) && selectedFeatures.length > 0) {
       cards = cards.filter(card => {
-        if (!card) return false;
-        return selectedFeatures.every(f => {
-          const lounge = String(card.loungeAccess || '').toLowerCase();
-          const fuel = String(card.fuelWaiver || '').toLowerCase();
-          const intl = String(card.internationalUsage || '').toLowerCase();
-          const benefits = String(card.benefits || '').toLowerCase();
-          const featList = (Array.isArray(card.features) ? card.features : []).map(x => String(x || '').toLowerCase());
+        const lounge = safeLower(card.loungeAccess);
+        const benefits = safeLower(card.benefits);
+        const featList = (Array.isArray(card.features) ? card.features : []).map(safeLower);
 
+        return selectedFeatures.every(f => {
           if (f === "Contactless") return Boolean(card.contactless) || featList.some(x => x.includes("contactless") || x.includes("paywave") || x.includes("tap"));
           if (f === "NFC") return Boolean(card.contactless) || featList.some(x => x.includes("nfc") || x.includes("contactless"));
-          if (f === "Virtual Card") return String(card.category || '').toLowerCase() === "digital" || featList.some(x => x.includes("virtual"));
-          if (f === "International Usage") return intl.includes("yes") || card.travelZeroForex === true;
-          if (f === "Domestic Only") return intl.includes("no") || !card.internationalUsage;
-          if (f === "Lounge Access") return Boolean(lounge) && !lounge.startsWith("no");
-          if (f === "Cashback") return (card.cashbackPct || 0) > 0 || (Array.isArray(card.tags) ? card.tags : []).includes("Cashback") || benefits.includes("cashback");
-          if (f === "Reward Points") return String(card.category || '').toLowerCase() === "rewards" || benefits.includes("reward");
-          if (f === "Fuel Benefits") return Boolean(fuel) && !fuel.startsWith("no");
+          if (f === "Virtual Card") return safeLower(card.category) === "digital" || featList.some(x => x.includes("virtual")) || safeLower(card.cardName).includes("digital");
+          if (f === "International Usage") return card.internationalUsage === true || safeLower(card.forexMarkup).includes("0%");
+          if (f === "Domestic Only") return card.internationalUsage === false;
+          if (f === "Lounge Access") return Boolean(lounge) && !lounge.startsWith("no") && !lounge.includes("not available");
+          if (f === "Cashback") return parseCashbackVal(card.cashback) > 0 || benefits.includes("cashback");
+          if (f === "Reward Points") return safeStr(card.rewards).length > 0 && !safeLower(card.rewards).includes("not available") || benefits.includes("reward");
+          if (f === "Fuel Benefits") return benefits.includes("fuel") || featList.some(x => x.includes("fuel"));
           if (f === "Dining Benefits") return benefits.includes("dining") || featList.some(x => x.includes("dining") || x.includes("food"));
-          if (f === "Shopping Benefits") return benefits.includes("shopping") || String(card.bestFor || '').toLowerCase().includes("shopping");
-          if (f === "Entertainment Benefits") return benefits.includes("movie") || benefits.includes("bogo") || featList.some(x => x.includes("movie") || x.includes("bogo") || x.includes("entertainment"));
+          if (f === "Shopping Benefits") return benefits.includes("shopping") || safeLower(card.bestFor).includes("shopping");
+          if (f === "Entertainment Benefits") return benefits.includes("movie") || benefits.includes("bogo") || featList.some(x => x.includes("movie") || x.includes("bogo"));
           if (f === "Insurance Coverage") return benefits.includes("insurance") || featList.some(x => x.includes("insurance"));
-          if (f === "EMI Support") return benefits.includes("emi") || featList.some(x => x.includes("emi"));
+          if (f === "EMI Support") return safeStr(card.emi).length > 0 && !safeLower(card.emi).includes("not available") || benefits.includes("emi");
           return true;
         });
       });
+      console.log(`[Filter Debug] Step 8 - Features (${selectedFeatures.join(', ')}): ${cards.length} cards`);
+    } else {
+      console.log(`[Filter Debug] Step 8 - Features (none): ${cards.length} cards`);
     }
 
     // 9. Bank Type Filter
-    if (selectedBankTypes.length > 0) {
+    if (Array.isArray(selectedBankTypes) && selectedBankTypes.length > 0) {
       cards = cards.filter(card => {
-        if (!card) return false;
-        const bankName = String(card.bank || '').toLowerCase();
+        const bankName = safeLower(card.bank);
         return selectedBankTypes.some(bt => {
-          if (bt === "Government Banks") return bankName.includes("sbi") || bankName.includes("state bank") || bankName.includes("baroda") || bankName.includes("punjab") || bankName.includes("canara") || bankName.includes("union bank") || bankName.includes("indian bank");
-          if (bt === "Private Banks") return bankName.includes("hdfc") || bankName.includes("icici") || bankName.includes("axis") || bankName.includes("kotak") || bankName.includes("indusind") || bankName.includes("yes bank") || bankName.includes("idfc") || bankName.includes("federal");
-          if (bt === "Small Finance Banks") return bankName.includes("au small") || bankName.includes("equitas") || bankName.includes("ujjivan") || bankName.includes("suryoday") || bankName.includes("small finance");
-          if (bt === "Payments Banks") return bankName.includes("paytm") || bankName.includes("airtel") || bankName.includes("post") || bankName.includes("nsdl") || bankName.includes("payments");
+          if (bt === "Government Banks") return bankName.includes("sbi") || bankName.includes("state bank") || bankName.includes("baroda") || bankName.includes("punjab") || bankName.includes("canara") || bankName.includes("union bank") || bankName.includes("indian bank") || bankName.includes("central bank") || bankName.includes("bank of india");
+          if (bt === "Private Banks") return bankName.includes("hdfc") || bankName.includes("icici") || bankName.includes("axis") || bankName.includes("kotak") || bankName.includes("indusind") || bankName.includes("yes bank") || bankName.includes("idfc") || bankName.includes("federal") || bankName.includes("rbl") || bankName.includes("south indian");
+          if (bt === "Small Finance Banks") return bankName.includes("au small") || bankName.includes("equitas") || bankName.includes("ujjivan") || bankName.includes("suryoday") || bankName.includes("small finance") || bankName.includes("jana");
+          if (bt === "Payments Banks") return bankName.includes("paytm") || bankName.includes("airtel") || bankName.includes("post") || bankName.includes("nsdl") || bankName.includes("payments") || bankName.includes("fi money");
           return true;
         });
       });
+      console.log(`[Filter Debug] Step 9 - Bank Types (${selectedBankTypes.join(', ')}): ${cards.length} cards`);
+    } else {
+      console.log(`[Filter Debug] Step 9 - Bank Types (none): ${cards.length} cards`);
     }
 
     // 10. Active Filters (Presets)
-    if (activeFilters.length > 0) {
+    if (Array.isArray(activeFilters) && activeFilters.length > 0) {
       cards = cards.filter((card) => {
-        if (!card) return false;
         return activeFilters.every(f => {
-          const category = String(card.category || '').toLowerCase();
-          const lounge = String(card.loungeAccess || '').toLowerCase();
-          const atmCharges = String(card.atmCharges || '').toLowerCase();
-          const hiddenCharges = String(card.hiddenCharges || '').toLowerCase();
-          const intl = String(card.internationalUsage || '').toLowerCase();
-          const fuel = String(card.fuelWaiver || '').toLowerCase();
-          const benefits = String(card.benefits || '').toLowerCase();
+          const category = safeLower(card.category);
+          const lounge = safeLower(card.loungeAccess);
 
           if (f === "Best for Students" || f === "Student Friendly") return card.studentFriendly === true;
           if (f === "Best for Women" || f === "Women Special") return card.womenSpecial === true;
           if (f === "Best for Seniors" || f === "Senior Citizen") return card.seniorCitizen === true;
-          if (f === "Lowest Fee") return (card.annualFee || 0) <= 250;
-          if (f === "Highest Cashback") return (card.cashbackPct || 0) >= 1.5;
-          if (f === "Zero Balance") return (card.minBalance || 0) === 0;
-          if (f === "Premium Benefits" || f === "Premium Banking") return category === 'premium' || (card.annualFee || 0) >= 1000;
-          if (f === "Travel Friendly" || f === "Best Travel Cards" || f === "Zero Forex") return card.travelZeroForex === true || (Boolean(lounge) && !lounge.startsWith('no'));
-          if (f === "Lounge Access") return Boolean(lounge) && !lounge.startsWith('no');
-          if (f === "International Usage") return Boolean(intl) && !intl.startsWith('no');
+          if (f === "Lowest Fee") return parseAnnualFeeVal(card.annualFee) <= 250;
+          if (f === "Highest Cashback") return parseCashbackVal(card.cashback) >= 1.5;
+          if (f === "Zero Balance") return card.minimumBalance === 0;
+          if (f === "Premium Benefits" || f === "Premium Banking") return category.includes('premium') || parseAnnualFeeVal(card.annualFee) >= 1000;
+          if (f === "Travel Friendly" || f === "Best Travel Cards" || f === "Zero Forex") return safeLower(card.forexMarkup).includes('0%') || (Boolean(lounge) && !lounge.startsWith('no'));
+          if (f === "Lounge Access") return Boolean(lounge) && !lounge.startsWith('no') && !lounge.includes('not available');
+          if (f === "International Usage") return card.internationalUsage === true;
           if (f === "Contactless") return Boolean(card.contactless);
-          if (f === "Fuel Waiver") return Boolean(fuel) && !fuel.startsWith('no');
           return true;
         });
       });
+      console.log(`[Filter Debug] Step 10 - Active Presets (${activeFilters.join(', ')}): ${cards.length} cards`);
+    } else {
+      console.log(`[Filter Debug] Step 10 - Active Presets (none): ${cards.length} cards`);
     }
 
     // 11. Selected Banks Filter
-    if (selectedBanks.length > 0) {
-      cards = cards.filter(card => card && selectedBanks.includes(card.bank));
+    if (Array.isArray(selectedBanks) && selectedBanks.length > 0) {
+      cards = cards.filter(card => {
+        const cb = safeLower(card.bank);
+        return selectedBanks.some(b => {
+          const sb = safeLower(b);
+          if (cb === sb || cb.includes(sb) || sb.includes(cb)) return true;
+          if (sb.includes("sbi") && (cb.includes("state bank") || cb.includes("sbi"))) return true;
+          if (sb.includes("state bank") && (cb.includes("sbi") || cb.includes("state bank"))) return true;
+          if (sb.includes("icici") && cb.includes("icici")) return true;
+          if (sb.includes("hdfc") && cb.includes("hdfc")) return true;
+          if (sb.includes("axis") && cb.includes("axis")) return true;
+          if (sb.includes("kotak") && cb.includes("kotak")) return true;
+          if ((sb.includes("pnb") || sb.includes("punjab")) && (cb.includes("pnb") || cb.includes("punjab"))) return true;
+          if ((sb.includes("bob") || sb.includes("baroda")) && (cb.includes("bob") || cb.includes("baroda"))) return true;
+          return false;
+        });
+      });
+      console.log(`[Filter Debug] Step 11 - Selected Banks (${selectedBanks.join(', ')}): ${cards.length} cards`);
+    } else {
+      console.log(`[Filter Debug] Step 11 - Selected Banks (none): ${cards.length} cards`);
     }
 
-    // 12. Continuous Range Sliders
-    cards = cards.filter(card => {
-      if (!card) return false;
-      const atmLimit = card.atmLimit ?? card.limits?.atmLimit ?? 50000;
-      const posLimit = card.posLimit ?? card.limits?.posLimit ?? 100000;
-      const annualFee = card.annualFee ?? 0;
-      const minBalance = card.minBalance ?? 0;
-      const rating = card.rating ?? 4.5;
-      const cashbackPct = card.cashbackPct ?? 0;
+    // 12. Continuous Range Sliders (Only if user has adjusted sliders from default)
+    const isFeeActive = feeRange < 2000;
+    const isBalanceActive = balanceRange < 500000;
+    const isRatingActive = minRating > 0;
+    const isCashbackActive = minCashback > 0;
+    const isAtmActive = (Array.isArray(atmRange) && (atmRange[0] > 0 || atmRange[1] < 1000000));
+    const isPosActive = (Array.isArray(posRange) && (posRange[0] > 0 || posRange[1] < 1500000));
 
-      return (
-        annualFee <= feeRange &&
-        minBalance <= balanceRange &&
-        rating >= minRating &&
-        cashbackPct >= minCashback &&
-        atmLimit >= atmRange[0] && atmLimit <= atmRange[1] &&
-        posLimit >= posRange[0] && posLimit <= posRange[1]
-      );
-    });
+    if (isFeeActive || isBalanceActive || isRatingActive || isCashbackActive || isAtmActive || isPosActive) {
+      cards = cards.filter(card => {
+        const annualFeeNum = parseAnnualFeeVal(card.annualFee);
+        const minBalNum = card.minimumBalance;
+        const ratingNum = card.rating || 4.5;
+        const cbNum = parseCashbackVal(card.cashback);
+        const atmLimit = card.atmLimit || 50000;
+        const posLimit = card.posLimit || 100000;
+
+        if (isFeeActive && annualFeeNum > feeRange) return false;
+        if (isBalanceActive && minBalNum > balanceRange) return false;
+        if (isRatingActive && ratingNum < minRating) return false;
+        if (isCashbackActive && cbNum < minCashback) return false;
+        if (isAtmActive && (atmLimit < atmRange[0] || atmLimit > atmRange[1])) return false;
+        if (isPosActive && (posLimit < posRange[0] || posLimit > posRange[1])) return false;
+        return true;
+      });
+      console.log(`[Filter Debug] Step 12 - Range Sliders (Active): ${cards.length} cards`);
+    } else {
+      console.log(`[Filter Debug] Step 12 - Range Sliders (none active): ${cards.length} cards`);
+    }
+
+    console.log(`[Filter Debug] FINAL Filtered Output: ${cards.length} cards`);
+    return cards;
 
     // 13. All Sorting Options
     if (sortBy === "most-popular") {
