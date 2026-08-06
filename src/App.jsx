@@ -9,6 +9,10 @@ import Footer from "./components/Footer";
 import AuthModal from "./components/AuthModal";
 import WebsiteDisclaimerModal from "./components/WebsiteDisclaimerModal";
 
+// Vercel Analytics & Performance Speed Insights
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
+
 // Pages
 import HomePage from "./pages/HomePage";
 import CardsPage from "./pages/CardsPage";
@@ -1029,6 +1033,8 @@ function App() {
           <WishlistProvider>
             <BrowserRouter>
               <AppContent />
+              <Analytics />
+              <SpeedInsights />
             </BrowserRouter>
           </WishlistProvider>
         </AuthProvider>
