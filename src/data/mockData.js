@@ -1,3 +1,6 @@
+import dcardDebitCardsRaw from "../../dcard_debit_cards.json";
+import { normalizeCard, deduplicateCards } from "../utils/compareUtils";
+
 export const bankCards = [
   { id: 1,
     image: "/images/cards/card-1.png", logo: "HD", name: "HDFC Bank", features: ["Cashback on Spends", "Airport Lounge Access", "Premium EMI Perks"], lowCharges: false, interest: 3.0 },
@@ -6323,6 +6326,23 @@ export const filterOptions = [
   "Zero Fee",
 ];
 
-export const BANKS = [...new Set(debitCards.map(c => c.bank))].sort();
+export const jsonDebitCards = (dcardDebitCardsRaw || []).map(c => normalizeCard({
+  ...c,
+  id: `json-${c.id}`,
+  dataset: 'json'
+}));
+
+export const normalizedMockDebitCards = (debitCards || []).map(c => normalizeCard({
+  ...c,
+  dataset: 'mock'
+}));
+
+export const allDebitCards = deduplicateCards([
+  ...normalizedMockDebitCards,
+  ...jsonDebitCards
+]);
+
+export const BANKS = [...new Set(allDebitCards.map(c => c.bank).filter(Boolean))].sort();
 export const NETWORKS = ["Visa", "Mastercard", "RuPay"];
-export const CATEGORIES = [...new Set(debitCards.map(c => c.category))];
+export const CATEGORIES = [...new Set(allDebitCards.map(c => c.category).filter(Boolean))];
+

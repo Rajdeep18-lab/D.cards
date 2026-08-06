@@ -1,19 +1,20 @@
-import { db, collection, getDocs, doc, getDoc } from '../lib/firebase';
-import { debitCards } from '../data/mockData';
+import { db, collection, getDocs } from '../lib/firebase';
+import { allDebitCards, debitCards } from '../data/mockData';
+import { normalizeCard } from '../utils/compareUtils';
 
 export const DEBIT_CARDS_COLLECTION = 'debit_cards';
 
-// In-memory caching for zero-latency page transitions & 99% reduction in Firestore reads
+// In-memory caching for zero-latency page transitions
 let cachedCards = null;
 let lastCacheTime = 0;
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes TTL
 
 /**
- * Service to interact exclusively with Firestore `debit_cards` collection
+ * Service to interact with debit cards collection and static datasets
  */
 export const cardService = {
   /**
-   * Fetch all debit cards, ensuring dataset is rolled back to stable verified 34 cards
+   * Fetch all debit cards, combining mock and JSON datasets
    */
   async getDebitCards(forceRefresh = false) {
     const now = Date.now();
@@ -24,41 +25,32 @@ export const cardService = {
     try {
       const querySnapshot = await getDocs(collection(db, DEBIT_CARDS_COLLECTION));
       if (!querySnapshot.empty) {
-        const firestoreCards = querySnapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
-        // Map and validate against original stable IDs 1..34
-        const validStableCards = debitCards.map(baseCard => {
-          const fsMatch = firestoreCards.find(fc => String(fc.id) === String(baseCard.id));
-          if (fsMatch && fsMatch.bank && fsMatch.cardName) {
-            return {
-              ...baseCard,
-              ...fsMatch,
-              id: baseCard.id, // preserve numeric ID 1..34
-              bank: fsMatch.bank || baseCard.bank,
-              cardName: fsMatch.cardName || baseCard.cardName
-            };
-          }
-          return baseCard;
-        });
+        const firestoreCards = querySnapshot.docs.map(docSnap => normalizeCard({ id: docSnap.id, ...docSnap.data() }));
+        const mergedMap = new Map();
+        
+        allDebitCards.forEach(c => mergedMap.set(String(c.id), c));
+        firestoreCards.forEach(fc => mergedMap.set(String(fc.id), fc));
 
-        cachedCards = validStableCards;
+        cachedCards = Array.from(mergedMap.values());
         lastCacheTime = now;
         return cachedCards;
       }
     } catch (err) {
-      console.warn("Firestore fetch notice for debit_cards collection, using stable dataset:", err.message || err);
+      console.warn("Firestore fetch notice for debit_cards collection, using combined dataset:", err.message || err);
     }
 
-    cachedCards = debitCards;
+    cachedCards = allDebitCards;
     lastCacheTime = now;
-    return debitCards;
+    return allDebitCards;
   },
 
   /**
-   * Fetch a single debit card by ID from stable dataset
+   * Fetch a single debit card by ID from combined dataset
    */
   async getDebitCardById(cardId) {
     const all = await this.getDebitCards();
-    return all.find(c => String(c.id) === String(cardId)) || debitCards.find(c => String(c.id) === String(cardId)) || null;
+    const strId = String(cardId);
+    return all.find(c => String(c.id) === strId) || null;
   },
 
   /**
@@ -71,3 +63,4 @@ export const cardService = {
 };
 
 export default cardService;
+

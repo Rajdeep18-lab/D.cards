@@ -1,10 +1,13 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { normalizeCard, safeMap } from '../utils/compareUtils';
 
-function ComparisonDock({ compareQueue, onRemove, onCompareNow, onClear }) {
-  if (compareQueue.length === 0) return null;
+function ComparisonDock({ compareQueue = [], onRemove, onCompareNow, onClear }) {
+  const queueList = safeMap(Array.isArray(compareQueue) ? compareQueue : [], normalizeCard);
 
-  const potentialSavings = compareQueue.length >= 2 ? "₹1,800/year" : null;
+  if (queueList.length === 0) return null;
+
+  const potentialSavings = queueList.length >= 2 ? "₹1,800/year" : null;
 
   return (
     <AnimatePresence>
@@ -21,7 +24,7 @@ function ComparisonDock({ compareQueue, onRemove, onCompareNow, onClear }) {
           <div className="flex flex-wrap items-center gap-3">
             {/* Count Chip */}
             <div className="px-3 py-1 rounded-full text-xs font-black text-white bg-gradient-to-r from-primary to-secondary shadow-sm">
-              {compareQueue.length} / 3 QUEUED
+              {queueList.length} / 3 QUEUED
             </div>
 
             {/* Potential Savings Badge */}
@@ -33,15 +36,16 @@ function ComparisonDock({ compareQueue, onRemove, onCompareNow, onClear }) {
 
             {/* Card Chips */}
             <div className="flex flex-wrap gap-2">
-              {compareQueue.map((card) => (
-                <div key={card.id} className="relative group">
+              {queueList.map((card, i) => (
+                <div key={card.id || i} className="relative group">
                   <div className="rounded-xl px-3 py-1.5 text-xs font-black flex items-center gap-1.5 bg-secondary/5 dark:bg-secondary/10 border border-secondary/15 text-secondary dark:text-[#f3d9e8] shadow-sm">
                     <span className="w-1.5 h-1.5 rounded-full bg-secondary dark:bg-[#C21875]" />
-                    {card.cardName}
+                    {card.cardName || "Debit Card"}
                   </div>
                   <button
-                    onClick={() => onRemove(card.id)}
+                    onClick={() => onRemove && onRemove(card.id)}
                     className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full flex items-center justify-center text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity shadow-md cursor-pointer bg-gradient-to-r from-primary to-secondary border border-white/10"
+                    title="Remove card"
                   >
                     ×
                   </button>
@@ -59,9 +63,9 @@ function ComparisonDock({ compareQueue, onRemove, onCompareNow, onClear }) {
             </button>
             <button
               onClick={onCompareNow}
-              disabled={compareQueue.length < 2}
+              disabled={queueList.length < 2}
               className={`px-5 py-2.5 rounded-xl text-xs font-black text-white transition-all shadow cursor-pointer ${
-                compareQueue.length >= 2
+                queueList.length >= 2
                   ? 'bg-gradient-to-r from-primary to-secondary hover:shadow-indigo'
                   : 'bg-slate-100 dark:bg-secondary/5 border border-slate-200 dark:border-secondary/10 text-slate-400 dark:text-slate-500 cursor-not-allowed shadow-none'
               }`}

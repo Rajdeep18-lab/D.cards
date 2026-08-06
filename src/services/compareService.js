@@ -1,42 +1,5 @@
 import { db, collection, addDoc, getDocs, query, where, orderBy, limit, deleteDoc, doc } from '../lib/firebase';
-
-/**
- * Computes the overall D.Card Score™ using the same logic as DebitCardCard.jsx
- */
-function calculateCardScore(card) {
-  if (!card) return 50;
-  let annualFeeNum = typeof card.annualFee === 'number' ? card.annualFee : parseFloat(String(card.annualFee || '').replace(/[^0-9.]/g, '')) || 0;
-  let minBalNum = typeof card.minBalance === 'number' ? card.minBalance : parseFloat(String(card.minBalance || '').replace(/[^0-9.]/g, '')) || 0;
-
-  let chargesScore = Math.round(98 - (annualFeeNum / 35) - (minBalNum / 9000));
-  chargesScore = Math.min(98, Math.max(45, chargesScore));
-
-  const loungeStr = String(card.loungeAccess || '').toLowerCase();
-  const bankStr = String(card.bank || '').toLowerCase();
-  const cardNameStr = String(card.cardName || '').toLowerCase();
-  const categoryStr = String(card.category || '').toLowerCase();
-
-  let perksCount = (loungeStr && !loungeStr.startsWith('no') ? 1.5 : 0) + 
-                   (card.travelZeroForex ? 1.5 : 0) + 
-                   (card.healthcareFriendly ? 1.5 : 0) + 
-                   ((card.cashbackPct || 0) >= 1.0 ? 1 : 0) + 
-                   (card.contactless ? 0.5 : 0) + 
-                   (card.fuelWaiver ? 0.5 : 0);
-  let benefitsScore = Math.round(55 + (perksCount * 6.5));
-  benefitsScore = Math.min(98, Math.max(50, benefitsScore));
-
-  let trustScoreVal = card.verificationStatus === 'Verified' ? 95 : card.verificationStatus === 'Recently Updated' ? 88 : 72;
-
-  let digitalExperienceScore = categoryStr === 'digital' || bankStr.includes("fi money") ? 96 : 88;
-  if (cardNameStr.includes("wealth") || cardNameStr.includes("private")) {
-    digitalExperienceScore = 98;
-  }
-
-  let overallScore = Math.round((chargesScore * 0.3) + (benefitsScore * 0.3) + (trustScoreVal * 0.2) + (digitalExperienceScore * 0.2));
-  overallScore = Math.min(98, Math.max(50, overallScore));
-
-  return overallScore;
-}
+import { normalizeCard, calculateCardAIScore } from '../utils/compareUtils';
 
 export const compareService = {
   /**
@@ -53,21 +16,22 @@ export const compareService = {
     let comparedCardDetails = [];
 
     if (isObjects) {
-      comparedCards = cardsOrIds.map(c => c?.id || 'unknown');
-      comparedCardNames = cardsOrIds.map(c => c?.cardName || 'Unknown Card');
-      comparedBanks = cardsOrIds.map(c => c?.bank || 'Unknown Bank');
-      comparedCardDetails = cardsOrIds.map(c => {
-        const scoreVal = calculateCardScore(c);
+      const normalizedList = cardsOrIds.map(normalizeCard);
+      comparedCards = normalizedList.map(c => c.id || 'unknown');
+      comparedCardNames = normalizedList.map(c => c.cardName || 'Unknown Card');
+      comparedBanks = normalizedList.map(c => c.bank || 'Unknown Bank');
+      comparedCardDetails = normalizedList.map(c => {
+        const scoreVal = c.aiScore || calculateCardAIScore(c);
         return {
-          card_id: c?.id || 'unknown',
-          card_name: c?.cardName || 'Unknown Card',
-          bank_name: c?.bank || 'Unknown Bank',
-          annual_fee: c?.annualFee === 0 ? "Lifetime Free" : (c?.annualFee ? `₹${c.annualFee}` : "Not Available"),
+          card_id: c.id || 'unknown',
+          card_name: c.cardName || 'Unknown Card',
+          bank_name: c.bank || 'Unknown Bank',
+          annual_fee: c.annualFee || "Free",
           score: `${scoreVal}/100`
         };
       });
     } else {
-      comparedCards = cardsOrIds;
+      comparedCards = cardsOrIds.map(item => String(item || ''));
     }
 
     const firstCardVal = isObjects ? (cardsOrIds[0]?.cardName || cardsOrIds[0]?.id || '') : (cardsOrIds[0] || '');

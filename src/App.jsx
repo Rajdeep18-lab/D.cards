@@ -7,11 +7,13 @@ import FilterSidebar from "./components/FilterSidebar";
 import BankCard from "./components/BankCard";
 import DebitCardCard from "./components/DebitCardCard";
 import ComparisonTable from "./components/ComparisonTable";
+import ComparisonDock from "./components/ComparisonDock";
 import LoadingSkeleton from "./components/LoadingSkeleton";
 import Footer from "./components/Footer";
 import TopCardsSection from "./components/TopCardsSection";
 import AuthModal from "./components/AuthModal";
 import QuickFilterChips from "./components/QuickFilterChips";
+import { normalizeCard, deduplicateCards } from "./utils/compareUtils";
 
 // Lazy Loaded Heavy Components & Modals for Code Splitting
 const UserProfilePage = lazy(() => import("./components/UserProfilePage"));
@@ -35,7 +37,7 @@ import { ToastProvider, useToast } from "./context/ToastContext";
 import { WishlistProvider, useWishlist } from "./context/WishlistContext";
 import { AuthProvider } from "./context/AuthContext";
 import { useAuth } from "./hooks/useAuth";
-import { bankCards, debitCards } from "./data/mockData";
+import { bankCards, debitCards, allDebitCards } from "./data/mockData";
 
 /* Dynamic limit extractor from card features */
 function getCardLimits(card) {
@@ -250,7 +252,7 @@ function AppInner() {
     return () => clearTimeout(timer);
   }, []);
 
-  const [rawLiveCards, setRawLiveCards] = useState(debitCards);
+  const [rawLiveCards, setRawLiveCards] = useState(allDebitCards);
 
   const fetchLiveCards = useCallback(async () => {
     try {
@@ -540,14 +542,19 @@ function AppInner() {
     toast(`Preset settings loaded successfully!`, "success");
   }, [toast]);
 
-  const toggleCompareQueue = useCallback((card) => {
+  const toggleCompareQueue = useCallback((rawCard) => {
+    if (!rawCard) return;
+    const card = normalizeCard(rawCard);
     setCompareQueue(prev => {
-      if (prev.find(c => c.id === card.id)) return prev.filter(c => c.id !== card.id);
+      const exists = prev.some(c => String(c.id) === String(card.id) || (c.bank.toLowerCase().trim() === card.bank.toLowerCase().trim() && c.cardName.toLowerCase().trim() === card.cardName.toLowerCase().trim()));
+      if (exists) {
+        return prev.filter(c => String(c.id) !== String(card.id) && !(c.bank.toLowerCase().trim() === card.bank.toLowerCase().trim() && c.cardName.toLowerCase().trim() === card.cardName.toLowerCase().trim()));
+      }
       if (prev.length >= 3) {
         toast("You can compare up to 3 cards at a time", "warning");
         return prev;
       }
-      return [...prev, card];
+      return deduplicateCards([...prev, card]);
     });
   }, [toast]);
 
@@ -1163,18 +1170,24 @@ function AppInner() {
                   <div className="mb-6 flex items-end justify-between border-b border-highlight dark:border-darkHighlight pb-4">
                     <div>
                       <h2 className="text-2xl font-bold font-serif text-primary dark:text-accent">
-                        {isComparing ? "Your Comparison" : "Feature Comparison Matrix"}
+                        {compareQueue.length > 0 ? `Your Comparison (${compareQueue.length})` : "Feature Comparison Matrix"}
                       </h2>
                       <p className="text-sm text-textSoft dark:text-gray-400 mt-1">Detailed side-by-side evaluation</p>
                     </div>
-                    {isComparing && (
-                      <button onClick={() => setIsComparing(false)} className="text-sm text-cta dark:text-primary font-bold hover:underline">
+                    {compareQueue.length > 0 && (
+                      <button 
+                        onClick={() => {
+                          setCompareQueue([]);
+                          setIsComparing(false);
+                        }} 
+                        className="text-sm text-cta dark:text-primary font-bold hover:underline cursor-pointer"
+                      >
                         Clear Comparison
                       </button>
                     )}
                   </div>
                   <div className="bg-cardBg dark:bg-darkCard rounded-xl p-3 sm:p-6 shadow-soft border border-highlight dark:border-darkHighlight overflow-x-auto transition-colors">
-                    <ComparisonTable cards={isComparing ? compareQueue : debitCards.slice(0, 3)} />
+                    <ComparisonTable cards={compareQueue} />
                   </div>
                 </section>
                 
@@ -1393,6 +1406,19 @@ function AppInner() {
           />
         )}
       </AnimatePresence>
+
+      <ComparisonDock
+        compareQueue={compareQueue}
+        onRemove={(cardId) => setCompareQueue(prev => prev.filter(c => String(c.id) !== String(cardId)))}
+        onCompareNow={() => {
+          setIsComparing(true);
+          document.getElementById('comparison')?.scrollIntoView({ behavior: 'smooth' });
+        }}
+        onClear={() => {
+          setCompareQueue([]);
+          setIsComparing(false);
+        }}
+      />
     </div>
   );
 }
