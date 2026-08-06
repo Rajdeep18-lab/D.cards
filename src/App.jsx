@@ -18,6 +18,7 @@ import FavoritesPage from "./pages/FavoritesPage";
 import BanksPage from "./pages/BanksPage";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
+import FoundersPage from "./pages/FoundersPage";
 
 import { normalizeCard, deduplicateCards, parseAnnualFeeVal, parseCashbackVal, safeLower, safeIncludes, safeStr, safeMap } from "./utils/compareUtils";
 
@@ -918,6 +919,14 @@ function AppContent() {
           <Route 
             path="/about" 
             element={<AboutPage />} 
+          />
+          <Route 
+            path="/founders" 
+            element={<FoundersPage />} 
+          />
+          <Route 
+            path="/team" 
+            element={<FoundersPage />} 
           />
           <Route 
             path="/contact" 

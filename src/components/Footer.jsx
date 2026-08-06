@@ -13,6 +13,7 @@ function Footer({ onOpenLegal }) {
     ],
     'Company': [
       { name: 'About Us', path: '/about' },
+      { name: 'Founders & Team', path: '/founders' },
       { name: 'Contact Support', path: '/contact' },
       { name: 'Privacy Policy', type: 'privacy' },
       { name: 'Terms & Conditions', type: 'terms' },
