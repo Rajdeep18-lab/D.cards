@@ -50,12 +50,18 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, onOpenWishlist, onOpen
   }, [isMobileMenuOpen]);
 
   const handleNavClick = (viewName, targetHash, profileTab = "profile") => {
-    if (onNavigateView) {
-      onNavigateView(viewName, profileTab);
-    }
-    if (targetHash && (currentView === "home" || viewName === "home")) {
-      const el = document.querySelector(targetHash);
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    if (viewName === 'profile') {
+      if (onNavigateView) onNavigateView('profile', profileTab);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      if (onNavigateView) onNavigateView('home', 'profile');
+      if (targetHash) {
+        setTimeout(() => {
+          const el = document.querySelector(targetHash);
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+          else window.scrollTo({ top: 0, behavior: 'smooth' });
+        }, 50);
+      }
     }
   };
 
