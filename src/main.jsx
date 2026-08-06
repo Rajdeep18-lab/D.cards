@@ -5,10 +5,12 @@ import { SpeedInsights } from "@vercel/speed-insights/react";
 import App from "./App";
 import "./index.css";
 
+const isProduction = import.meta.env.PROD || process.env.NODE_ENV === 'production';
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <App />
-    <Analytics />
+    <Analytics mode={isProduction ? "production" : "auto"} />
     <SpeedInsights />
   </React.StrictMode>
 );
