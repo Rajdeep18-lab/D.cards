@@ -335,4 +335,11 @@ function DebitCardCard({ card, onCompare, isQueued, onViewDetails, userProfile =
   );
 }
 
-export default memo(DebitCardCard);
+export default memo(DebitCardCard, (prevProps, nextProps) => {
+  return (
+    prevProps.card?.id === nextProps.card?.id &&
+    prevProps.isQueued === nextProps.isQueued &&
+    prevProps.userProfile === nextProps.userProfile &&
+    prevProps.activeFilters?.length === nextProps.activeFilters?.length
+  );
+});

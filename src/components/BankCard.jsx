@@ -66,4 +66,6 @@ function BankCard({ bank, onSelect }) {
   );
 }
 
-export default memo(BankCard);
+export default memo(BankCard, (prevProps, nextProps) => {
+  return prevProps.bank?.name === nextProps.bank?.name;
+});

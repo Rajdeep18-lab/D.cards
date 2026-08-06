@@ -226,7 +226,7 @@ function UserProfilePage({ activeTab = "profile", onSelectCard, onCompareCards, 
         <div className="relative z-10 flex flex-col sm:flex-row items-center gap-5">
           <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-slate-900 border-4 border-white/30 overflow-hidden shadow-2xl flex items-center justify-center text-3xl font-black flex-shrink-0">
             {profileImage ? (
-              <img src={profileImage} alt="Profile Avatar" className="w-full h-full object-cover" />
+              <img src={profileImage} alt="Profile Avatar" width="96" height="96" loading="lazy" decoding="async" className="w-full h-full object-cover" />
             ) : (
               <span>{String(fullName || user?.email || 'U').charAt(0).toUpperCase()}</span>
             )}
@@ -304,6 +304,10 @@ function UserProfilePage({ activeTab = "profile", onSelectCard, onCompareCards, 
                     key={idx}
                     src={url}
                     alt={`Avatar ${idx}`}
+                    width="48"
+                    height="48"
+                    loading="lazy"
+                    decoding="async"
                     onClick={() => setProfileImage(url)}
                     className={`w-12 h-12 rounded-full object-cover cursor-pointer border-2 transition-all ${
                       profileImage === url ? 'border-secondary scale-110 shadow-lg' : 'border-transparent opacity-70 hover:opacity-100'

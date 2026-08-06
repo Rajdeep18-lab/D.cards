@@ -13,6 +13,7 @@ import Footer from "./components/Footer";
 import TopCardsSection from "./components/TopCardsSection";
 import AuthModal from "./components/AuthModal";
 import QuickFilterChips from "./components/QuickFilterChips";
+import VirtualizedCardGrid from "./components/VirtualizedCardGrid";
 import { normalizeCard, deduplicateCards, parseAnnualFeeVal, parseCashbackVal, safeLower, safeIncludes, safeStr, safeMap } from "./utils/compareUtils";
 
 // Lazy Loaded Heavy Components & Modals for Code Splitting
@@ -1152,34 +1153,15 @@ function AppInner() {
                       </button>
                     </motion.div>
                   ) : (
-                    <motion.div
-                      initial="hidden"
-                      animate="visible"
-                      variants={{ visible: { transition: { staggerChildren: 0.08 } } }}
-                      className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
-                    >
-                      <AnimatePresence>
-                        {filteredCards.map((card) => (
-                          <motion.div
-                            key={card.id}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.9 }}
-                            className="h-full"
-                          >
-                            <DebitCardCard
-                              card={card}
-                              onCompare={() => toggleCompareQueue(card)}
-                              isQueued={compareQueue.some(c => c.id === card.id)}
-                              onViewDetails={() => setSelectedCard(card)}
-                              userProfile={userProfile}
-                              activeFilters={activeFilters}
-                              rankings={STATIC_RANKINGS}
-                            />
-                          </motion.div>
-                        ))}
-                      </AnimatePresence>
-                    </motion.div>
+                    <VirtualizedCardGrid
+                      cards={filteredCards}
+                      toggleCompareQueue={toggleCompareQueue}
+                      compareQueue={compareQueue}
+                      setSelectedCard={setSelectedCard}
+                      userProfile={userProfile}
+                      activeFilters={activeFilters}
+                      STATIC_RANKINGS={STATIC_RANKINGS}
+                    />
                   )}
                 </section>
 
@@ -1391,13 +1373,13 @@ function AppInner() {
       </Suspense>
 
       <Suspense fallback={null}>
-        <ContactModal isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />
-        <AboutModal isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
-        <LegalModal isOpen={isLegalOpen} onClose={() => setIsLegalOpen(false)} initialTab={legalTab} />
+        {isContactOpen && <ContactModal isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />}
+        {isAboutOpen && <AboutModal isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />}
+        {isLegalOpen && <LegalModal isOpen={isLegalOpen} onClose={() => setIsLegalOpen(false)} initialTab={legalTab} />}
         <AIChatAssistant onOpenContact={() => setIsContactOpen(true)} />
-        <AdminDashboardModal isOpen={isAdminOpen} onClose={() => setIsAdminOpen(false)} currentUser={user} />
-        <AdminLoginPage isOpen={isAdminLoginOpen} onClose={() => setIsAdminLoginOpen(false)} />
-        <AccessDeniedModal isOpen={isAccessDeniedOpen} onClose={() => setIsAccessDeniedOpen(false)} onOpenAuth={() => openAuthModal('login')} />
+        {isAdminOpen && <AdminDashboardModal isOpen={isAdminOpen} onClose={() => setIsAdminOpen(false)} currentUser={user} />}
+        {isAdminLoginOpen && <AdminLoginPage isOpen={isAdminLoginOpen} onClose={() => setIsAdminLoginOpen(false)} />}
+        {isAccessDeniedOpen && <AccessDeniedModal isOpen={isAccessDeniedOpen} onClose={() => setIsAccessDeniedOpen(false)} onOpenAuth={() => openAuthModal('login')} />}
       </Suspense>
 
       {/* Mobile Floating Filters Trigger Button */}

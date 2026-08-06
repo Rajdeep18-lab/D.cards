@@ -204,7 +204,7 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, onOpenWishlist, onOpen
                 >
                   <div className="w-6 h-6 rounded-full bg-gradient-to-br from-secondary to-primary text-white text-[10px] font-black flex items-center justify-center shadow-inner overflow-hidden">
                     {profile?.profile_image ? (
-                      <img src={profile.profile_image} alt="Avatar" className="w-full h-full object-cover" />
+                      <img src={profile.profile_image} alt="Avatar" width="24" height="24" loading="lazy" decoding="async" className="w-full h-full object-cover" />
                     ) : (
                       <span>{String(profile?.full_name || user?.email || 'U').charAt(0).toUpperCase()}</span>
                     )}
