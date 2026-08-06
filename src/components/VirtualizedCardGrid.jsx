@@ -14,11 +14,11 @@ function VirtualizedCardGrid({
   activeFilters = [],
   STATIC_RANKINGS
 }) {
-  const INITIAL_TOP_COUNT = 12;
-  const CHUNK_INCREMENT = 12;
+  const INITIAL_TOP_COUNT = 6;
+  const CHUNK_INCREMENT = 6;
   const [visibleCount, setVisibleCount] = useState(INITIAL_TOP_COUNT);
 
-  // Reset to Top 12 cards when search/filters change
+  // Reset to Top 6 cards when search/filters change
   useEffect(() => {
     setVisibleCount(INITIAL_TOP_COUNT);
   }, [cards]);
@@ -76,7 +76,7 @@ function VirtualizedCardGrid({
             }}
             className="text-xs font-bold text-secondary dark:text-roseGold hover:underline cursor-pointer flex items-center gap-1"
           >
-            ↑ Collapse Back to Top 12 Cards
+            ↑ Collapse Back to Top 6 Cards
           </button>
         </div>
       )}

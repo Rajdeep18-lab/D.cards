@@ -202,7 +202,7 @@ export default function TopCardsSection({ onViewDetails }) {
           scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch',
         }}
       >
-        {topCards.map((card, idx) => (
+        {(debitCards || []).slice(0, 5).map((card, idx) => (
           <TopCardItem key={card.id} card={card} index={idx} onViewDetails={onViewDetails} />
         ))}
       </div>
