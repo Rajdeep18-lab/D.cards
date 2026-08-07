@@ -785,6 +785,10 @@ function AppContent() {
       cards = [...cards].sort((a, b) => (b?.id || 0) - (a?.id || 0));
     }
 
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`[D.CARD Filter Engine] Base Cards: ${activeCardsList?.length || 0} | Active Filters: ${totalActiveFiltersCount} | Filtered Result: ${cards.length}`);
+    }
+
     return cards;
   }, [
     query, activeFilters, selectedUserTypes, selectedNetworks, selectedCategories,

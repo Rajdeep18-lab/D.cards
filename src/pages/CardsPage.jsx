@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Filter, SlidersHorizontal, ArrowUpDown, Sparkles, ShieldCheck, CreditCard } from 'lucide-react';
+import { Search, Filter, SlidersHorizontal, ArrowUpDown, Sparkles, ShieldCheck, CreditCard, X, RotateCcw } from 'lucide-react';
 import FilterSidebar from '../components/FilterSidebar';
 import QuickFilterChips from '../components/QuickFilterChips';
 import VirtualizedCardGrid from '../components/VirtualizedCardGrid';
@@ -62,7 +62,7 @@ function CardsPage({
 }) {
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isMobileFilterOpen) {
       document.body.style.overflow = 'hidden';
     } else {
@@ -73,15 +73,33 @@ function CardsPage({
     };
   }, [isMobileFilterOpen]);
 
+  // Construct active filter chips array for top bar display
+  const activeChipsList = [];
+  if (query) activeChipsList.push({ label: `Search: "${query}"`, onRemove: () => setQuery('') });
+  selectedBanks.forEach(b => activeChipsList.push({ label: b, onRemove: () => toggleBank(b) }));
+  selectedNetworks.forEach(n => activeChipsList.push({ label: n, onRemove: () => toggleNetwork(n) }));
+  selectedCategories.forEach(c => activeChipsList.push({ label: c, onRemove: () => toggleCategory(c) }));
+  selectedUserTypes.forEach(u => activeChipsList.push({ label: u, onRemove: () => toggleUserType(u) }));
+  selectedBankTypes.forEach(bt => activeChipsList.push({ label: bt, onRemove: () => toggleBankType(bt) }));
+  selectedFeatures.forEach(f => activeChipsList.push({ label: f, onRemove: () => toggleFeature(f) }));
+  activeFilters.forEach(af => activeChipsList.push({ label: af, onRemove: () => toggleFilter(af) }));
+  if (selectedFeeTier) activeChipsList.push({ label: `Fee: ${selectedFeeTier}`, onRemove: () => setSelectedFeeTier(null) });
+  if (selectedAtmLimitTier) activeChipsList.push({ label: `ATM: ${selectedAtmLimitTier}`, onRemove: () => setSelectedAtmLimitTier(null) });
+  if (selectedPosLimitTier) activeChipsList.push({ label: `POS: ${selectedPosLimitTier}`, onRemove: () => setSelectedPosLimitTier(null) });
+  if (feeRange < 2000) activeChipsList.push({ label: `Fee ≤ ₹${feeRange}`, onRemove: () => setFeeRange(2000) });
+  if (balanceRange < 500000) activeChipsList.push({ label: `Bal ≤ ₹${balanceRange}`, onRemove: () => setBalanceRange(500000) });
+  if (minRating > 0) activeChipsList.push({ label: `Rating ≥ ${minRating}★`, onRemove: () => setMinRating(0) });
+  if (minCashback > 0) activeChipsList.push({ label: `Cashback ≥ ${minCashback}%`, onRemove: () => setMinCashback(0) });
+
   return (
-    <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 relative z-20">
+    <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 relative z-20 select-none">
       {/* Header Banner */}
       <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#E5E7EB] dark:border-slate-800 pb-6 text-left">
         <div>
-          <span className="text-xs font-semibold text-[#2563EB] dark:text-[#60A5FA] tracking-widest uppercase block mb-1">
+          <span className="text-xs font-bold text-[#2563EB] dark:text-[#60A5FA] tracking-widest uppercase block mb-1">
             FINANCIAL INFORMATION DATABASE
           </span>
-          <h1 className="text-3xl font-bold text-[#1F2937] dark:text-white">
+          <h1 className="text-3xl font-extrabold text-[#1F2937] dark:text-white">
             Debit Cards & Account Limits
           </h1>
           <p className="text-xs sm:text-sm text-[#6B7280] dark:text-slate-400 mt-1 font-normal">
@@ -91,19 +109,19 @@ function CardsPage({
 
         {/* Global Search inside Cards Page */}
         <div className="w-full md:w-80">
-          <div className="relative flex items-center bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-700 rounded-xl px-3 py-2 shadow-sm focus-within:border-[#2563EB] transition-colors">
+          <div className="relative flex items-center bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-700 rounded-xl px-3.5 py-2.5 shadow-sm focus-within:border-[#2563EB] transition-colors">
             <Search className="w-4 h-4 text-[#6B7280] dark:text-slate-400 mr-2 flex-shrink-0" />
             <input
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search bank, card or perk..."
-              className="w-full bg-transparent border-none text-xs font-normal text-[#1F2937] dark:text-white outline-none placeholder-[#9CA3AF]"
+              className="w-full bg-transparent border-none text-xs font-semibold text-[#1F2937] dark:text-white outline-none placeholder-[#9CA3AF]"
             />
             {query && (
               <button
                 onClick={() => setQuery('')}
-                className="text-xs text-[#6B7280] hover:text-[#1F2937] dark:hover:text-white px-1 font-bold"
+                className="text-xs text-[#6B7280] hover:text-[#1F2937] dark:hover:text-white px-1 font-bold cursor-pointer"
               >
                 ✕
               </button>
@@ -112,20 +130,24 @@ function CardsPage({
         </div>
       </div>
 
-      {/* Quick Filter Chips */}
+      {/* Quick Discovery Filter Chips */}
       <div className="mb-6">
         <QuickFilterChips
-          activeFilters={activeFilters}
-          toggleFilter={toggleFilter}
-          clearFilters={clearFilters}
-          STATIC_RANKINGS={STATIC_RANKINGS}
-          TOTAL_CARDS_COUNT={TOTAL_CARDS_COUNT}
-          VERIFIED_CARDS_COUNT={VERIFIED_CARDS_COUNT}
-          PENDING_VERIFY_COUNT={PENDING_VERIFY_COUNT}
-          RECENTLY_UPDATED_COUNT={RECENTLY_UPDATED_COUNT}
-          handleLoadPreset={handleLoadPreset}
-          userProfile={userProfile}
-          handleApplyProfilePreset={handleApplyProfilePreset}
+          selectedUserTypes={selectedUserTypes}
+          toggleUserType={toggleUserType}
+          selectedFeeTier={selectedFeeTier}
+          setFeeTier={setSelectedFeeTier}
+          selectedBankTypes={selectedBankTypes}
+          toggleBankType={toggleBankType}
+          selectedNetworks={selectedNetworks}
+          toggleNetwork={toggleNetwork}
+          selectedFeatures={selectedFeatures}
+          toggleFeature={toggleFeature}
+          selectedCategories={selectedCategories}
+          toggleCategory={toggleCategory}
+          sortBy={sortBy}
+          setSortBy={setSortBy}
+          onResetFilters={handleResetFilters}
         />
       </div>
 
@@ -196,28 +218,72 @@ function CardsPage({
           {/* Top Toolbar */}
           <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-[#E5E7EB] dark:border-slate-800 pb-4 text-left">
             <div>
-              <h2 className="text-lg font-bold text-[#1F2937] dark:text-white">Active Card Selection</h2>
-              <p className="text-xs text-[#6B7280] dark:text-slate-400 mt-0.5 font-normal">Showing {filteredCards.length} cards matching your filter criteria</p>
+              <h2 className="text-lg font-extrabold text-[#1F2937] dark:text-white">Active Card Selection</h2>
+              <p className="text-xs text-[#6B7280] dark:text-slate-400 mt-0.5 font-normal">
+                Showing {filteredCards.length} cards matching your filter criteria
+              </p>
             </div>
 
             {/* Sort Selector */}
             <div className="flex items-center gap-2 select-none">
               <ArrowUpDown className="w-3.5 h-3.5 text-[#6B7280]" />
-              <span className="text-xs font-normal text-[#6B7280] dark:text-slate-400">Sort By:</span>
+              <span className="text-xs font-semibold text-[#6B7280] dark:text-slate-400">Sort By:</span>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-700 rounded-xl px-3 py-1.5 text-xs font-semibold text-[#1F2937] dark:text-white outline-none cursor-pointer"
+                className="bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-700 rounded-xl px-3 py-1.5 text-xs font-extrabold text-[#1F2937] dark:text-white outline-none cursor-pointer"
               >
-                <option value="popularity">Popularity (Default)</option>
-                <option value="rating_high">Rating: High to Low</option>
-                <option value="fee_low">Annual Fee: Low to High</option>
-                <option value="fee_high">Annual Fee: High to Low</option>
+                <option value="most-popular">Popularity (Default)</option>
+                <option value="highest-rated">Rating: High to Low</option>
+                <option value="fee-low">Annual Fee: Low to High</option>
+                <option value="fee-high">Annual Fee: High to Low</option>
                 <option value="cashback_high">Reward Rate: High to Low</option>
                 <option value="atm_high">ATM Limit: High to Low</option>
               </select>
             </div>
           </div>
+
+          {/* ── Active Filter Chips Bar (Requirement #8) ── */}
+          {activeChipsList.length > 0 && (
+            <div className="mb-6 p-4 rounded-2xl glass-card-premium border border-[#E5E7EB] dark:border-slate-800 shadow-soft text-left space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-extrabold text-[#1F2937] dark:text-white uppercase tracking-wider flex items-center gap-1.5">
+                  <Filter className="w-3.5 h-3.5 text-[#2563EB]" />
+                  Active Filter Criteria ({activeChipsList.length})
+                </span>
+                <button
+                  type="button"
+                  onClick={handleResetFilters}
+                  className="text-xs font-bold text-[#2563EB] dark:text-[#60A5FA] hover:underline flex items-center gap-1 cursor-pointer"
+                >
+                  <RotateCcw className="w-3 h-3" />
+                  <span>Clear All Filters</span>
+                </button>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2 pt-1">
+                {activeChipsList.map((chip, idx) => (
+                  <motion.span
+                    key={idx}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] border border-[#2563EB]/25 text-xs font-extrabold"
+                  >
+                    <span>{chip.label}</span>
+                    <button
+                      type="button"
+                      onClick={chip.onRemove}
+                      className="w-4 h-4 rounded-full bg-[#2563EB]/20 hover:bg-[#2563EB] hover:text-white flex items-center justify-center transition-colors cursor-pointer text-[10px]"
+                      title={`Remove ${chip.label}`}
+                    >
+                      ✕
+                    </button>
+                  </motion.span>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Cards Grid */}
           {isLoading ? (
@@ -230,19 +296,22 @@ function CardsPage({
               setSelectedCard={setSelectedCard}
             />
           ) : (
-            <div className="py-16 text-center bg-white dark:bg-[#1E293B] rounded-3xl border border-[#E5E7EB] dark:border-slate-800 p-8 space-y-4">
-              <div className="w-16 h-16 rounded-full bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center text-2xl mx-auto shadow-sm">
+            <div className="py-16 text-center bg-white dark:bg-[#1E293B] rounded-3xl border border-[#E5E7EB] dark:border-slate-800 p-8 space-y-4 shadow-soft">
+              <div className="w-16 h-16 rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center text-2xl mx-auto shadow-xs border border-rose-500/20">
                 🔍
               </div>
-              <h3 className="text-xl font-bold text-[#1F2937] dark:text-white">No debit cards match your selected filters.</h3>
+              <h3 className="text-xl font-extrabold text-[#1F2937] dark:text-white">
+                No cards match your selected filters.
+              </h3>
               <p className="text-xs text-[#6B7280] dark:text-slate-400 max-w-sm mx-auto font-normal">
-                Try widening your fee ranges or resetting bank filters to explore more cards.
+                Try clearing one or two filter criteria to view more debit card options.
               </p>
               <button
                 onClick={handleResetFilters}
-                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white text-xs font-semibold shadow-sm hover:opacity-95 transition-all cursor-pointer"
+                className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white text-xs font-extrabold uppercase tracking-wider shadow-md hover:shadow-lg transition-all cursor-pointer inline-flex items-center gap-2"
               >
-                Reset All Filters
+                <RotateCcw className="w-4 h-4" />
+                <span>Clear All Filters</span>
               </button>
             </div>
           )}
@@ -253,10 +322,10 @@ function CardsPage({
       {isMobileFilterOpen && (
         <div className="fixed inset-0 z-50 lg:hidden flex flex-col bg-white dark:bg-[#0F172A] p-4 overflow-y-auto">
           <div className="flex items-center justify-between pb-4 border-b border-[#E5E7EB] dark:border-slate-800 mb-4">
-            <h3 className="text-lg font-bold text-[#1F2937] dark:text-white">Filter & Sort Options</h3>
+            <h3 className="text-lg font-extrabold text-[#1F2937] dark:text-white">Filter & Sort Options</h3>
             <button
               onClick={() => setIsMobileFilterOpen(false)}
-              className="text-lg font-bold text-[#6B7280]"
+              className="text-lg font-bold text-[#6B7280] cursor-pointer"
             >
               ✕
             </button>
@@ -300,12 +369,6 @@ function CardsPage({
             toggleFeature={toggleFeature}
             totalActiveFiltersCount={totalActiveFiltersCount}
           />
-          <button
-            onClick={() => setIsMobileFilterOpen(false)}
-            className="mt-6 w-full py-3 rounded-xl bg-[#2563EB] text-white font-semibold text-xs shadow-md"
-          >
-            Apply Filters
-          </button>
         </div>
       )}
     </main>
