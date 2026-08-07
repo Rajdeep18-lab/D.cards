@@ -1,35 +1,58 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bot, User, Send, Sparkles, X, Minus, Maximize2, Trash2, ShieldCheck, CreditCard, Plane, Gift, Award, Zap } from 'lucide-react';
+import { 
+  Bot, 
+  User, 
+  Send, 
+  Sparkles, 
+  X, 
+  Minus, 
+  Maximize2, 
+  Trash2, 
+  ShieldCheck, 
+  CreditCard, 
+  Plane, 
+  Gift, 
+  CheckCircle2, 
+  Zap,
+  ArrowRight,
+  RefreshCw,
+  Layers,
+  Percent,
+  Check
+} from 'lucide-react';
 import { aiChatService } from '../services/aiChatService';
 import { useAuth } from '../hooks/useAuth';
 
 const QUICK_ACTIONS = [
-  { label: "RuPay Cards", query: "Show me the best RuPay Debit Card" },
   { label: "Visa Cards", query: "Show me Visa Debit Cards" },
+  { label: "RuPay Cards", query: "Show me the best RuPay Debit Card" },
+  { label: "Mastercard", query: "Show me Mastercard Debit Cards" },
+  { label: "Airport Lounge", query: "Which debit cards offer Airport Lounge Access?" },
   { label: "Zero Annual Fee", query: "Show me Zero Annual Fee Debit Cards" },
-  { label: "SBI Cards", query: "Show me SBI Debit Cards" },
-  { label: "HDFC Cards", query: "Show me HDFC Debit Cards" },
-  { label: "ATM Limits", query: "Show me ATM Withdrawal Limits" },
-  { label: "Lounge Access", query: "Which cards offer Airport Lounge Access?" },
-  { label: "Contactless Cards", query: "Show me Contactless Cards" },
-  { label: "Cashback Cards", query: "Show me Cashback Cards" },
-  { label: "Platinum Cards", query: "Show me Platinum Cards" },
-  { label: "Compare Cards", query: "Compare Debit Cards" }
+  { label: "Cashback Cards", query: "Show me Cashback Debit Cards" },
+  { label: "Fuel Benefits", query: "Which debit cards offer fuel surcharge waivers?" },
+  { label: "Shopping Cards", query: "Show me best debit cards for online shopping rewards" },
+  { label: "Travel Cards", query: "Show me zero forex travel debit cards" },
+  { label: "Senior Citizen", query: "Show me senior citizen banking debit cards" },
+  { label: "Compare Banks", query: "Compare SBI vs HDFC debit cards" },
+  { label: "ATM Limits", query: "Show me high ATM withdrawal limit debit cards" },
+  { label: "International Cards", query: "Show me international debit cards" }
 ];
 
-const INITIAL_WELCOME = {
-  id: "welcome-1",
-  sender: "bot",
-  text: "Welcome to D.CARD AI Assistant!\n\nI answer your questions strictly using our verified database with zero bias. Ask me about RuPay, Visa, Zero Fee cards, Lounge Access, ATM limits, or Compare Cards!",
-  timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-};
+const STARTER_PROMPTS = [
+  { label: "Best HDFC Debit Card", query: "Show me the best HDFC Bank Debit Card" },
+  { label: "Compare SBI vs ICICI", query: "Compare SBI and ICICI debit cards" },
+  { label: "Zero Balance Accounts", query: "Show me zero balance savings account debit cards" },
+  { label: "Best Cashback Card", query: "Which debit card gives the highest cashback?" },
+  { label: "Airport Lounge Cards", query: "Which cards offer free airport lounge access?" }
+];
 
 function AIChatAssistant({ onOpenContact, embeddedPage = false, externalQuery = null }) {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(embeddedPage);
   const [isMinimized, setIsMinimized] = useState(false);
-  const [messages, setMessages] = useState([INITIAL_WELCOME]);
+  const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [lastMatchedCards, setLastMatchedCards] = useState([]);
@@ -85,7 +108,6 @@ function AIChatAssistant({ onOpenContact, embeddedPage = false, externalQuery = 
     setIsSearching(true);
 
     try {
-      // Pass conversational context (e.g. previous search result set)
       const chatContext = { lastMatchedCards };
       const response = await aiChatService.sendMessage(query, user, chatContext);
 
@@ -104,7 +126,6 @@ function AIChatAssistant({ onOpenContact, embeddedPage = false, externalQuery = 
       const updatedHistory = [...newMessages, botMsg];
       setMessages(updatedHistory);
 
-      // Save chat history to Firestore for logged-in users
       if (user?.uid) {
         await aiChatService.saveUserChatHistory(user.uid, updatedHistory);
       }
@@ -112,7 +133,7 @@ function AIChatAssistant({ onOpenContact, embeddedPage = false, externalQuery = 
       const errorMsg = {
         id: Date.now() + "-error",
         sender: "bot",
-        text: "Sorry, I couldn't find any matching debit card in our database.",
+        text: "AI service is temporarily unavailable. Please try again later.",
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
       setMessages(prev => [...prev, errorMsg]);
@@ -122,15 +143,15 @@ function AIChatAssistant({ onOpenContact, embeddedPage = false, externalQuery = 
   };
 
   const handleClearChat = async () => {
-    setMessages([INITIAL_WELCOME]);
+    setMessages([]);
     setLastMatchedCards([]);
     if (user?.uid) {
-      await aiChatService.saveUserChatHistory(user.uid, [INITIAL_WELCOME]);
+      await aiChatService.saveUserChatHistory(user.uid, []);
     }
   };
 
   return (
-    <div className={embeddedPage ? "w-full" : "fixed bottom-6 right-6 z-[1200] select-none"}>
+    <div className={embeddedPage ? "w-full h-full min-h-[680px] flex flex-col" : "fixed bottom-6 right-6 z-[1200] select-none"}>
       {/* Floating Trigger Button (hidden in embedded page mode) */}
       {!isOpen && !embeddedPage && (
         <motion.button
@@ -139,12 +160,12 @@ function AIChatAssistant({ onOpenContact, embeddedPage = false, externalQuery = 
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setIsOpen(true)}
-          aria-label="Open AI Assistant"
-          className="flex items-center gap-2.5 px-4 py-3 rounded-full bg-gradient-to-r from-[#2563EB] via-[#3B82F6] to-[#60A5FA] text-white font-extrabold text-xs shadow-[0_8px_30px_rgba(37,99,235,0.45)] border border-white/20 hover:brightness-110 cursor-pointer transition-all"
+          aria-label="Open D.CARD AI Advisor"
+          className="flex items-center gap-2.5 px-4 py-3 rounded-full bg-gradient-to-r from-[#0B3D91] via-[#2563EB] to-[#3B82F6] text-white font-extrabold text-xs shadow-[0_8px_30px_rgba(37,99,235,0.45)] border border-white/20 hover:brightness-110 cursor-pointer transition-all"
         >
           <Bot className="w-4 h-4 text-white" />
-          <span>Ask Firestore AI</span>
-          <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 border border-white shadow-sm" title="Firestore AI Online" />
+          <span>D.CARD AI Advisor</span>
+          <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 border border-white shadow-sm" title="AI Advisor Online" />
         </motion.button>
       )}
 
@@ -157,165 +178,232 @@ function AIChatAssistant({ onOpenContact, embeddedPage = false, externalQuery = 
               opacity: 1, 
               y: 0, 
               scale: 1,
-              height: isMinimized ? '64px' : 'min(530px, 80vh)'
+              height: isMinimized ? '64px' : embeddedPage ? '100%' : 'min(680px, 85vh)'
             }}
             exit={{ opacity: 0, y: 30, scale: 0.95 }}
             transition={{ type: "spring", stiffness: 350, damping: 28 }}
-            className={`${embeddedPage ? "w-full" : "w-[360px] sm:w-[430px] max-w-[94vw]"} rounded-3xl bg-white dark:bg-[#0F172A] border border-[#E5E7EB] dark:border-slate-800 shadow-[0_24px_80px_rgba(15,23,42,0.35)] backdrop-blur-2xl flex flex-col overflow-hidden text-left transition-all duration-300`}
+            className={`${embeddedPage ? "w-full h-full" : "w-[420px] sm:w-[500px] lg:w-[900px] max-w-[95vw]"} rounded-3xl bg-white dark:bg-[#0F172A] border border-[#E5E7EB] dark:border-slate-800 shadow-[0_24px_80px_rgba(15,23,42,0.35)] backdrop-blur-2xl flex flex-col overflow-hidden text-left transition-all duration-300`}
           >
             {/* Header Bar */}
-            <div className="px-4 sm:px-5 py-3.5 bg-gradient-to-r from-[#0F172A] via-[#1E293B] to-[#0F172A] text-white flex items-center justify-between shadow-md flex-shrink-0 border-b border-slate-800">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-[#2563EB] flex items-center justify-center text-[#60A5FA] border border-[#2563EB]/40 shadow-sm">
-                  <Bot className="w-4 h-4 text-white" />
+            <div className="px-5 py-4 bg-gradient-to-r from-[#0B3D91] via-[#1E3A8A] to-[#1E293B] text-white flex items-center justify-between shadow-md flex-shrink-0 border-b border-slate-800/80">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-2xl bg-[#2563EB] flex items-center justify-center text-white border border-[#3B82F6]/40 shadow-sm flex-shrink-0">
+                  <Bot className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-xs sm:text-sm font-bold tracking-tight leading-none text-white">
-                    D.CARD Firestore AI
+                  <h3 className="text-sm sm:text-base font-extrabold tracking-tight leading-none text-white flex items-center gap-2">
+                    D.CARD AI Advisor
                   </h3>
-                  <p className="text-[9.5px] text-[#60A5FA] font-semibold tracking-wider uppercase mt-0.5 flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    Verified Financial Assistant
+                  <p className="text-[10.5px] text-[#60A5FA] font-semibold tracking-wide uppercase mt-1 flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                    <span>AI Powered Financial Intelligence</span>
                   </p>
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-2">
                 <button
                   onClick={handleClearChat}
                   title="Clear Chat History"
-                  className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs flex items-center justify-center cursor-pointer transition-colors"
+                  className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs flex items-center justify-center cursor-pointer transition-colors"
                 >
-                  <Trash2 className="w-3.5 h-3.5" />
+                  <Trash2 className="w-4 h-4" />
                 </button>
 
-                <button
-                  onClick={() => setIsMinimized(!isMinimized)}
-                  title={isMinimized ? "Maximize" : "Minimize"}
-                  className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs flex items-center justify-center cursor-pointer transition-colors"
-                >
-                  {isMinimized ? <Maximize2 className="w-3.5 h-3.5" /> : <Minus className="w-3.5 h-3.5" />}
-                </button>
+                {!embeddedPage && (
+                  <>
+                    <button
+                      onClick={() => setIsMinimized(!isMinimized)}
+                      title={isMinimized ? "Maximize" : "Minimize"}
+                      className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs flex items-center justify-center cursor-pointer transition-colors"
+                    >
+                      {isMinimized ? <Maximize2 className="w-4 h-4" /> : <Minus className="w-4 h-4" />}
+                    </button>
 
-                <button
-                  onClick={() => setIsOpen(false)}
-                  title="Close Assistant"
-                  className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs flex items-center justify-center cursor-pointer transition-colors"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
+                    <button
+                      onClick={() => setIsOpen(false)}
+                      title="Close Assistant"
+                      className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs flex items-center justify-center cursor-pointer transition-colors"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </>
+                )}
               </div>
             </div>
 
             {/* Chat Body & Scroll Area */}
             {!isMinimized && (
               <>
-                <div className="flex-1 p-4 overflow-y-auto space-y-3.5 custom-scrollbar text-xs">
+                <div className="flex-1 p-5 overflow-y-auto space-y-4 custom-scrollbar text-xs min-h-0 bg-[#F8FAFC]/50 dark:bg-[#0F172A]/50">
+                  {/* Empty / Welcome State */}
+                  {messages.length === 0 && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 15 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-800 shadow-soft space-y-6 my-auto"
+                    >
+                      <div className="flex items-center gap-4 border-b border-[#E5E7EB] dark:border-slate-800 pb-4">
+                        <div className="w-12 h-12 rounded-2xl bg-[#EFF6FF] dark:bg-slate-800 border border-[#2563EB]/20 flex items-center justify-center text-[#2563EB] dark:text-[#60A5FA]">
+                          <Bot className="w-6 h-6" />
+                        </div>
+                        <div>
+                          <h4 className="text-base sm:text-lg font-extrabold text-[#1F2937] dark:text-white">
+                            Welcome to D.CARD AI Advisor
+                          </h4>
+                          <p className="text-xs text-[#6B7280] dark:text-slate-400 font-normal">
+                            Your verified financial assistant powered by live Indian banking data.
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2.5">
+                        <span className="text-[11px] font-bold text-[#6B7280] dark:text-slate-400 uppercase tracking-wider block">
+                          I can help you with:
+                        </span>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-medium text-[#1F2937] dark:text-slate-200">
+                          <div className="flex items-center gap-2 p-2.5 rounded-xl bg-[#EFF6FF] dark:bg-slate-800/60 border border-[#2563EB]/10">
+                            <CheckCircle2 className="w-4 h-4 text-[#2563EB]" />
+                            <span>Debit Cards & Features</span>
+                          </div>
+                          <div className="flex items-center gap-2 p-2.5 rounded-xl bg-[#EFF6FF] dark:bg-slate-800/60 border border-[#2563EB]/10">
+                            <CheckCircle2 className="w-4 h-4 text-[#2563EB]" />
+                            <span>Savings Accounts & Rates</span>
+                          </div>
+                          <div className="flex items-center gap-2 p-2.5 rounded-xl bg-[#EFF6FF] dark:bg-slate-800/60 border border-[#2563EB]/10">
+                            <CheckCircle2 className="w-4 h-4 text-[#2563EB]" />
+                            <span>Cashback & Rewards</span>
+                          </div>
+                          <div className="flex items-center gap-2 p-2.5 rounded-xl bg-[#EFF6FF] dark:bg-slate-800/60 border border-[#2563EB]/10">
+                            <CheckCircle2 className="w-4 h-4 text-[#2563EB]" />
+                            <span>Airport Lounge Access</span>
+                          </div>
+                          <div className="flex items-center gap-2 p-2.5 rounded-xl bg-[#EFF6FF] dark:bg-slate-800/60 border border-[#2563EB]/10">
+                            <CheckCircle2 className="w-4 h-4 text-[#2563EB]" />
+                            <span>Side-by-Side Comparisons</span>
+                          </div>
+                          <div className="flex items-center gap-2 p-2.5 rounded-xl bg-[#EFF6FF] dark:bg-slate-800/60 border border-[#2563EB]/10">
+                            <CheckCircle2 className="w-4 h-4 text-[#2563EB]" />
+                            <span>ATM & POS Limits</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2 pt-2 border-t border-[#E5E7EB] dark:border-slate-800">
+                        <span className="text-[11px] font-bold text-[#6B7280] dark:text-slate-400 uppercase tracking-wider block">
+                          Try asking:
+                        </span>
+                        <div className="flex flex-wrap gap-2">
+                          {STARTER_PROMPTS.map((sp, idx) => (
+                            <button
+                              key={idx}
+                              onClick={() => handleSendMessage(sp.query)}
+                              className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#EFF6FF] dark:bg-slate-800 text-[#2563EB] dark:text-[#60A5FA] border border-[#2563EB]/20 hover:bg-[#2563EB] hover:text-white transition-all cursor-pointer shadow-xs active:scale-95"
+                            >
+                              💡 {sp.label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {/* Messages Flow */}
                   {messages.map((msg) => {
                     const isUser = msg.sender === "user";
-                    const isNoMatch = msg.type === "no_match";
 
                     return (
                       <motion.div
                         key={msg.id}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className={`flex gap-2.5 ${isUser ? "flex-row-reverse" : "flex-row"}`}
+                        className={`flex gap-3 ${isUser ? "flex-row-reverse" : "flex-row"}`}
                       >
                         {/* Avatar */}
-                        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs flex-shrink-0 shadow-sm ${
+                        <div className={`w-8 h-8 rounded-2xl flex items-center justify-center text-xs flex-shrink-0 shadow-sm ${
                           isUser 
-                            ? "bg-[#2563EB] text-white font-bold" 
-                            : "bg-[#0F172A] border border-[#2563EB]/40 text-[#60A5FA]"
+                            ? "bg-gradient-to-br from-[#2563EB] to-[#3B82F6] text-white font-bold" 
+                            : "bg-[#0B3D91] border border-[#2563EB]/40 text-white"
                         }`}>
-                          {isUser ? <User className="w-3.5 h-3.5" /> : <Bot className="w-3.5 h-3.5" />}
+                          {isUser ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
                         </div>
 
                         {/* Speech Bubble */}
-                        <div className={`max-w-[84%] rounded-2xl p-3 text-xs leading-relaxed space-y-1 ${
+                        <div className={`max-w-[85%] sm:max-w-[80%] rounded-2xl p-4 text-xs leading-relaxed space-y-1.5 ${
                           isUser
                             ? "bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white rounded-tr-none shadow-md font-medium"
-                            : isNoMatch
-                            ? "bg-red-500/10 text-red-700 dark:text-red-300 border border-red-500/20 rounded-tl-none font-medium"
-                            : "bg-[#F8FAFC] dark:bg-slate-800 text-[#1F2937] dark:text-slate-100 border border-[#E5E7EB] dark:border-slate-700 rounded-tl-none font-normal"
+                            : "bg-white dark:bg-[#1E293B] text-[#1F2937] dark:text-slate-100 border border-[#E5E7EB] dark:border-slate-800 rounded-tl-none shadow-soft font-normal"
                         }`}>
-                          <div className="whitespace-pre-line">
+                          <div className="whitespace-pre-line leading-relaxed font-normal">
                             {msg.text}
                           </div>
                           
-                          <div className={`text-[9px] font-medium text-right mt-1 ${isUser ? "text-white/70" : "text-[#6B7280]"}`}>
+                          <div className={`text-[9.5px] font-medium text-right mt-1 ${isUser ? "text-white/80" : "text-[#6B7280] dark:text-slate-400"}`}>
                             {msg.timestamp}
                           </div>
-
-                          {/* Fallback Contact Button */}
-                          {isNoMatch && onOpenContact && (
-                            <div className="pt-2 border-t border-red-500/20 mt-2">
-                              <button
-                                onClick={onOpenContact}
-                                className="w-full py-1.5 rounded-lg bg-red-500/10 text-red-600 dark:text-red-300 hover:bg-red-500/20 text-[10.5px] font-semibold cursor-pointer transition-colors text-center"
-                              >
-                                Ask Support Team to Add This Card
-                              </button>
-                            </div>
-                          )}
                         </div>
                       </motion.div>
                     );
                   })}
 
-                  {/* Loading Animation */}
+                  {/* AI Thinking Animation State */}
                   {isSearching && (
                     <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="flex items-center gap-2 text-[#6B7280] text-xs pl-9 py-1"
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="flex items-center gap-3 text-xs pl-2 py-2"
                     >
-                      <div className="flex gap-1">
-                        <span className="w-2 h-2 rounded-full bg-[#2563EB] animate-bounce" style={{ animationDelay: '0ms' }} />
-                        <span className="w-2 h-2 rounded-full bg-[#2563EB] animate-bounce" style={{ animationDelay: '150ms' }} />
-                        <span className="w-2 h-2 rounded-full bg-[#2563EB] animate-bounce" style={{ animationDelay: '300ms' }} />
+                      <div className="w-8 h-8 rounded-2xl bg-[#0B3D91] border border-[#2563EB]/40 flex items-center justify-center text-white flex-shrink-0">
+                        <Bot className="w-4 h-4" />
                       </div>
-                      <span className="text-[11px] font-semibold text-[#2563EB] dark:text-[#60A5FA] animate-pulse">
-                        Searching database...
-                      </span>
+                      <div className="px-4 py-3 rounded-2xl rounded-tl-none bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-800 shadow-soft flex items-center gap-2 text-[#2563EB] dark:text-[#60A5FA] font-bold">
+                        <div className="flex gap-1.5 items-center">
+                          <span className="w-2 h-2 rounded-full bg-[#2563EB] animate-bounce" style={{ animationDelay: '0ms' }} />
+                          <span className="w-2 h-2 rounded-full bg-[#2563EB] animate-bounce" style={{ animationDelay: '150ms' }} />
+                          <span className="w-2 h-2 rounded-full bg-[#2563EB] animate-bounce" style={{ animationDelay: '300ms' }} />
+                        </div>
+                        <span className="text-xs font-semibold text-[#1F2937] dark:text-slate-200">
+                          Thinking...
+                        </span>
+                      </div>
                     </motion.div>
                   )}
 
                   <div ref={messagesEndRef} />
                 </div>
 
-                {/* Quick Prompts Horizontal Tray */}
-                <div className="px-3 py-2 bg-[#F8FAFC] dark:bg-slate-900 border-t border-[#E5E7EB] dark:border-slate-800 overflow-x-auto flex gap-1.5 custom-scrollbar flex-shrink-0">
+                {/* Quick Prompts Action Chips */}
+                <div className="px-4 py-2.5 bg-[#F8FAFC] dark:bg-slate-900 border-t border-b border-[#E5E7EB] dark:border-slate-800 overflow-x-auto flex gap-2 custom-scrollbar flex-shrink-0">
                   {QUICK_ACTIONS.map((act) => (
                     <button
                       key={act.label}
                       onClick={() => handleSendMessage(act.query)}
-                      className="px-2.5 py-1 rounded-full text-[10px] font-semibold whitespace-nowrap bg-white dark:bg-slate-800 text-[#2563EB] dark:text-[#60A5FA] border border-[#2563EB]/20 hover:bg-[#2563EB]/10 transition-colors cursor-pointer shadow-sm"
+                      className="px-3 py-1.5 rounded-xl text-[11px] font-semibold whitespace-nowrap bg-white dark:bg-slate-800 text-[#2563EB] dark:text-[#60A5FA] border border-[#2563EB]/20 hover:bg-[#2563EB] hover:text-white dark:hover:bg-[#2563EB] transition-all cursor-pointer shadow-xs active:scale-95"
                     >
                       {act.label}
                     </button>
                   ))}
                 </div>
 
-                {/* Form Controls */}
+                {/* Chat Form Controls */}
                 <form
                   onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }}
-                  className="p-3 bg-white dark:bg-[#0F172A] border-t border-[#E5E7EB] dark:border-slate-800 flex items-center gap-2 flex-shrink-0"
+                  className="p-4 bg-white dark:bg-[#0F172A] border-t border-[#E5E7EB] dark:border-slate-800 flex items-center gap-3 flex-shrink-0"
                 >
                   <input
                     type="text"
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
-                    placeholder="Ask about RuPay, Visa, Zero Fee, Lounge..."
-                    className="flex-1 rounded-xl bg-[#F8FAFC] dark:bg-slate-900 border border-[#E5E7EB] dark:border-slate-800 px-3.5 py-2 text-xs text-[#1F2937] dark:text-white font-normal outline-none focus:border-[#2563EB] transition-colors"
+                    placeholder="Ask anything about debit cards, banking, cashback, lounge access..."
+                    className="flex-1 rounded-full bg-[#F8FAFC] dark:bg-slate-900 border border-[#E5E7EB] dark:border-slate-800 px-5 py-3.5 text-xs text-[#1F2937] dark:text-white font-normal outline-none focus:border-[#2563EB] transition-all shadow-xs"
                   />
                   <button
                     type="submit"
                     disabled={!inputValue.trim() || isSearching}
-                    className="w-8 h-8 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white font-bold flex items-center justify-center text-xs shadow-md disabled:opacity-40 cursor-pointer"
+                    className="w-10 h-10 rounded-full bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:shadow-[0_0_18px_rgba(37,99,235,0.5)] text-white font-bold flex items-center justify-center text-xs shadow-md disabled:opacity-40 cursor-pointer active:scale-95 transition-all flex-shrink-0"
                   >
-                    <Send className="w-3.5 h-3.5" />
+                    <Send className="w-4 h-4" />
                   </button>
                 </form>
               </>

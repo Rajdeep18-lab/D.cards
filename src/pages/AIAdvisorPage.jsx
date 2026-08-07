@@ -22,42 +22,42 @@ const SUGGESTED_PROMPTS = [
     id: "p1",
     category: "Lounge Access",
     icon: Plane,
-    bg: "bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/20",
+    bg: "bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] border-[#2563EB]/20",
     query: "Which debit cards offer complimentary airport lounge access?"
   },
   {
     id: "p2",
     category: "Zero Annual Fee",
     icon: Gift,
-    bg: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
+    bg: "bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] border-[#2563EB]/20",
     query: "Show me zero annual fee debit cards with zero minimum balance."
   },
   {
     id: "p3",
     category: "ATM Limits",
     icon: Zap,
-    bg: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
+    bg: "bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] border-[#2563EB]/20",
     query: "What is the daily ATM withdrawal limit for HDFC Platinum?"
   },
   {
     id: "p4",
     category: "RuPay & UPI",
     icon: CreditCard,
-    bg: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20",
+    bg: "bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] border-[#2563EB]/20",
     query: "Show me the best RuPay debit cards for cashback and rewards."
   },
   {
     id: "p5",
     category: "Bank Comparison",
     icon: Layers,
-    bg: "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20",
+    bg: "bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] border-[#2563EB]/20",
     query: "Compare SBI Global vs ICICI Coral debit cards."
   },
   {
     id: "p6",
     category: "Cashback Deals",
     icon: Percent,
-    bg: "bg-pink-500/10 text-pink-600 dark:text-pink-400 border-pink-500/20",
+    bg: "bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] border-[#2563EB]/20",
     query: "Which debit card gives maximum cashback points on daily spends?"
   }
 ];
@@ -75,8 +75,8 @@ function AIAdvisorPage({ onOpenContact }) {
       <div className="border-b border-[#E5E7EB] dark:border-slate-800 pb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
           <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] text-xs font-semibold tracking-widest uppercase rounded-full mb-2">
-            <Sparkles className="w-3.5 h-3.5 animate-pulse" />
-            FINANCIAL INTELLIGENCE ENGINE
+            <Sparkles className="w-3.5 h-3.5 animate-pulse text-[#2563EB]" />
+            AI POWERED FINANCIAL INTELLIGENCE
           </span>
           <h1 className="text-3xl font-extrabold text-[#1F2937] dark:text-white tracking-tight">
             D.CARD AI Advisor
@@ -86,16 +86,16 @@ function AIAdvisorPage({ onOpenContact }) {
           </p>
         </div>
 
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-semibold flex-shrink-0">
-          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-          <span>Live Database Connected</span>
+        <div className="flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-semibold flex-shrink-0 shadow-xs">
+          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
+          <span>AI Advisor Online</span>
         </div>
       </div>
 
-      {/* Embedded AI Advisor Interface */}
-      <div className="flex flex-col lg:flex-row gap-8 items-start justify-center">
-        {/* Left Side Highlights & Popular Questions */}
-        <div className="w-full lg:w-1/3 space-y-6">
+      {/* 30% / 70% Layout Container */}
+      <div className="flex flex-col lg:flex-row gap-8 items-stretch justify-between">
+        {/* Left Sidebar (30% Width) */}
+        <div className="w-full lg:w-[30%] space-y-6 flex-shrink-0">
           {/* Zero Bias Card */}
           <div className="p-6 rounded-3xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-800 shadow-soft space-y-4">
             <div className="flex items-center gap-3">
@@ -112,12 +112,12 @@ function AIAdvisorPage({ onOpenContact }) {
             </p>
           </div>
 
-          {/* Enhanced Interactive Popular Prompt Suggestions */}
+          {/* Popular Banking Questions Sidebar */}
           <div className="p-6 rounded-3xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-800 shadow-soft space-y-4">
             <div className="flex items-center justify-between">
               <h4 className="text-xs font-bold text-[#1F2937] dark:text-white uppercase tracking-wider flex items-center gap-1.5">
                 <HelpCircle className="w-4 h-4 text-[#2563EB]" />
-                <span>Popular Question Prompts</span>
+                <span>Popular Banking Questions</span>
               </h4>
               <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA]">
                 Click to Ask
@@ -130,10 +130,10 @@ function AIAdvisorPage({ onOpenContact }) {
                 return (
                   <motion.button
                     key={prompt.id}
-                    whileHover={{ scale: 1.02, x: 2 }}
+                    whileHover={{ y: -3, scale: 1.01 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => handlePromptClick(prompt.query)}
-                    className="w-full text-left p-3.5 rounded-2xl bg-[#F8FAFC] dark:bg-slate-900 border border-[#E5E7EB] dark:border-slate-800/80 hover:border-[#2563EB]/40 hover:bg-[#EFF6FF] dark:hover:bg-slate-800/90 transition-all duration-200 cursor-pointer group flex items-start gap-3"
+                    className="w-full text-left p-3.5 rounded-2xl bg-[#F8FAFC] dark:bg-slate-900 border border-[#E5E7EB] dark:border-slate-800/80 hover:border-[#2563EB]/40 hover:bg-[#EFF6FF] dark:hover:bg-slate-800/90 transition-all duration-200 cursor-pointer group flex items-start gap-3 shadow-xs"
                   >
                     <div className={`p-2 rounded-xl border flex-shrink-0 mt-0.5 ${prompt.bg}`}>
                       <IconComponent className="w-3.5 h-3.5" />
@@ -156,15 +156,13 @@ function AIAdvisorPage({ onOpenContact }) {
           </div>
         </div>
 
-        {/* Right Side: Full AI Chat Panel */}
-        <div className="w-full lg:w-2/3 flex justify-center">
-          <div className="w-full max-w-xl">
-            <AIChatAssistant 
-              onOpenContact={onOpenContact} 
-              embeddedPage={true} 
-              externalQuery={activeExternalQuery}
-            />
-          </div>
+        {/* Right Chat Window (70% Width, Dominate Page) */}
+        <div className="w-full lg:w-[70%] h-[720px] min-h-[680px] flex flex-col flex-1">
+          <AIChatAssistant 
+            onOpenContact={onOpenContact} 
+            embeddedPage={true} 
+            externalQuery={activeExternalQuery}
+          />
         </div>
       </div>
     </main>

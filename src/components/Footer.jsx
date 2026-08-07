@@ -115,14 +115,14 @@ function Footer({ onOpenLegal }) {
             </div>
           </div>
 
-          {/* Ask Firestore AI Button */}
+          {/* Ask AI Advisor Button */}
           <Link
             to="/ai-advisor"
             className="w-full p-3 rounded-2xl bg-gradient-to-r from-[#0F172A] to-[#1E293B] text-white font-semibold text-xs flex items-center justify-between shadow-md hover:border-[#2563EB] border border-slate-700 transition-all cursor-pointer group"
           >
             <div className="flex items-center gap-2">
               <Bot className="w-4 h-4 text-[#60A5FA]" />
-              <span>Ask Firestore AI</span>
+              <span>Ask AI Advisor</span>
             </div>
             <ArrowRight className="w-4 h-4 text-[#60A5FA] group-hover:translate-x-1 transition-transform" />
           </Link>
