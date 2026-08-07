@@ -6,9 +6,7 @@ import TopCardsSection from '../components/TopCardsSection';
 import PickOfTheMonth from '../components/PickOfTheMonth';
 import { debitCards } from '../data/mockData';
 import BankCard from '../components/BankCard';
-import BankBrandLogo from '../components/BankBrandLogo';
 import FaqSection from '../components/FaqSection';
-import AnimatedStatCounter from '../components/AnimatedStatCounter';
 import { getCoveredBanksDirectory } from '../utils/bankDirectoryUtils';
 import { 
   GraduationCap, 
@@ -20,30 +18,12 @@ import {
   ShieldPlus, 
   Sparkles, 
   Bot, 
-  Building2, 
   ArrowRight, 
   ShieldCheck, 
   BarChart3, 
   CheckCircle2,
-  Layers,
-  Search,
-  Lock,
-  TrendingUp,
-  CreditCard,
-  Percent,
-  Award,
-  Zap,
-  Globe,
-  Wallet,
-  Smartphone
+  Layers
 } from 'lucide-react';
-
-const TOP_CAROUSEL_BANKS = [
-  "HDFC Bank", "ICICI Bank", "State Bank of India", "Axis Bank", 
-  "Kotak Mahindra Bank", "IDFC FIRST Bank", "IndusInd Bank", "Yes Bank", 
-  "AU Small Finance Bank", "Punjab National Bank", "Bank of Baroda", 
-  "Union Bank of India", "Canara Bank", "Federal Bank", "RBL Bank", "DBS Bank India"
-];
 
 function HomePage({
   query,
@@ -68,62 +48,21 @@ function HomePage({
   };
 
   return (
-    <div className="space-y-16 overflow-hidden select-none">
+    <div className="space-y-12 overflow-hidden select-none">
       
-      {/* ── 1. Stripe/Revolut Inspired Hero Section ── */}
+      {/* ── 1. Hero Section ── */}
       <HeroSection 
         query={query} 
         setQuery={handleHeroSearchSubmit} 
         onViewDetails={onViewDetails} 
       />
 
-      {/* ── 2. Infinite Auto-Scrolling Bank Logo Showcase Carousel ── */}
-      <section className="py-6 border-y border-[#E5E7EB] dark:border-slate-800 bg-white/50 dark:bg-[#0F172A]/50 backdrop-blur-md overflow-hidden">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mb-4 flex items-center justify-between text-left">
-          <div className="flex items-center gap-2">
-            <Building2 className="w-4 h-4 text-[#2563EB]" />
-            <span className="text-xs font-extrabold text-[#1F2937] dark:text-white uppercase tracking-wider">
-              Trusted Bank Indexes Covered
-            </span>
-          </div>
-          <span className="text-[11px] font-semibold text-[#6B7280] dark:text-slate-400">
-            26+ Official Bank Specifications Indexed
-          </span>
-        </div>
-
-        <div className="relative w-full flex overflow-x-hidden group py-2">
-          {/* Left / Right Blur Gradients */}
-          <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-24 bg-gradient-to-r from-white dark:from-[#0F172A] to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-24 bg-gradient-to-l from-white dark:from-[#0F172A] to-transparent z-10 pointer-events-none" />
-
-          {/* Marquee Track 1 */}
-          <div className="flex gap-6 animate-[marquee_28s_linear_infinite] group-hover:[animation-play-state:paused] flex-shrink-0">
-            {TOP_CAROUSEL_BANKS.concat(TOP_CAROUSEL_BANKS).map((bankName, idx) => (
-              <button
-                key={idx}
-                onClick={() => {
-                  if (selectSingleBank) selectSingleBank(bankName);
-                  else if (toggleBank) toggleBank(bankName);
-                  navigate('/cards');
-                }}
-                className="flex items-center gap-3 px-4 py-2.5 rounded-2xl glass-card-premium border border-[#E5E7EB] dark:border-slate-800 hover:border-[#2563EB]/50 hover:shadow-[0_0_15px_rgba(37,99,235,0.25)] transition-all cursor-pointer flex-shrink-0"
-              >
-                <BankBrandLogo bankName={bankName} className="w-7 h-7" />
-                <span className="text-xs font-extrabold text-[#1F2937] dark:text-white whitespace-nowrap">
-                  {bankName}
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
-
       <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-16 space-y-20">
         
-        {/* ── 3. Featured Top Cards Section ── */}
+        {/* ── 2. Featured Top Cards Section ── */}
         <TopCardsSection onViewDetails={onViewDetails} />
 
-        {/* ── 4. Trust & Security 4-Pillar Infographic Section ── */}
+        {/* ── 3. Trust & Security 4-Pillar Infographic Section ── */}
         <section className="select-none py-6 relative">
           <div className="text-center max-w-2xl mx-auto space-y-3 mb-12">
             <span className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] text-xs font-bold tracking-widest uppercase rounded-full border border-[#2563EB]/20">
@@ -190,14 +129,14 @@ function HomePage({
           </div>
         </section>
 
-        {/* ── 5. Curved Wave Section Divider ── */}
+        {/* ── 4. Curved Wave Section Divider ── */}
         <div className="relative py-2 opacity-60">
           <svg className="w-full h-8 text-[#2563EB]/20 fill-current" viewBox="0 0 1200 120" preserveAspectRatio="none">
             <path d="M0,0 C150,90 350,-40 500,45 C650,130 900,10 1200,60 L1200,120 L0,120 Z" />
           </svg>
         </div>
 
-        {/* ── 6. Life Stage & Financial Profile Portal ── */}
+        {/* ── 5. Life Stage & Financial Profile Portal ── */}
         <section className="select-none">
           <div className="text-center md:text-left mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#E5E7EB] dark:border-slate-800 pb-4">
             <div>
@@ -268,10 +207,10 @@ function HomePage({
           </div>
         </section>
 
-        {/* ── 7. Pick of the Month ── */}
+        {/* ── 6. Pick of the Month ── */}
         <PickOfTheMonth card={debitCards.find(c => c.id === 26)} onViewDetails={onViewDetails} />
 
-        {/* ── 8. AI Financial Engine Banner ── */}
+        {/* ── 7. AI Financial Engine Banner ── */}
         <section className="select-none">
           <div className="p-8 sm:p-10 rounded-3xl bg-gradient-to-r from-[#0B3D91] via-[#1E3A8A] to-[#1E293B] text-white shadow-xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8 border border-slate-700/80">
             {/* Ambient Orb */}
@@ -316,7 +255,7 @@ function HomePage({
           </div>
         </section>
 
-        {/* ── 9. Covered Banking Networks Preview ── */}
+        {/* ── 8. Covered Banking Networks Preview ── */}
         <section className="select-none">
           <div className="mb-6 flex items-end justify-between border-b border-[#E5E7EB] dark:border-slate-800 pb-4 text-left">
             <div>
@@ -357,7 +296,7 @@ function HomePage({
           </div>
         </section>
 
-        {/* ── 10. FAQ Section ── */}
+        {/* ── 9. FAQ Section ── */}
         <FaqSection />
       </main>
     </div>
