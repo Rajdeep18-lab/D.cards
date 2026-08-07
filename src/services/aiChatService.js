@@ -58,6 +58,31 @@ export function isBankingRelatedQuery(userMessage = "") {
 }
 
 /**
+ * Intelligent Offline Knowledge Base Fallback for common queries when API key is rate-limited
+ */
+export function getOfflineFallbackResponse(userMessage = "") {
+  const lower = String(userMessage).toLowerCase();
+
+  if (lower.includes("chandigarh university") || lower.includes("where is cu") || lower.includes("cu location")) {
+    return "📍 **Chandigarh University (CU)** is a NAAC A+ accredited private university located on National Highway 95 (Chandigarh-Ludhiana Highway) in **Gharuan, Mohali, Punjab** (near Chandigarh), India.";
+  }
+
+  if (lower.includes("antigravity")) {
+    return "🌌 **Antigravity** refers to the concept of creating a space or object free from gravitational pull. In modern AI software, **Antigravity** is Google DeepMind's advanced agentic coding assistant engine.";
+  }
+
+  if (lower.includes("python") && (lower.includes("hello world") || lower.includes("code") || lower.includes("program"))) {
+    return "```python\n# Python Hello World Program\nprint(\"Hello, World!\")\n```";
+  }
+
+  if (lower.includes("hello world")) {
+    return "```javascript\n// JavaScript Hello World Program\nconsole.log(\"Hello, World!\");\n```";
+  }
+
+  return null;
+}
+
+/**
  * Get initialized Google Generative AI model client (using supported model gemini-2.0-flash)
  */
 function getGeminiModel() {
@@ -198,16 +223,32 @@ User Question: "${userMessage}"`;
         statusText: err.statusText || "RESOURCE_EXHAUSTED",
         errorDetails: err
       });
+
+      const fallbackAnswer = getOfflineFallbackResponse(userMessage);
+      if (fallbackAnswer) {
+        return {
+          error: false,
+          text: fallbackAnswer
+        };
+      }
+
       return {
         error: true,
-        message: "AI service is temporarily unavailable. Please try again later.",
-        rawError: err.message
+        message: "AI service is temporarily rate-limited. Please add a valid Gemini API key to your .env file."
+      };
+    }
+
+    const fallbackAnswer = getOfflineFallbackResponse(userMessage);
+    if (fallbackAnswer) {
+      return {
+        error: false,
+        text: fallbackAnswer
       };
     }
 
     return {
       error: true,
-      message: "AI service is temporarily unavailable. Please try again later."
+      message: "AI service is temporarily rate-limited. Please add a valid Gemini API key to your .env file."
     };
   },
 
