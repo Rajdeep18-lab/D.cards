@@ -2,12 +2,21 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Building2, ShieldCheck, CheckCircle2, ArrowRight, Star, AlertCircle } from 'lucide-react';
-import { bankCards } from '../data/mockData';
-import BankCard from '../components/BankCard';
+import CoveredBanksDirectory from '../components/CoveredBanksDirectory';
 
-function BanksPage({ BANK_PROFILES, toggleBank }) {
+function BanksPage({ BANK_PROFILES, toggleBank, selectSingleBank, activeCardsList }) {
   const navigate = useNavigate();
   const [selectedBankProfile, setSelectedBankProfile] = useState("HDFC Bank");
+
+  const handleSelectBank = (bankName) => {
+    if (selectSingleBank) {
+      selectSingleBank(bankName);
+    } else if (toggleBank) {
+      toggleBank(bankName);
+    }
+    navigate('/cards');
+    window.scrollTo(0, 0);
+  };
 
   return (
     <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 relative z-20 space-y-10 text-left">
@@ -24,24 +33,11 @@ function BanksPage({ BANK_PROFILES, toggleBank }) {
         </p>
       </div>
 
-      {/* Main Bank Grid */}
-      <section className="space-y-6">
-        <h2 className="text-xl font-bold text-[#1F2937] dark:text-white">
-          Covered Banks Directory
-        </h2>
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {bankCards.map((bank) => (
-            <BankCard
-              key={bank.id}
-              bank={bank}
-              onSelect={() => {
-                toggleBank(bank.name);
-                navigate('/cards');
-              }}
-            />
-          ))}
-        </div>
-      </section>
+      {/* Dynamic Covered Banks Directory */}
+      <CoveredBanksDirectory
+        onSelectBank={handleSelectBank}
+        customCardsList={activeCardsList}
+      />
 
       {/* Institutional Bank Audits Section */}
       {BANK_PROFILES && (

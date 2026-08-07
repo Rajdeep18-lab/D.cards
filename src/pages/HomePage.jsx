@@ -4,9 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import HeroSection from '../components/HeroSection';
 import TopCardsSection from '../components/TopCardsSection';
 import PickOfTheMonth from '../components/PickOfTheMonth';
-import { debitCards, bankCards } from '../data/mockData';
+import { debitCards } from '../data/mockData';
 import BankCard from '../components/BankCard';
 import FaqSection from '../components/FaqSection';
+import { getCoveredBanksDirectory } from '../utils/bankDirectoryUtils';
 import { 
   GraduationCap, 
   UserCheck, 
@@ -33,9 +34,15 @@ function HomePage({
   activeFilters,
   setActiveFilters,
   STATIC_AI_PILL_COUNTS,
-  toggleBank
+  toggleBank,
+  selectSingleBank,
+  activeCardsList
 }) {
   const navigate = useNavigate();
+
+  const dynamicBanks = React.useMemo(() => {
+    return getCoveredBanksDirectory(activeCardsList);
+  }, [activeCardsList]);
 
   const handleHeroSearchSubmit = (searchVal) => {
     setQuery(searchVal);
@@ -254,14 +261,19 @@ function HomePage({
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {bankCards.slice(0, 4).map((bank) => (
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {dynamicBanks.slice(0, 3).map((bank) => (
               <BankCard 
-                key={bank.id} 
+                key={bank.name} 
                 bank={bank} 
-                onSelect={() => {
-                  toggleBank(bank.name);
+                onSelect={(bankName) => {
+                  if (selectSingleBank) {
+                    selectSingleBank(bankName);
+                  } else if (toggleBank) {
+                    toggleBank(bankName);
+                  }
                   navigate('/cards');
+                  window.scrollTo(0, 0);
                 }}
               />
             ))}

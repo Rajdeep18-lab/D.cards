@@ -374,6 +374,10 @@ function AppContent() {
     );
   }, []);
 
+  const selectSingleBank = useCallback((bank) => {
+    setSelectedBanks([bank]);
+  }, []);
+
   const toggleNetwork = useCallback((network) => {
     setSelectedNetworks(prev =>
       prev.includes(network) ? prev.filter(n => n !== network) : [...prev, network]
@@ -815,6 +819,8 @@ function AppContent() {
                 setActiveFilters={setActiveFilters}
                 STATIC_AI_PILL_COUNTS={STATIC_AI_PILL_COUNTS}
                 toggleBank={toggleBank}
+                selectSingleBank={selectSingleBank}
+                activeCardsList={activeCardsList}
               />
             } 
           />
@@ -913,6 +919,8 @@ function AppContent() {
               <BanksPage
                 BANK_PROFILES={BANK_PROFILES}
                 toggleBank={toggleBank}
+                selectSingleBank={selectSingleBank}
+                activeCardsList={activeCardsList}
               />
             } 
           />
