@@ -19,7 +19,7 @@ const FAQ_COLLECTION = 'faq';
 const OFFERS_COLLECTION = 'offers';
 const CHAT_HISTORY_COLLECTION = 'chat_history';
 
-// In-memory cache to optimize Firebase queries
+// In-memory cache for Firestore records
 let firestoreCache = {
   debitCards: null,
   banks: null,
@@ -29,8 +29,36 @@ let firestoreCache = {
 };
 const CACHE_TTL_MS = 15000;
 
+// Keywords that indicate a query is specifically about banking/debit cards
+const BANKING_KEYWORDS = [
+  "card", "cards", "debit", "credit", "bank", "banks", "banking", "account", "accounts", "savings",
+  "visa", "mastercard", "rupay", "master card", "ru-pay",
+  "atm", "withdrawal", "withdraw", "limit", "limits", "pos", "mab",
+  "cashback", "reward", "rewards", "point", "points", "offer", "offers",
+  "lounge", "airport", "forex", "markup", "fee", "annual fee", "joining fee", "zero fee", "free",
+  "interest", "rate", "yield", "compare", "comparison", "versus", "vs", "benefit", "benefits", "perks",
+  "sbi", "state bank", "hdfc", "icici", "axis", "kotak", "idfc", "indusind", "pnb", "punjab", "baroda",
+  "bob", "canara", "union bank", "indian bank", "central bank", "uco", "federal", "rbl", "yes bank",
+  "au small", "equitas", "ujjivan", "jana", "esaf", "suryoday", "fi money", "jupiter", "niyo", "freo",
+  "airtel", "post bank"
+];
+
 /**
- * Helper to get initialized Google Generative AI client
+ * Checks if user message contains any banking or debit card related keyword
+ */
+export function isBankingRelatedQuery(userMessage = "") {
+  const lower = String(userMessage).toLowerCase();
+  return BANKING_KEYWORDS.some(kw => {
+    if (kw.length <= 3) {
+      const regex = new RegExp(`\\b${kw}\\b`, 'i');
+      return regex.test(lower);
+    }
+    return lower.includes(kw);
+  });
+}
+
+/**
+ * Get initialized Google Generative AI model client (using supported model gemini-2.0-flash)
  */
 function getGeminiModel() {
   if (!GEMINI_API_KEY || GEMINI_API_KEY === "your-gemini-api-key-here") {
@@ -38,18 +66,15 @@ function getGeminiModel() {
   }
   try {
     const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-    // Use gemini-1.5-flash or gemini-2.0-flash model
-    return genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    // Use gemini-2.0-flash model
+    return genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
   } catch (err) {
-    console.warn("Google Gemini AI initialization notice:", err.message || err);
+    console.error("Gemini Error: Client initialization failed", err.message || err);
     return null;
   }
 }
 
 export const aiChatService = {
-  /**
-   * Ensure Firestore collections contain records
-   */
   async ensureFirestoreSeeded() {
     try {
       const cardsSnap = await getDocs(collection(db, DEBIT_CARDS_COLLECTION));
@@ -78,9 +103,6 @@ export const aiChatService = {
     }
   },
 
-  /**
-   * Fetch all records directly from Firestore collections
-   */
   async getFirestoreData(forceRefresh = false) {
     const now = Date.now();
     if (!forceRefresh && firestoreCache.debitCards && (now - firestoreCache.lastFetched < CACHE_TTL_MS)) {
@@ -124,25 +146,36 @@ export const aiChatService = {
   },
 
   /**
-   * Generate Response using Google Gemini API with Grounded Database Context
+   * Request response from Google Gemini API with logging & explicit error handling
    */
-  async generateGeminiResponse(userMessage, contextData) {
+  async generateGeminiResponse(userMessage, contextData = {}) {
+    console.log("Gemini Request Sent", { userMessage });
+
     const geminiModel = getGeminiModel();
-    if (!geminiModel) return null;
+    if (!geminiModel) {
+      const errMessage = !GEMINI_API_KEY 
+        ? "Gemini API key is not configured in environment variables." 
+        : "Gemini API key is invalid or placeholder.";
+      console.error("Gemini Error:", errMessage);
+      return {
+        error: true,
+        message: "AI service is temporarily unavailable. Please try again later."
+      };
+    }
 
     try {
       const cardsSummary = (contextData.debitCards || []).slice(0, 20).map(c => {
-        return `- ${c.cardName} (${c.bank}): Fee: ${c.annualFee || 'Free'}, Lounge: ${c.loungeAccess || 'No'}, ATM Limit: ${c.atmLimit || 'Standard'}, Cashback: ${c.cashback || 'N/A'}, Best for: ${Array.isArray(c.bestFor) ? c.bestFor.join(', ') : (c.bestFor || 'N/A')}`;
+        return `- ${c.cardName} (${c.bank}): Fee: ${c.annualFee || 'Free'}, Lounge: ${c.loungeAccess || 'No'}, ATM Limit: ${c.atmLimit || 'Standard'}, Cashback: ${c.cashback || 'N/A'}`;
       }).join('\n');
 
-      const systemPrompt = `You are D.CARD AI Advisor, a world-class financial expert specializing in Indian debit cards, banking fees, airport lounge access, zero forex cards, ATM withdrawal limits, and rewards.
+      const systemPrompt = `You are D.CARD AI Advisor, a helpful and knowledgeable assistant.
 
-Strict System Rules:
-1. Always be polite, professional, concise, and helpful.
-2. Format key points using bold text and markdown bullet points.
-3. Answer using verified card information from the database context below whenever relevant.
+Rules:
+1. Provide accurate, clear, and direct answers to the user's question.
+2. If answering general knowledge, science, location, or programming questions, give clean, well-formatted answers with markdown code blocks or bullet points.
+3. If answering banking/debit card questions, reference relevant Indian debit card context provided below:
 
-Available Database Context (Top Cards):
+Verified Cards Context:
 ${cardsSummary}
 
 User Question: "${userMessage}"`;
@@ -152,29 +185,28 @@ User Question: "${userMessage}"`;
       const text = response.text();
 
       if (text && text.trim()) {
-        return text.trim();
+        console.log("Gemini Response Received");
+        return {
+          error: false,
+          text: text.trim()
+        };
       }
     } catch (err) {
-      console.warn("Google Gemini API generation error:", err.message || err);
-      
-      // Fallback try with gemini-pro if flash model errors
-      try {
-        const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-        const fallbackModel = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
-        const result = await fallbackModel.generateContent(userMessage);
-        const response = await result.response;
-        const text = response.text();
-        if (text && text.trim()) return text.trim();
-      } catch (fallbackErr) {
-        console.warn("Google Gemini fallback model error:", fallbackErr.message || fallbackErr);
-      }
+      console.error("Gemini Error:", err.message || err);
+      return {
+        error: true,
+        message: "AI service is temporarily unavailable. Please try again later."
+      };
     }
 
-    return null;
+    return {
+      error: true,
+      message: "AI service is temporarily unavailable. Please try again later."
+    };
   },
 
   /**
-   * Process incoming user messages and return AI response
+   * Main Router Flow
    */
   async sendMessage(userMessage, user = null, chatContext = {}) {
     const cleanMsg = (userMessage || "").trim();
@@ -188,111 +220,124 @@ User Question: "${userMessage}"`;
       };
     }
 
-    // 1. Fetch live database context
-    const data = await this.getFirestoreData();
-    const { debitCards: allCards, banks: allBanks, faq: allFaqs } = data;
     const lowerMsg = cleanMsg.toLowerCase();
 
     // Check basic friendly greetings
     if (["hi", "hello", "hey", "namaste", "greetings", "hallo"].some(w => lowerMsg === w || lowerMsg.startsWith(w + " "))) {
       return {
-        text: "👋 **Hello! Welcome to D.CARD AI Assistant.**\n\nPowered by **Google Gemini AI** & our verified card database. Ask me anything about:\n- 💳 **RuPay, Visa, Mastercard** Debit Cards\n- 🆓 **Zero Annual Fee & Zero Balance** Cards\n- 🏦 **SBI, HDFC, ICICI, Axis** Cards\n- 🏧 **ATM Withdrawal Limits & Lounge Access**\n- 🎁 **Cashback & Contactless Spends**",
+        text: "👋 **Hello! Welcome to D.CARD AI Assistant.**\n\nAsk me anything about:\n- 💳 **RuPay, Visa, Mastercard** Debit Cards\n- 🆓 **Zero Annual Fee & Zero Balance** Cards\n- 🏦 **SBI, HDFC, ICICI, Axis** Cards\n- 🏧 **ATM Withdrawal Limits & Lounge Access**\n- 🌐 **General Questions & Financial Guidance**",
         type: "greeting",
         timestamp
       };
     }
 
-    // 2. Perform Database Matching for Card Chips & Highlights
-    let matchedCards = (allCards || []).filter(c => {
-      if (!c) return false;
-      const cName = String(c.cardName || "").toLowerCase();
-      const cBank = String(c.bank || "").toLowerCase();
-      const cNetwork = String(c.network || "").toLowerCase();
-      const cCat = String(c.category || "").toLowerCase();
+    // Step 1: Detect if query is banking-related
+    const isBankingQuery = isBankingRelatedQuery(cleanMsg);
 
-      if (lowerMsg.includes("rupay") && !cNetwork.includes("rupay") && !cName.includes("rupay")) return false;
-      if (lowerMsg.includes("visa") && !cNetwork.includes("visa") && !cName.includes("visa")) return false;
-      if (lowerMsg.includes("mastercard") && !cNetwork.includes("mastercard") && !cName.includes("mastercard")) return false;
+    let matchedCards = [];
+    let data = null;
 
-      const bankMentions = ["sbi", "hdfc", "icici", "axis", "kotak", "idfc", "canara", "indusind", "pnb", "baroda"].filter(b => lowerMsg.includes(b));
-      if (bankMentions.length > 0) {
-        const matches = bankMentions.some(b => cBank.includes(b) || cName.includes(b));
-        if (!matches) return false;
-      }
+    if (isBankingQuery) {
+      console.log("Firestore Search Started", { cleanMsg, isBankingQuery });
+      data = await this.getFirestoreData();
+      const { debitCards: allCards } = data;
 
-      if (lowerMsg.includes("lounge") && !String(c.loungeAccess || "").toLowerCase().includes("lounge") && !String(c.loungeAccess || "").toLowerCase().includes("yes")) return false;
-      if (lowerMsg.includes("zero fee") && c.annualFee !== 0 && !String(c.annualFee || "").toLowerCase().includes("free")) return false;
+      matchedCards = (allCards || []).filter(c => {
+        if (!c) return false;
+        const cName = String(c.cardName || "").toLowerCase();
+        const cBank = String(c.bank || "").toLowerCase();
+        const cNetwork = String(c.network || "").toLowerCase();
 
-      return true;
-    });
+        if (lowerMsg.includes("rupay") && !cNetwork.includes("rupay") && !cName.includes("rupay")) return false;
+        if (lowerMsg.includes("visa") && !cNetwork.includes("visa") && !cName.includes("visa")) return false;
+        if (lowerMsg.includes("mastercard") && !cNetwork.includes("mastercard") && !cName.includes("mastercard")) return false;
 
-    if (matchedCards.length > 6) {
-      matchedCards = matchedCards.slice(0, 4);
-    }
+        const bankMentions = ["sbi", "hdfc", "icici", "axis", "kotak", "idfc", "canara", "indusind", "pnb", "baroda"].filter(b => lowerMsg.includes(b));
+        if (bankMentions.length > 0) {
+          const matches = bankMentions.some(b => cBank.includes(b) || cName.includes(b));
+          if (!matches) return false;
+        }
 
-    // 3. Request AI Response from Google Gemini API if Key is provided
-    if (GEMINI_API_KEY && GEMINI_API_KEY !== "your-gemini-api-key-here") {
-      const geminiAnswer = await this.generateGeminiResponse(cleanMsg, data);
-      if (geminiAnswer) {
+        if (lowerMsg.includes("lounge") && !String(c.loungeAccess || "").toLowerCase().includes("lounge") && !String(c.loungeAccess || "").toLowerCase().includes("yes")) return false;
+        if (lowerMsg.includes("zero fee") && c.annualFee !== 0 && !String(c.annualFee || "").toLowerCase().includes("free")) return false;
+
+        return true;
+      });
+
+      console.log("Firestore Results Count:", matchedCards.length);
+
+      // If cards found in Firestore, return cards directly
+      if (matchedCards.length > 0) {
+        const isCompareQuery = lowerMsg.includes("compare") || lowerMsg.includes("versus") || lowerMsg.includes("vs");
+        const topCards = matchedCards.slice(0, 4);
+
+        if (isCompareQuery) {
+          let compareText = `📊 **Firestore Side-by-Side Card Comparison**:\n\n`;
+          topCards.slice(0, 3).forEach((c, idx) => {
+            const feeStr = c.annualFee === 0 ? "FREE (₹0)" : `₹${c.annualFee}/yr`;
+            const atmStr = typeof c.limits?.atmLimit === 'number' ? `₹${c.limits.atmLimit.toLocaleString()}/day` : "Standard Limit";
+            const loungeStr = c.loungeAccess || "Check Spend Qualifier";
+
+            compareText += `**${idx + 1}. ${c.cardName} (${c.bank})**\n`;
+            compareText += `• **Network**: ${c.network || 'Visa/RuPay'}\n`;
+            compareText += `• **Annual Fee**: ${feeStr}\n`;
+            compareText += `• **ATM Withdrawal Limit**: ${atmStr}\n`;
+            compareText += `• **Lounge Access**: ${loungeStr}\n`;
+            compareText += `• **Rating**: ${c.rating || 4.5} ★\n\n`;
+          });
+
+          return {
+            text: compareText,
+            type: "compare",
+            matchedCards: topCards.slice(0, 3),
+            timestamp
+          };
+        }
+
+        let responseText = `💳 **Found ${matchedCards.length} Matching Card(s) in Database:**\n\n`;
+        topCards.forEach((c, idx) => {
+          const feeStr = c.annualFee === 0 ? "FREE (Zero Fee)" : `₹${c.annualFee}/year`;
+          const atmStr = typeof c.limits?.atmLimit === 'number' ? `₹${c.limits.atmLimit.toLocaleString()}/day` : "Standard Limit";
+          const loungeStr = c.loungeAccess ? c.loungeAccess : "N/A";
+
+          responseText += `**${idx + 1}. ${c.cardName}** (${c.bank})\n`;
+          responseText += `• **Network**: ${c.network || 'RuPay / Visa'}\n`;
+          responseText += `• **Annual Fee**: ${feeStr}\n`;
+          responseText += `• **ATM Limit**: ${atmStr}\n`;
+          responseText += `• **Lounge Access**: ${loungeStr}\n\n`;
+        });
+
         return {
-          text: geminiAnswer,
-          type: matchedCards.length > 0 ? "cards_list" : "ai_response",
-          matchedCards,
+          text: responseText,
+          type: "cards_list",
+          matchedCards: topCards,
           timestamp
         };
       }
+
+      console.log("Fallback to Gemini");
     }
 
-    // 4. Deterministic Fallback if Gemini Key is not set or network call falls back
-    if (matchedCards.length > 0) {
-      const cardsToShow = matchedCards.slice(0, 4);
-      let responseText = `💳 **Found ${matchedCards.length} Matching Card(s) in Database:**\n\n`;
+    // Non-banking query OR no cards found in Firestore -> Ask Gemini AI
+    if (!data) data = await this.getFirestoreData();
+    const geminiResult = await this.generateGeminiResponse(cleanMsg, data);
 
-      cardsToShow.forEach((c, idx) => {
-        const feeStr = c.annualFee === 0 ? "FREE (Zero Fee)" : `₹${c.annualFee}/year`;
-        const atmStr = typeof c.limits?.atmLimit === 'number' ? `₹${c.limits.atmLimit.toLocaleString()}/day` : "Standard Limit";
-        const loungeStr = c.loungeAccess ? c.loungeAccess : "N/A";
-
-        responseText += `**${idx + 1}. ${c.cardName}** (${c.bank})\n`;
-        responseText += `• **Network**: ${c.network || 'RuPay / Visa'}\n`;
-        responseText += `• **Annual Fee**: ${feeStr}\n`;
-        responseText += `• **ATM Limit**: ${atmStr}\n`;
-        responseText += `• **Lounge Access**: ${loungeStr}\n\n`;
-      });
-
+    if (geminiResult.error) {
       return {
-        text: responseText,
-        type: "cards_list",
-        matchedCards,
-        timestamp
-      };
-    }
-
-    // FAQ fallback
-    const faqMatch = (allFaqs || []).find(f => {
-      if (!f) return false;
-      const qLower = String(f.q || f.question || "").toLowerCase();
-      return lowerMsg.includes(qLower);
-    });
-
-    if (faqMatch) {
-      return {
-        text: `❓ **${faqMatch.q || faqMatch.question}**\n\n${faqMatch.a || faqMatch.answer}`,
-        type: "faq",
+        text: geminiResult.message,
+        type: "error",
         timestamp
       };
     }
 
     return {
-      text: "Sorry, I couldn't find any matching debit card in our database. Please try asking about SBI, HDFC, ICICI, zero fee cards, or lounge access!",
-      type: "no_match",
+      text: geminiResult.text,
+      type: "ai_response",
+      matchedCards: [],
       timestamp
     };
   },
 
-  /**
-   * Save Chat History for logged-in users in Firestore
-   */
   async saveUserChatHistory(userId, messages) {
     if (!userId || !Array.isArray(messages)) return;
     try {
@@ -307,9 +352,6 @@ User Question: "${userMessage}"`;
     }
   },
 
-  /**
-   * Load Saved Chat History from Firestore for logged-in users
-   */
   async loadUserChatHistory(userId) {
     if (!userId) return null;
     try {
