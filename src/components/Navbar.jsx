@@ -104,12 +104,12 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
 
         {/* Action Controls */}
         <div className="flex items-center gap-2.5">
-          {/* Wishlist Floating Heart Button & Badge Drawer Opener */}
-          <button
-            onClick={onOpenWishlist}
-            className="relative p-2 rounded-xl text-[#6B7280] dark:text-slate-300 hover:text-rose-500 hover:bg-rose-500/10 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-            title="Saved Favorites"
-            aria-label="Open Saved Favorites"
+          {/* Saved Cards Link with Badge */}
+          <Link
+            to="/saved-cards"
+            className="relative p-2 rounded-xl text-[#6B7280] dark:text-slate-300 hover:text-rose-500 hover:bg-rose-500/10 dark:hover:bg-slate-800 transition-colors"
+            title="Saved Cards"
+            aria-label="Open Saved Cards"
           >
             <Heart className="w-5 h-5 text-rose-500 fill-rose-500/20 hover:fill-rose-500 transition-all" />
             {wishlist && wishlist.length > 0 && (
@@ -117,7 +117,7 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
                 {wishlist.length}
               </span>
             )}
-          </button>
+          </Link>
 
           {/* Compare Badge Link */}
           <Link

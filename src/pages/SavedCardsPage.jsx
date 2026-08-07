@@ -18,7 +18,6 @@ import {
 } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
 import DebitCardCard from '../components/DebitCardCard';
-import BankBrandLogo from '../components/BankBrandLogo';
 
 function SavedCardsPage({ setSelectedCard, toggleCompareQueue, compareQueue, userProfile, STATIC_RANKINGS }) {
   const { wishlist, removeFromWishlist, clearWishlist } = useWishlist();
@@ -26,7 +25,6 @@ function SavedCardsPage({ setSelectedCard, toggleCompareQueue, compareQueue, use
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedNetworkFilter, setSelectedNetworkFilter] = useState('All');
-  const [selectedCategoryFilter, setSelectedCategoryFilter] = useState('All');
 
   // Compute Top Summary Statistics for Saved Portfolio
   const stats = useMemo(() => {
@@ -37,15 +35,11 @@ function SavedCardsPage({ setSelectedCard, toggleCompareQueue, compareQueue, use
       const cat = String(c.category || '').toLowerCase();
       return fee >= 1000 || cat.includes('premium') || cat.includes('wealth');
     }).length;
-    const loungeCards = wishlist.filter(c => {
-      const lounge = String(c.loungeAccess || '').toLowerCase();
-      return lounge && !lounge.startsWith('no') && !lounge.includes('not available');
-    }).length;
 
-    return { totalCards, uniqueBanks, premiumCards, loungeCards };
+    return { totalCards, uniqueBanks, premiumCards };
   }, [wishlist]);
 
-  // Filtered Cards based on search and selected chips
+  // Filtered Cards based on search and network chips
   const filteredWishlist = useMemo(() => {
     return wishlist.filter(card => {
       const q = searchTerm.toLowerCase().trim();
@@ -58,36 +52,25 @@ function SavedCardsPage({ setSelectedCard, toggleCompareQueue, compareQueue, use
 
       const matchNetwork = selectedNetworkFilter === 'All' || String(card.network || '').toLowerCase() === selectedNetworkFilter.toLowerCase();
 
-      let matchCategory = true;
-      if (selectedCategoryFilter === 'Zero Fee') {
-        const fee = typeof c.annualFee === 'number' ? c.annualFee : parseFloat(String(c.annualFee || '').replace(/[^0-9.]/g, '')) || 0;
-        matchCategory = fee === 0;
-      } else if (selectedCategoryFilter === 'Lounge Access') {
-        const lounge = String(card.loungeAccess || '').toLowerCase();
-        matchCategory = Boolean(lounge) && !lounge.startsWith('no') && !lounge.includes('not available');
-      } else if (selectedCategoryFilter === 'Student') {
-        matchCategory = card.studentFriendly === true || String(card.bestFor || '').toLowerCase().includes('student');
-      }
-
-      return matchSearch && matchNetwork && matchCategory;
+      return matchSearch && matchNetwork;
     });
-  }, [wishlist, searchTerm, selectedNetworkFilter, selectedCategoryFilter]);
+  }, [wishlist, searchTerm, selectedNetworkFilter]);
 
   return (
     <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 relative z-20 space-y-8 text-left select-none">
       
-      {/* ── 1. Page Header & Stats Dashboard ── */}
+      {/* ── 1. Page Large Header ── */}
       <div className="border-b border-[#E5E7EB] dark:border-slate-800 pb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div>
           <span className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-rose-500/10 text-rose-600 dark:text-rose-400 text-xs font-extrabold tracking-widest uppercase rounded-full mb-2 border border-rose-500/20">
             <Heart className="w-3.5 h-3.5 fill-rose-500 text-rose-500" />
-            PERSONAL CARD COLLECTION
+            BOOKMARKED COLLECTION
           </span>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1F2937] dark:text-white tracking-tight flex items-center gap-3">
             ❤️ Saved Cards
           </h1>
           <p className="text-xs sm:text-sm text-[#6B7280] dark:text-slate-400 mt-1 font-normal max-w-2xl leading-relaxed">
-            Manage your bookmarked debit cards in one place. Compare benefits, check lounge access, or apply anytime.
+            Your personally bookmarked debit cards.
           </p>
         </div>
 
@@ -107,7 +90,7 @@ function SavedCardsPage({ setSelectedCard, toggleCompareQueue, compareQueue, use
             to="/cards"
             className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:shadow-[0_0_18px_rgba(37,99,235,0.4)] text-white font-bold text-xs shadow-md transition-all flex items-center gap-1.5"
           >
-            <span>Explore More Cards</span>
+            <span>Explore Cards</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
@@ -115,22 +98,18 @@ function SavedCardsPage({ setSelectedCard, toggleCompareQueue, compareQueue, use
 
       {/* ── 2. Top Summary Statistics Grid ── */}
       {wishlist.length > 0 && (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div className="p-4 rounded-2xl glass-card-premium border border-[#E5E7EB] dark:border-slate-800 shadow-soft">
-            <span className="text-[10px] font-extrabold text-[#6B7280] uppercase tracking-wider block">Saved Cards</span>
-            <p className="text-2xl font-extrabold text-[#1F2937] dark:text-white mt-0.5">{stats.totalCards}</p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="p-5 rounded-2xl glass-card-premium border border-[#E5E7EB] dark:border-slate-800 shadow-soft">
+            <span className="text-[11px] font-extrabold text-[#6B7280] uppercase tracking-wider block">Total Saved</span>
+            <p className="text-3xl font-extrabold text-[#1F2937] dark:text-white mt-1">{stats.totalCards}</p>
           </div>
-          <div className="p-4 rounded-2xl glass-card-premium border border-[#E5E7EB] dark:border-slate-800 shadow-soft">
-            <span className="text-[10px] font-extrabold text-[#6B7280] uppercase tracking-wider block">Banks Covered</span>
-            <p className="text-2xl font-extrabold text-[#2563EB] dark:text-[#60A5FA] mt-0.5">{stats.uniqueBanks}</p>
+          <div className="p-5 rounded-2xl glass-card-premium border border-[#E5E7EB] dark:border-slate-800 shadow-soft">
+            <span className="text-[11px] font-extrabold text-[#6B7280] uppercase tracking-wider block">Banks Covered</span>
+            <p className="text-3xl font-extrabold text-[#2563EB] dark:text-[#60A5FA] mt-1">{stats.uniqueBanks}</p>
           </div>
-          <div className="p-4 rounded-2xl glass-card-premium border border-[#E5E7EB] dark:border-slate-800 shadow-soft">
-            <span className="text-[10px] font-extrabold text-[#6B7280] uppercase tracking-wider block">Premium Cards</span>
-            <p className="text-2xl font-extrabold text-amber-500 mt-0.5">{stats.premiumCards}</p>
-          </div>
-          <div className="p-4 rounded-2xl glass-card-premium border border-[#E5E7EB] dark:border-slate-800 shadow-soft">
-            <span className="text-[10px] font-extrabold text-[#6B7280] uppercase tracking-wider block">Lounge Perks</span>
-            <p className="text-2xl font-extrabold text-emerald-500 mt-0.5">{stats.loungeCards} Cards</p>
+          <div className="p-5 rounded-2xl glass-card-premium border border-[#E5E7EB] dark:border-slate-800 shadow-soft">
+            <span className="text-[11px] font-extrabold text-[#6B7280] uppercase tracking-wider block">Premium Cards</span>
+            <p className="text-3xl font-extrabold text-amber-500 mt-1">{stats.premiumCards}</p>
           </div>
         </div>
       )}
@@ -155,7 +134,7 @@ function SavedCardsPage({ setSelectedCard, toggleCompareQueue, compareQueue, use
               <button
                 key={net}
                 onClick={() => setSelectedNetworkFilter(net)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   selectedNetworkFilter === net
                     ? 'bg-[#2563EB] text-white shadow-xs'
                     : 'bg-[#F8FAFC] dark:bg-slate-900 text-[#6B7280] dark:text-slate-300 border border-[#E5E7EB] dark:border-slate-800 hover:border-[#2563EB]'
@@ -168,7 +147,7 @@ function SavedCardsPage({ setSelectedCard, toggleCompareQueue, compareQueue, use
         </div>
       )}
 
-      {/* ── 4. Saved Cards Grid or Empty State ── */}
+      {/* ── 4. Saved Cards Responsive Grid (Desktop: 4, Tablet: 2, Mobile: 1) ── */}
       {wishlist.length === 0 ? (
         <motion.div
           initial={{ opacity: 0, y: 15 }}
@@ -184,7 +163,7 @@ function SavedCardsPage({ setSelectedCard, toggleCompareQueue, compareQueue, use
               You haven't saved any debit cards yet.
             </h2>
             <p className="text-xs text-[#6B7280] dark:text-slate-400 leading-relaxed font-normal">
-              Tap the heart icon on any card while browsing to save it to your personal wallet for instant access later.
+              Tap the heart icon on any debit card to bookmark it here for instant access.
             </p>
           </div>
 
@@ -192,16 +171,16 @@ function SavedCardsPage({ setSelectedCard, toggleCompareQueue, compareQueue, use
             onClick={() => navigate('/cards')}
             className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] text-white font-bold text-xs tracking-wide uppercase shadow-md transition-all cursor-pointer inline-flex items-center gap-2 active:scale-95"
           >
-            <span>Explore Debit Cards</span>
+            <span>Explore Cards</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </motion.div>
       ) : filteredWishlist.length === 0 ? (
         <div className="py-12 text-center text-xs text-[#6B7280] dark:text-slate-400">
-          No saved cards match your current search or network filter.
+          No saved cards match your search criteria.
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <AnimatePresence>
             {filteredWishlist.map((card) => (
               <motion.div

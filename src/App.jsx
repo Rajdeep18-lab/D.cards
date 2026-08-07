@@ -29,7 +29,6 @@ const AIChatAssistant = lazy(() => import("./components/AIChatAssistant"));
 const AdminDashboardModal = lazy(() => import("./components/AdminDashboardModal"));
 const AdminLoginPage = lazy(() => import("./components/AdminLoginPage"));
 const CardDetailsModal = lazy(() => import("./components/CardDetailsModal"));
-const WishlistDrawer = lazy(() => import("./components/WishlistDrawer"));
 const FirstLoginModal = lazy(() => import("./components/FirstLoginModal"));
 const AccessDeniedModal = lazy(() => import("./components/AccessDeniedModal"));
 
@@ -244,7 +243,6 @@ function AppContent() {
     }
   });
 
-  const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isAdminLoginOpen, setIsAdminLoginOpen] = useState(false);
   const [isAccessDeniedOpen, setIsAccessDeniedOpen] = useState(false);
@@ -804,7 +802,6 @@ function AppContent() {
         toggleDarkMode={toggleDarkMode}
         onOpenAuth={() => openAuthModal('required')}
         compareCount={compareQueue.length}
-        onOpenWishlist={() => setIsWishlistOpen(true)}
       />
 
       <div className="flex-1">
@@ -1001,12 +998,6 @@ function AppContent() {
           onCardSelect={setSelectedCard}
           userProfile={userProfile}
           rankings={STATIC_RANKINGS}
-        />
-
-        <WishlistDrawer 
-          isOpen={isWishlistOpen} 
-          onClose={() => setIsWishlistOpen(false)} 
-          onViewDetails={handleSelectCardFromItem} 
         />
       </Suspense>
 
