@@ -24,12 +24,12 @@ function BankCard({ bank, onSelect }) {
 
   return (
     <motion.article 
-      whileHover={{ y: -6 }}
-      transition={{ duration: 0.25, ease: "easeOut" }}
-      className="group relative flex flex-col justify-between rounded-3xl p-6 bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-800 hover:border-[#2563EB]/50 hover:shadow-[0_0_25px_rgba(37,99,235,0.18)] transition-all duration-300 cursor-pointer text-left overflow-hidden select-none"
+      whileHover={{ y: -8, rotate: 0.8 }}
+      transition={{ type: "spring", stiffness: 350, damping: 25 }}
+      className="group relative flex flex-col justify-between rounded-3xl p-6 glass-card-premium glass-card-hover border border-[#E5E7EB] dark:border-slate-800 hover:border-[#2563EB]/60 hover:shadow-[0_20px_50px_rgba(37,99,235,0.2)] transition-all duration-300 cursor-pointer text-left overflow-hidden select-none gpu-layer"
     >
-      {/* Background Subtle Gradient Highlight on Hover */}
-      <div className={`absolute inset-0 bg-gradient-to-br ${brandTheme.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300 pointer-events-none`} />
+      {/* Background Subtle Gradient Ambient Glow on Hover */}
+      <div className={`absolute inset-0 bg-gradient-to-br ${brandTheme.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-300 pointer-events-none`} />
 
       <div>
         {/* Top Header: Official Bank Logo + Bank Name */}
@@ -38,13 +38,13 @@ function BankCard({ bank, onSelect }) {
             <BankBrandLogo 
               bankName={bankName} 
               logoText={logoText} 
-              className="w-12 h-12 shadow-md group-hover:scale-105 transition-transform duration-300" 
+              className="w-12 h-12 shadow-md group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300" 
             />
             <div>
-              <h3 className="text-base font-bold text-[#1F2937] dark:text-white group-hover:text-[#2563EB] dark:group-hover:text-[#60A5FA] transition-colors leading-snug">
+              <h3 className="text-base font-extrabold text-[#1F2937] dark:text-white group-hover:text-[#2563EB] dark:group-hover:text-[#60A5FA] transition-colors leading-snug">
                 {bankName}
               </h3>
-              <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#6B7280] dark:text-slate-400">
+              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#6B7280] dark:text-slate-400">
                 <CreditCard className="w-3 h-3 text-[#2563EB]" />
                 {cardCountText}
               </span>
@@ -58,7 +58,7 @@ function BankCard({ bank, onSelect }) {
             {badges.map((b, idx) => (
               <span
                 key={idx}
-                className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold border ${b.bg || 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20'}`}
+                className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${b.bg || 'bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] border-[#2563EB]/20'}`}
               >
                 <span>{b.icon}</span>
                 <span>{b.text}</span>
@@ -83,21 +83,21 @@ function BankCard({ bank, onSelect }) {
         </div>
       </div>
 
-      <div className="mt-4 pt-4 border-t border-[#E5E7EB] dark:border-slate-800 space-y-3">
+      <div className="mt-4 pt-4 border-t border-[#E5E7EB] dark:border-slate-800/80 space-y-3">
         {/* Savings Interest Rate */}
         <div className="flex items-center justify-between text-xs">
           <span className="text-[#6B7280] dark:text-slate-400 font-medium flex items-center gap-1">
             <Percent className="w-3.5 h-3.5 text-emerald-500" />
             Savings Interest:
           </span>
-          <span className="font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 dark:bg-emerald-500/20 px-2 py-0.5 rounded-md border border-emerald-500/20">
+          <span className="font-extrabold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 dark:bg-emerald-500/20 px-2 py-0.5 rounded-md border border-emerald-500/20">
             {interestRate}% p.a.
           </span>
         </div>
 
         {/* Trust Rating Bar */}
-        <div className="p-3 rounded-2xl bg-[#F8FAFC] dark:bg-slate-900 border border-[#E5E7EB] dark:border-slate-800/80">
-          <div className="flex justify-between items-center text-xs font-semibold text-[#1F2937] dark:text-slate-200 mb-1.5">
+        <div className="p-3 rounded-2xl bg-[#F8FAFC] dark:bg-slate-900/90 border border-[#E5E7EB] dark:border-slate-800/80">
+          <div className="flex justify-between items-center text-xs font-bold text-[#1F2937] dark:text-slate-200 mb-1.5">
             <span className="flex items-center gap-1.5">
               <ShieldCheck className="w-3.5 h-3.5 text-[#2563EB]" />
               Trust Index
@@ -122,7 +122,7 @@ function BankCard({ bank, onSelect }) {
             e.stopPropagation();
             if (onSelect) onSelect(bankName);
           }}
-          className={`w-full rounded-xl py-2.5 text-xs font-semibold bg-gradient-to-r ${brandTheme.gradient} hover:opacity-95 text-white transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] group-hover:brightness-105`}
+          className={`w-full rounded-xl py-3 text-xs font-bold bg-gradient-to-r ${brandTheme.gradient} hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] text-white transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] group-hover:brightness-110`}
         >
           <span>View Matched Cards</span>
           <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
