@@ -25,7 +25,7 @@ const INITIAL_WELCOME = {
   timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 };
 
-function AIChatAssistant({ onOpenContact, embeddedPage = false }) {
+function AIChatAssistant({ onOpenContact, embeddedPage = false, externalQuery = null }) {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(embeddedPage);
   const [isMinimized, setIsMinimized] = useState(false);
@@ -39,6 +39,15 @@ function AIChatAssistant({ onOpenContact, embeddedPage = false }) {
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
+
+  // Trigger external query if passed from parent page
+  useEffect(() => {
+    if (externalQuery) {
+      setIsOpen(true);
+      setIsMinimized(false);
+      handleSendMessage(externalQuery);
+    }
+  }, [externalQuery]);
 
   // Restore chat history from Firestore for logged-in users on mount or login
   useEffect(() => {
