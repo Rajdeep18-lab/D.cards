@@ -192,10 +192,16 @@ User Question: "${userMessage}"`;
         };
       }
     } catch (err) {
-      console.error("Gemini Error:", err.message || err);
+      console.error("Gemini API Request Error Details:", {
+        message: err.message,
+        status: err.status || 429,
+        statusText: err.statusText || "RESOURCE_EXHAUSTED",
+        errorDetails: err
+      });
       return {
         error: true,
-        message: "AI service is temporarily unavailable. Please try again later."
+        message: "AI service is temporarily unavailable. Please try again later.",
+        rawError: err.message
       };
     }
 
