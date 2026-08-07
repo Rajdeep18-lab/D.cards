@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { Link, NavLink, useLocation } from "react-router-dom";
-import { CreditCard, Sun, Moon, LogIn, User, Scale, Heart, Menu, X, Bot } from "lucide-react";
+import { Link, NavLink } from "react-router-dom";
+import { Sun, Moon, LogIn, Scale, Heart, Menu, X } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { useWishlist } from "../context/WishlistContext";
 
-function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0 }) {
+function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOpenWishlist }) {
   const { user, profile, logout } = useAuth();
   const { wishlist } = useWishlist();
 
@@ -25,7 +25,6 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0 }) {
     { name: "Debit Cards", path: "/cards" },
     { name: "Compare", path: "/compare" },
     { name: "AI Advisor", path: "/ai-advisor" },
-    { name: "Favorites", path: "/favorites" },
     { name: "Banks", path: "/banks" },
     { name: "About", path: "/about" },
     { name: "Founders", path: "/founders" },
@@ -105,19 +104,20 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0 }) {
 
         {/* Action Controls */}
         <div className="flex items-center gap-2.5">
-          {/* Wishlist Link with Badge */}
-          <Link
-            to="/favorites"
-            className="relative p-2 rounded-xl text-[#6B7280] dark:text-slate-300 hover:text-[#2563EB] hover:bg-[#EFF6FF] dark:hover:bg-slate-800 transition-colors"
+          {/* Wishlist Floating Heart Button & Badge Drawer Opener */}
+          <button
+            onClick={onOpenWishlist}
+            className="relative p-2 rounded-xl text-[#6B7280] dark:text-slate-300 hover:text-rose-500 hover:bg-rose-500/10 dark:hover:bg-slate-800 transition-colors cursor-pointer"
             title="Saved Favorites"
+            aria-label="Open Saved Favorites"
           >
-            <Heart className="w-5 h-5" />
+            <Heart className="w-5 h-5 text-rose-500 fill-rose-500/20 hover:fill-rose-500 transition-all" />
             {wishlist && wishlist.length > 0 && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#2563EB] text-white text-[10px] font-bold flex items-center justify-center shadow-sm">
+              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-rose-500 text-white text-[10px] font-extrabold flex items-center justify-center shadow-sm animate-pulse">
                 {wishlist.length}
               </span>
             )}
-          </Link>
+          </button>
 
           {/* Compare Badge Link */}
           <Link
@@ -209,7 +209,7 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0 }) {
               className={({ isActive }) =>
                 `block px-4 py-2.5 rounded-xl text-xs font-semibold ${
                   isActive
-                    ? 'bg-[#2563EB] text-white'
+                    ? 'bg-[#2563EB] text-[#FFFFFF]'
                     : 'text-[#1F2937] dark:text-slate-200 hover:bg-[#EFF6FF] dark:hover:bg-slate-800'
                 }`
               }

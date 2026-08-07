@@ -14,7 +14,6 @@ import HomePage from "./pages/HomePage";
 import CardsPage from "./pages/CardsPage";
 import ComparePage from "./pages/ComparePage";
 import AIAdvisorPage from "./pages/AIAdvisorPage";
-import FavoritesPage from "./pages/FavoritesPage";
 import BanksPage from "./pages/BanksPage";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
@@ -804,6 +803,7 @@ function AppContent() {
         toggleDarkMode={toggleDarkMode}
         onOpenAuth={() => openAuthModal('required')}
         compareCount={compareQueue.length}
+        onOpenWishlist={() => setIsWishlistOpen(true)}
       />
 
       <div className="flex-1">
@@ -898,18 +898,6 @@ function AppContent() {
             element={
               <AIAdvisorPage
                 onOpenContact={() => navigate('/contact')}
-              />
-            } 
-          />
-          <Route 
-            path="/favorites" 
-            element={
-              <FavoritesPage
-                setSelectedCard={setSelectedCard}
-                toggleCompareQueue={toggleCompareQueue}
-                compareQueue={compareQueue}
-                userProfile={userProfile}
-                STATIC_RANKINGS={STATIC_RANKINGS}
               />
             } 
           />

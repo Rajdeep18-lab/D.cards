@@ -8,7 +8,6 @@ function Footer({ onOpenLegal }) {
       { name: 'Debit Cards', path: '/cards' },
       { name: 'Compare Cards', path: '/compare' },
       { name: 'AI Advisor', path: '/ai-advisor' },
-      { name: 'Saved Favorites', path: '/favorites' },
       { name: 'Top Banks', path: '/banks' },
     ],
     'Company': [
