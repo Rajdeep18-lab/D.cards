@@ -1,11 +1,12 @@
 import React, { memo } from "react";
 import { motion } from "framer-motion";
-import { Building2, ShieldCheck, CheckCircle2, ArrowRight, Percent, CreditCard, Sparkles } from "lucide-react";
+import { ShieldCheck, CheckCircle2, ArrowRight, Percent, CreditCard } from "lucide-react";
+import BankBrandLogo from "./BankBrandLogo";
+import { getBankBrandTheme } from "../utils/bankDirectoryUtils";
 
 function BankCard({ bank, onSelect }) {
   if (!bank) return null;
 
-  // Support both legacy mock bank structure and new dynamic JSON structure
   const bankName = bank.name || "Unknown Bank";
   const cardCountText = bank.cardCount !== undefined
     ? `${bank.cardCount} Debit Card${bank.cardCount !== 1 ? 's' : ''} Available`
@@ -19,6 +20,7 @@ function BankCard({ bank, onSelect }) {
   const interestRate = bank.interest !== undefined ? bank.interest : 3.0;
   const badges = Array.isArray(bank.badges) ? bank.badges : [];
   const logoText = bank.logoText || bankName.slice(0, 2).toUpperCase();
+  const brandTheme = bank.brandTheme || getBankBrandTheme(bankName);
 
   return (
     <motion.article 
@@ -27,15 +29,17 @@ function BankCard({ bank, onSelect }) {
       className="group relative flex flex-col justify-between rounded-3xl p-6 bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-800 hover:border-[#2563EB]/50 hover:shadow-[0_0_25px_rgba(37,99,235,0.18)] transition-all duration-300 cursor-pointer text-left overflow-hidden select-none"
     >
       {/* Background Subtle Gradient Highlight on Hover */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#2563EB]/[0.02] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+      <div className={`absolute inset-0 bg-gradient-to-br ${brandTheme.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300 pointer-events-none`} />
 
       <div>
-        {/* Top Header: Logo + Badges */}
-        <div className="mb-4 flex items-center justify-between gap-2">
+        {/* Top Header: Official Bank Logo + Bank Name */}
+        <div className="mb-4 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl font-black text-sm text-[#2563EB] dark:text-[#60A5FA] bg-[#EFF6FF] dark:bg-slate-800 border border-[#2563EB]/20 shadow-xs group-hover:scale-105 group-hover:bg-[#2563EB] group-hover:text-white transition-all duration-300 flex-shrink-0">
-              {typeof bank.logo === 'string' && bank.logo.length <= 3 ? bank.logo : logoText}
-            </div>
+            <BankBrandLogo 
+              bankName={bankName} 
+              logoText={logoText} 
+              className="w-12 h-12 shadow-md group-hover:scale-105 transition-transform duration-300" 
+            />
             <div>
               <h3 className="text-base font-bold text-[#1F2937] dark:text-white group-hover:text-[#2563EB] dark:group-hover:text-[#60A5FA] transition-colors leading-snug">
                 {bankName}
@@ -71,7 +75,7 @@ function BankCard({ bank, onSelect }) {
           <ul className="space-y-2 text-xs text-[#374151] dark:text-slate-200 font-normal">
             {features.map((feature, idx) => (
               <li key={idx} className="flex items-start gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#60A5FA] flex-shrink-0 mt-0.5" />
+                <CheckCircle2 className={`w-3.5 h-3.5 ${brandTheme.accentText} flex-shrink-0 mt-0.5`} />
                 <span className="leading-tight">{feature}</span>
               </li>
             ))}
@@ -98,7 +102,7 @@ function BankCard({ bank, onSelect }) {
               <ShieldCheck className="w-3.5 h-3.5 text-[#2563EB]" />
               Trust Index
             </span>
-            <span className="text-[#2563EB] dark:text-[#60A5FA] font-extrabold">
+            <span className={`${brandTheme.accentText} font-extrabold`}>
               {trustScore}/10
             </span>
           </div>
@@ -107,7 +111,7 @@ function BankCard({ bank, onSelect }) {
               initial={{ width: 0 }}
               animate={{ width: `${Math.min(100, Math.max(10, trustScore * 10))}%` }}
               transition={{ duration: 0.8, ease: "easeOut" }}
-              className="h-full bg-gradient-to-r from-[#2563EB] to-[#60A5FA] rounded-full shadow-xs" 
+              className={`h-full bg-gradient-to-r ${brandTheme.progressGradient || 'from-[#2563EB] to-[#60A5FA]'} rounded-full shadow-xs`} 
             />
           </div>
         </div>
@@ -118,7 +122,7 @@ function BankCard({ bank, onSelect }) {
             e.stopPropagation();
             if (onSelect) onSelect(bankName);
           }}
-          className="w-full rounded-xl py-2.5 text-xs font-semibold bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:from-[#1D4ED8] hover:to-[#2563EB] text-white transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] group-hover:brightness-105"
+          className={`w-full rounded-xl py-2.5 text-xs font-semibold bg-gradient-to-r ${brandTheme.gradient} hover:opacity-95 text-white transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] group-hover:brightness-105`}
         >
           <span>View Matched Cards</span>
           <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />

@@ -425,6 +425,141 @@ function generateBankBadges(bankName, cards = []) {
   return badges.slice(0, 2);
 }
 
+export function getBankBrandTheme(rawName = "") {
+  const canonical = canonicalBankName(rawName);
+  const lower = canonical.toLowerCase();
+
+  if (lower.includes("sbi") || lower.includes("state bank")) {
+    return {
+      gradient: "from-[#003366] via-[#0055A5] to-[#0077C8]",
+      brandColor: "#003366",
+      accentText: "text-[#0077C8]",
+      accentBg: "bg-[#003366]/10 dark:bg-[#003366]/25",
+      accentBorder: "border-[#0077C8]/30",
+      progressGradient: "from-[#003366] to-[#00B5EF]"
+    };
+  }
+  if (lower.includes("hdfc")) {
+    return {
+      gradient: "from-[#004B8D] via-[#003366] to-[#002855]",
+      brandColor: "#004B8D",
+      accentText: "text-[#004B8D] dark:text-[#60A5FA]",
+      accentBg: "bg-[#004B8D]/10 dark:bg-[#004B8D]/25",
+      accentBorder: "border-[#004B8D]/30",
+      progressGradient: "from-[#004B8D] to-[#2563EB]"
+    };
+  }
+  if (lower.includes("icici")) {
+    return {
+      gradient: "from-[#F37021] via-[#E85D04] to-[#C41230]",
+      brandColor: "#F37021",
+      accentText: "text-[#F37021]",
+      accentBg: "bg-[#F37021]/10 dark:bg-[#F37021]/25",
+      accentBorder: "border-[#F37021]/30",
+      progressGradient: "from-[#F37021] to-[#FF8C38]"
+    };
+  }
+  if (lower.includes("axis")) {
+    return {
+      gradient: "from-[#97123A] via-[#800B28] to-[#5C0519]",
+      brandColor: "#97123A",
+      accentText: "text-[#97123A] dark:text-[#F472B6]",
+      accentBg: "bg-[#97123A]/10 dark:bg-[#97123A]/25",
+      accentBorder: "border-[#97123A]/30",
+      progressGradient: "from-[#97123A] to-[#D42355]"
+    };
+  }
+  if (lower.includes("kotak")) {
+    return {
+      gradient: "from-[#ED1C24] via-[#D90429] to-[#990000]",
+      brandColor: "#ED1C24",
+      accentText: "text-[#ED1C24]",
+      accentBg: "bg-[#ED1C24]/10 dark:bg-[#ED1C24]/25",
+      accentBorder: "border-[#ED1C24]/30",
+      progressGradient: "from-[#ED1C24] to-[#FF4D4D]"
+    };
+  }
+  if (lower.includes("idfc")) {
+    return {
+      gradient: "from-[#9E1B32] via-[#801224] to-[#5C0A18]",
+      brandColor: "#9E1B32",
+      accentText: "text-[#9E1B32] dark:text-[#F472B6]",
+      accentBg: "bg-[#9E1B32]/10 dark:bg-[#9E1B32]/25",
+      accentBorder: "border-[#9E1B32]/30",
+      progressGradient: "from-[#9E1B32] to-[#E11D48]"
+    };
+  }
+  if (lower.includes("indusind") || lower.includes("indus")) {
+    return {
+      gradient: "from-[#800000] via-[#A31C1C] to-[#590000]",
+      brandColor: "#800000",
+      accentText: "text-[#991B1B] dark:text-[#FCA5A5]",
+      accentBg: "bg-[#800000]/10 dark:bg-[#800000]/25",
+      accentBorder: "border-[#800000]/30",
+      progressGradient: "from-[#800000] to-[#DC2626]"
+    };
+  }
+  if (lower.includes("punjab") || lower.includes("pnb")) {
+    return {
+      gradient: "from-[#A31D24] via-[#C9252D] to-[#801016]",
+      brandColor: "#A31D24",
+      accentText: "text-[#A31D24] dark:text-[#F87171]",
+      accentBg: "bg-[#A31D24]/10 dark:bg-[#A31D24]/25",
+      accentBorder: "border-[#A31D24]/30",
+      progressGradient: "from-[#A31D24] to-[#EF4444]"
+    };
+  }
+  if (lower.includes("baroda") || lower.includes("bob")) {
+    return {
+      gradient: "from-[#F26522] via-[#E54E00] to-[#B33C00]",
+      brandColor: "#F26522",
+      accentText: "text-[#F26522]",
+      accentBg: "bg-[#F26522]/10 dark:bg-[#F26522]/25",
+      accentBorder: "border-[#F26522]/30",
+      progressGradient: "from-[#F26522] to-[#FB923C]"
+    };
+  }
+  if (lower.includes("canara")) {
+    return {
+      gradient: "from-[#0072CE] via-[#00529B] to-[#00386B]",
+      brandColor: "#0072CE",
+      accentText: "text-[#0072CE] dark:text-[#38BDF8]",
+      accentBg: "bg-[#0072CE]/10 dark:bg-[#0072CE]/25",
+      accentBorder: "border-[#0072CE]/30",
+      progressGradient: "from-[#0072CE] to-[#0EA5E9]"
+    };
+  }
+  if (lower.includes("au small") || lower.includes("au sfb")) {
+    return {
+      gradient: "from-[#E30613] via-[#F36F21] to-[#B3000A]",
+      brandColor: "#E30613",
+      accentText: "text-[#E30613] dark:text-[#FB7185]",
+      accentBg: "bg-[#E30613]/10 dark:bg-[#E30613]/25",
+      accentBorder: "border-[#E30613]/30",
+      progressGradient: "from-[#E30613] to-[#F43F5E]"
+    };
+  }
+  if (lower.includes("fi money") || lower === "fi") {
+    return {
+      gradient: "from-[#00D084] via-[#059669] to-[#047857]",
+      brandColor: "#00D084",
+      accentText: "text-[#059669] dark:text-[#34D399]",
+      accentBg: "bg-[#00D084]/10 dark:bg-[#00D084]/25",
+      accentBorder: "border-[#00D084]/30",
+      progressGradient: "from-[#00D084] to-[#10B981]"
+    };
+  }
+
+  return {
+    gradient: "from-[#2563EB] via-[#1D4ED8] to-[#1E40AF]",
+    brandColor: "#2563EB",
+    accentText: "text-[#2563EB] dark:text-[#60A5FA]",
+    accentBg: "bg-[#2563EB]/10 dark:bg-[#2563EB]/25",
+    accentBorder: "border-[#2563EB]/30",
+    progressGradient: "from-[#2563EB] to-[#60A5FA]"
+  };
+}
+
 /**
  * Main Dynamic Generator: Reads card dataset and automatically generates deduplicated covered banks array.
  */
@@ -455,6 +590,7 @@ export function getCoveredBanksDirectory(customCardsList = null) {
     const trustScore = calculateTrustIndex(bankName, cards);
     const interest = BANK_INTEREST_RATES[bankName] || (bankName.includes("Small Finance") ? 7.0 : 3.0);
     const badges = generateBankBadges(bankName, cards);
+    const brandTheme = getBankBrandTheme(bankName);
 
     let logoText = bankName.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
     if (bankName.includes("SBI") || bankName.includes("State Bank")) logoText = "SBI";
@@ -478,6 +614,7 @@ export function getCoveredBanksDirectory(customCardsList = null) {
       trustScore,
       interest,
       badges,
+      brandTheme,
       cards
     });
   });
@@ -577,6 +714,7 @@ export function getInstitutionalProfileForBank(bankName, cardsForBank = []) {
       branches: meta.branches || "5,000+ Branches",
       customers: meta.customers || "50M+ Customers"
     },
+    brandTheme: getBankBrandTheme(canonicalName),
     popularCards: normalizedCards.slice(0, 4)
   };
 }

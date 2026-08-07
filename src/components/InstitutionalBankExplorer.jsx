@@ -21,6 +21,7 @@ import {
   Layers,
   ArrowUpRight
 } from 'lucide-react';
+import BankBrandLogo from './BankBrandLogo';
 import { getCoveredBanksDirectory, getInstitutionalProfileForBank } from '../utils/bankDirectoryUtils';
 
 function InstitutionalBankExplorer({ onSelectBank, onCompareCard, compareQueue = [], customCardsList = null }) {
@@ -50,6 +51,7 @@ function InstitutionalBankExplorer({ onSelectBank, onCompareCard, compareQueue =
   if (!activeBankData || !coveredBanks.length) return null;
 
   const { bankObj, profile } = activeBankData;
+  const brandTheme = profile.brandTheme || bankObj.brandTheme;
 
   const handleBankChange = (name) => {
     setSelectedBankName(name);
@@ -87,15 +89,15 @@ function InstitutionalBankExplorer({ onSelectBank, onCompareCard, compareQueue =
                 onClick={() => handleBankChange(b.name)}
                 className={`flex items-center gap-3 px-4 py-2.5 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer flex-shrink-0 border ${
                   isActive
-                    ? 'bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white border-transparent shadow-md shadow-[#2563EB]/25'
+                    ? `bg-gradient-to-r ${b.brandTheme?.gradient || 'from-[#2563EB] to-[#3B82F6]'} text-white border-transparent shadow-md shadow-[#2563EB]/25`
                     : 'bg-white dark:bg-[#1E293B] text-[#1F2937] dark:text-slate-200 border-[#E5E7EB] dark:border-slate-700 hover:border-[#2563EB]/50'
                 }`}
               >
-                <div className={`w-7 h-7 rounded-xl flex items-center justify-center font-black text-[11px] ${
-                  isActive ? 'bg-white/20 text-white' : 'bg-[#EFF6FF] dark:bg-slate-800 text-[#2563EB] dark:text-[#60A5FA]'
-                }`}>
-                  {b.logoText}
-                </div>
+                <BankBrandLogo 
+                  bankName={b.name} 
+                  logoText={b.logoText} 
+                  className="w-7 h-7 shadow-xs" 
+                />
                 <div className="text-left">
                   <div className="leading-tight">{b.name}</div>
                   <div className={`text-[10px] font-medium mt-0.5 ${isActive ? 'text-white/80' : 'text-[#6B7280] dark:text-slate-400'}`}>
@@ -119,19 +121,24 @@ function InstitutionalBankExplorer({ onSelectBank, onCompareCard, compareQueue =
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -15 }}
           transition={{ duration: 0.3, ease: "easeOut" }}
-          className="rounded-3xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-800 shadow-soft overflow-hidden space-y-8 p-6 sm:p-8"
+          className="rounded-3xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-800 shadow-soft overflow-hidden space-y-8 p-6 sm:p-8 relative"
         >
+          {/* Subtle Top Accent Bar using Official Bank Color */}
+          <div className={`absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r ${brandTheme?.gradient || 'from-[#2563EB] to-[#3B82F6]'}`} />
+
           {/* Top Profile Header: Left Side (Info) & Right Side (Ratings) */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 border-b border-[#E5E7EB] dark:border-slate-800 pb-8 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 border-b border-[#E5E7EB] dark:border-slate-800 pb-8 items-start pt-2">
             
             {/* Left Side: Logo, Name, Meta & Official Link */}
             <div className="lg:col-span-6 space-y-4">
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-2xl bg-[#EFF6FF] dark:bg-slate-800 border-2 border-[#2563EB]/20 flex items-center justify-center font-black text-xl text-[#2563EB] dark:text-[#60A5FA] shadow-md flex-shrink-0">
-                  {bankObj.logoText}
-                </div>
+                <BankBrandLogo 
+                  bankName={profile.bankName} 
+                  logoText={bankObj.logoText} 
+                  className="w-16 h-16 shadow-lg rounded-2xl" 
+                />
                 <div>
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] text-[10px] font-bold uppercase tracking-wider">
+                  <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${brandTheme?.accentBg || 'bg-[#2563EB]/10'} ${brandTheme?.accentText || 'text-[#2563EB]'}`}>
                     {profile.ownershipType}
                   </span>
                   <h3 className="text-2xl sm:text-3xl font-extrabold text-[#1F2937] dark:text-white mt-1">
@@ -369,7 +376,7 @@ function InstitutionalBankExplorer({ onSelectBank, onCompareCard, compareQueue =
                 navigate('/cards');
                 window.scrollTo(0, 0);
               }}
-              className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:from-[#1D4ED8] hover:to-[#2563EB] text-white text-xs font-semibold shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-95 transition-all"
+              className={`w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r ${brandTheme?.gradient || 'from-[#2563EB] to-[#3B82F6]'} hover:opacity-95 text-white text-xs font-semibold shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-95 transition-all`}
             >
               <span>View All {profile.bankName} Debit Cards</span>
               <ArrowRight className="w-4 h-4" />
