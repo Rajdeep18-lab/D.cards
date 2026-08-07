@@ -14,6 +14,7 @@ import HomePage from "./pages/HomePage";
 import CardsPage from "./pages/CardsPage";
 import ComparePage from "./pages/ComparePage";
 import AIAdvisorPage from "./pages/AIAdvisorPage";
+import SavedCardsPage from "./pages/SavedCardsPage";
 import BanksPage from "./pages/BanksPage";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
@@ -898,6 +899,18 @@ function AppContent() {
             element={
               <AIAdvisorPage
                 onOpenContact={() => navigate('/contact')}
+              />
+            } 
+          />
+          <Route 
+            path="/saved-cards" 
+            element={
+              <SavedCardsPage
+                setSelectedCard={setSelectedCard}
+                toggleCompareQueue={toggleCompareQueue}
+                compareQueue={compareQueue}
+                userProfile={userProfile}
+                STATIC_RANKINGS={STATIC_RANKINGS}
               />
             } 
           />
