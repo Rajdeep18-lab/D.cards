@@ -23,6 +23,7 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
   const navLinks = [
     { name: "Home", path: "/" },
     { name: "Debit Cards", path: "/cards" },
+    { name: "Savings Accounts", path: "/savings-accounts" },
     { name: "Compare", path: "/compare" },
     { name: "AI Advisor", path: "/ai-advisor" },
     { name: "Banks", path: "/banks" },

@@ -48,7 +48,7 @@ const STARTER_PROMPTS = [
   { label: "Airport Lounge Cards", query: "Which cards offer free airport lounge access?" }
 ];
 
-function AIChatAssistant({ onOpenContact, embeddedPage = false, externalQuery = null }) {
+function AIChatAssistant({ onOpenContact, embeddedPage = false, externalQuery = null, isCompareActive = false, compareDockHeight = 0 }) {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(embeddedPage);
   const [isMinimized, setIsMinimized] = useState(false);
@@ -151,7 +151,22 @@ function AIChatAssistant({ onOpenContact, embeddedPage = false, externalQuery = 
   };
 
   return (
-    <div className={embeddedPage ? "w-full h-full min-h-[680px] flex flex-col" : "fixed bottom-6 right-6 z-[1200] select-none"}>
+    <div
+      className={
+        embeddedPage
+          ? "w-full h-full min-h-[680px] flex flex-col"
+          : "fixed right-4 sm:right-6 z-50 select-none transition-[bottom] duration-300 ease-out"
+      }
+      style={
+        embeddedPage
+          ? {}
+          : {
+              bottom: isCompareActive
+                ? `calc(1.5rem + var(--compare-dock-height, ${compareDockHeight || 80}px) + 12px + env(safe-area-inset-bottom, 0px))`
+                : `calc(1.5rem + env(safe-area-inset-bottom, 0px))`
+            }
+      }
+    >
       {/* Floating Trigger Button (hidden in embedded page mode) */}
       {!isOpen && !embeddedPage && (
         <motion.button
@@ -178,11 +193,11 @@ function AIChatAssistant({ onOpenContact, embeddedPage = false, externalQuery = 
               opacity: 1, 
               y: 0, 
               scale: 1,
-              height: isMinimized ? '64px' : embeddedPage ? '100%' : 'min(680px, 85vh)'
+              height: isMinimized ? '64px' : embeddedPage ? '100%' : 'min(680px, calc(85vh - var(--compare-dock-height, 0px)))'
             }}
             exit={{ opacity: 0, y: 30, scale: 0.95 }}
             transition={{ type: "spring", stiffness: 350, damping: 28 }}
-            className={`${embeddedPage ? "w-full h-full" : "w-[420px] sm:w-[500px] lg:w-[900px] max-w-[95vw]"} rounded-3xl bg-white dark:bg-[#0F172A] border border-[#E5E7EB] dark:border-slate-800 shadow-[0_24px_80px_rgba(15,23,42,0.35)] backdrop-blur-2xl flex flex-col overflow-hidden text-left transition-all duration-300`}
+            className={`${embeddedPage ? "w-full h-full" : "w-[420px] sm:w-[500px] lg:w-[900px] max-w-[95vw] sm:max-w-[90vw] max-h-[calc(100vh-var(--compare-dock-height,0px)-100px)]"} rounded-3xl bg-white dark:bg-[#0F172A] border border-[#E5E7EB] dark:border-slate-800 shadow-[0_24px_80px_rgba(15,23,42,0.35)] backdrop-blur-2xl flex flex-col overflow-hidden text-left transition-all duration-300`}
           >
             {/* Header Bar */}
             <div className="px-5 py-4 bg-gradient-to-r from-[#0B3D91] via-[#1E3A8A] to-[#1E293B] text-white flex items-center justify-between shadow-md flex-shrink-0 border-b border-slate-800/80">

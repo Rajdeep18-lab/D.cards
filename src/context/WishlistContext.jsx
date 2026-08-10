@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useState } from "rea
 import { useAuth } from "../hooks/useAuth";
 import { wishlistService } from "../services/wishlistService";
 import { debitCards } from "../data/mockData";
+import { savingsAccounts } from "../data/mockSavingsAccounts";
 import { useToast } from "./ToastContext";
 
 const WishlistContext = createContext(null);
@@ -38,19 +39,30 @@ export function WishlistProvider({ children }) {
           
           const fetchedItems = await wishlistService.getWishlist(user.id);
           const items = fetchedItems || [];
-          const fullCards = items.map(item => {
-            const cardId = item.card_id || item.id || item.card?.id;
-            const match = debitCards.find(c => String(c.id) === String(cardId));
-            return match || item.card || { 
-              id: cardId, 
+          const fullItems = items.map(item => {
+            const itemId = item.card_id || item.id || item.card?.id;
+            const isSavings = item.productType === 'savingsAccount' || !!item.card?.accountName || !!item.accountName;
+            if (isSavings) {
+              const matchSavings = savingsAccounts.find(s => String(s.id) === String(itemId));
+              return matchSavings || item.card || {
+                id: itemId,
+                accountName: item.card_name || item.accountName || 'Savings Account',
+                bank: item.bank_name || 'Listed Bank',
+                productType: 'savingsAccount'
+              };
+            }
+            const matchCard = debitCards.find(c => String(c.id) === String(itemId));
+            return matchCard || item.card || { 
+              id: itemId, 
               cardName: item.card_name || 'Debit Card', 
               bank: item.bank_name || 'Listed Bank', 
               annualFee: 0,
               rating: 4.0,
-              benefits: "" 
+              benefits: "",
+              productType: 'debitCard'
             };
           });
-          setWishlist(fullCards);
+          setWishlist(fullItems);
         } catch (err) {
           console.error("Firestore wishlist load/sync error: ", err);
         } finally {
@@ -70,38 +82,40 @@ export function WishlistProvider({ children }) {
     }
   }, [wishlist, user]);
 
-  const addToWishlist = useCallback(async (card) => {
+  const addToWishlist = useCallback(async (product) => {
     if (!user) {
       setIsAuthModalOpen(true);
-      toast("Please log in to save cards to your wishlist", "warning");
+      toast("Please log in to save items to your wishlist", "warning");
       return;
     }
 
+    const title = product.accountName || product.cardName || product.name || 'Product';
     try {
-      await wishlistService.saveCard(user.id, card);
-      setWishlist(prev => [...prev, card]);
-      toast(`"${card.cardName || card.name}" saved to your cloud wishlist ♥`, "success");
+      await wishlistService.saveCard(user.id, product);
+      setWishlist(prev => [...prev, product]);
+      toast(`"${title}" saved to your cloud wishlist ♥`, "success");
     } catch (err) {
       console.error("Wishlist error:", err);
       toast(err.message || "Failed to update database wishlist!", "error");
     }
   }, [user, toast, setIsAuthModalOpen]);
 
-  const toggleWishlist = useCallback(async (card) => {
+  const toggleWishlist = useCallback(async (product) => {
     if (!user) {
       setIsAuthModalOpen(true);
-      toast("Please log in to save cards to your wishlist", "warning");
+      toast("Please log in to save items to your wishlist", "warning");
       return;
     }
 
-    const exists = wishlist.some((c) => String(c.id) === String(card.id));
+    const title = product.accountName || product.cardName || product.name || 'Product';
+    const exists = wishlist.some((c) => String(c.id) === String(product.id));
     try {
       if (exists) {
-        await wishlistService.removeCard(user.id, card.id);
-        setWishlist(prev => prev.filter(c => String(c.id) !== String(card.id)));
-        toast(`"${card.cardName || card.name}" removed from your wishlist`, "info");
+        await wishlistService.removeCard(user.id, product.id);
+        setWishlist(prev => prev.filter(c => String(c.id) !== String(product.id)));
+        toast(`"${title}" removed from your wishlist`, "info");
       } else {
-        await addToWishlist(card);
+        await addToWishlist(product);
       }
     } catch (err) {
       console.error("Firestore wishlist toggle error: ", err);
@@ -124,7 +138,7 @@ export function WishlistProvider({ children }) {
     try {
       await wishlistService.removeCard(user.id, id);
       setWishlist(prev => prev.filter(c => String(c.id) !== String(id)));
-      toast("Card removed from your cloud wishlist", "info");
+      toast("Item removed from your cloud wishlist", "info");
     } catch (err) {
       toast("Failed to delete bookmark from database!", "error");
       console.error("Firestore wishlist remove error: ", err);

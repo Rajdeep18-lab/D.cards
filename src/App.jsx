@@ -19,6 +19,8 @@ import BanksPage from "./pages/BanksPage";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
 import FoundersPage from "./pages/FoundersPage";
+import SavingsAccountsPage from "./pages/SavingsAccountsPage";
+import SavingsAccountsComparePage from "./pages/SavingsAccountsComparePage";
 
 import { normalizeCard, deduplicateCards, parseAnnualFeeVal, parseCashbackVal, safeLower, safeIncludes, safeStr, safeMap } from "./utils/compareUtils";
 
@@ -249,6 +251,8 @@ function AppContent() {
   const [isLegalOpen, setIsLegalOpen] = useState(false);
   const [legalTab, setLegalTab] = useState("privacy");
   const [compareQueue, setCompareQueue] = useState([]);
+  const [savingsCompareQueue, setSavingsCompareQueue] = useState([]);
+  const [compareDockHeight, setCompareDockHeight] = useState(0);
   const [selectedCard, setSelectedCard] = useState(null);
 
   useEffect(() => {
@@ -886,6 +890,24 @@ function AppContent() {
             } 
           />
           <Route 
+            path="/savings-accounts" 
+            element={
+              <SavingsAccountsPage
+                onSelectDebitCard={(card) => setSelectedCard(card)}
+              />
+            } 
+          />
+          <Route 
+            path="/compare-savings" 
+            element={
+              <SavingsAccountsComparePage
+                compareQueue={savingsCompareQueue}
+                setCompareQueue={setSavingsCompareQueue}
+                onSelectDebitCard={(card) => setSelectedCard(card)}
+              />
+            } 
+          />
+          <Route 
             path="/compare" 
             element={
               <ComparePage
@@ -1009,7 +1031,11 @@ function AppContent() {
         {isLegalOpen && <LegalModal isOpen={isLegalOpen} onClose={() => setIsLegalOpen(false)} initialTab={legalTab} />}
         {/* Render floating AI widget on all routes except dedicated /ai-advisor */}
         {location.pathname !== '/ai-advisor' && (
-          <AIChatAssistant onOpenContact={() => navigate('/contact')} />
+          <AIChatAssistant 
+            onOpenContact={() => navigate('/contact')} 
+            isCompareActive={compareQueue.length > 0}
+            compareDockHeight={compareDockHeight}
+          />
         )}
         {isAdminOpen && <AdminDashboardModal isOpen={isAdminOpen} onClose={() => setIsAdminOpen(false)} currentUser={user} />}
         {isAdminLoginOpen && <AdminLoginPage isOpen={isAdminLoginOpen} onClose={() => setIsAdminLoginOpen(false)} />}
@@ -1022,6 +1048,7 @@ function AppContent() {
         onRemove={(cardId) => setCompareQueue(prev => prev.filter(c => String(c.id) !== String(cardId)))}
         onCompareNow={() => navigate('/compare')}
         onClear={() => setCompareQueue([])}
+        onHeightChange={setCompareDockHeight}
       />
     </div>
   );
