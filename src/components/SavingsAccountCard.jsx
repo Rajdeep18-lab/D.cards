@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Heart, Scale, ExternalLink, CheckCircle2, CreditCard, ShieldCheck, Sparkles, Zap, Smartphone, ChevronRight } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
@@ -30,9 +31,9 @@ function SavingsAccountCard({ account, onViewDetails, onToggleCompare, isCompare
               <span className="text-[11px] font-bold uppercase tracking-wider text-[#6B7280] dark:text-slate-400 block">
                 {account.bank}
               </span>
-              <h3 className="text-base sm:text-lg font-extrabold text-[#1F2937] dark:text-white tracking-tight leading-snug group-hover:text-[#2563EB] dark:group-hover:text-[#60A5FA] transition-colors">
+              <Link to={`/savings-accounts/${account.id}`} className="text-base sm:text-lg font-extrabold text-[#1F2937] dark:text-white tracking-tight leading-snug group-hover:text-[#2563EB] dark:group-hover:text-[#60A5FA] transition-colors hover:underline">
                 {account.accountName}
-              </h3>
+              </Link>
             </div>
           </div>
 
@@ -155,13 +156,19 @@ function SavingsAccountCard({ account, onViewDetails, onToggleCompare, isCompare
           <span>{isCompared ? 'Queued' : 'Compare'}</span>
         </button>
 
-        <button
-          onClick={() => onViewDetails && onViewDetails(account)}
+        <Link
+          to={`/savings-accounts/${account.id}`}
+          onClick={(e) => {
+            if (onViewDetails) {
+              e.preventDefault();
+              onViewDetails(account);
+            }
+          }}
           className="flex-1 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:shadow-lg hover:shadow-[#2563EB]/25 text-white font-extrabold text-xs transition-all shadow cursor-pointer active:scale-95 text-center flex items-center justify-center gap-1.5"
         >
           <span>View Details</span>
           <ChevronRight className="w-3.5 h-3.5" />
-        </button>
+        </Link>
       </div>
     </motion.div>
   );

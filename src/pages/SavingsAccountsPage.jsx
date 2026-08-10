@@ -88,6 +88,8 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
   const [filterSeniorCitizen, setFilterSeniorCitizen] = useState(false);
   const [filterWomen, setFilterWomen] = useState(false);
   const [filterDigital, setFilterDigital] = useState(false);
+  const [filterHasDebitCard, setFilterHasDebitCard] = useState(false);
+  const [filterLoungeAccess, setFilterLoungeAccess] = useState(false);
 
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
@@ -124,6 +126,8 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
     setFilterSeniorCitizen(false);
     setFilterWomen(false);
     setFilterDigital(false);
+    setFilterHasDebitCard(false);
+    setFilterLoungeAccess(false);
   }, []);
 
   const toggleCompareQueue = useCallback((account) => {
@@ -185,12 +189,21 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
     if (filterSeniorCitizen) result = result.filter(acc => acc.isSeniorCitizen === true || (acc.accountType || '').toLowerCase().includes('senior'));
     if (filterWomen) result = result.filter(acc => acc.isWomenSpecial === true || (acc.accountType || '').toLowerCase().includes('women'));
     if (filterDigital) result = result.filter(acc => acc.isDigital === true || (acc.accountType || '').toLowerCase().includes('digital'));
+    if (filterHasDebitCard) result = result.filter(acc => Boolean(acc.associatedDebitCardName) || Boolean(acc.associatedDebitCardId));
+    if (filterLoungeAccess) {
+      result = result.filter(acc => {
+        const card = getAssociatedDebitCard(acc.associatedDebitCardId);
+        const l = (card?.loungeAccess || '').toLowerCase();
+        return Boolean(l) && !l.startsWith('no') && !l.includes('not available');
+      });
+    }
 
     return result;
   }, [
     accounts, searchQuery, selectedBanks, selectedAccountTypes,
     minInterestRate, maxMinBalance, filterZeroBalance, filterOnlineOpening,
-    filterStudent, filterSalary, filterSeniorCitizen, filterWomen, filterDigital
+    filterStudent, filterSalary, filterSeniorCitizen, filterWomen, filterDigital,
+    filterHasDebitCard, filterLoungeAccess
   ]);
 
   const activeFiltersCount = useMemo(() => {
@@ -204,11 +217,13 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
       (filterSalary ? 1 : 0) +
       (filterSeniorCitizen ? 1 : 0) +
       (filterWomen ? 1 : 0) +
-      (filterDigital ? 1 : 0);
+      (filterDigital ? 1 : 0) +
+      (filterHasDebitCard ? 1 : 0) +
+      (filterLoungeAccess ? 1 : 0);
   }, [
     selectedBanks, selectedAccountTypes, minInterestRate, maxMinBalance,
     filterZeroBalance, filterOnlineOpening, filterStudent, filterSalary,
-    filterSeniorCitizen, filterWomen, filterDigital
+    filterSeniorCitizen, filterWomen, filterDigital, filterHasDebitCard, filterLoungeAccess
   ]);
 
   return (
@@ -224,7 +239,7 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
             Find the Right Savings Account
           </h1>
           <p className="text-xs sm:text-sm text-[#6B7280] dark:text-slate-400 mt-1 font-normal max-w-3xl">
-            Explore, compare and understand savings accounts from different banks alongside their associated debit card privileges.
+            Explore and compare savings accounts from different banks.
           </p>
         </div>
 
@@ -299,14 +314,14 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
           </button>
 
           <button
-            onClick={() => setMinInterestRate(minInterestRate === 6.0 ? 0 : 6.0)}
+            onClick={() => setFilterLoungeAccess(!filterLoungeAccess)}
             className={`px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all border cursor-pointer ${
-              minInterestRate >= 6.0
+              filterLoungeAccess
                 ? 'bg-[#2563EB] text-white border-[#2563EB] shadow-xs'
                 : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
             }`}
           >
-            🔥 High Rate (&gt;6.0%)
+            ✈️ Lounge Access
           </button>
         </div>
       </div>
@@ -368,10 +383,53 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
               </div>
             </div>
 
+            {/* Range Filters: Min Interest Rate & Max Min Balance */}
+            <div className="space-y-4 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs font-semibold">
+              <div>
+                <div className="flex justify-between text-slate-700 dark:text-slate-300 mb-1">
+                  <span>Min Interest Rate:</span>
+                  <span className="font-extrabold text-emerald-600">{minInterestRate > 0 ? `${minInterestRate}%+` : 'Any'}</span>
+                </div>
+                <input
+                  type="range"
+                  min="0"
+                  max="7.5"
+                  step="0.5"
+                  value={minInterestRate}
+                  onChange={(e) => setMinInterestRate(parseFloat(e.target.value))}
+                  className="w-full accent-[#2563EB]"
+                />
+              </div>
+
+              <div>
+                <div className="flex justify-between text-slate-700 dark:text-slate-300 mb-1">
+                  <span>Max Min Balance:</span>
+                  <span className="font-extrabold text-[#2563EB]">₹{maxMinBalance.toLocaleString('en-IN')}</span>
+                </div>
+                <input
+                  type="range"
+                  min="0"
+                  max="50000"
+                  step="5000"
+                  value={maxMinBalance}
+                  onChange={(e) => setMaxMinBalance(parseInt(e.target.value, 10))}
+                  className="w-full accent-[#2563EB]"
+                />
+              </div>
+            </div>
+
             {/* Category Special Toggles */}
             <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs font-semibold">
-              <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 block mb-2">Special Categories:</span>
+              <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 block mb-2">Special Filters:</span>
               <div className="space-y-2">
+                <label className="flex items-center justify-between cursor-pointer text-slate-700 dark:text-slate-300">
+                  <span>Zero Minimum Balance</span>
+                  <input type="checkbox" checked={filterZeroBalance} onChange={(e) => setFilterZeroBalance(e.target.checked)} className="rounded text-[#2563EB]" />
+                </label>
+                <label className="flex items-center justify-between cursor-pointer text-slate-700 dark:text-slate-300">
+                  <span>Online Video KYC</span>
+                  <input type="checkbox" checked={filterOnlineOpening} onChange={(e) => setFilterOnlineOpening(e.target.checked)} className="rounded text-[#2563EB]" />
+                </label>
                 <label className="flex items-center justify-between cursor-pointer text-slate-700 dark:text-slate-300">
                   <span>Student Friendly</span>
                   <input type="checkbox" checked={filterStudent} onChange={(e) => setFilterStudent(e.target.checked)} className="rounded text-[#2563EB]" />
@@ -391,6 +449,14 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
                 <label className="flex items-center justify-between cursor-pointer text-slate-700 dark:text-slate-300">
                   <span>100% Digital Account</span>
                   <input type="checkbox" checked={filterDigital} onChange={(e) => setFilterDigital(e.target.checked)} className="rounded text-[#2563EB]" />
+                </label>
+                <label className="flex items-center justify-between cursor-pointer text-slate-700 dark:text-slate-300">
+                  <span>Debit Card Available</span>
+                  <input type="checkbox" checked={filterHasDebitCard} onChange={(e) => setFilterHasDebitCard(e.target.checked)} className="rounded text-[#2563EB]" />
+                </label>
+                <label className="flex items-center justify-between cursor-pointer text-slate-700 dark:text-slate-300">
+                  <span>Lounge Access Card</span>
+                  <input type="checkbox" checked={filterLoungeAccess} onChange={(e) => setFilterLoungeAccess(e.target.checked)} className="rounded text-[#2563EB]" />
                 </label>
               </div>
             </div>
@@ -445,6 +511,128 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
           )}
         </div>
       </div>
+
+      {/* Mobile Filter Slide-out Drawer */}
+      <AnimatePresence>
+        {isMobileFilterOpen && (
+          <div className="fixed inset-0 z-50 flex justify-end lg:hidden">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMobileFilterOpen(false)}
+              className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs"
+            />
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="relative z-10 w-full max-w-xs bg-white dark:bg-[#0F172A] h-full overflow-y-auto p-6 space-y-6 shadow-2xl"
+            >
+              <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
+                <h3 className="font-extrabold text-base text-slate-800 dark:text-white flex items-center gap-2">
+                  <Filter className="w-5 h-5 text-[#2563EB]" />
+                  <span>Account Filters</span>
+                </h3>
+                <button
+                  onClick={() => setIsMobileFilterOpen(false)}
+                  className="p-1 rounded-full text-slate-400 hover:text-slate-600"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              {/* Mobile Banks Checklist */}
+              <div className="space-y-2">
+                <span className="text-xs font-bold text-slate-400 uppercase">Select Banks:</span>
+                <div className="space-y-2 max-h-40 overflow-y-auto text-xs">
+                  {BANK_OPTIONS.map(b => (
+                    <label key={b} className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
+                      <input
+                        type="checkbox"
+                        checked={selectedBanks.includes(b)}
+                        onChange={() => toggleBank(b)}
+                        className="rounded text-[#2563EB]"
+                      />
+                      <span>{b}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Mobile Account Types */}
+              <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+                <span className="text-xs font-bold text-slate-400 uppercase">Account Types:</span>
+                <div className="space-y-2 max-h-40 overflow-y-auto text-xs">
+                  {ACCOUNT_TYPE_OPTIONS.map(t => (
+                    <label key={t} className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
+                      <input
+                        type="checkbox"
+                        checked={selectedAccountTypes.includes(t)}
+                        onChange={() => toggleAccountType(t)}
+                        className="rounded text-[#2563EB]"
+                      />
+                      <span>{t}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Mobile Toggles */}
+              <div className="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs font-semibold">
+                <label className="flex items-center justify-between text-slate-700 dark:text-slate-300">
+                  <span>Zero Minimum Balance</span>
+                  <input type="checkbox" checked={filterZeroBalance} onChange={(e) => setFilterZeroBalance(e.target.checked)} className="rounded text-[#2563EB]" />
+                </label>
+                <label className="flex items-center justify-between text-slate-700 dark:text-slate-300">
+                  <span>Online Video KYC</span>
+                  <input type="checkbox" checked={filterOnlineOpening} onChange={(e) => setFilterOnlineOpening(e.target.checked)} className="rounded text-[#2563EB]" />
+                </label>
+                <label className="flex items-center justify-between text-slate-700 dark:text-slate-300">
+                  <span>Student Account</span>
+                  <input type="checkbox" checked={filterStudent} onChange={(e) => setFilterStudent(e.target.checked)} className="rounded text-[#2563EB]" />
+                </label>
+                <label className="flex items-center justify-between text-slate-700 dark:text-slate-300">
+                  <span>Salary Account</span>
+                  <input type="checkbox" checked={filterSalary} onChange={(e) => setFilterSalary(e.target.checked)} className="rounded text-[#2563EB]" />
+                </label>
+                <label className="flex items-center justify-between text-slate-700 dark:text-slate-300">
+                  <span>Senior Citizen</span>
+                  <input type="checkbox" checked={filterSeniorCitizen} onChange={(e) => setFilterSeniorCitizen(e.target.checked)} className="rounded text-[#2563EB]" />
+                </label>
+                <label className="flex items-center justify-between text-slate-700 dark:text-slate-300">
+                  <span>Women's Account</span>
+                  <input type="checkbox" checked={filterWomen} onChange={(e) => setFilterWomen(e.target.checked)} className="rounded text-[#2563EB]" />
+                </label>
+                <label className="flex items-center justify-between text-slate-700 dark:text-slate-300">
+                  <span>Debit Card Available</span>
+                  <input type="checkbox" checked={filterHasDebitCard} onChange={(e) => setFilterHasDebitCard(e.target.checked)} className="rounded text-[#2563EB]" />
+                </label>
+                <label className="flex items-center justify-between text-slate-700 dark:text-slate-300">
+                  <span>Lounge Access Card</span>
+                  <input type="checkbox" checked={filterLoungeAccess} onChange={(e) => setFilterLoungeAccess(e.target.checked)} className="rounded text-[#2563EB]" />
+                </label>
+              </div>
+
+              <div className="pt-4 space-y-2">
+                <button
+                  onClick={() => setIsMobileFilterOpen(false)}
+                  className="w-full py-3 rounded-xl bg-[#2563EB] text-white text-xs font-bold shadow"
+                >
+                  Apply Filters ({activeFiltersCount})
+                </button>
+                <button
+                  onClick={() => { resetAllFilters(); setIsMobileFilterOpen(false); }}
+                  className="w-full py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold"
+                >
+                  Reset All
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* Floating Savings Account Comparison Dock */}
       <SavingsAccountComparisonDock

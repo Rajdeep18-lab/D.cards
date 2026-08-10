@@ -23,28 +23,35 @@ export const wishlistService = {
   /**
    * Bookmarks a card inside Firestore wishlists & saved_cards collections
    */
-  async saveCard(userId, card) {
-    if (!userId || !card) return null;
+  async saveCard(userId, product) {
+    if (!userId || !product) return null;
     const savedAtTimestamp = new Date().toISOString();
-    const cardId = card.id;
-    const cardName = card.cardName || card.name || 'Debit Card';
-    const bankName = card.bank || card.bank_name || 'Listed Bank';
+    const isSavings = product.productType === 'savingsAccount' || Boolean(product.accountName);
+    const productId = product.id;
+    const productName = product.accountName || product.cardName || product.name || 'Product';
+    const bankName = product.bank || product.bank_name || 'Listed Bank';
+    const pType = isSavings ? 'savingsAccount' : 'debitCard';
 
     const cardItem = {
-      card_id: cardId,
-      card_name: cardName,
+      card_id: productId,
+      card_name: productName,
+      accountName: product.accountName,
       bank_name: bankName,
+      productType: pType,
       saved_at: savedAtTimestamp,
-      card
+      card: { ...product, productType: pType }
     };
 
     try {
-      // 1. Save entry to Firestore collection "saved_cards" (Requirement 3)
+      // 1. Save entry to Firestore collection "saved_cards"
       await addDoc(collection(db, 'saved_cards'), {
         userId: userId,
-        cardId: cardId,
-        cardName: cardName,
+        cardId: productId,
+        productId: productId,
+        productName: productName,
+        cardName: productName,
         bankName: bankName,
+        productType: pType,
         savedAt: savedAtTimestamp
       });
 

@@ -21,6 +21,7 @@ import ContactPage from "./pages/ContactPage";
 import FoundersPage from "./pages/FoundersPage";
 import SavingsAccountsPage from "./pages/SavingsAccountsPage";
 import SavingsAccountsComparePage from "./pages/SavingsAccountsComparePage";
+import SavingsAccountDetailPage from "./pages/SavingsAccountDetailPage";
 
 import { normalizeCard, deduplicateCards, parseAnnualFeeVal, parseCashbackVal, safeLower, safeIncludes, safeStr, safeMap } from "./utils/compareUtils";
 
@@ -898,6 +899,22 @@ function AppContent() {
             } 
           />
           <Route 
+            path="/savings-accounts/:id" 
+            element={
+              <SavingsAccountDetailPage
+                onSelectDebitCard={(card) => setSelectedCard(card)}
+                onToggleCompare={(acc) => {
+                  setSavingsCompareQueue(prev => {
+                    if (prev.some(a => String(a.id) === String(acc.id))) return prev;
+                    if (prev.length >= 3) return prev;
+                    return [...prev, acc];
+                  });
+                }}
+                isCompared={false}
+              />
+            } 
+          />
+          <Route 
             path="/compare-savings" 
             element={
               <SavingsAccountsComparePage
@@ -927,6 +944,18 @@ function AppContent() {
           />
           <Route 
             path="/saved-cards" 
+            element={
+              <SavedCardsPage
+                setSelectedCard={setSelectedCard}
+                toggleCompareQueue={toggleCompareQueue}
+                compareQueue={compareQueue}
+                userProfile={userProfile}
+                STATIC_RANKINGS={STATIC_RANKINGS}
+              />
+            } 
+          />
+          <Route 
+            path="/favorites" 
             element={
               <SavedCardsPage
                 setSelectedCard={setSelectedCard}

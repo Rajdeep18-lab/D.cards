@@ -1,7 +1,8 @@
 import { db, collection, getDocs } from '../lib/firebase';
 import { savingsAccounts } from '../data/mockSavingsAccounts';
 
-export const SAVINGS_ACCOUNTS_COLLECTION = 'savings_accounts';
+export const PRIMARY_COLLECTION = 'savingsAccounts';
+export const ALT_COLLECTION = 'savings_accounts';
 
 let cachedSavingsAccounts = null;
 let lastCacheTime = 0;
@@ -15,7 +16,11 @@ export const savingsAccountService = {
     }
 
     try {
-      const querySnapshot = await getDocs(collection(db, SAVINGS_ACCOUNTS_COLLECTION));
+      let querySnapshot = await getDocs(collection(db, PRIMARY_COLLECTION));
+      if (querySnapshot.empty) {
+        querySnapshot = await getDocs(collection(db, ALT_COLLECTION));
+      }
+
       if (!querySnapshot.empty) {
         const firestoreAccounts = querySnapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
         const mergedMap = new Map();
@@ -28,7 +33,7 @@ export const savingsAccountService = {
         return cachedSavingsAccounts;
       }
     } catch (err) {
-      console.warn("Firestore fetch notice for savings_accounts collection, using static dataset:", err.message || err);
+      console.warn("Firestore fetch notice for savingsAccounts collection, using static dataset:", err.message || err);
     }
 
     cachedSavingsAccounts = savingsAccounts;

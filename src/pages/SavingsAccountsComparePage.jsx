@@ -103,6 +103,14 @@ function SavingsAccountsComparePage({ compareQueue = [], setCompareQueue, onSele
                 ))}
               </tr>
               <tr>
+                <td className="p-4 font-bold text-slate-700 dark:text-slate-300">Non-Maintenance Charge</td>
+                {compareQueue.map(acc => (
+                  <td key={acc.id} className="p-4 text-center text-xs font-medium text-slate-600 dark:text-slate-400">
+                    {acc.nonMaintenanceCharges || "Standard Fee"}
+                  </td>
+                ))}
+              </tr>
+              <tr>
                 <td className="p-4 font-bold text-slate-700 dark:text-slate-300">Online Video KYC</td>
                 {compareQueue.map(acc => (
                   <td key={acc.id} className="p-4 text-center font-semibold text-indigo-600">
@@ -110,19 +118,29 @@ function SavingsAccountsComparePage({ compareQueue = [], setCompareQueue, onSele
                   </td>
                 ))}
               </tr>
+              <tr>
+                <td className="p-4 font-bold text-slate-700 dark:text-slate-300">Eligibility & Conditions</td>
+                {compareQueue.map(acc => (
+                  <td key={acc.id} className="p-4 text-center text-xs font-medium text-slate-600 dark:text-slate-400">
+                    {acc.eligibility && acc.eligibility.length > 0 ? acc.eligibility[0] : "Resident Indian (18+)"}
+                  </td>
+                ))}
+              </tr>
               <tr className="bg-slate-50 dark:bg-slate-900/60">
-                <td className="p-4 font-black text-[#0B3D91] dark:text-[#60A5FA] uppercase text-xs">💳 Associated Debit Card</td>
+                <td className="p-4 font-black text-[#0B3D91] dark:text-[#60A5FA] uppercase text-xs">💳 Provided Debit Card</td>
                 {compareQueue.map(acc => {
                   const card = getAssociatedDebitCard(acc.associatedDebitCardId);
                   return (
                     <td key={acc.id} className="p-4 text-center align-top">
                       {card ? (
                         <div className="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-left space-y-1 shadow-xs">
-                          <span className="text-[10px] font-bold text-[#2563EB] uppercase">{card.network}</span>
+                          <span className="text-[10px] font-bold text-[#2563EB] uppercase">{card.network} • {card.category || 'Standard'}</span>
                           <h4 className="font-extrabold text-xs text-slate-800 dark:text-white">{card.cardName}</h4>
                           <p className="text-[11px] text-slate-500">Annual Fee: {card.annualFee}</p>
                           <p className="text-[11px] text-slate-500">ATM Limit: ₹{(card.atmLimit || 50000).toLocaleString('en-IN')}/day</p>
+                          <p className="text-[11px] text-slate-500">POS Limit: ₹{(card.posLimit || 100000).toLocaleString('en-IN')}/day</p>
                           <p className="text-[11px] text-slate-500">Lounge: {card.loungeAccess || "No"}</p>
+                          <p className="text-[11px] text-slate-500">Intl Usage: {card.international ? 'Yes' : 'No'}</p>
                         </div>
                       ) : (
                         <span className="text-xs font-semibold text-slate-500">{acc.associatedDebitCardName || "Debit Card Provided"}</span>

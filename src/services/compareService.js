@@ -5,10 +5,11 @@ export const compareService = {
   /**
    * Logs a card comparison list to Firestore compare_history collection
    */
-  async logComparison(userId, cardsOrIds) {
+  async logComparison(userId, cardsOrIds, type = 'debitCard') {
     if (!userId || !Array.isArray(cardsOrIds) || cardsOrIds.length === 0) return null;
 
     const isObjects = typeof cardsOrIds[0] === 'object' && cardsOrIds[0] !== null;
+    const isSavings = type === 'savingsAccount' || (isObjects && Boolean(cardsOrIds[0]?.accountName));
 
     let comparedCards = [];
     let comparedCardNames = [];
@@ -16,38 +17,36 @@ export const compareService = {
     let comparedCardDetails = [];
 
     if (isObjects) {
-      const normalizedList = cardsOrIds.map(normalizeCard);
+      const normalizedList = cardsOrIds.map(c => isSavings ? c : normalizeCard(c));
       comparedCards = normalizedList.map(c => c.id || 'unknown');
-      comparedCardNames = normalizedList.map(c => c.cardName || 'Unknown Card');
+      comparedCardNames = normalizedList.map(c => c.accountName || c.cardName || 'Unknown Product');
       comparedBanks = normalizedList.map(c => c.bank || 'Unknown Bank');
       comparedCardDetails = normalizedList.map(c => {
-        const scoreVal = c.aiScore || calculateCardAIScore(c);
         return {
           card_id: c.id || 'unknown',
-          card_name: c.cardName || 'Unknown Card',
+          card_name: c.accountName || c.cardName || 'Unknown Product',
           bank_name: c.bank || 'Unknown Bank',
-          annual_fee: c.annualFee || "Free",
-          score: `${scoreVal}/100`
+          annual_fee: c.minimumBalance || c.annualFee || "Free",
+          productType: isSavings ? 'savingsAccount' : 'debitCard'
         };
       });
     } else {
       comparedCards = cardsOrIds.map(item => String(item || ''));
     }
 
-    const firstCardVal = isObjects ? (cardsOrIds[0]?.cardName || cardsOrIds[0]?.id || '') : (cardsOrIds[0] || '');
-    const secondCardVal = cardsOrIds.length > 1 ? (isObjects ? (cardsOrIds[1]?.cardName || cardsOrIds[1]?.id || '') : (cardsOrIds[1] || '')) : null;
+    const firstCardVal = isObjects ? (cardsOrIds[0]?.accountName || cardsOrIds[0]?.cardName || cardsOrIds[0]?.id || '') : (cardsOrIds[0] || '');
+    const secondCardVal = cardsOrIds.length > 1 ? (isObjects ? (cardsOrIds[1]?.accountName || cardsOrIds[1]?.cardName || cardsOrIds[1]?.id || '') : (cardsOrIds[1] || '')) : null;
     const comparedAtTimestamp = new Date().toISOString();
 
     const insertPayload = {
-      // Requirement 2 fields:
       userId: userId,
       firstCard: firstCardVal,
       secondCard: secondCardVal,
       comparedAt: comparedAtTimestamp,
-      // Compatibility fields:
       user_id: userId,
-      compared_cards: comparedCards,
-      created_at: comparedAtTimestamp
+      compared_cards: comparedCardNames.length > 0 ? comparedCardNames : comparedCards,
+      created_at: comparedAtTimestamp,
+      comparisonType: isSavings ? 'savingsAccount' : 'debitCard'
     };
 
     if (isObjects) {

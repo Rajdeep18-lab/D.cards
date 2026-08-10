@@ -20,45 +20,45 @@ import AIChatAssistant from '../components/AIChatAssistant';
 const SUGGESTED_PROMPTS = [
   {
     id: "p1",
+    category: "Zero Balance Savings",
+    icon: Gift,
+    bg: "bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] border-[#2563EB]/20",
+    query: "Which savings account has zero minimum balance?"
+  },
+  {
+    id: "p2",
+    category: "Savings Comparison",
+    icon: Layers,
+    bg: "bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] border-[#2563EB]/20",
+    query: "Compare SBI and HDFC savings accounts."
+  },
+  {
+    id: "p3",
+    category: "Student Savings",
+    icon: Zap,
+    bg: "bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] border-[#2563EB]/20",
+    query: "Which savings account is suitable for a student?"
+  },
+  {
+    id: "p4",
+    category: "Account Debit Card",
+    icon: CreditCard,
+    bg: "bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] border-[#2563EB]/20",
+    query: "What debit card comes with HDFC SavingsMax Account and what features does it offer?"
+  },
+  {
+    id: "p5",
+    category: "Online Account Opening",
+    icon: ShieldCheck,
+    bg: "bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] border-[#2563EB]/20",
+    query: "Which savings accounts can be opened online via Video KYC?"
+  },
+  {
+    id: "p6",
     category: "Lounge Access",
     icon: Plane,
     bg: "bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] border-[#2563EB]/20",
     query: "Which debit cards offer complimentary airport lounge access?"
-  },
-  {
-    id: "p2",
-    category: "Zero Annual Fee",
-    icon: Gift,
-    bg: "bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] border-[#2563EB]/20",
-    query: "Show me zero annual fee debit cards with zero minimum balance."
-  },
-  {
-    id: "p3",
-    category: "ATM Limits",
-    icon: Zap,
-    bg: "bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] border-[#2563EB]/20",
-    query: "What is the daily ATM withdrawal limit for HDFC Platinum?"
-  },
-  {
-    id: "p4",
-    category: "RuPay & UPI",
-    icon: CreditCard,
-    bg: "bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] border-[#2563EB]/20",
-    query: "Show me the best RuPay debit cards for cashback and rewards."
-  },
-  {
-    id: "p5",
-    category: "Bank Comparison",
-    icon: Layers,
-    bg: "bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] border-[#2563EB]/20",
-    query: "Compare SBI Global vs ICICI Coral debit cards."
-  },
-  {
-    id: "p6",
-    category: "Cashback Deals",
-    icon: Percent,
-    bg: "bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] border-[#2563EB]/20",
-    query: "Which debit card gives maximum cashback points on daily spends?"
   }
 ];
 

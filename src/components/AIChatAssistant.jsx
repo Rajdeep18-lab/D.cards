@@ -25,27 +25,27 @@ import { aiChatService } from '../services/aiChatService';
 import { useAuth } from '../hooks/useAuth';
 
 const QUICK_ACTIONS = [
-  { label: "Visa Cards", query: "Show me Visa Debit Cards" },
-  { label: "RuPay Cards", query: "Show me the best RuPay Debit Card" },
-  { label: "Mastercard", query: "Show me Mastercard Debit Cards" },
+  { label: "Zero Balance Savings", query: "Which savings account has zero minimum balance?" },
+  { label: "Compare Savings", query: "Compare SBI and HDFC savings accounts" },
+  { label: "Student Savings", query: "Which savings account is suitable for a student?" },
+  { label: "Online Video KYC", query: "Which savings accounts can be opened online?" },
+  { label: "Account Debit Card", query: "What debit card comes with HDFC SavingsMax Account?" },
   { label: "Airport Lounge", query: "Which debit cards offer Airport Lounge Access?" },
   { label: "Zero Annual Fee", query: "Show me Zero Annual Fee Debit Cards" },
   { label: "Cashback Cards", query: "Show me Cashback Debit Cards" },
-  { label: "Fuel Benefits", query: "Which debit cards offer fuel surcharge waivers?" },
+  { label: "Visa Cards", query: "Show me Visa Debit Cards" },
+  { label: "RuPay Cards", query: "Show me the best RuPay Debit Card" },
   { label: "Shopping Cards", query: "Show me best debit cards for online shopping rewards" },
   { label: "Travel Cards", query: "Show me zero forex travel debit cards" },
-  { label: "Senior Citizen", query: "Show me senior citizen banking debit cards" },
-  { label: "Compare Banks", query: "Compare SBI vs HDFC debit cards" },
-  { label: "ATM Limits", query: "Show me high ATM withdrawal limit debit cards" },
-  { label: "International Cards", query: "Show me international debit cards" }
+  { label: "Senior Citizen", query: "Show me senior citizen savings accounts" }
 ];
 
 const STARTER_PROMPTS = [
-  { label: "Best HDFC Debit Card", query: "Show me the best HDFC Bank Debit Card" },
-  { label: "Compare SBI vs ICICI", query: "Compare SBI and ICICI debit cards" },
-  { label: "Zero Balance Accounts", query: "Show me zero balance savings account debit cards" },
-  { label: "Best Cashback Card", query: "Which debit card gives the highest cashback?" },
-  { label: "Airport Lounge Cards", query: "Which cards offer free airport lounge access?" }
+  { label: "Zero Balance Savings", query: "Which savings account has zero minimum balance?" },
+  { label: "Compare SBI vs HDFC Savings", query: "Compare SBI and HDFC savings accounts" },
+  { label: "Student Savings Account", query: "Which savings account is suitable for a student?" },
+  { label: "Online Video KYC Accounts", query: "Which savings accounts can be opened online?" },
+  { label: "Savings Debit Card Perks", query: "What debit card comes with ICICI MINE Savings Account?" }
 ];
 
 function AIChatAssistant({ onOpenContact, embeddedPage = false, externalQuery = null, isCompareActive = false, compareDockHeight = 0 }) {

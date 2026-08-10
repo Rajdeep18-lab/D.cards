@@ -609,6 +609,236 @@ export const savingsAccounts = [
       "Zero Maintenance Charge for life",
       "Free Physical Visa Debit Card dispatched to home"
     ]
+  },
+  {
+    id: 111,
+    bankId: "icici-bank",
+    bank: "ICICI Bank",
+    logo: "IC",
+    accountName: "ICICI Advantage Woman Savings Account",
+    accountType: "Women's",
+    accountTypeBadges: ["Women's", "Cashback", "Shopping"],
+    interestRate: "3.00% - 3.50% p.a.",
+    interestRateValue: 3.5,
+    minimumBalance: "₹10,000",
+    minimumBalanceValue: 10000,
+    isZeroBalance: false,
+    isOnlineOpening: true,
+    isStudent: false,
+    isSalary: false,
+    isSeniorCitizen: false,
+    isWomenSpecial: true,
+    isDigital: true,
+    isPremium: true,
+    isNRI: false,
+    rating: 4.8,
+    isPopular: true,
+    officialSourceUrl: "https://www.icicibank.com/personal-banking/accounts/savings-account/women-savings-account",
+    lastVerified: "August 2026",
+    description: "Specially tailored for modern women, featuring Smart Shopper Silver Debit Card with high cashback rates, free cancer insurance cover, and child education benefits.",
+    keyBenefits: [
+      "Cashback up to ₹750/month on shopping, dining & grocery spends",
+      "Complimentary Breast Cancer Insurance Cover up to ₹2 Lakhs",
+      "Discounts on skill development courses & wellness subscriptions",
+      "Special home & car loan interest concessions for women applicants"
+    ],
+    associatedDebitCardId: 5,
+    associatedDebitCardName: "ICICI Coral PayWave Debit Card",
+    interestSlabs: [
+      "Daily balance up to ₹50 Lakhs: 3.00% p.a.",
+      "Daily balance above ₹50 Lakhs: 3.50% p.a."
+    ],
+    ambAqbText: "Average Monthly Balance: ₹10,000 (Metro/Urban branches)",
+    nonMaintenanceCharges: "₹500/quarter if AMB falls below threshold",
+    accountOpeningFeatures: [
+      "Instant Video KYC online onboarding",
+      "Zero paperwork doorstep assistant",
+      "Instant iMobile Pay app activation"
+    ],
+    eligibility: [
+      "Resident Indian Women aged 18 years and above",
+      "Single or Primary Joint Account Holder"
+    ],
+    documentsRequired: [
+      "Aadhaar Card",
+      "PAN Card",
+      "Proof of Identity & Address"
+    ],
+    bankingFeatures: [
+      "Free Unlimited NEFT & RTGS Online Transfers",
+      "Complimentary iMobile Pay App access",
+      "Free Chequebook (50 leaves/year)",
+      "Priority customer care desk at branches"
+    ]
+  },
+  {
+    id: 112,
+    bankId: "sbi",
+    bank: "State Bank of India",
+    logo: "SB",
+    accountName: "SBI Pehla Kadam Minor Savings Account",
+    accountType: "Minor",
+    accountTypeBadges: ["Minor", "Kids", "Financial Literacy"],
+    interestRate: "2.70% p.a.",
+    interestRateValue: 2.7,
+    minimumBalance: "₹0",
+    minimumBalanceValue: 0,
+    isZeroBalance: true,
+    isOnlineOpening: true,
+    isStudent: true,
+    isSalary: false,
+    isSeniorCitizen: false,
+    isWomenSpecial: false,
+    isDigital: true,
+    isPremium: false,
+    isNRI: false,
+    rating: 4.6,
+    isPopular: false,
+    officialSourceUrl: "https://sbi.co.in/web/personal-banking/accounts/savings-account/pehla-kadam-pehli-udaan",
+    lastVerified: "August 2026",
+    description: "Empowering children below 18 years with financial literacy, zero minimum balance requirement, photo-printed contact-less debit card, and capped daily transaction limits.",
+    keyBenefits: [
+      "Photo-printed SBI Pehla Kadam Debit Card for children",
+      "Zero Minimum Balance maintenance requirement",
+      "Capped per-day ATM withdrawal (₹5,000) & POS spending (₹5,000)",
+      "Automated Monthly Recurring Deposit auto-debit options"
+    ],
+    associatedDebitCardId: 1,
+    associatedDebitCardName: "SBI Global International Debit Card",
+    interestSlabs: [
+      "Daily balance up to ₹10 Crores: 2.70% p.a."
+    ],
+    ambAqbText: "Zero Minimum Balance (No penalty for non-maintenance)",
+    nonMaintenanceCharges: "Nil",
+    accountOpeningFeatures: [
+      "Joint opening with parent/guardian via SBI Branch or YONO",
+      "Simple birth certificate & guardian Aadhaar verification"
+    ],
+    eligibility: [
+      "Minors under 18 years of age (Jointly with Parent/Guardian for under 10 years)"
+    ],
+    documentsRequired: [
+      "Minor's Birth Certificate & Aadhaar",
+      "Guardian's PAN Card & Aadhaar"
+    ],
+    bankingFeatures: [
+      "Restricted YONO Mobile Banking view access",
+      "Personalized Chequebook with 10 free leaves",
+      "Auto-sweep into e-TDR/e-STDR deposits"
+    ]
+  },
+  {
+    id: 113,
+    bankId: "hdfc-bank",
+    bank: "HDFC Bank",
+    logo: "HD",
+    accountName: "HDFC NRE Premium Savings Account",
+    accountType: "NRI",
+    accountTypeBadges: ["NRI", "Tax Free Interest", "Zero Forex"],
+    interestRate: "3.00% - 3.50% p.a.",
+    interestRateValue: 3.5,
+    minimumBalance: "₹10,000",
+    minimumBalanceValue: 10000,
+    isZeroBalance: false,
+    isOnlineOpening: true,
+    isStudent: false,
+    isSalary: false,
+    isSeniorCitizen: false,
+    isWomenSpecial: false,
+    isDigital: true,
+    isPremium: true,
+    isNRI: true,
+    rating: 4.9,
+    isPopular: true,
+    officialSourceUrl: "https://www.hdfcbank.com/nri-banking/save/nre-savings-account",
+    lastVerified: "August 2026",
+    description: "Dedicated account for Non-Resident Indians allowing full repatriation of funds, tax-free interest earned in India, and international HDFC Platinum Debit Card privileges.",
+    keyBenefits: [
+      "100% Tax-Free Interest earned in India under Income Tax Act",
+      "Full and freely repatriable principal & interest funds back overseas",
+      "Complimentary HDFC Global NRE Platinum Debit Card",
+      "Free 24/7 dedicated International NRI Relationship Desk"
+    ],
+    associatedDebitCardId: 3,
+    associatedDebitCardName: "EasyShop Platinum Debit Card",
+    interestSlabs: [
+      "Daily balance below ₹50 Lakhs: 3.00% p.a.",
+      "Daily balance ₹50 Lakhs & above: 3.50% p.a."
+    ],
+    ambAqbText: "Average Monthly Balance: ₹10,000 in NRE Savings or ₹5 Lakhs overall Relationship",
+    nonMaintenanceCharges: "₹750/quarter if AMB is not maintained",
+    accountOpeningFeatures: [
+      "100% Paperless Remote Online Account Opening for NRIs",
+      "Attestation via Indian Embassy / Overseas Notary or Video KYC"
+    ],
+    eligibility: [
+      "Non-Resident Indians (NRIs) & Persons of Indian Origin (PIOs)"
+    ],
+    documentsRequired: [
+      "Valid Indian Passport & Overseas Work/Residence Visa",
+      "Overseas Proof of Address & PAN Card or Form 60"
+    ],
+    bankingFeatures: [
+      "Free Money2India Overseas Remittance Service",
+      "Preferential Forex Exchange Rates on INR Conversion",
+      "International ATM withdrawals & worldwide concierge"
+    ]
+  },
+  {
+    id: 114,
+    bankId: "axis-bank",
+    bank: "Axis Bank",
+    logo: "AX",
+    accountName: "Axis Basic Small Savings Account (BSBD)",
+    accountType: "Basic Savings",
+    accountTypeBadges: ["Basic Savings", "Zero Balance", "Govt Compliant"],
+    interestRate: "3.00% p.a.",
+    interestRateValue: 3.0,
+    minimumBalance: "₹0",
+    minimumBalanceValue: 0,
+    isZeroBalance: true,
+    isOnlineOpening: true,
+    isStudent: true,
+    isSalary: false,
+    isSeniorCitizen: true,
+    isWomenSpecial: false,
+    isDigital: false,
+    isPremium: false,
+    isNRI: false,
+    rating: 4.5,
+    isPopular: false,
+    officialSourceUrl: "https://www.axisbank.com/retail/accounts/savings-account/basic-savings-account",
+    lastVerified: "August 2026",
+    description: "RBI-mandated Basic Savings Bank Deposit (BSBD) account with zero minimum balance requirement, free RuPay debit card, and zero annual charges.",
+    keyBenefits: [
+      "100% Zero Minimum Balance requirement (BSBDA Guidelines)",
+      "Complimentary Basic RuPay Debit Card with Zero Joining or Annual Fee",
+      "4 Free ATM Withdrawals per month across any bank ATM",
+      "Deposit of cash & cheques at branch with zero charges"
+    ],
+    associatedDebitCardId: 8,
+    associatedDebitCardName: "Priority Debit Card",
+    interestSlabs: [
+      "Daily balance up to ₹50 Lakhs: 3.00% p.a."
+    ],
+    ambAqbText: "Zero AMB (No minimum balance maintenance requirement)",
+    nonMaintenanceCharges: "Nil (Protected under RBI BSBD Norms)",
+    accountOpeningFeatures: [
+      "Simple e-KYC Branch or Online onboarding",
+      "Aadhaar OTP instant verification"
+    ],
+    eligibility: [
+      "All Resident Indian Individuals who do not hold another BSBD account in Axis Bank"
+    ],
+    documentsRequired: [
+      "Aadhaar Card",
+      "PAN Card or Form 60"
+    ],
+    bankingFeatures: [
+      "Free E-Statements & Passbook update",
+      "Free Direct Benefit Transfer (DBT) government subsidy credits",
+      "Access to Mobile Banking & UPI"
+    ]
   }
 ];
 
@@ -616,3 +846,4 @@ export function getAssociatedDebitCard(cardId) {
   if (!cardId) return null;
   return debitCards.find(c => Number(c.id) === Number(cardId)) || null;
 }
+

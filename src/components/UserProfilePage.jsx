@@ -543,7 +543,7 @@ function UserProfilePage({ activeTab = "profile", onSelectCard, onCompareCards, 
           >
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <h3 className="text-lg font-black text-[#1F2937] dark:text-white flex items-center gap-2">
-                ❤️ Saved Portfolio ({savedCardObjects.length})
+                ❤️ Saved Products Portfolio ({savedCardObjects.length})
               </h3>
             </div>
 
@@ -556,61 +556,76 @@ function UserProfilePage({ activeTab = "profile", onSelectCard, onCompareCards, 
                 </p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {savedCardObjects.map(item => {
-                  const isSavingsAcc = !!item.accountName || item.productType === 'savingsAccount';
-                  if (isSavingsAcc) {
-                    return (
-                      <div key={item.id} className="p-5 rounded-3xl glass-card-premium border border-[#E5E7EB] dark:border-slate-800 shadow-soft flex flex-col justify-between space-y-3">
-                        <div className="space-y-2">
-                          <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA]">
-                            🏦 Savings Account • {item.bank}
-                          </span>
-                          <h4 className="font-extrabold text-sm text-slate-800 dark:text-white">{item.accountName}</h4>
-                          <div className="flex items-center gap-2 text-xs font-bold text-slate-600 dark:text-slate-300">
-                            <span>Rate: {item.interestRate || '3.5% p.a.'}</span>
-                            <span>•</span>
-                            <span>Min Bal: {item.minimumBalance || '₹0'}</span>
+              <div className="space-y-6">
+                {/* Savings Accounts Section */}
+                {savedCardObjects.some(item => !!item.accountName || item.productType === 'savingsAccount') && (
+                  <div className="space-y-3">
+                    <h4 className="text-xs font-black uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA]">
+                      🏦 Bookmarked Savings Accounts ({savedCardObjects.filter(item => !!item.accountName || item.productType === 'savingsAccount').length})
+                    </h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {savedCardObjects.filter(item => !!item.accountName || item.productType === 'savingsAccount').map(item => (
+                        <div key={item.id} className="p-5 rounded-3xl glass-card-premium border border-[#E5E7EB] dark:border-slate-800 shadow-soft flex flex-col justify-between space-y-3">
+                          <div className="space-y-2">
+                            <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA]">
+                              🏦 {item.bank}
+                            </span>
+                            <h4 className="font-extrabold text-sm text-slate-800 dark:text-white">{item.accountName}</h4>
+                            <div className="flex items-center gap-2 text-xs font-bold text-slate-600 dark:text-slate-300">
+                              <span>Rate: {item.interestRate || '3.5% p.a.'}</span>
+                              <span>•</span>
+                              <span>Min Bal: {item.minimumBalance || '₹0'}</span>
+                            </div>
+                          </div>
+                          <div className="pt-3 border-t border-[#E5E7EB] dark:border-slate-800 flex items-center justify-between">
+                            <button
+                              onClick={() => onSelectCard && onSelectCard(item)}
+                              className="text-xs font-bold text-[#2563EB] dark:text-[#60A5FA] hover:underline cursor-pointer"
+                            >
+                              View Specs ➔
+                            </button>
+                            <button
+                              onClick={() => removeFromWishlist(item.id)}
+                              className="text-xs font-bold text-red-500 hover:underline cursor-pointer"
+                            >
+                              Remove 🗑️
+                            </button>
                           </div>
                         </div>
-                        <div className="pt-3 border-t border-[#E5E7EB] dark:border-slate-800 flex items-center justify-between">
-                          <button
-                            onClick={() => onSelectCard && onSelectCard(item)}
-                            className="text-xs font-bold text-[#2563EB] dark:text-[#60A5FA] hover:underline cursor-pointer"
-                          >
-                            View Specs ➔
-                          </button>
-                          <button
-                            onClick={() => removeFromWishlist(item.id)}
-                            className="text-xs font-bold text-red-500 hover:underline cursor-pointer"
-                          >
-                            Remove 🗑️
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  }
-
-                  return (
-                    <div key={item.id} className="p-4 rounded-3xl glass-card-premium border border-[#E5E7EB] dark:border-slate-800 shadow-soft flex flex-col justify-between">
-                      <DebitCardVisual mode="grid" card={item} />
-                      <div className="mt-3 pt-3 border-t border-[#E5E7EB] dark:border-slate-800 flex items-center justify-between">
-                        <button
-                          onClick={() => onSelectCard && onSelectCard(item)}
-                          className="text-xs font-bold text-[#2563EB] dark:text-[#60A5FA] hover:underline cursor-pointer"
-                        >
-                          View Specs ➔
-                        </button>
-                        <button
-                          onClick={() => removeFromWishlist(item.id)}
-                          className="text-xs font-bold text-red-500 hover:underline cursor-pointer"
-                        >
-                          Remove 🗑️
-                        </button>
-                      </div>
+                      ))}
                     </div>
-                  );
-                })}
+                  </div>
+                )}
+
+                {/* Debit Cards Section */}
+                {savedCardObjects.some(item => !item.accountName && item.productType !== 'savingsAccount') && (
+                  <div className="space-y-3 pt-2">
+                    <h4 className="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                      💳 Bookmarked Debit Cards ({savedCardObjects.filter(item => !item.accountName && item.productType !== 'savingsAccount').length})
+                    </h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {savedCardObjects.filter(item => !item.accountName && item.productType !== 'savingsAccount').map(item => (
+                        <div key={item.id} className="p-4 rounded-3xl glass-card-premium border border-[#E5E7EB] dark:border-slate-800 shadow-soft flex flex-col justify-between">
+                          <DebitCardVisual mode="grid" card={item} />
+                          <div className="mt-3 pt-3 border-t border-[#E5E7EB] dark:border-slate-800 flex items-center justify-between">
+                            <button
+                              onClick={() => onSelectCard && onSelectCard(item)}
+                              className="text-xs font-bold text-[#2563EB] dark:text-[#60A5FA] hover:underline cursor-pointer"
+                            >
+                              View Specs ➔
+                            </button>
+                            <button
+                              onClick={() => removeFromWishlist(item.id)}
+                              className="text-xs font-bold text-red-500 hover:underline cursor-pointer"
+                            >
+                              Remove 🗑️
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </motion.div>
@@ -630,7 +645,7 @@ function UserProfilePage({ activeTab = "profile", onSelectCard, onCompareCards, 
                 ✨ AI Curated Matches for {occupation}
               </h3>
               <p className="text-xs text-[#6B7280] dark:text-slate-300 mt-1">
-                Our recommendation engine filtered cards based on your life stage, fee limits, and reward structures.
+                Our recommendation engine filtered products based on your life stage, fee limits, and reward structures.
               </p>
             </div>
 
@@ -659,21 +674,31 @@ function UserProfilePage({ activeTab = "profile", onSelectCard, onCompareCards, 
             exit={{ opacity: 0, y: -15 }}
             className="p-6 rounded-3xl glass-card-premium border border-[#E5E7EB] dark:border-slate-800 space-y-4 text-left"
           >
-            <h3 className="text-lg font-extrabold text-[#1F2937] dark:text-white flex items-center gap-2">
-              🔄 Compare Audit Log
-            </h3>
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+              <h3 className="text-lg font-extrabold text-[#1F2937] dark:text-white flex items-center gap-2">
+                🔄 Comparison Audit Log
+              </h3>
+              <span className="text-xs text-slate-400 font-bold">Debit Cards & Savings Accounts</span>
+            </div>
+
             {compareLogs.length === 0 ? (
               <p className="text-xs text-[#6B7280] dark:text-slate-400 py-8 text-center">No comparison history entries logged yet.</p>
             ) : (
               <div className="space-y-3">
-                {compareLogs.map((log) => (
-                  <div key={log.id} className="p-4 rounded-2xl bg-[#F8FAFC] dark:bg-slate-900/60 border border-[#E5E7EB] dark:border-slate-800 flex items-center justify-between">
-                    <div>
-                      <p className="text-xs font-extrabold text-[#1F2937] dark:text-white">{log.comparedCards?.join(' vs ')}</p>
-                      <p className="text-[10px] text-[#6B7280] mt-0.5">{log.timestamp}</p>
+                {compareLogs.map((log) => {
+                  const isSavingsLog = log.comparisonType === 'savingsAccount' || String(log.comparedCards?.join(' ') || '').toLowerCase().includes('account');
+                  return (
+                    <div key={log.id} className="p-4 rounded-2xl bg-[#F8FAFC] dark:bg-slate-900/60 border border-[#E5E7EB] dark:border-slate-800 flex items-center justify-between">
+                      <div>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#2563EB] block">
+                          {isSavingsLog ? '🏦 Savings Account Comparison' : '💳 Debit Card Comparison'}
+                        </span>
+                        <p className="text-xs font-extrabold text-[#1F2937] dark:text-white mt-0.5">{log.comparedCards?.join(' vs ') || log.firstCard}</p>
+                        <p className="text-[10px] text-[#6B7280] mt-0.5">{log.comparedAt || log.timestamp || log.created_at}</p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </motion.div>
