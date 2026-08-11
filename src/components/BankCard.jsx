@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { motion } from "framer-motion";
-import { ShieldCheck, CheckCircle2, ArrowRight, Percent, CreditCard } from "lucide-react";
+import { ShieldCheck, CheckCircle2, ArrowRight, Percent, CreditCard, Landmark } from "lucide-react";
 import BankBrandLogo from "./BankBrandLogo";
 import { getBankBrandTheme } from "../utils/bankDirectoryUtils";
 
@@ -8,14 +8,13 @@ function BankCard({ bank, onSelect }) {
   if (!bank) return null;
 
   const bankName = bank.name || "Unknown Bank";
-  const cardCountText = bank.cardCount !== undefined
-    ? `${bank.cardCount} Debit Card${bank.cardCount !== 1 ? 's' : ''} Available`
-    : (bank.cardsAvailable ? `${bank.cardsAvailable} Debit Cards Available` : "Debit Cards Available");
+  const cardCount = bank.cardCount !== undefined ? bank.cardCount : (bank.cardsAvailable || 0);
+  const accountCount = bank.accountCount !== undefined ? bank.accountCount : (bank.accounts ? bank.accounts.length : 0);
 
   const trustScore = typeof bank.trustScore === 'number' ? bank.trustScore : 8.8;
   const features = Array.isArray(bank.features) && bank.features.length > 0 
     ? bank.features.slice(0, 3)
-    : ["Cashback Rewards", "Lounge Access", "Contactless Tap & Pay"];
+    : ["Cashback Rewards", "High Yield Savings", "Lounge Access & Contactless"];
 
   const interestRate = bank.interest !== undefined ? bank.interest : 3.0;
   const badges = Array.isArray(bank.badges) ? bank.badges : [];
@@ -26,6 +25,7 @@ function BankCard({ bank, onSelect }) {
     <motion.article 
       whileHover={{ y: -8, rotate: 0.8 }}
       transition={{ type: "spring", stiffness: 350, damping: 25 }}
+      onClick={() => onSelect && onSelect(bankName)}
       className="group relative flex flex-col justify-between rounded-3xl p-6 glass-card-premium glass-card-hover border border-[#E5E7EB] dark:border-slate-800 hover:border-[#2563EB]/60 hover:shadow-[0_20px_50px_rgba(37,99,235,0.2)] transition-all duration-300 cursor-pointer text-left overflow-hidden select-none gpu-layer"
     >
       {/* Background Subtle Gradient Ambient Glow on Hover */}
@@ -38,16 +38,21 @@ function BankCard({ bank, onSelect }) {
             <BankBrandLogo 
               bankName={bankName} 
               logoText={logoText} 
-              className="w-12 h-12 shadow-md group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300" 
+              className="w-12 h-12 shadow-md group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 shrink-0" 
             />
             <div>
               <h3 className="text-base font-extrabold text-[#1F2937] dark:text-white group-hover:text-[#2563EB] dark:group-hover:text-[#60A5FA] transition-colors leading-snug">
                 {bankName}
               </h3>
-              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#6B7280] dark:text-slate-400">
-                <CreditCard className="w-3 h-3 text-[#2563EB]" />
-                {cardCountText}
-              </span>
+              <div className="flex items-center gap-2 text-[10.5px] font-bold text-[#6B7280] dark:text-slate-400 flex-wrap mt-0.5">
+                <span className="flex items-center gap-1 text-[#2563EB] dark:text-[#60A5FA]">
+                  <CreditCard className="w-3 h-3" /> {cardCount} Debit Cards
+                </span>
+                <span>•</span>
+                <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
+                  <Landmark className="w-3 h-3" /> {accountCount} Savings Accounts
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -67,10 +72,10 @@ function BankCard({ bank, onSelect }) {
           </div>
         )}
 
-        {/* Top 3 Debit Card Benefits */}
+        {/* Top Product Highlights */}
         <div className="my-3 space-y-2">
           <span className="text-[10px] font-bold text-[#6B7280] dark:text-slate-400 uppercase tracking-wider block">
-            Top Debit Card Benefits
+            Institution Highlights
           </span>
           <ul className="space-y-2 text-xs text-[#374151] dark:text-slate-200 font-normal">
             {features.map((feature, idx) => (
@@ -91,7 +96,7 @@ function BankCard({ bank, onSelect }) {
             Savings Interest:
           </span>
           <span className="font-extrabold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 dark:bg-emerald-500/20 px-2 py-0.5 rounded-md border border-emerald-500/20">
-            {interestRate}% p.a.
+            Up to {interestRate}% p.a.
           </span>
         </div>
 
@@ -124,7 +129,7 @@ function BankCard({ bank, onSelect }) {
           }}
           className={`w-full rounded-xl py-3 text-xs font-bold bg-gradient-to-r ${brandTheme.gradient} hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] text-white transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] group-hover:brightness-110`}
         >
-          <span>View Matched Cards</span>
+          <span>View Bank Profile</span>
           <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
         </button>
       </div>
@@ -136,6 +141,7 @@ export default memo(BankCard, (prevProps, nextProps) => {
   return (
     prevProps.bank?.name === nextProps.bank?.name &&
     prevProps.bank?.cardCount === nextProps.bank?.cardCount &&
+    prevProps.bank?.accountCount === nextProps.bank?.accountCount &&
     prevProps.bank?.trustScore === nextProps.bank?.trustScore
   );
 });

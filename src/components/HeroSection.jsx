@@ -1,5 +1,5 @@
-import { useState, useEffect, memo } from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
+import { useState, useEffect, useMemo, memo } from 'react';
+import { motion, useReducedMotion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { 
   CreditCard, 
@@ -15,9 +15,15 @@ import {
   Gift, 
   Percent, 
   Award,
-  Globe
+  Globe,
+  Landmark,
+  Bot,
+  ChevronRight
 } from 'lucide-react';
 import AnimatedStatCounter from './AnimatedStatCounter';
+import { debitCards } from '../data/mockData';
+import { savingsAccounts } from '../data/mockSavingsAccounts';
+import { getCoveredBanksDirectory } from '../utils/bankDirectoryUtils';
 
 const HeroVisual = memo(({ isMobile }) => {
   const shouldReduceMotion = useReducedMotion();
@@ -34,18 +40,6 @@ const HeroVisual = memo(({ isMobile }) => {
       {/* Geometric Decorative Rotating Rings */}
       <div className="absolute w-[380px] h-[380px] sm:w-[480px] sm:h-[480px] rounded-full border border-dashed border-[#2563EB]/30 dark:border-[#60A5FA]/20 animate-[spin_45s_linear_infinite] pointer-events-none z-0" />
       <div className="absolute w-[280px] h-[280px] sm:w-[360px] sm:h-[360px] rounded-full border border-[#60A5FA]/20 dark:border-[#2563EB]/20 pointer-events-none z-0" />
-
-      {/* Financial Trend SVG Graph Line in Background */}
-      <svg className="absolute w-full h-[220px] top-1/2 -translate-y-1/2 opacity-20 pointer-events-none z-0" viewBox="0 0 500 200" fill="none">
-        <path d="M0,150 Q100,180 200,80 T400,60 T500,20" stroke="url(#hero-gradient)" strokeWidth="4" fill="none" strokeDasharray="6 6" />
-        <defs>
-          <linearGradient id="hero-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#0B3D91" />
-            <stop offset="50%" stopColor="#2563EB" />
-            <stop offset="100%" stopColor="#60A5FA" />
-          </linearGradient>
-        </defs>
-      </svg>
 
       {/* Floating 3D Card 1 — D.CARD Elite Royal Blue Gradient Card */}
       <motion.div
@@ -92,7 +86,7 @@ const HeroVisual = memo(({ isMobile }) => {
         </div>
       </motion.div>
 
-      {/* Floating 3D Card 2 — Slate Navy HDFC Card */}
+      {/* Floating 3D Card 2 — High Yield Savings Card */}
       <motion.div
         animate={
           isMobile || shouldReduceMotion
@@ -110,10 +104,10 @@ const HeroVisual = memo(({ isMobile }) => {
           <div className="flex justify-between items-start">
             <div>
               <div className="flex items-center gap-1.5">
-                <Building2 className="w-4 h-4 text-[#60A5FA]" />
-                <span className="text-xs font-black tracking-widest uppercase text-white">HDFC PLATINUM</span>
+                <Landmark className="w-4 h-4 text-emerald-400" />
+                <span className="text-xs font-black tracking-widest uppercase text-white">HIGH YIELD SAVINGS</span>
               </div>
-              <span className="text-[10px] text-slate-400 tracking-wider uppercase font-medium block mt-0.5">Lounge & Rewards</span>
+              <span className="text-[10px] text-emerald-400 tracking-wider uppercase font-semibold block mt-0.5">7.50% p.a. • Zero Balance</span>
             </div>
             <span className="text-xs font-bold tracking-widest text-[#60A5FA] bg-[#2563EB]/15 px-3 py-1 rounded-full border border-[#2563EB]/30">RuPay</span>
           </div>
@@ -136,8 +130,8 @@ const HeroVisual = memo(({ isMobile }) => {
       >
         <ShieldCheck className="w-4 h-4 text-[#2563EB]" />
         <div className="text-[11px]">
-          <p className="font-bold text-[#1F2937] dark:text-white leading-none">100% Unbiased</p>
-          <p className="text-[9px] text-[#6B7280] dark:text-slate-400 font-medium">Zero Commission Bias</p>
+          <p className="font-bold text-[#1F2937] dark:text-white leading-none">100% Verified</p>
+          <p className="text-[9px] text-[#6B7280] dark:text-slate-400 font-medium">Cards & Savings Accounts</p>
         </div>
       </motion.div>
 
@@ -146,33 +140,25 @@ const HeroVisual = memo(({ isMobile }) => {
         transition={{ repeat: Infinity, duration: 5.2, ease: 'easeInOut', delay: 1 }}
         className="absolute bottom-2 right-4 sm:right-8 z-30 px-3.5 py-2 rounded-2xl bg-white/90 dark:bg-[#1E293B]/90 backdrop-blur-md border border-[#E5E7EB] dark:border-slate-700 shadow-lg flex items-center gap-2"
       >
-        <Plane className="w-4 h-4 text-sky-500" />
+        <Percent className="w-4 h-4 text-emerald-500" />
         <div className="text-[11px]">
-          <p className="font-bold text-[#1F2937] dark:text-white leading-none">Lounge Access</p>
-          <p className="text-[9px] text-[#6B7280] dark:text-slate-400 font-medium">Airport Perks</p>
+          <p className="font-bold text-[#1F2937] dark:text-white leading-none">Interest & Perks</p>
+          <p className="text-[9px] text-[#6B7280] dark:text-slate-400 font-medium">Verified Yields</p>
         </div>
       </motion.div>
     </div>
   );
 });
 
-function HeroSection({ query = '', setQuery = () => {} }) {
+function HeroSection({ query = '', setQuery = () => {}, onViewDetails = null }) {
   const navigate = useNavigate();
   const [searchVal, setSearchVal] = useState(query);
   const [isMobile, setIsMobile] = useState(false);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   useEffect(() => {
     setSearchVal(query);
   }, [query]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (searchVal !== query) {
-        setQuery(searchVal);
-      }
-    }, 250);
-    return () => clearTimeout(timer);
-  }, [searchVal, query, setQuery]);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -183,9 +169,47 @@ function HeroSection({ query = '', setQuery = () => {} }) {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  const coveredBanks = useMemo(() => getCoveredBanksDirectory(), []);
+
+  // Categorized Live Search Results
+  const searchResults = useMemo(() => {
+    const q = searchVal.trim().toLowerCase();
+    if (!q) return { banks: [], cards: [], accounts: [] };
+
+    const matchedBanks = coveredBanks.filter(b => b.name.toLowerCase().includes(q)).slice(0, 3);
+    const matchedCards = debitCards.filter(c => 
+      c.cardName.toLowerCase().includes(q) || 
+      c.bank.toLowerCase().includes(q) || 
+      (c.network && c.network.toLowerCase().includes(q))
+    ).slice(0, 3);
+
+    const matchedAccounts = savingsAccounts.filter(s => 
+      s.accountName.toLowerCase().includes(q) || 
+      s.bank.toLowerCase().includes(q) || 
+      s.accountType.toLowerCase().includes(q)
+    ).slice(0, 3);
+
+    return {
+      banks: matchedBanks,
+      cards: matchedCards,
+      accounts: matchedAccounts
+    };
+  }, [searchVal, coveredBanks]);
+
+  const hasResults = searchResults.banks.length > 0 || searchResults.cards.length > 0 || searchResults.accounts.length > 0;
+
   const handleSearchSubmit = () => {
     setQuery(searchVal);
     navigate('/cards');
+  };
+
+  const scrollToCategories = () => {
+    const elem = document.getElementById('product-categories');
+    if (elem) {
+      elem.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      navigate('/savings-accounts');
+    }
   };
 
   return (
@@ -198,22 +222,41 @@ function HeroSection({ query = '', setQuery = () => {} }) {
           {/* Badge */}
           <span className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold tracking-widest uppercase border border-[#2563EB]/25 bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] shadow-xs select-none">
             <Sparkles className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#60A5FA] animate-pulse" />
-            INDEPENDENT DEBIT CARD FINTECH PLATFORM
+            INDEPENDENT BANKING DISCOVERY PLATFORM
           </span>
 
           {/* Core Headline */}
           <h1 className="w-full text-4xl sm:text-5xl lg:text-[56px] font-extrabold leading-[1.12] text-[#1F2937] dark:text-white tracking-tight">
-            Find the perfect <br className="hidden sm:block" />
+            Find the Right <br className="hidden sm:block" />
             <span className="text-gradient">
-              debit card
-            </span> for your lifestyle.
+              Banking Product
+            </span> for You.
           </h1>
 
           <p className="max-w-xl text-base sm:text-lg text-[#6B7280] dark:text-slate-300 leading-relaxed font-normal">
-            Compare annual fees, lounge access, cashback, minimum balance terms, and hidden charges across top banks in India.
+            Explore, compare and discover debit cards and savings accounts from India's leading banks.
           </p>
 
-          {/* Search & Compare Input */}
+          {/* Primary & Secondary CTAs */}
+          <div className="flex flex-wrap items-center gap-3 pt-1 w-full max-w-lg">
+            <button
+              onClick={scrollToCategories}
+              className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#2563EB] via-[#3B82F6] to-[#2563EB] hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] text-white text-xs font-bold tracking-wide uppercase shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 flex-1 sm:flex-none"
+            >
+              <span>Explore Banking Products</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+
+            <button
+              onClick={() => navigate('/ai-advisor')}
+              className="px-6 py-3.5 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-[#2563EB] dark:text-[#60A5FA] border border-[#2563EB]/30 text-xs font-bold tracking-wide uppercase shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 flex-1 sm:flex-none"
+            >
+              <Bot className="w-4 h-4" />
+              <span>Ask AI Advisor</span>
+            </button>
+          </div>
+
+          {/* Search & Categorized Live Dropdown */}
           <div className="w-full max-w-lg select-none relative z-30 pt-2">
             <div className="flex flex-col sm:flex-row gap-2 bg-white dark:bg-[#1E293B] p-2 rounded-2xl border border-[#E5E7EB] dark:border-slate-700 shadow-lg hover:border-[#2563EB]/50 transition-colors">
               <div className="relative flex-1 flex items-center pl-3">
@@ -221,26 +264,100 @@ function HeroSection({ query = '', setQuery = () => {} }) {
                 <input
                   type="text"
                   value={searchVal}
+                  onFocus={() => setIsSearchFocused(true)}
                   onChange={(e) => setSearchVal(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') handleSearchSubmit();
                   }}
-                  placeholder="Search card or bank (e.g. HDFC, Lounge, Zero Fee)..."
+                  placeholder="Search banks, debit cards or savings accounts (e.g. SBI, RuPay, Zero Balance)..."
                   className="w-full bg-transparent border-none text-xs font-normal pl-2.5 py-3 outline-none text-[#1F2937] dark:text-white placeholder-[#9CA3AF]"
                 />
               </div>
               
               <button
                 onClick={handleSearchSubmit}
-                className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#2563EB] via-[#3B82F6] to-[#2563EB] hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] text-white text-xs font-bold tracking-wide uppercase shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
+                className="px-6 py-3.5 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-bold tracking-wide uppercase shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
               >
-                <span>Compare Cards</span>
+                <span>Search</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
+
+            {/* Categorized Dropdown Menu */}
+            <AnimatePresence>
+              {isSearchFocused && searchVal.trim().length > 0 && hasResults && (
+                <motion.div
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 5 }}
+                  className="absolute top-full left-0 right-0 mt-2 p-4 rounded-2xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-2xl z-50 space-y-3 text-xs max-h-96 overflow-y-auto custom-scrollbar"
+                >
+                  {/* Banks Category */}
+                  {searchResults.banks.length > 0 && (
+                    <div className="space-y-1.5">
+                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA] flex items-center gap-1">
+                        <Building2 className="w-3 h-3" /> Banks
+                      </span>
+                      {searchResults.banks.map(b => (
+                        <div
+                          key={b.id}
+                          onClick={() => { setIsSearchFocused(false); navigate(`/banks/${b.id}`); }}
+                          className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer flex items-center justify-between font-bold text-slate-800 dark:text-slate-100"
+                        >
+                          <span>{b.name}</span>
+                          <span className="text-[10px] font-normal text-slate-400">{b.cardCount} Cards • {b.accountCount || 0} Accounts</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Debit Cards Category */}
+                  {searchResults.cards.length > 0 && (
+                    <div className="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
+                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA] flex items-center gap-1">
+                        <CreditCard className="w-3 h-3" /> Debit Cards
+                      </span>
+                      {searchResults.cards.map(c => (
+                        <div
+                          key={c.id}
+                          onClick={() => {
+                            setIsSearchFocused(false);
+                            if (onViewDetails) onViewDetails(c);
+                            else navigate('/cards');
+                          }}
+                          className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer flex items-center justify-between font-bold text-slate-800 dark:text-slate-100"
+                        >
+                          <span>{c.cardName} ({c.bank})</span>
+                          <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Savings Accounts Category */}
+                  {searchResults.accounts.length > 0 && (
+                    <div className="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
+                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                        <Landmark className="w-3 h-3" /> Savings Accounts
+                      </span>
+                      {searchResults.accounts.map(s => (
+                        <div
+                          key={s.id}
+                          onClick={() => { setIsSearchFocused(false); navigate(`/savings-accounts/${s.id}`); }}
+                          className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer flex items-center justify-between font-bold text-slate-800 dark:text-slate-100"
+                        >
+                          <span>{s.accountName} ({s.bank})</span>
+                          <span className="text-[10px] text-emerald-600 font-extrabold">{s.interestRate}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
-          {/* Key Platform Animated Stat Badges */}
+          {/* Platform Stat Badges */}
           <div className="pt-4 grid grid-cols-3 gap-4 w-full max-w-lg text-left select-none border-t border-[#E5E7EB] dark:border-slate-800">
             <div>
               <p className="text-xl sm:text-2xl font-extrabold text-[#1F2937] dark:text-white tracking-tight">
@@ -249,16 +366,16 @@ function HeroSection({ query = '', setQuery = () => {} }) {
               <p className="text-[11px] font-semibold text-[#6B7280] dark:text-slate-400 uppercase tracking-wider">Debit Cards</p>
             </div>
             <div>
-              <p className="text-xl sm:text-2xl font-extrabold text-[#1F2937] dark:text-white tracking-tight">
-                <AnimatedStatCounter value={35} suffix=" Banks" />
+              <p className="text-xl sm:text-2xl font-extrabold text-emerald-600 dark:text-emerald-400 tracking-tight">
+                <AnimatedStatCounter value={40} suffix="+" />
               </p>
-              <p className="text-[11px] font-semibold text-[#6B7280] dark:text-slate-400 uppercase tracking-wider">Indexed</p>
+              <p className="text-[11px] font-semibold text-[#6B7280] dark:text-slate-400 uppercase tracking-wider">Savings Accounts</p>
             </div>
             <div>
               <p className="text-xl sm:text-2xl font-extrabold text-[#2563EB] dark:text-[#60A5FA] tracking-tight">
-                <AnimatedStatCounter value={100} suffix="%" />
+                <AnimatedStatCounter value={15} suffix=" Banks" />
               </p>
-              <p className="text-[11px] font-semibold text-[#6B7280] dark:text-slate-400 uppercase tracking-wider">Unbiased</p>
+              <p className="text-[11px] font-semibold text-[#6B7280] dark:text-slate-400 uppercase tracking-wider">Indexed</p>
             </div>
           </div>
 

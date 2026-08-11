@@ -560,13 +560,19 @@ export function getBankBrandTheme(rawName = "") {
   };
 }
 
+import { savingsAccounts as defaultSavingsAccounts } from '../data/mockSavingsAccounts';
+
 /**
  * Main Dynamic Generator: Reads card dataset and automatically generates deduplicated covered banks array.
  */
-export function getCoveredBanksDirectory(customCardsList = null) {
+export function getCoveredBanksDirectory(customCardsList = null, customSavingsList = null) {
   const sourceCards = (customCardsList && customCardsList.length > 0) 
     ? customCardsList 
     : (dcardDebitCardsRaw || []);
+
+  const sourceSavings = (customSavingsList && customSavingsList.length > 0)
+    ? customSavingsList
+    : (defaultSavingsAccounts || []);
 
   const bankGroups = new Map();
 
@@ -586,6 +592,12 @@ export function getCoveredBanksDirectory(customCardsList = null) {
 
   bankGroups.forEach((cards, bankName) => {
     const cardCount = cards.length;
+    const bankAccounts = sourceSavings.filter(s => {
+      const cBank = canonicalBankName(s.bank || s.bankId || "");
+      return cBank.toLowerCase() === bankName.toLowerCase();
+    });
+    const accountCount = bankAccounts.length;
+
     const features = deriveTop3Benefits(cards);
     const trustScore = calculateTrustIndex(bankName, cards);
     const interest = BANK_INTEREST_RATES[bankName] || (bankName.includes("Small Finance") ? 7.0 : 3.0);
@@ -610,12 +622,14 @@ export function getCoveredBanksDirectory(customCardsList = null) {
       name: bankName,
       logoText,
       cardCount,
+      accountCount,
       features,
       trustScore,
       interest,
       badges,
       brandTheme,
-      cards
+      cards,
+      accounts: bankAccounts
     });
   });
 

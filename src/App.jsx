@@ -828,6 +828,10 @@ function AppContent() {
                 toggleBank={toggleBank}
                 selectSingleBank={selectSingleBank}
                 activeCardsList={activeCardsList}
+                toggleCompareQueue={toggleCompareQueue}
+                compareQueue={compareQueue}
+                savingsCompareQueue={savingsCompareQueue}
+                setSavingsCompareQueue={setSavingsCompareQueue}
               />
             } 
           />
