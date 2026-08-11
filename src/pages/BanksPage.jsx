@@ -1,44 +1,648 @@
-import React from 'react';
-import CoveredBanksDirectory from '../components/CoveredBanksDirectory';
-import InstitutionalBankExplorer from '../components/InstitutionalBankExplorer';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  Building2, 
+  ExternalLink, 
+  CreditCard, 
+  ShieldCheck, 
+  CheckCircle2, 
+  Search, 
+  Percent, 
+  Sliders, 
+  Heart, 
+  Scale, 
+  Globe, 
+  ChevronRight, 
+  Info, 
+  Award, 
+  MapPin, 
+  Calendar, 
+  Shield, 
+  Smartphone,
+  Star,
+  DollarSign,
+  Gift,
+  Zap,
+  ArrowRight,
+  Filter,
+  Check
+} from 'lucide-react';
+import { debitCards as defaultDebitCards } from '../data/mockData';
+import { savingsAccounts as defaultSavingsAccounts, getAssociatedDebitCards, getAssociatedDebitCard } from '../data/mockSavingsAccounts';
+import { getCoveredBanksDirectory, getInstitutionalProfileForBank, canonicalBankName, getBankBrandTheme } from '../utils/bankDirectoryUtils';
+import { useWishlist } from '../context/WishlistContext';
+import DebitCardCard from '../components/DebitCardCard';
+import SavingsAccountCard from '../components/SavingsAccountCard';
+import BankBrandLogo from '../components/BankBrandLogo';
 
-function BanksPage({ toggleBank, selectSingleBank, activeCardsList, toggleCompareQueue, compareQueue }) {
-  const handleSelectBank = (bankName) => {
-    if (selectSingleBank) {
-      selectSingleBank(bankName);
-    } else if (toggleBank) {
-      toggleBank(bankName);
+function BanksPage({ 
+  activeCardsList = null, 
+  toggleCompareQueue, 
+  compareQueue = [], 
+  onSelectDebitCard, 
+  savingsCompareQueue = [], 
+  setSavingsCompareQueue 
+}) {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { isWishlisted, toggleWishlist } = useWishlist();
+
+  // Load all covered banks dynamically from JSON & dataset
+  const coveredBanks = useMemo(() => {
+    return getCoveredBanksDirectory(activeCardsList);
+  }, [activeCardsList]);
+
+  // Determine active bank based on URL param :id or default to first bank (SBI)
+  const activeBankObj = useMemo(() => {
+    if (!coveredBanks || coveredBanks.length === 0) return null;
+    if (id) {
+      const q = String(id).toLowerCase().trim();
+      const match = coveredBanks.find(b => 
+        String(b.id) === q || 
+        b.name.toLowerCase() === q || 
+        canonicalBankName(b.name).toLowerCase() === q ||
+        b.logoText.toLowerCase() === q
+      );
+      if (match) return match;
+    }
+    return coveredBanks[0];
+  }, [coveredBanks, id]);
+
+  const [selectedBankName, setSelectedBankName] = useState(() => {
+    return activeBankObj ? activeBankObj.name : "State Bank of India";
+  });
+
+  useEffect(() => {
+    if (activeBankObj && activeBankObj.name !== selectedBankName) {
+      setSelectedBankName(activeBankObj.name);
+    }
+  }, [activeBankObj]);
+
+  const handleBankSelect = (bankName) => {
+    setSelectedBankName(bankName);
+    const bankObj = coveredBanks.find(b => b.name === bankName);
+    if (bankObj) {
+      navigate(`/banks/${bankObj.id}`, { replace: true });
     }
   };
 
+  // Section smooth scrolling refs
+  const overviewRef = useRef(null);
+  const debitCardsRef = useRef(null);
+  const savingsAccountsRef = useRef(null);
+  const [activeTab, setActiveTab] = useState('overview');
+
+  const scrollToSection = (sectionId, tabName) => {
+    setActiveTab(tabName);
+    const elem = document.getElementById(sectionId);
+    if (elem) {
+      elem.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  // In-Bank Search & Filter State
+  const [bankSearchQuery, setBankSearchQuery] = useState('');
+  const [productCategoryFilter, setProductCategoryFilter] = useState('All'); // 'All' | 'Debit Cards' | 'Savings Accounts'
+
+  // Get active bank details, debit cards, and savings accounts
+  const bankProfileData = useMemo(() => {
+    const canonicalName = canonicalBankName(selectedBankName);
+    const currentBankObj = coveredBanks.find(b => canonicalBankName(b.name) === canonicalName) || coveredBanks[0];
+
+    // Filter Debit Cards for this bank
+    const sourceDebitCards = (activeCardsList && activeCardsList.length > 0) ? activeCardsList : defaultDebitCards;
+    const bankCards = sourceDebitCards.filter(c => {
+      const cBank = canonicalBankName(c.bank || c.bankName || "");
+      return cBank.toLowerCase() === canonicalName.toLowerCase();
+    });
+
+    // Filter Savings Accounts for this bank
+    const bankAccounts = defaultSavingsAccounts.filter(s => {
+      const sBank = canonicalBankName(s.bank || s.bankId || "");
+      return sBank.toLowerCase() === canonicalName.toLowerCase() || String(s.bankId || '').toLowerCase() === canonicalName.toLowerCase();
+    });
+
+    const profile = getInstitutionalProfileForBank(canonicalName, bankCards);
+
+    return {
+      canonicalName,
+      currentBankObj,
+      profile,
+      bankCards,
+      bankAccounts
+    };
+  }, [coveredBanks, selectedBankName, activeCardsList]);
+
+  const { canonicalName, currentBankObj, profile, bankCards, bankAccounts } = bankProfileData;
+  const brandTheme = getBankBrandTheme(canonicalName);
+
+  // Apply In-Bank Search & Category Filter
+  const filteredDebitCards = useMemo(() => {
+    if (productCategoryFilter === 'Savings Accounts') return [];
+    const q = bankSearchQuery.trim().toLowerCase();
+    if (!q) return bankCards;
+    return bankCards.filter(c => {
+      const matchName = String(c.cardName || '').toLowerCase().includes(q);
+      const matchCategory = String(c.category || '').toLowerCase().includes(q);
+      const matchNetwork = String(c.network || '').toLowerCase().includes(q);
+      const matchBenefits = String(c.benefits || '').toLowerCase().includes(q);
+      const matchBestFor = Array.isArray(c.bestFor) ? c.bestFor.some(b => String(b).toLowerCase().includes(q)) : String(c.bestFor || '').toLowerCase().includes(q);
+      return matchName || matchCategory || matchNetwork || matchBenefits || matchBestFor;
+    });
+  }, [bankCards, bankSearchQuery, productCategoryFilter]);
+
+  const filteredSavingsAccounts = useMemo(() => {
+    if (productCategoryFilter === 'Debit Cards') return [];
+    const q = bankSearchQuery.trim().toLowerCase();
+    if (!q) return bankAccounts;
+    return bankAccounts.filter(a => {
+      const matchName = String(a.accountName || '').toLowerCase().includes(q);
+      const matchType = String(a.accountType || '').toLowerCase().includes(q);
+      const matchDesc = String(a.description || '').toLowerCase().includes(q);
+      const matchBenefits = Array.isArray(a.keyBenefits) ? a.keyBenefits.some(b => String(b).toLowerCase().includes(q)) : false;
+      const matchCardName = String(a.associatedDebitCardName || '').toLowerCase().includes(q);
+      return matchName || matchType || matchDesc || matchBenefits || matchCardName;
+    });
+  }, [bankAccounts, bankSearchQuery, productCategoryFilter]);
+
+  const handleToggleSavingsCompare = (acc) => {
+    if (!setSavingsCompareQueue) return;
+    setSavingsCompareQueue(prev => {
+      if (prev.some(a => String(a.id) === String(acc.id))) {
+        return prev.filter(a => String(a.id) !== String(acc.id));
+      }
+      if (prev.length >= 3) return prev;
+      return [...prev, acc];
+    });
+  };
+
   return (
-    <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 relative z-20 space-y-12 text-left">
-      {/* Page Header */}
-      <div className="border-b border-[#E5E7EB] dark:border-slate-800 pb-6">
-        <span className="text-xs font-semibold text-[#2563EB] dark:text-[#60A5FA] tracking-widest uppercase block mb-1">
-          FINANCIAL INFORMATION PLATFORM
-        </span>
-        <h1 className="text-3xl font-bold text-[#1F2937] dark:text-white">
-          Top Listed Banks & Profiles
-        </h1>
-        <p className="text-xs sm:text-sm text-[#6B7280] dark:text-slate-400 mt-1 font-normal">
-          Explore debit card lineups, trust scores, lounge eligibility, and charges across India's leading banks
-        </p>
+    <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 relative z-20 space-y-8 text-left select-none">
+      
+      {/* ── 0. BANK SELECTION BAR (Quick Switching across all covered banks) ── */}
+      <div className="p-4 rounded-3xl glass-card-premium border border-slate-200 dark:border-slate-800 shadow-soft space-y-3">
+        <div className="flex items-center justify-between">
+          <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA] flex items-center gap-1.5">
+            <Building2 className="w-4 h-4" /> Select Bank Institution:
+          </span>
+          <span className="text-xs font-bold text-slate-400">
+            {coveredBanks.length} Banks Listed
+          </span>
+        </div>
+
+        <div className="flex items-center gap-2 overflow-x-auto custom-scrollbar pb-1">
+          {coveredBanks.map(b => (
+            <button
+              key={b.id}
+              onClick={() => handleBankSelect(b.name)}
+              className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer whitespace-nowrap flex items-center gap-2 border ${
+                canonicalBankName(selectedBankName) === canonicalBankName(b.name)
+                  ? 'bg-[#2563EB] text-white border-[#2563EB] shadow-md shadow-[#2563EB]/25 scale-105'
+                  : 'bg-slate-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800'
+              }`}
+            >
+              <div className="w-5 h-5 rounded-md bg-white/20 flex items-center justify-center font-black text-[10px]">
+                {b.logoText}
+              </div>
+              <span>{b.name}</span>
+            </button>
+          ))}
+        </div>
       </div>
 
-      {/* Dynamic Covered Banks Directory */}
-      <CoveredBanksDirectory
-        onSelectBank={handleSelectBank}
-        customCardsList={activeCardsList}
-      />
+      {/* ── 1. BANK HEADER ── */}
+      <div 
+        id="bank-overview"
+        ref={overviewRef}
+        className={`p-6 sm:p-8 rounded-[32px] bg-gradient-to-br ${brandTheme.gradient} text-white shadow-2xl space-y-6 relative overflow-hidden border border-white/20`}
+      >
+        <div className="absolute right-0 top-0 w-96 h-96 rounded-full bg-white/10 blur-3xl pointer-events-none" />
 
-      {/* Institutional Bank Explorer Section */}
-      <InstitutionalBankExplorer
-        onSelectBank={handleSelectBank}
-        onCompareCard={toggleCompareQueue}
-        compareQueue={compareQueue}
-        customCardsList={activeCardsList}
-      />
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
+          <div className="flex items-center gap-5">
+            <div className="w-20 h-20 rounded-3xl bg-white/15 backdrop-blur-xl border border-white/30 flex items-center justify-center font-black text-2xl shadow-xl shrink-0">
+              <BankBrandLogo bankName={canonicalName} className="w-12 h-12" />
+            </div>
+
+            <div className="space-y-1">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="px-3 py-0.5 rounded-full bg-white/20 backdrop-blur-md text-white text-[10.5px] font-black uppercase tracking-widest border border-white/30">
+                  {profile.ownershipType}
+                </span>
+                <span className="px-3 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10.5px] font-black uppercase tracking-widest border border-emerald-400/30 flex items-center gap-1">
+                  <CheckCircle2 className="w-3 h-3" /> Verified Institution
+                </span>
+              </div>
+              <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
+                {canonicalName}
+              </h1>
+              <p className="text-xs sm:text-sm text-white/80 font-medium max-w-2xl leading-relaxed">
+                {profile.overviewHistory}
+              </p>
+            </div>
+          </div>
+
+          {profile.officialWebsite && (
+            <a
+              href={profile.officialWebsite}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-6 py-3 rounded-2xl bg-white text-[#0B3D91] hover:bg-slate-100 font-extrabold text-xs transition-all shadow-lg flex items-center gap-2 shrink-0 cursor-pointer active:scale-95"
+            >
+              <span>Visit Official Website</span>
+              <ExternalLink className="w-4 h-4 text-[#2563EB]" />
+            </a>
+          )}
+        </div>
+
+        {/* ── 6. BANK PRODUCT SUMMARY (Dynamic Numbers) ── */}
+        <div className="pt-4 border-t border-white/20 grid grid-cols-2 sm:grid-cols-4 gap-3 relative z-10 text-xs">
+          <div className="p-3.5 rounded-2xl bg-black/25 backdrop-blur-xl border border-white/15">
+            <span className="text-[10px] font-bold text-white/70 uppercase tracking-wider block">Debit Cards</span>
+            <span className="text-xl sm:text-2xl font-black text-white mt-0.5 block">{bankCards.length} Available</span>
+          </div>
+
+          <div className="p-3.5 rounded-2xl bg-black/25 backdrop-blur-xl border border-white/15">
+            <span className="text-[10px] font-bold text-white/70 uppercase tracking-wider block">Savings Accounts</span>
+            <span className="text-xl sm:text-2xl font-black text-emerald-300 mt-0.5 block">{bankAccounts.length} Available</span>
+          </div>
+
+          <div className="p-3.5 rounded-2xl bg-black/25 backdrop-blur-xl border border-white/15">
+            <span className="text-[10px] font-bold text-white/70 uppercase tracking-wider block">Trust Score</span>
+            <span className="text-xl sm:text-2xl font-black text-amber-300 mt-0.5 block">{profile.trustScore}</span>
+          </div>
+
+          <div className="p-3.5 rounded-2xl bg-black/25 backdrop-blur-xl border border-white/15">
+            <span className="text-[10px] font-bold text-white/70 uppercase tracking-wider block">Max Savings Yield</span>
+            <span className="text-xl sm:text-2xl font-black text-cyan-300 mt-0.5 block">{profile.stats.interestRate}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* ── 8. PRODUCT SECTION NAVIGATION TABS ── */}
+      <div className="sticky top-20 z-30 p-2.5 rounded-2xl glass-card-premium border border-slate-200 dark:border-slate-800 shadow-soft flex items-center justify-between gap-2 overflow-x-auto">
+        <div className="flex items-center gap-2">
+          {[
+            { id: 'bank-overview', tab: 'overview', label: 'Overview', icon: Building2 },
+            { id: 'debit-cards-section', tab: 'debitCards', label: `Debit Cards (${bankCards.length})`, icon: CreditCard },
+            { id: 'savings-accounts-section', tab: 'savingsAccounts', label: `Savings Accounts (${bankAccounts.length})`, icon: Percent }
+          ].map(t => {
+            const Icon = t.icon;
+            return (
+              <button
+                key={t.tab}
+                onClick={() => scrollToSection(t.id, t.tab)}
+                className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap ${
+                  activeTab === t.tab
+                    ? 'bg-[#2563EB] text-white shadow-md shadow-[#2563EB]/25'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                }`}
+              >
+                <Icon className="w-3.5 h-3.5" />
+                <span>{t.label}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Quick Link to Official Site */}
+        {profile.officialWebsite && (
+          <a
+            href={profile.officialWebsite}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs font-extrabold text-[#2563EB] dark:text-[#60A5FA] hover:underline flex items-center gap-1 shrink-0 px-3 py-1.5"
+          >
+            <span>{canonicalName} Site</span>
+            <ExternalLink className="w-3 h-3" />
+          </a>
+        )}
+      </div>
+
+      {/* ── 2. BANK OVERVIEW & METRICS ── */}
+      <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-6">
+        <h2 className="text-xl font-black text-slate-800 dark:text-white flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
+          <ShieldCheck className="w-5 h-5 text-[#2563EB]" />
+          <span>Institutional Overview & Key Parameters</span>
+        </h2>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Headquarters</span>
+            <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mt-0.5 block">{profile.headquarters}</span>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Founded Year</span>
+            <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mt-0.5 block">{profile.foundedYear}</span>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Banking Category</span>
+            <span className="font-extrabold text-[#2563EB] dark:text-[#60A5FA] text-sm mt-0.5 block">{profile.ownershipType}</span>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Official Portal</span>
+            <a href={profile.officialWebsite} target="_blank" rel="noopener noreferrer" className="font-extrabold text-[#2563EB] dark:text-[#60A5FA] text-xs mt-0.5 block truncate hover:underline">
+              {profile.officialWebsite.replace("https://", "")}
+            </a>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+          <div className="p-4 rounded-2xl bg-blue-50/50 dark:bg-slate-900/60 border border-blue-100 dark:border-slate-800 space-y-1">
+            <span className="text-[10.5px] font-bold text-[#2563EB] dark:text-[#60A5FA] uppercase tracking-wider block">Customer Base & Network</span>
+            <p className="text-xs text-slate-700 dark:text-slate-300 font-medium">{profile.overviewCustomerBase}</p>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-emerald-50/50 dark:bg-slate-900/60 border border-emerald-100 dark:border-slate-800 space-y-1">
+            <span className="text-[10.5px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider block">Digital Banking Infrastructure</span>
+            <p className="text-xs text-slate-700 dark:text-slate-300 font-medium">{profile.overviewDigital}</p>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-purple-50/50 dark:bg-slate-900/60 border border-purple-100 dark:border-slate-800 space-y-1">
+            <span className="text-[10.5px] font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider block">Security & Financial Reputation</span>
+            <p className="text-xs text-slate-700 dark:text-slate-300 font-medium">{profile.overviewReputation}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* ── 7. SEARCH & FILTER WITHIN BANK PRODUCTS ── */}
+      <div className="p-5 rounded-3xl glass-card-premium border border-slate-200 dark:border-slate-800 shadow-soft flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-2 w-full md:w-auto">
+          {['All', 'Debit Cards', 'Savings Accounts'].map(cat => (
+            <button
+              key={cat}
+              onClick={() => setProductCategoryFilter(cat)}
+              className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+                productCategoryFilter === cat
+                  ? 'bg-[#2563EB] text-white shadow-xs'
+                  : 'bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:border-[#2563EB]'
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+
+        <div className="relative w-full md:w-80">
+          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <input
+            type="text"
+            value={bankSearchQuery}
+            onChange={(e) => setBankSearchQuery(e.target.value)}
+            placeholder={`Search ${canonicalName} products (e.g. "student", "RuPay", "lounge")...`}
+            className="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs text-slate-800 dark:text-white outline-none focus:border-[#2563EB]"
+          />
+        </div>
+      </div>
+
+      {/* ── 3. DEBIT CARDS SECTION ── */}
+      {(productCategoryFilter === 'All' || productCategoryFilter === 'Debit Cards') && (
+        <div id="debit-cards-section" ref={debitCardsRef} className="space-y-4 pt-4">
+          <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-widest text-[#2563EB] dark:text-[#60A5FA]">
+                VERIFIED LINEUP
+              </span>
+              <h2 className="text-2xl font-black text-slate-800 dark:text-white flex items-center gap-2">
+                <CreditCard className="w-6 h-6 text-[#2563EB]" />
+                <span>Debit Cards ({filteredDebitCards.length})</span>
+              </h2>
+            </div>
+
+            <p className="text-xs text-slate-400 font-bold">
+              Official debit card variants issued by {canonicalName}
+            </p>
+          </div>
+
+          {filteredDebitCards.length === 0 ? (
+            <div className="py-12 text-center rounded-3xl glass-card-premium border border-slate-200 dark:border-slate-800 text-xs text-slate-500 space-y-2">
+              <CreditCard className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto" />
+              <p className="font-bold">No debit cards match your search criteria for {canonicalName}.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredDebitCards.map(card => (
+                <DebitCardCard
+                  key={card.id}
+                  card={card}
+                  onViewDetails={() => onSelectDebitCard && onSelectDebitCard(card)}
+                  onCompare={() => toggleCompareQueue && toggleCompareQueue(card)}
+                  isCompared={compareQueue.some(c => String(c.id) === String(card.id))}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── 4 & 5. SAVINGS ACCOUNTS & ASSOCIATED DEBIT CARDS SECTION ── */}
+      {(productCategoryFilter === 'All' || productCategoryFilter === 'Savings Accounts') && (
+        <div id="savings-accounts-section" ref={savingsAccountsRef} className="space-y-6 pt-6">
+          <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400">
+                HIGH-YIELD SAVINGS
+              </span>
+              <h2 className="text-2xl font-black text-slate-800 dark:text-white flex items-center gap-2">
+                <Percent className="w-6 h-6 text-emerald-500" />
+                <span>Savings Accounts ({filteredSavingsAccounts.length})</span>
+              </h2>
+            </div>
+
+            <p className="text-xs text-slate-400 font-bold">
+              Verified savings schemes & account tiers for {canonicalName}
+            </p>
+          </div>
+
+          {filteredSavingsAccounts.length === 0 ? (
+            <div className="py-12 text-center rounded-3xl glass-card-premium border border-slate-200 dark:border-slate-800 text-xs text-slate-500 space-y-2">
+              <Percent className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto" />
+              <p className="font-bold">No savings accounts match your search criteria for {canonicalName}.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {filteredSavingsAccounts.map(account => {
+                const associatedCards = getAssociatedDebitCards(account);
+                const linkedCard = associatedCards.length > 0 ? associatedCards[0] : getAssociatedDebitCard(account.associatedDebitCardId);
+
+                return (
+                  <div 
+                    key={account.id}
+                    className="p-6 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft hover:shadow-xl hover:border-[#2563EB]/40 transition-all duration-300 flex flex-col justify-between space-y-5"
+                  >
+                    {/* Header: Logo, Bank, Name, Heart Toggle */}
+                    <div className="space-y-3">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#0B3D91] to-[#2563EB] text-white flex items-center justify-center font-black text-base shadow-md shrink-0">
+                            {account.logo || account.bank.substring(0, 2).toUpperCase()}
+                          </div>
+                          <div>
+                            <span className="text-[10.5px] font-bold uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA] block">
+                              {account.bank}
+                            </span>
+                            <Link 
+                              to={`/savings-accounts/${account.id}`}
+                              className="text-lg font-extrabold text-slate-800 dark:text-white hover:text-[#2563EB] hover:underline leading-snug block"
+                            >
+                              {account.accountName}
+                            </Link>
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={() => toggleWishlist(account)}
+                          className={`w-9 h-9 rounded-full flex items-center justify-center transition-all cursor-pointer border shrink-0 ${
+                            isWishlisted(account.id)
+                              ? 'bg-rose-50 dark:bg-rose-950/40 border-rose-200 text-rose-500'
+                              : 'bg-slate-50 dark:bg-slate-800 border-slate-200 text-slate-400 hover:text-rose-500'
+                          }`}
+                        >
+                          <Heart className={`w-4 h-4 ${isWishlisted(account.id) ? 'fill-rose-500' : ''}`} />
+                        </button>
+                      </div>
+
+                      {/* Badges */}
+                      <div className="flex flex-wrap gap-1.5 text-[10.5px]">
+                        <span className="px-2.5 py-0.5 rounded-full font-extrabold bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] border border-[#2563EB]/20">
+                          {account.accountType}
+                        </span>
+                        {account.isZeroBalance && (
+                          <span className="px-2.5 py-0.5 rounded-full font-extrabold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
+                            <CheckCircle2 className="w-3 h-3" /> Zero Balance
+                          </span>
+                        )}
+                        {account.isOnlineOpening && (
+                          <span className="px-2.5 py-0.5 rounded-full font-bold bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
+                            ⚡ Instant Video KYC
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Key Account Stats */}
+                      <div className="grid grid-cols-2 gap-3 pt-1">
+                        <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+                          <span className="text-[10px] font-extrabold text-slate-400 uppercase block">Max Interest Rate</span>
+                          <span className="text-lg font-black text-emerald-600 dark:text-emerald-400">{account.interestRate}</span>
+                        </div>
+                        <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+                          <span className="text-[10px] font-extrabold text-slate-400 uppercase block">Min. Balance</span>
+                          <span className="text-lg font-black text-slate-800 dark:text-white">{account.minimumBalance}</span>
+                        </div>
+                      </div>
+
+                      {/* Account Key Benefits */}
+                      {account.keyBenefits && (
+                        <div className="space-y-1.5 text-xs text-slate-700 dark:text-slate-300 font-medium">
+                          <span className="text-[10.5px] font-extrabold text-slate-400 uppercase block">Key Account Highlights:</span>
+                          {account.keyBenefits.slice(0, 2).map((b, i) => (
+                            <div key={i} className="flex items-start gap-1.5">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-[#2563EB] shrink-0 mt-0.5" />
+                              <span>{b}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* ── 5. SAVINGS ACCOUNT → ASSOCIATED DEBIT CARD BOX ── */}
+                    <div className="p-4 rounded-2xl bg-gradient-to-br from-[#EFF6FF] to-[#DBEAFE]/40 dark:from-slate-900 dark:to-slate-900/90 border border-[#2563EB]/25 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10.5px] font-black uppercase tracking-wider text-[#0B3D91] dark:text-[#60A5FA] flex items-center gap-1.5">
+                          <CreditCard className="w-3.5 h-3.5 text-[#2563EB]" />
+                          <span>Debit Card with this Account</span>
+                        </span>
+                        {linkedCard && (
+                          <span className="px-2 py-0.5 rounded-full text-[9.5px] font-extrabold bg-[#2563EB] text-white">
+                            Official Linked Card
+                          </span>
+                        )}
+                      </div>
+
+                      {linkedCard ? (
+                        <div className="space-y-2 bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-200 dark:border-slate-700 text-xs">
+                          <div className="flex items-start justify-between gap-2">
+                            <div>
+                              <span className="text-[10px] font-bold text-[#2563EB] uppercase block">
+                                {linkedCard.bank} • {linkedCard.network || 'Visa'}
+                              </span>
+                              <h4 className="font-extrabold text-sm text-slate-800 dark:text-white leading-tight">
+                                {linkedCard.cardName}
+                              </h4>
+                            </div>
+
+                            {onSelectDebitCard && (
+                              <button
+                                onClick={() => onSelectDebitCard(linkedCard)}
+                                className="px-3 py-1 rounded-lg bg-[#2563EB] text-white font-bold text-[11px] hover:bg-blue-700 transition-colors shrink-0 cursor-pointer"
+                              >
+                                View Specs →
+                              </button>
+                            )}
+                          </div>
+
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] pt-1.5 border-t border-slate-100 dark:border-slate-700 text-slate-600 dark:text-slate-300">
+                            <div><strong className="block text-[9.5px] text-slate-400 uppercase">ATM Limit</strong> ₹{(linkedCard.atmLimit || 50000).toLocaleString('en-IN')}/day</div>
+                            <div><strong className="block text-[9.5px] text-slate-400 uppercase">POS Limit</strong> ₹{(linkedCard.posLimit || 100000).toLocaleString('en-IN')}/day</div>
+                            <div><strong className="block text-[9.5px] text-slate-400 uppercase">Annual Fee</strong> {linkedCard.annualFee || 'Free'}</div>
+                            <div><strong className="block text-[9.5px] text-slate-400 uppercase">Lounge</strong> {linkedCard.loungeAccess || 'No'}</div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="p-3 bg-white/80 dark:bg-slate-800/80 rounded-xl text-xs font-semibold text-slate-500">
+                          Debit card information not available for this account.
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
+                      <Link
+                        to={`/savings-accounts/${account.id}`}
+                        className="px-4 py-2 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white font-extrabold text-xs transition-all shadow-xs flex items-center gap-1"
+                      >
+                        <span>View Details</span>
+                        <ChevronRight className="w-3.5 h-3.5" />
+                      </Link>
+
+                      <button
+                        onClick={() => handleToggleSavingsCompare(account)}
+                        className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all border cursor-pointer flex items-center gap-1.5 ${
+                          savingsCompareQueue.some(a => String(a.id) === String(account.id))
+                            ? 'bg-[#2563EB] text-white border-[#2563EB]'
+                            : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-200'
+                        }`}
+                      >
+                        <Scale className="w-3.5 h-3.5" />
+                        <span>{savingsCompareQueue.some(a => String(a.id) === String(account.id)) ? 'Queued' : 'Compare'}</span>
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── 13 & 15. STATUTORY DISCLAIMER & INFORMATION NOTICE ── */}
+      <div className="p-5 sm:p-6 rounded-3xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/60 space-y-3 text-amber-900 dark:text-amber-200 text-xs sm:text-sm">
+        <div className="flex items-center gap-2 font-black uppercase tracking-wider text-amber-800 dark:text-amber-300">
+          <Info className="w-4 h-4 shrink-0" />
+          <span>Statutory Bank Information & Verification Disclaimer</span>
+        </div>
+        <p className="leading-relaxed font-normal">
+          Information is displayed for comparison and informational purposes only. Interest rates, debit card charges, daily transaction limits, lounge access criteria, and account opening requirements are updated based on verified bank notifications and may change over time. Please verify current details directly on {canonicalName}'s official website.
+        </p>
+        <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-amber-200/60 dark:border-amber-900/40 text-xs font-semibold">
+          <span>Source: Official {canonicalName} Portal</span>
+          <span>Last Verified: August 2026</span>
+        </div>
+      </div>
     </main>
   );
 }

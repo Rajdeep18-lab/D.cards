@@ -976,6 +976,25 @@ function AppContent() {
                 activeCardsList={activeCardsList}
                 toggleCompareQueue={toggleCompareQueue}
                 compareQueue={compareQueue}
+                onSelectDebitCard={(card) => setSelectedCard(card)}
+                savingsCompareQueue={savingsCompareQueue}
+                setSavingsCompareQueue={setSavingsCompareQueue}
+              />
+            } 
+          />
+          <Route 
+            path="/banks/:id" 
+            element={
+              <BanksPage
+                BANK_PROFILES={BANK_PROFILES}
+                toggleBank={toggleBank}
+                selectSingleBank={selectSingleBank}
+                activeCardsList={activeCardsList}
+                toggleCompareQueue={toggleCompareQueue}
+                compareQueue={compareQueue}
+                onSelectDebitCard={(card) => setSelectedCard(card)}
+                savingsCompareQueue={savingsCompareQueue}
+                setSavingsCompareQueue={setSavingsCompareQueue}
               />
             } 
           />
