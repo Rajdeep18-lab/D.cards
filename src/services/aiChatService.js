@@ -201,16 +201,17 @@ export const aiChatService = {
         return `- Debit Card: ${c.cardName} (${c.bank}): Fee: ${c.annualFee || 'Free'}, Lounge: ${c.loungeAccess || 'No'}, ATM Limit: ${c.atmLimit || 'Standard'}, Cashback: ${c.cashback || 'N/A'}`;
       }).join('\n');
 
-      const savingsSummary = (contextData.savingsAccounts || []).slice(0, 15).map(s => {
-        return `- Savings Account: ${s.accountName} (${s.bank}): Rate: ${s.interestRate}, Min Bal: ${s.minimumBalance}, Zero Bal: ${s.isZeroBalance ? 'Yes' : 'No'}, Video KYC: ${s.isOnlineOpening ? 'Yes' : 'No'}, Debit Card: ${s.associatedDebitCardName || 'N/A'}`;
+      const savingsSummary = (contextData.savingsAccounts || []).slice(0, 20).map(s => {
+        const cardNames = s.associatedDebitCardName || 'Standard Card';
+        return `- Savings Account: ${s.accountName} (${s.bank}): Rate: ${s.interestRate}, Min Bal: ${s.minimumBalance}, Zero Bal: ${s.isZeroBalance ? 'Yes' : 'No'}, Video KYC: ${s.isOnlineOpening ? 'Yes' : 'No'}, Associated Debit Card(s): ${cardNames}`;
       }).join('\n');
 
       const systemPrompt = `You are D.CARD AI Advisor, a helpful and knowledgeable banking and financial assistant.
 
 Rules:
 1. Provide accurate, clear, and direct answers to the user's question.
-2. For financial inquiries regarding interest rates, minimum balances, debit card fees, ATM limits, lounge access, or account opening rules: ONLY use the structured D.CARD database provided below. Do NOT invent or extrapolate financial information. If required information is unavailable, clearly state: "Information is not available in the current D.CARD database."
-3. When asked about what debit card comes with a savings account, specify the exact associated debit card and its features.
+2. For financial inquiries regarding interest rates, minimum balances, debit card fees, ATM limits, lounge access, or account opening rules: ONLY use the structured D.CARD database provided below. Do NOT invent or extrapolate financial information. If required information is unavailable, clearly state: "That information is not available in the current D.CARD database."
+3. When asked about what debit card comes with a savings account, specify the exact associated debit card(s) and their verified features, limits, fees, and benefits.
 
 Verified D.CARD Database Context:
 ${savingsSummary}
@@ -304,7 +305,7 @@ User Question: "${userMessage}"`;
       data = await this.getFirestoreData();
       const { debitCards: allCards, savingsAccounts: allAccounts } = data;
 
-      const isSavingsQuery = lowerMsg.includes("savings") || lowerMsg.includes("account") || lowerMsg.includes("minimum balance") || lowerMsg.includes("zero balance") || lowerMsg.includes("interest rate") || lowerMsg.includes("video kyc") || lowerMsg.includes("online opening");
+      const isSavingsQuery = lowerMsg.includes("savings") || lowerMsg.includes("account") || lowerMsg.includes("minimum balance") || lowerMsg.includes("zero balance") || lowerMsg.includes("interest rate") || lowerMsg.includes("video kyc") || lowerMsg.includes("online opening") || lowerMsg.includes("which debit card") || lowerMsg.includes("what debit card") || lowerMsg.includes("card comes with") || lowerMsg.includes("provided with");
 
       if (isSavingsQuery && Array.isArray(allAccounts) && allAccounts.length > 0) {
         matchedAccounts = allAccounts.filter(acc => {

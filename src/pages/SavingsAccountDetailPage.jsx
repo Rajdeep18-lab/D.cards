@@ -21,10 +21,16 @@ import {
   AlertCircle,
   HelpCircle,
   Clock,
-  DollarSign
+  DollarSign,
+  Gift,
+  Award,
+  Globe,
+  Tag,
+  Sliders,
+  Check
 } from 'lucide-react';
 import { savingsAccountService } from '../services/savingsAccountService';
-import { getAssociatedDebitCard } from '../data/mockSavingsAccounts';
+import { getAssociatedDebitCards } from '../data/mockSavingsAccounts';
 import { useWishlist } from '../context/WishlistContext';
 import LoadingSkeleton from '../components/LoadingSkeleton';
 
@@ -36,6 +42,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
   const [account, setAccount] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [activeCardIndex, setActiveCardIndex] = useState(0);
 
   useEffect(() => {
     setLoading(true);
@@ -79,7 +86,8 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
   }
 
   const wishlisted = isWishlisted(account.id);
-  const associatedCard = getAssociatedDebitCard(account.associatedDebitCardId);
+  const associatedCards = getAssociatedDebitCards(account);
+  const currentCard = associatedCards.length > 0 ? associatedCards[activeCardIndex] || associatedCards[0] : null;
 
   return (
     <main className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-8 relative z-20 space-y-8 text-left select-none">
@@ -246,102 +254,240 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
         </div>
       </div>
 
-      {/* SECTION 6: CORE FEATURE - SAVINGS ACCOUNT → ASSOCIATED DEBIT CARD */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-[#EFF6FF] via-[#DBEAFE]/40 to-white dark:from-slate-900 dark:via-slate-900/90 dark:to-slate-800 border-2 border-[#2563EB]/40 shadow-md space-y-6">
+      {/* SECTION 3: CORE FEATURE - SAVINGS ACCOUNT → ASSOCIATED DEBIT CARD */}
+      <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-[#EFF6FF] via-[#DBEAFE]/30 to-white dark:from-slate-900 dark:via-slate-900/90 dark:to-slate-800 border-2 border-[#2563EB]/40 shadow-md space-y-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-[#2563EB]/20 pb-4">
           <div>
             <span className="inline-flex items-center gap-1.5 px-3 py-0.5 bg-[#2563EB] text-white text-[10px] font-black uppercase tracking-widest rounded-full mb-1">
-              CORE LINKAGE PRIVILEGE
+              OFFICIAL LINKED CARD
             </span>
             <h2 className="text-xl sm:text-2xl font-black text-[#0B3D91] dark:text-[#60A5FA] flex items-center gap-2">
               <CreditCard className="w-6 h-6 text-[#2563EB]" />
-              <span>Debit Card Provided with this Account</span>
+              <span>
+                {associatedCards.length > 1
+                  ? "Available Debit Cards"
+                  : associatedCards.length === 1
+                  ? "Debit Card with this Account"
+                  : "Debit Card Information"}
+              </span>
             </h2>
           </div>
 
           <p className="text-xs text-[#2563EB] dark:text-[#60A5FA] font-bold">
-            What card do you get & what features does it offer?
+            {associatedCards.length > 0
+              ? `${associatedCards.length} verified card option(s) available`
+              : "Debit card linkage details"}
           </p>
         </div>
 
-        {associatedCard ? (
+        {/* State B: Multiple Cards Switcher Tabs */}
+        {associatedCards.length > 1 && (
+          <div className="flex items-center gap-2 overflow-x-auto custom-scrollbar pb-2">
+            {associatedCards.map((c, idx) => (
+              <button
+                key={c.id || idx}
+                onClick={() => setActiveCardIndex(idx)}
+                className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all border cursor-pointer flex items-center gap-2 whitespace-nowrap ${
+                  activeCardIndex === idx
+                    ? 'bg-[#2563EB] text-white border-[#2563EB] shadow-md'
+                    : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-100'
+                }`}
+              >
+                <CreditCard className="w-3.5 h-3.5" />
+                <span>{c.cardName}</span>
+              </button>
+            ))}
+          </div>
+        )}
+
+        {currentCard ? (
           <div className="space-y-6">
-            {/* Associated Card Summary Banner */}
-            <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-[#2563EB]/30 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="space-y-1">
-                <span className="text-xs font-bold text-[#2563EB] dark:text-[#60A5FA] uppercase tracking-wider block">
-                  {associatedCard.bank} • {associatedCard.network} Network
-                </span>
-                <h3 className="text-lg sm:text-xl font-black text-slate-800 dark:text-white">
-                  {associatedCard.cardName}
-                </h3>
-                <p className="text-xs text-slate-500">
-                  Category: {associatedCard.category || 'Standard'} • Best For: {associatedCard.bestFor || 'Everyday Purchases'}
-                </p>
+            {/* Main Debit Card Banner Visual */}
+            <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-[#2563EB]/30 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+              <div className="flex items-center gap-4">
+                {currentCard.image ? (
+                  <img
+                    src={currentCard.image}
+                    alt={currentCard.cardName}
+                    className="w-24 h-16 object-cover rounded-xl shadow-md border border-slate-200 dark:border-slate-700 shrink-0"
+                    onError={(e) => { e.target.style.display = 'none'; }}
+                  />
+                ) : (
+                  <div className="w-20 h-14 rounded-xl bg-gradient-to-br from-[#0B3D91] to-[#2563EB] text-white flex flex-col items-center justify-center font-bold text-xs shadow-md shrink-0">
+                    <CreditCard className="w-5 h-5 mb-1" />
+                    <span>{currentCard.network || 'DEBIT'}</span>
+                  </div>
+                )}
+
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-[11px] font-extrabold text-[#2563EB] dark:text-[#60A5FA] uppercase tracking-wider">
+                      {currentCard.bank}
+                    </span>
+                    <span className="px-2 py-0.5 rounded-md bg-blue-50 dark:bg-slate-800 text-blue-700 dark:text-blue-300 font-bold text-[10px] border border-blue-200 dark:border-slate-700">
+                      {currentCard.network || 'Visa'}
+                    </span>
+                    {currentCard.category && (
+                      <span className="px-2 py-0.5 rounded-md bg-purple-50 dark:bg-slate-800 text-purple-700 dark:text-purple-300 font-bold text-[10px] border border-purple-200 dark:border-slate-700">
+                        {currentCard.category}
+                      </span>
+                    )}
+                  </div>
+                  <h3 className="text-xl font-black text-slate-800 dark:text-white tracking-tight">
+                    {currentCard.cardName}
+                  </h3>
+                  <p className="text-xs text-slate-500 font-medium">
+                    Best For: {currentCard.bestFor || 'Daily Purchases & ATM Withdrawals'}
+                  </p>
+                </div>
               </div>
 
-              {onSelectDebitCard && (
-                <button
-                  onClick={() => onSelectDebitCard(associatedCard)}
-                  className="px-5 py-2.5 rounded-xl bg-[#2563EB] text-white text-xs font-extrabold hover:bg-blue-700 transition-all flex items-center gap-1.5 shadow-md shrink-0 cursor-pointer"
-                >
-                  <span>Explore Full Card Specs</span>
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              )}
+              <div className="flex items-center gap-3 w-full md:w-auto justify-end">
+                {onSelectDebitCard && (
+                  <button
+                    onClick={() => onSelectDebitCard(currentCard)}
+                    className="px-5 py-2.5 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-extrabold transition-all flex items-center gap-1.5 shadow-md cursor-pointer active:scale-95"
+                  >
+                    <span>View Full Debit Card Details →</span>
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
             </div>
 
-            {/* Card Features & Benefits Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-              <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-                <span className="text-[10.5px] font-bold text-slate-400 block uppercase">Annual Fee</span>
-                <span className="font-extrabold text-slate-800 dark:text-slate-200 text-sm mt-0.5 block">{associatedCard.annualFee || '₹0'}</span>
-              </div>
-              <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-                <span className="text-[10.5px] font-bold text-slate-400 block uppercase">ATM Withdrawal Limit</span>
-                <span className="font-extrabold text-slate-800 dark:text-slate-200 text-sm mt-0.5 block">₹{(associatedCard.atmLimit || 50000).toLocaleString('en-IN')}/day</span>
-              </div>
-              <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-                <span className="text-[10.5px] font-bold text-slate-400 block uppercase">POS Limit</span>
-                <span className="font-extrabold text-slate-800 dark:text-slate-200 text-sm mt-0.5 block">₹{(associatedCard.posLimit || 100000).toLocaleString('en-IN')}/day</span>
-              </div>
-              <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-                <span className="text-[10.5px] font-bold text-slate-400 block uppercase">Lounge Access</span>
-                <span className="font-extrabold text-[#2563EB] dark:text-[#60A5FA] text-sm mt-0.5 block">{associatedCard.loungeAccess || 'No'}</span>
+            {/* 1. DEBIT CARD LIMITS */}
+            <div className="space-y-3">
+              <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                <Sliders className="w-4 h-4 text-[#2563EB]" />
+                <span>Card Transaction Limits</span>
+              </h3>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                  <span className="text-[10px] font-bold text-slate-400 block uppercase">ATM Withdrawal</span>
+                  <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mt-0.5 block">
+                    ₹{(currentCard.atmLimit || currentCard.limits?.atmLimit || 50000).toLocaleString('en-IN')} / day
+                  </span>
+                </div>
+                <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                  <span className="text-[10px] font-bold text-slate-400 block uppercase">POS Purchases</span>
+                  <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mt-0.5 block">
+                    ₹{(currentCard.posLimit || currentCard.limits?.posLimit || 100000).toLocaleString('en-IN')} / day
+                  </span>
+                </div>
+                <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                  <span className="text-[10px] font-bold text-slate-400 block uppercase">Online Spends</span>
+                  <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mt-0.5 block">
+                    ₹{(currentCard.onlineLimit || currentCard.limits?.onlineLimit || currentCard.posLimit || 100000).toLocaleString('en-IN')} / day
+                  </span>
+                </div>
+                <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                  <span className="text-[10px] font-bold text-slate-400 block uppercase">International</span>
+                  <span className={`font-extrabold text-sm mt-0.5 block ${currentCard.international ? 'text-emerald-600' : 'text-slate-400'}`}>
+                    {currentCard.international ? 'Available' : 'Not Available'}
+                  </span>
+                </div>
               </div>
             </div>
 
-            {/* Additional Features List */}
-            <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3">
-              <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-400">Card Perks & Privileges:</h4>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-medium">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                  <span>International Spends: {associatedCard.international ? 'Allowed' : 'Domestic Only'}</span>
+            {/* 2. DEBIT CARD FEATURES */}
+            <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3">
+              <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                <ShieldCheck className="w-4 h-4 text-[#2563EB]" />
+                <span>Debit Card Features & Controls</span>
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 text-xs font-medium">
+                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                  <span>Contactless / Tap & Pay: {currentCard.contactless ? 'Supported' : 'Not Supported'}</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                  <span>Contactless Tap to Pay: {associatedCard.contactless ? 'Supported' : 'Not Supported'}</span>
+                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                  <span>International POS/ATM: {currentCard.international ? 'Supported' : 'Domestic Only'}</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                  <span>Forex Markup: {associatedCard.forexMarkup || '3.5%'}</span>
+                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                  <span>Card Controls: In-App Lock & Limit Setting</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                  <span>Cashback Program: {associatedCard.cashback || 'Merchant Offers'}</span>
+                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                  <span>Virtual Card Support: {account.isDigital || currentCard.virtualCard ? 'Available' : 'Physical Card'}</span>
+                </div>
+                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                  <span>Domestic Usage: All RuPay / Visa Terminals</span>
+                </div>
+                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                  <span>Online E-Commerce Spends: 3D Secure Verified</span>
+                </div>
+              </div>
+            </div>
+
+            {/* 3. CARD BENEFITS */}
+            <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3">
+              <h3 className="text-xs font-extrabold uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA] flex items-center gap-1.5">
+                <Gift className="w-4 h-4 text-[#2563EB]" />
+                <span>Card Benefits & Privileges</span>
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div className="p-3.5 rounded-xl bg-blue-50/50 dark:bg-slate-800/60 border border-blue-100 dark:border-slate-700 space-y-1">
+                  <span className="font-extrabold text-[#2563EB] dark:text-[#60A5FA] uppercase text-[10px] block">Airport Lounge Access</span>
+                  <p className="font-bold text-slate-800 dark:text-slate-100">{currentCard.loungeAccess || "No complimentary lounge access"}</p>
+                </div>
+                <div className="p-3.5 rounded-xl bg-purple-50/50 dark:bg-slate-800/60 border border-purple-100 dark:border-slate-700 space-y-1">
+                  <span className="font-extrabold text-purple-600 dark:text-purple-400 uppercase text-[10px] block">Cashback & Rewards</span>
+                  <p className="font-bold text-slate-800 dark:text-slate-100">{currentCard.cashback || "Merchant Discounts & Offers"}</p>
+                </div>
+                {currentCard.benefits && (
+                  <div className="p-3.5 rounded-xl bg-emerald-50/50 dark:bg-slate-800/60 border border-emerald-100 dark:border-slate-700 space-y-1 sm:col-span-2">
+                    <span className="font-extrabold text-emerald-600 dark:text-emerald-400 uppercase text-[10px] block">Verified Perks & Insurance</span>
+                    <p className="font-medium text-slate-800 dark:text-slate-100">{currentCard.benefits}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* 4. CARD CHARGES */}
+            <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3">
+              <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                <DollarSign className="w-4 h-4 text-[#2563EB]" />
+                <span>Debit Card Charges & Fees</span>
+              </h3>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700">
+                  <span className="text-[10px] text-slate-400 block font-bold uppercase">Issuance Fee</span>
+                  <span className="font-extrabold text-slate-800 dark:text-slate-200 mt-0.5 block">{currentCard.joiningFee || "₹0"}</span>
+                </div>
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700">
+                  <span className="text-[10px] text-slate-400 block font-bold uppercase">Annual / Renewal Fee</span>
+                  <span className="font-extrabold text-slate-800 dark:text-slate-200 mt-0.5 block">{currentCard.annualFee || "Free"}</span>
+                </div>
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700">
+                  <span className="text-[10px] text-slate-400 block font-bold uppercase">Forex Markup Fee</span>
+                  <span className="font-extrabold text-slate-800 dark:text-slate-200 mt-0.5 block">{currentCard.forexMarkup || "3.5%"}</span>
+                </div>
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700">
+                  <span className="text-[10px] text-slate-400 block font-bold uppercase">ATM Charges</span>
+                  <span className="font-extrabold text-slate-800 dark:text-slate-200 mt-0.5 block">{currentCard.atmCharges || "5 Free TXNs/mo"}</span>
                 </div>
               </div>
             </div>
           </div>
         ) : (
-          <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 text-xs font-medium text-slate-600 dark:text-slate-300">
-            Associated Debit Card: <strong>{account.associatedDebitCardName || "Standard Bank Debit Card"}</strong>
+          /* State C: No verified card found */
+          <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-center space-y-2">
+            <CreditCard className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto" />
+            <p className="text-sm font-bold text-slate-700 dark:text-slate-200">
+              Debit card information is not available for this account.
+            </p>
+            <p className="text-xs text-slate-400">
+              Check back soon or consult the bank's official schedule of charges.
+            </p>
           </div>
         )}
       </div>
 
-      {/* SECTION 3: ACCOUNT FEATURES & DIGITIZATION */}
+      {/* SECTION 4: BANKING FEATURES & DIGITIZATION */}
       {account.bankingFeatures && (
         <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-4">
           <h2 className="text-lg font-black text-[#1F2937] dark:text-white flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
@@ -359,7 +505,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
         </div>
       )}
 
-      {/* SECTION 4 & 5: ELIGIBILITY, DOCUMENTS & ACCOUNT OPENING */}
+      {/* SECTION 5: ELIGIBILITY & ONBOARDING */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {account.eligibility && (
           <div className="p-6 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-3">
@@ -396,7 +542,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
         )}
       </div>
 
-      {/* SECTION 15: LEGAL DISCLAIMER */}
+      {/* STATUTORY DISCLAIMER */}
       <div className="p-5 sm:p-6 rounded-3xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/60 space-y-3 text-amber-900 dark:text-amber-200 text-xs sm:text-sm">
         <div className="flex items-center gap-2 font-black uppercase tracking-wider text-amber-800 dark:text-amber-300">
           <Info className="w-4 h-4 shrink-0" />

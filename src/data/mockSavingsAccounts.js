@@ -159,7 +159,8 @@ export const savingsAccounts = [
       "Complimentary SBI Global / Platinum International Debit Card options"
     ],
     associatedDebitCardId: 1,
-    associatedDebitCardName: "SBI Global International Debit Card",
+    debitCardIds: [1, 2],
+    associatedDebitCardName: "SBI Global / Platinum Debit Cards",
     interestSlabs: [
       "Savings Balance: 2.70% p.a.",
       "MOD (Sweep FD) Portion: Up to 6.80% p.a."
@@ -842,8 +843,29 @@ export const savingsAccounts = [
   }
 ];
 
-export function getAssociatedDebitCard(cardId) {
-  if (!cardId) return null;
-  return debitCards.find(c => Number(c.id) === Number(cardId)) || null;
+export function getAssociatedDebitCards(accountOrId) {
+  if (!accountOrId) return [];
+
+  if (typeof accountOrId === 'object') {
+    if (Array.isArray(accountOrId.debitCardIds) && accountOrId.debitCardIds.length > 0) {
+      return accountOrId.debitCardIds
+        .map(id => debitCards.find(c => Number(c.id) === Number(id)))
+        .filter(Boolean);
+    }
+    const singleId = accountOrId.debitCardId || accountOrId.associatedDebitCardId;
+    if (singleId) {
+      const found = debitCards.find(c => Number(c.id) === Number(singleId));
+      return found ? [found] : [];
+    }
+    return [];
+  }
+
+  const found = debitCards.find(c => Number(c.id) === Number(accountOrId));
+  return found ? [found] : [];
+}
+
+export function getAssociatedDebitCard(accountOrId) {
+  const cards = getAssociatedDebitCards(accountOrId);
+  return cards.length > 0 ? cards[0] : null;
 }
 

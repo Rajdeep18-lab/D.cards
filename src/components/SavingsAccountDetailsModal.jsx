@@ -18,7 +18,7 @@ import {
   Scale,
   Heart
 } from 'lucide-react';
-import { getAssociatedDebitCard } from '../data/mockSavingsAccounts';
+import { getAssociatedDebitCard, getAssociatedDebitCards } from '../data/mockSavingsAccounts';
 import { useWishlist } from '../context/WishlistContext';
 
 function SavingsAccountDetailsModal({ isOpen, onClose, account, onSelectDebitCard, onToggleCompare, isCompared }) {
@@ -36,7 +36,8 @@ function SavingsAccountDetailsModal({ isOpen, onClose, account, onSelectDebitCar
   if (!isOpen || !account) return null;
 
   const wishlisted = isWishlisted(account.id);
-  const associatedCard = getAssociatedDebitCard(account.associatedDebitCardId);
+  const associatedCards = getAssociatedDebitCards(account);
+  const associatedCard = associatedCards.length > 0 ? associatedCards[0] : getAssociatedDebitCard(account.associatedDebitCardId);
 
   return (
     <AnimatePresence>
@@ -161,58 +162,70 @@ function SavingsAccountDetailsModal({ isOpen, onClose, account, onSelectDebitCar
               <div className="flex items-center justify-between">
                 <h3 className="text-xs font-black uppercase tracking-wider text-[#0B3D91] dark:text-[#60A5FA] flex items-center gap-2">
                   <CreditCard className="w-4 h-4 text-[#2563EB]" />
-                  <span>Debit Card Provided with this Account</span>
+                  <span>
+                    {associatedCards.length > 1
+                      ? `Available Debit Cards (${associatedCards.length})`
+                      : associatedCards.length === 1
+                      ? "Debit Card Provided with this Account"
+                      : "Debit Card Information"}
+                  </span>
                 </h3>
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-[#2563EB] text-white">
-                  Official Linked Card
-                </span>
+                {associatedCards.length > 0 && (
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-[#2563EB] text-white">
+                    Official Linked Card
+                  </span>
+                )}
               </div>
 
-              {associatedCard ? (
-                <div className="space-y-3 bg-white dark:bg-slate-900 p-4 rounded-xl border border-[#2563EB]/20">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <span className="text-[10px] font-bold text-[#2563EB] dark:text-[#60A5FA] uppercase tracking-wider block">
-                        {associatedCard.bank} • {associatedCard.network}
-                      </span>
-                      <h4 className="text-base font-extrabold text-[#1F2937] dark:text-white">
-                        {associatedCard.cardName}
-                      </h4>
-                    </div>
+              {associatedCards.length > 0 ? (
+                <div className="space-y-3">
+                  {associatedCards.map((cardItem, idx) => (
+                    <div key={cardItem.id || idx} className="space-y-3 bg-white dark:bg-slate-900 p-4 rounded-xl border border-[#2563EB]/20 shadow-xs">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <span className="text-[10px] font-bold text-[#2563EB] dark:text-[#60A5FA] uppercase tracking-wider block">
+                            {cardItem.bank} • {cardItem.network || 'Visa'} {cardItem.category ? `• ${cardItem.category}` : ''}
+                          </span>
+                          <h4 className="text-base font-extrabold text-[#1F2937] dark:text-white">
+                            {cardItem.cardName}
+                          </h4>
+                        </div>
 
-                    {onSelectDebitCard && (
-                      <button
-                        onClick={() => onSelectDebitCard(associatedCard)}
-                        className="px-3 py-1.5 rounded-lg bg-[#2563EB] text-white font-bold text-xs flex items-center gap-1 hover:brightness-110 cursor-pointer shadow-xs"
-                      >
-                        <span>Full Card Perks</span>
-                        <ChevronRight className="w-3.5 h-3.5" />
-                      </button>
-                    )}
-                  </div>
+                        {onSelectDebitCard && (
+                          <button
+                            onClick={() => { onClose(); onSelectDebitCard(cardItem); }}
+                            className="px-3 py-1.5 rounded-lg bg-[#2563EB] text-white font-bold text-xs flex items-center gap-1 hover:brightness-110 cursor-pointer shadow-xs shrink-0"
+                          >
+                            <span>Full Card Specs</span>
+                            <ChevronRight className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </div>
 
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs pt-2 border-t border-slate-100 dark:border-slate-800">
-                    <div>
-                      <span className="text-[10px] text-slate-400 block font-semibold">Annual Fee</span>
-                      <span className="font-bold text-slate-800 dark:text-slate-200">{associatedCard.annualFee || "N/A"}</span>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs pt-2 border-t border-slate-100 dark:border-slate-800">
+                        <div>
+                          <span className="text-[10px] text-slate-400 block font-semibold uppercase">Annual Fee</span>
+                          <span className="font-bold text-slate-800 dark:text-slate-200">{cardItem.annualFee || "Free"}</span>
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-slate-400 block font-semibold uppercase">ATM Limit</span>
+                          <span className="font-bold text-slate-800 dark:text-slate-200">₹{(cardItem.atmLimit || cardItem.limits?.atmLimit || 50000).toLocaleString('en-IN')}/day</span>
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-slate-400 block font-semibold uppercase">POS Limit</span>
+                          <span className="font-bold text-slate-800 dark:text-slate-200">₹{(cardItem.posLimit || cardItem.limits?.posLimit || 100000).toLocaleString('en-IN')}/day</span>
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-slate-400 block font-semibold uppercase">Lounge Access</span>
+                          <span className="font-bold text-[#2563EB] dark:text-[#60A5FA]">{cardItem.loungeAccess || "No"}</span>
+                        </div>
+                      </div>
                     </div>
-                    <div>
-                      <span className="text-[10px] text-slate-400 block font-semibold">ATM Limit</span>
-                      <span className="font-bold text-slate-800 dark:text-slate-200">₹{(associatedCard.atmLimit || 50000).toLocaleString('en-IN')}/day</span>
-                    </div>
-                    <div>
-                      <span className="text-[10px] text-slate-400 block font-semibold">Lounge Access</span>
-                      <span className="font-bold text-slate-800 dark:text-slate-200">{associatedCard.loungeAccess || "No"}</span>
-                    </div>
-                    <div>
-                      <span className="text-[10px] text-slate-400 block font-semibold">Forex Markup</span>
-                      <span className="font-bold text-slate-800 dark:text-slate-200">{associatedCard.forexMarkup || "3.5%"}</span>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               ) : (
                 <div className="p-3 bg-white/80 dark:bg-slate-900/80 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300">
-                  Debit Card: <strong>{account.associatedDebitCardName || "Standard Debit Card Provided"}</strong>
+                  Debit card information is not available for this account.
                 </div>
               )}
             </div>

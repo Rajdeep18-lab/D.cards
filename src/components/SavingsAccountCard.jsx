@@ -3,13 +3,14 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Heart, Scale, ExternalLink, CheckCircle2, CreditCard, ShieldCheck, Sparkles, Zap, Smartphone, ChevronRight } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
-import { getAssociatedDebitCard } from '../data/mockSavingsAccounts';
+import { getAssociatedDebitCard, getAssociatedDebitCards } from '../data/mockSavingsAccounts';
 
 function SavingsAccountCard({ account, onViewDetails, onToggleCompare, isCompared, onSelectDebitCard }) {
   const { isWishlisted, toggleWishlist } = useWishlist();
   const wishlisted = isWishlisted(account.id);
 
-  const associatedCard = getAssociatedDebitCard(account.associatedDebitCardId);
+  const associatedCards = getAssociatedDebitCards(account);
+  const associatedCard = associatedCards.length > 0 ? associatedCards[0] : getAssociatedDebitCard(account.associatedDebitCardId);
 
   return (
     <motion.div
@@ -114,7 +115,7 @@ function SavingsAccountCard({ account, onViewDetails, onToggleCompare, isCompare
       </div>
 
       {/* Associated Debit Card Connection Box */}
-      {account.associatedDebitCardName && (
+      {(associatedCards.length > 0 || account.associatedDebitCardName) && (
         <div className="px-5 sm:px-6 py-3 bg-[#EFF6FF]/60 dark:bg-slate-800/50 border-t border-b border-[#2563EB]/15 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 text-left min-w-0">
             <div className="w-7 h-7 rounded-xl bg-[#2563EB] text-white flex items-center justify-center shrink-0 shadow-xs">
@@ -122,10 +123,10 @@ function SavingsAccountCard({ account, onViewDetails, onToggleCompare, isCompare
             </div>
             <div className="min-w-0">
               <span className="text-[9.5px] font-extrabold uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA] block leading-none">
-                Provided Debit Card:
+                {associatedCards.length > 1 ? `Provided Debit Cards (${associatedCards.length}):` : 'Provided Debit Card:'}
               </span>
               <span className="text-xs font-bold text-slate-800 dark:text-slate-100 truncate block mt-0.5">
-                {account.associatedDebitCardName}
+                {associatedCard?.cardName || account.associatedDebitCardName}
               </span>
             </div>
           </div>
