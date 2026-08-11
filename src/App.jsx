@@ -811,6 +811,7 @@ function AppContent() {
         toggleDarkMode={toggleDarkMode}
         onOpenAuth={() => openAuthModal('required')}
         compareCount={compareQueue.length}
+        onOpenLegal={(tab) => { setLegalTab(tab || 'terms'); setIsLegalOpen(true); }}
       />
 
       <div className="flex-1">
