@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Bot, 
@@ -19,43 +20,57 @@ import {
   RefreshCw,
   Layers,
   Percent,
-  Check
+  Check,
+  Scale,
+  Heart,
+  ExternalLink,
+  ChevronRight
 } from 'lucide-react';
 import { aiChatService } from '../services/aiChatService';
 import { useAuth } from '../hooks/useAuth';
+import { useWishlist } from '../context/WishlistContext';
 
 const QUICK_ACTIONS = [
   { label: "Zero Balance Savings", query: "Which savings account has zero minimum balance?" },
   { label: "Compare Savings", query: "Compare SBI and HDFC savings accounts" },
-  { label: "Student Savings", query: "Which savings account is suitable for a student?" },
+  { label: "Student Savings Account", query: "Which savings account is suitable for a student?" },
+  { label: "Account Debit Card", query: "What debit card comes with SBI Savings Plus Account?" },
   { label: "Online Video KYC", query: "Which savings accounts can be opened online?" },
-  { label: "Account Debit Card", query: "What debit card comes with HDFC SavingsMax Account?" },
-  { label: "Airport Lounge", query: "Which debit cards offer Airport Lounge Access?" },
-  { label: "Zero Annual Fee", query: "Show me Zero Annual Fee Debit Cards" },
+  { label: "Airport Lounge Cards", query: "Which debit cards offer Airport Lounge Access?" },
+  { label: "Zero Annual Fee Cards", query: "Show me Zero Annual Fee Debit Cards" },
   { label: "Cashback Cards", query: "Show me Cashback Debit Cards" },
-  { label: "Visa Cards", query: "Show me Visa Debit Cards" },
   { label: "RuPay Cards", query: "Show me the best RuPay Debit Card" },
-  { label: "Shopping Cards", query: "Show me best debit cards for online shopping rewards" },
-  { label: "Travel Cards", query: "Show me zero forex travel debit cards" },
-  { label: "Senior Citizen", query: "Show me senior citizen savings accounts" }
+  { label: "Senior Citizen Accounts", query: "Show me senior citizen savings accounts" }
 ];
 
 const STARTER_PROMPTS = [
   { label: "Zero Balance Savings", query: "Which savings account has zero minimum balance?" },
-  { label: "Compare SBI vs HDFC Savings", query: "Compare SBI and HDFC savings accounts" },
+  { label: "Compare SBI vs HDFC", query: "Compare SBI and HDFC savings accounts" },
   { label: "Student Savings Account", query: "Which savings account is suitable for a student?" },
-  { label: "Online Video KYC Accounts", query: "Which savings accounts can be opened online?" },
-  { label: "Savings Debit Card Perks", query: "What debit card comes with ICICI MINE Savings Account?" }
+  { label: "Account Debit Card Perks", query: "What debit card comes with SBI Savings Plus Account?" },
+  { label: "Online Video KYC Accounts", query: "Which savings accounts can be opened online?" }
 ];
 
-function AIChatAssistant({ onOpenContact, embeddedPage = false, externalQuery = null, isCompareActive = false, compareDockHeight = 0 }) {
+function AIChatAssistant({ 
+  onOpenContact, 
+  embeddedPage = false, 
+  externalQuery = null, 
+  isCompareActive = false, 
+  compareDockHeight = 0,
+  onSelectDebitCard,
+  toggleCompareQueue,
+  setSavingsCompareQueue
+}) {
   const { user } = useAuth();
+  const { isWishlisted, toggleWishlist } = useWishlist();
+  const navigate = useNavigate();
+
   const [isOpen, setIsOpen] = useState(embeddedPage);
   const [isMinimized, setIsMinimized] = useState(false);
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [isSearching, setIsSearching] = useState(false);
-  const [lastMatchedCards, setLastMatchedCards] = useState([]);
+  const [conversationState, setConversationState] = useState({});
 
   const messagesEndRef = useRef(null);
 
@@ -108,11 +123,11 @@ function AIChatAssistant({ onOpenContact, embeddedPage = false, externalQuery = 
     setIsSearching(true);
 
     try {
-      const chatContext = { lastMatchedCards };
+      const chatContext = { conversationState };
       const response = await aiChatService.sendMessage(query, user, chatContext);
 
-      if (response.matchedCards && response.matchedCards.length > 0) {
-        setLastMatchedCards(response.matchedCards);
+      if (response.conversationState) {
+        setConversationState(response.conversationState);
       }
 
       const botMsg = {
@@ -120,6 +135,8 @@ function AIChatAssistant({ onOpenContact, embeddedPage = false, externalQuery = 
         sender: "bot",
         text: response.text,
         type: response.type,
+        matchedAccounts: response.matchedAccounts || [],
+        matchedCards: response.matchedCards || [],
         timestamp: response.timestamp || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
 
@@ -133,7 +150,7 @@ function AIChatAssistant({ onOpenContact, embeddedPage = false, externalQuery = 
       const errorMsg = {
         id: Date.now() + "-error",
         sender: "bot",
-        text: "AI service is temporarily unavailable. Please try again later.",
+        text: "I'm having trouble connecting to the AI service right now. You can still explore D.CARD's verified products manually.",
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
       setMessages(prev => [...prev, errorMsg]);
@@ -144,7 +161,7 @@ function AIChatAssistant({ onOpenContact, embeddedPage = false, externalQuery = 
 
   const handleClearChat = async () => {
     setMessages([]);
-    setLastMatchedCards([]);
+    setConversationState({});
     if (user?.uid) {
       await aiChatService.saveUserChatHistory(user.uid, []);
     }
@@ -288,11 +305,11 @@ function AIChatAssistant({ onOpenContact, embeddedPage = false, externalQuery = 
                           </div>
                           <div className="flex items-center gap-2 p-2.5 rounded-xl bg-[#EFF6FF] dark:bg-slate-800/60 border border-[#2563EB]/10">
                             <CheckCircle2 className="w-4 h-4 text-[#2563EB]" />
-                            <span>Cashback & Rewards</span>
+                            <span>Savings Account → Debit Card</span>
                           </div>
                           <div className="flex items-center gap-2 p-2.5 rounded-xl bg-[#EFF6FF] dark:bg-slate-800/60 border border-[#2563EB]/10">
                             <CheckCircle2 className="w-4 h-4 text-[#2563EB]" />
-                            <span>Airport Lounge Access</span>
+                            <span>Airport Lounge & Limits</span>
                           </div>
                           <div className="flex items-center gap-2 p-2.5 rounded-xl bg-[#EFF6FF] dark:bg-slate-800/60 border border-[#2563EB]/10">
                             <CheckCircle2 className="w-4 h-4 text-[#2563EB]" />
@@ -300,7 +317,7 @@ function AIChatAssistant({ onOpenContact, embeddedPage = false, externalQuery = 
                           </div>
                           <div className="flex items-center gap-2 p-2.5 rounded-xl bg-[#EFF6FF] dark:bg-slate-800/60 border border-[#2563EB]/10">
                             <CheckCircle2 className="w-4 h-4 text-[#2563EB]" />
-                            <span>ATM & POS Limits</span>
+                            <span>Online Video KYC Accounts</span>
                           </div>
                         </div>
                       </div>
@@ -345,7 +362,7 @@ function AIChatAssistant({ onOpenContact, embeddedPage = false, externalQuery = 
                         </div>
 
                         {/* Speech Bubble */}
-                        <div className={`max-w-[85%] sm:max-w-[80%] rounded-2xl p-4 text-xs leading-relaxed space-y-1.5 ${
+                        <div className={`max-w-[88%] sm:max-w-[82%] rounded-2xl p-4 text-xs leading-relaxed space-y-3 ${
                           isUser
                             ? "bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white rounded-tr-none shadow-md font-medium"
                             : "bg-white dark:bg-[#1E293B] text-[#1F2937] dark:text-slate-100 border border-[#E5E7EB] dark:border-slate-800 rounded-tl-none shadow-soft font-normal"
@@ -353,6 +370,74 @@ function AIChatAssistant({ onOpenContact, embeddedPage = false, externalQuery = 
                           <div className="whitespace-pre-line leading-relaxed font-normal">
                             {msg.text}
                           </div>
+
+                          {/* Action Buttons for Mentioned Accounts */}
+                          {!isUser && msg.matchedAccounts && msg.matchedAccounts.length > 0 && (
+                            <div className="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-2">
+                              <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block">
+                                Quick Account Actions:
+                              </span>
+                              <div className="flex flex-wrap gap-2">
+                                {msg.matchedAccounts.map(acc => (
+                                  <div key={acc.id} className="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-800 p-1.5 rounded-xl border border-slate-200 dark:border-slate-700 text-[11px]">
+                                    <span className="font-extrabold text-slate-800 dark:text-slate-100">{acc.bank}: {acc.accountName}</span>
+                                    <button
+                                      onClick={() => navigate(`/savings-accounts/${acc.id}`)}
+                                      className="px-2 py-0.5 rounded bg-[#2563EB] text-white font-bold text-[10px] hover:bg-blue-700 cursor-pointer"
+                                    >
+                                      View Account
+                                    </button>
+                                    <button
+                                      onClick={() => toggleWishlist(acc)}
+                                      className={`p-1 rounded text-[10px] cursor-pointer ${isWishlisted(acc.id) ? 'text-rose-500' : 'text-slate-400 hover:text-rose-500'}`}
+                                      title="Save to Favourites"
+                                    >
+                                      <Heart className={`w-3.5 h-3.5 ${isWishlisted(acc.id) ? 'fill-rose-500' : ''}`} />
+                                    </button>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Action Buttons for Mentioned Cards */}
+                          {!isUser && msg.matchedCards && msg.matchedCards.length > 0 && (
+                            <div className="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-2">
+                              <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block">
+                                Quick Card Actions:
+                              </span>
+                              <div className="flex flex-wrap gap-2">
+                                {msg.matchedCards.map(c => (
+                                  <div key={c.id} className="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-800 p-1.5 rounded-xl border border-slate-200 dark:border-slate-700 text-[11px]">
+                                    <span className="font-extrabold text-slate-800 dark:text-slate-100">{c.bank}: {c.cardName}</span>
+                                    {onSelectDebitCard && (
+                                      <button
+                                        onClick={() => onSelectDebitCard(c)}
+                                        className="px-2 py-0.5 rounded bg-[#2563EB] text-white font-bold text-[10px] hover:bg-blue-700 cursor-pointer"
+                                      >
+                                        View Debit Card
+                                      </button>
+                                    )}
+                                    {toggleCompareQueue && (
+                                      <button
+                                        onClick={() => toggleCompareQueue(c)}
+                                        className="px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-[10px] cursor-pointer hover:bg-slate-300"
+                                      >
+                                        Compare
+                                      </button>
+                                    )}
+                                    <button
+                                      onClick={() => toggleWishlist(c)}
+                                      className={`p-1 rounded text-[10px] cursor-pointer ${isWishlisted(c.id) ? 'text-rose-500' : 'text-slate-400 hover:text-rose-500'}`}
+                                      title="Save to Favourites"
+                                    >
+                                      <Heart className={`w-3.5 h-3.5 ${isWishlisted(c.id) ? 'fill-rose-500' : ''}`} />
+                                    </button>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
                           
                           <div className={`text-[9.5px] font-medium text-right mt-1 ${isUser ? "text-white/80" : "text-[#6B7280] dark:text-slate-400"}`}>
                             {msg.timestamp}
@@ -379,7 +464,7 @@ function AIChatAssistant({ onOpenContact, embeddedPage = false, externalQuery = 
                           <span className="w-2 h-2 rounded-full bg-[#2563EB] animate-bounce" style={{ animationDelay: '300ms' }} />
                         </div>
                         <span className="text-xs font-semibold text-[#1F2937] dark:text-slate-200">
-                          Thinking...
+                          Searching Firestore & Analyzing Banking Context...
                         </span>
                       </div>
                     </motion.div>
@@ -410,7 +495,7 @@ function AIChatAssistant({ onOpenContact, embeddedPage = false, externalQuery = 
                     type="text"
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
-                    placeholder="Ask anything about debit cards, banking, cashback, lounge access..."
+                    placeholder="Ask about savings accounts, debit cards, lounge access, zero balance..."
                     className="flex-1 rounded-full bg-[#F8FAFC] dark:bg-slate-900 border border-[#E5E7EB] dark:border-slate-800 px-5 py-3.5 text-xs text-[#1F2937] dark:text-white font-normal outline-none focus:border-[#2563EB] transition-all shadow-xs"
                   />
                   <button

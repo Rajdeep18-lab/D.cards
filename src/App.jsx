@@ -939,6 +939,9 @@ function AppContent() {
             element={
               <AIAdvisorPage
                 onOpenContact={() => navigate('/contact')}
+                onSelectDebitCard={(card) => setSelectedCard(card)}
+                toggleCompareQueue={toggleCompareQueue}
+                setSavingsCompareQueue={setSavingsCompareQueue}
               />
             } 
           />

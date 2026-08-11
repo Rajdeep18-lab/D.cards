@@ -41,10 +41,10 @@ const SUGGESTED_PROMPTS = [
   },
   {
     id: "p4",
-    category: "Account Debit Card",
+    category: "Savings Debit Card",
     icon: CreditCard,
     bg: "bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] border-[#2563EB]/20",
-    query: "What debit card comes with HDFC SavingsMax Account and what features does it offer?"
+    query: "What debit card comes with SBI Savings Plus Account and what features does it offer?"
   },
   {
     id: "p5",
@@ -62,7 +62,7 @@ const SUGGESTED_PROMPTS = [
   }
 ];
 
-function AIAdvisorPage({ onOpenContact }) {
+function AIAdvisorPage({ onOpenContact, onSelectDebitCard, toggleCompareQueue, setSavingsCompareQueue }) {
   const [activeExternalQuery, setActiveExternalQuery] = useState(null);
 
   const handlePromptClick = (queryText) => {
@@ -82,7 +82,7 @@ function AIAdvisorPage({ onOpenContact }) {
             D.CARD AI Advisor
           </h1>
           <p className="text-xs sm:text-sm text-[#6B7280] dark:text-slate-400 mt-1 font-normal max-w-3xl">
-            Ask any question about lounge access, RuPay vs Visa, zero balance cards, or ATM limits — verified strictly against live database records.
+            Ask any question about savings accounts, zero balance rules, lounge access, RuPay vs Visa, or associated debit card perks — verified strictly against live database records.
           </p>
         </div>
 
@@ -108,7 +108,7 @@ function AIAdvisorPage({ onOpenContact }) {
               </div>
             </div>
             <p className="text-xs text-[#6B7280] dark:text-slate-300 leading-relaxed font-normal">
-              D.CARD AI Advisor checks actual bank fee structures, lounge rules, and card limits directly from verified database records.
+              D.CARD AI Advisor checks actual bank fee structures, savings interest rates, lounge rules, and associated debit card limits directly from verified database records.
             </p>
           </div>
 
@@ -162,6 +162,9 @@ function AIAdvisorPage({ onOpenContact }) {
             onOpenContact={onOpenContact} 
             embeddedPage={true} 
             externalQuery={activeExternalQuery}
+            onSelectDebitCard={onSelectDebitCard}
+            toggleCompareQueue={toggleCompareQueue}
+            setSavingsCompareQueue={setSavingsCompareQueue}
           />
         </div>
       </div>

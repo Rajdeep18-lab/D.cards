@@ -8,8 +8,9 @@ import {
   setDoc
 } from '../lib/firebase';
 import { debitCards, bankCards, faqs } from '../data/mockData';
-import { savingsAccounts } from '../data/mockSavingsAccounts';
+import { savingsAccounts, getAssociatedDebitCards } from '../data/mockSavingsAccounts';
 import { savingsAccountService } from './savingsAccountService';
+import { canonicalBankName } from '../utils/bankDirectoryUtils';
 
 // Environment variable for Google Gemini API key (never hardcode in source code)
 const GEMINI_API_KEY = (import.meta.env.VITE_GEMINI_API_KEY || "").trim();
@@ -45,12 +46,10 @@ const BANKING_KEYWORDS = [
   "sbi", "state bank", "hdfc", "icici", "axis", "kotak", "idfc", "indusind", "pnb", "punjab", "baroda",
   "bob", "canara", "union bank", "indian bank", "central bank", "uco", "federal", "rbl", "yes bank",
   "au small", "equitas", "ujjivan", "jana", "esaf", "suryoday", "fi money", "jupiter", "niyo", "freo",
-  "airtel", "post bank"
+  "airtel", "post bank", "recommend", "best", "which", "what", "provide", "provided", "comes with"
 ];
 
-/**
- * Checks if user message contains any banking or debit card related keyword
- */
+// Helper to check if message contains banking keywords
 export function isBankingRelatedQuery(userMessage = "") {
   const lower = String(userMessage).toLowerCase();
   return BANKING_KEYWORDS.some(kw => {
@@ -62,21 +61,19 @@ export function isBankingRelatedQuery(userMessage = "") {
   });
 }
 
-/**
- * Intelligent Offline Knowledge Base Fallback for common queries when API key is rate-limited
- */
+// Friendly fallback for non-banking queries
 export function getOfflineFallbackResponse(userMessage = "") {
   const lower = String(userMessage).toLowerCase();
 
   if (lower.includes("chandigarh university") || lower.includes("where is cu") || lower.includes("cu location")) {
-    return "📍 **Chandigarh University (CU)** is a NAAC A+ accredited private university located on National Highway 95 (Chandigarh-Ludhiana Highway) in **Gharuan, Mohali, Punjab** (near Chandigarh), India.";
+    return "📍 **Chandigarh University (CU)** is a NAAC A+ accredited university located on Highway 95 in **Gharuan, Mohali, Punjab**, India.";
   }
 
   if (lower.includes("antigravity")) {
-    return "🌌 **Antigravity** refers to the concept of creating a space or object free from gravitational pull. In modern AI software, **Antigravity** is Google DeepMind's advanced agentic coding assistant engine.";
+    return "🌌 **Antigravity** is Google DeepMind's advanced agentic coding assistant engine.";
   }
 
-  if (lower.includes("python") && (lower.includes("hello world") || lower.includes("code") || lower.includes("program"))) {
+  if (lower.includes("python") && (lower.includes("hello world") || lower.includes("code"))) {
     return "```python\n# Python Hello World Program\nprint(\"Hello, World!\")\n```";
   }
 
@@ -87,9 +84,7 @@ export function getOfflineFallbackResponse(userMessage = "") {
   return null;
 }
 
-/**
- * Get initialized Google Generative AI model client (using supported model gemini-2.0-flash)
- */
+// Get initialized Google Generative AI model client (gemini-2.0-flash)
 function getGeminiModel() {
   if (!GEMINI_API_KEY || GEMINI_API_KEY === "your-gemini-api-key-here") {
     return null;
@@ -104,6 +99,7 @@ function getGeminiModel() {
 }
 
 export const aiChatService = {
+  // Ensure Firestore collections exist
   async ensureFirestoreSeeded() {
     try {
       const cardsSnap = await getDocs(collection(db, DEBIT_CARDS_COLLECTION));
@@ -132,6 +128,7 @@ export const aiChatService = {
     }
   },
 
+  // Fetch Firestore dataset with cache
   async getFirestoreData(forceRefresh = false) {
     const now = Date.now();
     if (!forceRefresh && firestoreCache.debitCards && firestoreCache.savingsAccounts && (now - firestoreCache.lastFetched < CACHE_TTL_MS)) {
@@ -140,7 +137,6 @@ export const aiChatService = {
 
     try {
       await this.ensureFirestoreSeeded();
-
       const liveSavings = await savingsAccountService.getSavingsAccounts(forceRefresh);
 
       const [cardsSnap, banksSnap, faqSnap, offersSnap] = await Promise.all([
@@ -178,44 +174,60 @@ export const aiChatService = {
     }
   },
 
-  /**
-   * Request response from Google Gemini API with logging & explicit error handling
-   */
-  async generateGeminiResponse(userMessage, contextData = {}) {
+  // Gemini API Grounded Generator
+  async generateGeminiResponse(userMessage, contextData = {}, conversationState = {}) {
     console.log("Gemini Request Sent", { userMessage });
 
     const geminiModel = getGeminiModel();
     if (!geminiModel) {
-      const errMessage = !GEMINI_API_KEY 
-        ? "Gemini API key is not configured in environment variables." 
-        : "Gemini API key is invalid or placeholder.";
-      console.error("Gemini Error:", errMessage);
       return {
         error: true,
-        message: "AI service is temporarily unavailable. Please try again later."
+        message: "I'm having trouble connecting to the AI service right now. You can still explore D.CARD's verified products manually."
       };
     }
 
     try {
-      const cardsSummary = (contextData.debitCards || []).slice(0, 15).map(c => {
-        return `- Debit Card: ${c.cardName} (${c.bank}): Fee: ${c.annualFee || 'Free'}, Lounge: ${c.loungeAccess || 'No'}, ATM Limit: ${c.atmLimit || 'Standard'}, Cashback: ${c.cashback || 'N/A'}`;
+      const cardsSummary = (contextData.debitCards || []).map(c => {
+        const atm = typeof c.limits?.atmLimit === 'number' ? `₹${c.limits.atmLimit.toLocaleString()}` : (c.atmLimit ? `₹${c.atmLimit}` : '₹50,000');
+        const pos = typeof c.limits?.posLimit === 'number' ? `₹${c.limits.posLimit.toLocaleString()}` : (c.posLimit ? `₹${c.posLimit}` : '₹100,000');
+        return `- Debit Card [ID:${c.id}]: ${c.cardName} (${c.bank}): Network: ${c.network || 'Visa'}, Annual Fee: ${c.annualFee || 'Free'}, Joining Fee: ${c.joiningFee || '₹0'}, ATM Limit: ${atm}/day, POS Limit: ${pos}/day, Lounge Access: ${c.loungeAccess || 'No'}, Intl Usage: ${c.international ? 'Allowed' : 'Domestic Only'}, Contactless: ${c.contactless ? 'Supported' : 'Not Supported'}, Cashback/Rewards: ${c.cashback || c.rewards || 'Offers'}`;
       }).join('\n');
 
-      const savingsSummary = (contextData.savingsAccounts || []).slice(0, 20).map(s => {
-        const cardNames = s.associatedDebitCardName || 'Standard Card';
-        return `- Savings Account: ${s.accountName} (${s.bank}): Rate: ${s.interestRate}, Min Bal: ${s.minimumBalance}, Zero Bal: ${s.isZeroBalance ? 'Yes' : 'No'}, Video KYC: ${s.isOnlineOpening ? 'Yes' : 'No'}, Associated Debit Card(s): ${cardNames}`;
+      const savingsSummary = (contextData.savingsAccounts || []).map(s => {
+        const associatedCards = getAssociatedDebitCards(s);
+        const cardNames = associatedCards.length > 0 ? associatedCards.map(c => c.cardName).join(', ') : (s.associatedDebitCardName || 'Not Listed');
+        return `- Savings Account [ID:${s.id}]: ${s.accountName} (${s.bank}): Category: ${s.accountType}, Rate: ${s.interestRate}, Min Bal: ${s.minimumBalance}, Zero Bal: ${s.isZeroBalance ? 'Yes' : 'No'}, Online Video KYC: ${s.isOnlineOpening ? 'Yes' : 'No'}, Highlights: ${(s.keyBenefits || []).join('; ')}, Associated Debit Card(s): ${cardNames}`;
       }).join('\n');
+
+      let contextStr = "";
+      if (conversationState.lastMentionedBank) {
+        contextStr += `Active Conversation Bank Context: ${conversationState.lastMentionedBank}\n`;
+      }
+      if (conversationState.lastMentionedAccount) {
+        contextStr += `Active Conversation Account Context: ${conversationState.lastMentionedAccount.accountName} (${conversationState.lastMentionedAccount.bank})\n`;
+      }
+      if (conversationState.lastMentionedCard) {
+        contextStr += `Active Conversation Card Context: ${conversationState.lastMentionedCard.cardName} (${conversationState.lastMentionedCard.bank})\n`;
+      }
 
       const systemPrompt = `You are D.CARD AI Advisor, a helpful and knowledgeable banking and financial assistant.
 
 Rules:
-1. Provide accurate, clear, and direct answers to the user's question.
-2. For financial inquiries regarding interest rates, minimum balances, debit card fees, ATM limits, lounge access, or account opening rules: ONLY use the structured D.CARD database provided below. Do NOT invent or extrapolate financial information. If required information is unavailable, clearly state: "That information is not available in the current D.CARD database."
-3. When asked about what debit card comes with a savings account, specify the exact associated debit card(s) and their verified features, limits, fees, and benefits.
+1. Provide concise, clear, and direct answers using bullet points or markdown tables when helpful.
+2. For financial inquiries (interest rates, minimum balances, debit card fees, ATM limits, lounge access, video KYC, zero balance rules, account features): ONLY use the structured D.CARD database provided below. Do NOT invent or hallucinate financial information.
+3. If the requested product or information is not present in the D.CARD database, clearly state: "I couldn't find verified information about that in the current D.CARD database."
+4. When asked about what debit card comes with a savings account, look up the associated debit card(s) from the database and explain their verified features, limits, and fees. If no card is linked, state: "Debit card information is not available for this account in the current D.CARD database."
+5. Maintain conversation context if provided.
+6. Add a brief reminder when appropriate: "Please verify the latest information on the bank's official website before making a financial decision."
+
+${contextStr}
 
 Verified D.CARD Database Context:
+
+Savings Accounts:
 ${savingsSummary}
 
+Debit Cards:
 ${cardsSummary}
 
 User Question: "${userMessage}"`;
@@ -232,12 +244,7 @@ User Question: "${userMessage}"`;
         };
       }
     } catch (err) {
-      console.error("Gemini API Request Error Details:", {
-        message: err.message,
-        status: err.status || 429,
-        statusText: err.statusText || "RESOURCE_EXHAUSTED",
-        errorDetails: err
-      });
+      console.error("Gemini API Error:", err.message);
 
       const fallbackAnswer = getOfflineFallbackResponse(userMessage);
       if (fallbackAnswer) {
@@ -249,154 +256,223 @@ User Question: "${userMessage}"`;
 
       return {
         error: true,
-        message: "Information is not available in the current D.CARD database."
-      };
-    }
-
-    const fallbackAnswer = getOfflineFallbackResponse(userMessage);
-    if (fallbackAnswer) {
-      return {
-        error: false,
-        text: fallbackAnswer
+        message: "I'm having trouble connecting to the AI service right now. You can still explore D.CARD's verified products manually."
       };
     }
 
     return {
       error: true,
-      message: "Information is not available in the current D.CARD database."
+      message: "I couldn't find verified information about that in the current D.CARD database."
     };
   },
 
-  /**
-   * Main Router Flow
-   */
+  // Main Router Flow with Firestore-first retrieval & multi-turn memory
   async sendMessage(userMessage, user = null, chatContext = {}) {
     const cleanMsg = (userMessage || "").trim();
     const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
     if (!cleanMsg) {
       return {
-        text: "Please type a question or select a quick option below! 💳",
+        text: "Please type a question or select a suggested prompt below! 💳",
         type: "greeting",
         timestamp
       };
     }
 
     const lowerMsg = cleanMsg.toLowerCase();
+    const conversationState = chatContext.conversationState || {};
 
-    // Check basic friendly greetings
+    // Friendly greetings
     if (["hi", "hello", "hey", "namaste", "greetings", "hallo"].some(w => lowerMsg === w || lowerMsg.startsWith(w + " "))) {
       return {
-        text: "👋 **Hello! Welcome to D.CARD AI Assistant.**\n\nAsk me anything about:\n- 🏦 **Savings Accounts** (Zero Balance, High Interest, Student, Salary, Digital)\n- 💳 **Associated Debit Cards** (Visa, RuPay, Mastercard & Card Privileges)\n- 🏧 **ATM Withdrawal Limits & Lounge Access**\n- 🔄 **Comparing Bank Savings Accounts & Debit Cards**",
+        text: "👋 **Hello! Welcome to D.CARD AI Advisor.**\n\nAsk me anything about:\n- 🏦 **Savings Accounts** (Zero Balance, High Interest, Student, Salary, Digital)\n- 💳 **Associated Debit Cards** (Visa, RuPay, Mastercard, Lounge Access & ATM Limits)\n- 🔄 **Comparing Savings Accounts & Debit Cards**\n- ⚡ **Online Account Opening via Video KYC**",
         type: "greeting",
         timestamp
       };
     }
 
-    // Step 1: Detect if query is banking-related
-    const isBankingQuery = isBankingRelatedQuery(cleanMsg);
+    // Step 1: Detect bank mentions in query or fallback to conversation memory
+    const bankKeywordsList = ["sbi", "hdfc", "icici", "axis", "kotak", "idfc", "canara", "indusind", "pnb", "baroda", "au small", "fi money", "jupiter", "niyo", "federal", "rbl", "yes bank"];
+    const detectedBank = bankKeywordsList.find(b => lowerMsg.includes(b)) || conversationState.lastMentionedBank || null;
 
-    let matchedCards = [];
-    let matchedAccounts = [];
+    // Step 2: Fetch Firestore data
     let data = null;
-
-    if (isBankingQuery) {
-      console.log("Firestore Search Started", { cleanMsg, isBankingQuery });
+    try {
       data = await this.getFirestoreData();
-      const { debitCards: allCards, savingsAccounts: allAccounts } = data;
+    } catch (err) {
+      return {
+        text: "Product information is temporarily unavailable. Please try again.",
+        type: "error",
+        timestamp
+      };
+    }
 
-      const isSavingsQuery = lowerMsg.includes("savings") || lowerMsg.includes("account") || lowerMsg.includes("minimum balance") || lowerMsg.includes("zero balance") || lowerMsg.includes("interest rate") || lowerMsg.includes("video kyc") || lowerMsg.includes("online opening") || lowerMsg.includes("which debit card") || lowerMsg.includes("what debit card") || lowerMsg.includes("card comes with") || lowerMsg.includes("provided with");
+    const { debitCards: allCards, savingsAccounts: allAccounts } = data;
 
-      if (isSavingsQuery && Array.isArray(allAccounts) && allAccounts.length > 0) {
-        matchedAccounts = allAccounts.filter(acc => {
-          if (!acc) return false;
-          const aName = String(acc.accountName || "").toLowerCase();
-          const aBank = String(acc.bank || "").toLowerCase();
-          const aType = String(acc.accountType || "").toLowerCase();
+    // Direct Intent Check A: Savings Account → Associated Debit Card query
+    const isAssociatedCardQuery = (lowerMsg.includes("card") && (lowerMsg.includes("comes with") || lowerMsg.includes("associated") || lowerMsg.includes("provided") || lowerMsg.includes("get with") || lowerMsg.includes("which debit card") || lowerMsg.includes("what debit card")));
 
-          const bankMentions = ["sbi", "hdfc", "icici", "axis", "kotak", "idfc", "canara", "indusind", "pnb", "baroda", "au small", "fi money"].filter(b => lowerMsg.includes(b));
-          if (bankMentions.length > 0) {
-            const matches = bankMentions.some(b => aBank.includes(b) || aName.includes(b));
-            if (!matches) return false;
-          }
+    if (isAssociatedCardQuery && Array.isArray(allAccounts) && allAccounts.length > 0) {
+      let targetAccount = null;
 
-          if (lowerMsg.includes("zero balance") || lowerMsg.includes("zero min")) {
-            if (!acc.isZeroBalance && acc.minimumBalanceValue !== 0) return false;
-          }
-          if (lowerMsg.includes("online") || lowerMsg.includes("video kyc") || lowerMsg.includes("digital")) {
-            if (!acc.isOnlineOpening && !acc.isDigital) return false;
-          }
-          if (lowerMsg.includes("student") && !acc.isStudent && !aType.includes("student")) return false;
-          if (lowerMsg.includes("salary") && !acc.isSalary && !aType.includes("salary")) return false;
-          if (lowerMsg.includes("senior") && !acc.isSeniorCitizen && !aType.includes("senior")) return false;
-          if (lowerMsg.includes("women") && !acc.isWomenSpecial && !aType.includes("women")) return false;
+      // Match account by bank and keywords, or fallback to conversation memory
+      if (detectedBank) {
+        const canonical = canonicalBankName(detectedBank);
+        targetAccount = allAccounts.find(a => canonicalBankName(a.bank).toLowerCase() === canonical.toLowerCase() && (lowerMsg.includes(a.accountName.toLowerCase()) || lowerMsg.includes(a.accountType.toLowerCase())))
+          || allAccounts.find(a => canonicalBankName(a.bank).toLowerCase() === canonical.toLowerCase());
+      } else if (conversationState.lastMentionedAccount) {
+        targetAccount = conversationState.lastMentionedAccount;
+      }
 
-          return true;
-        });
-
-        if (matchedAccounts.length > 0) {
-          const isCompareQuery = lowerMsg.includes("compare") || lowerMsg.includes("versus") || lowerMsg.includes("vs");
-          const topAccounts = matchedAccounts.slice(0, 4);
-
-          if (isCompareQuery) {
-            let compareText = `🏦 **Firestore Side-by-Side Savings Account Comparison**:\n\n`;
-            topAccounts.slice(0, 3).forEach((acc, idx) => {
-              const card = (allCards || []).find(c => Number(c.id) === Number(acc.associatedDebitCardId)) || null;
-              compareText += `**${idx + 1}. ${acc.accountName} (${acc.bank})**\n`;
-              compareText += `• **Account Type**: ${acc.accountType}\n`;
-              compareText += `• **Max Interest Rate**: ${acc.interestRate}\n`;
-              compareText += `• **Minimum Balance**: ${acc.minimumBalance}\n`;
-              compareText += `• **Zero Balance**: ${acc.isZeroBalance ? "✓ Yes" : "No"}\n`;
-              compareText += `• **Video KYC**: ${acc.isOnlineOpening ? "✓ Online" : "Branch"}\n`;
-              compareText += `• **Provided Debit Card**: ${acc.associatedDebitCardName || 'Standard Debit Card'}${card ? ` (${card.annualFee || 'Fee N/A'})` : ''}\n\n`;
-            });
-
-            return {
-              text: compareText,
-              type: "compare_savings",
-              matchedAccounts: topAccounts.slice(0, 3),
-              timestamp
-            };
-          }
-
-          let responseText = `🏦 **Found ${matchedAccounts.length} Matching Savings Account(s) in D.CARD Database:**\n\n`;
-          topAccounts.forEach((acc, idx) => {
-            const card = (allCards || []).find(c => Number(c.id) === Number(acc.associatedDebitCardId)) || null;
-            responseText += `**${idx + 1}. ${acc.accountName}** (${acc.bank})\n`;
-            responseText += `• **Category**: ${acc.accountType}\n`;
-            responseText += `• **Interest Rate**: ${acc.interestRate}\n`;
-            responseText += `• **Minimum Balance**: ${acc.minimumBalance}\n`;
-            responseText += `• **Online Video KYC**: ${acc.isOnlineOpening ? '✓ Instant Online' : 'Branch Visit'}\n`;
-            responseText += `• **Associated Debit Card**: ${acc.associatedDebitCardName || 'Standard Card'}`;
-            if (card) {
-              responseText += ` (${card.network || 'Visa'} • Fee: ${card.annualFee || 'Free'} • Lounge: ${card.loungeAccess || 'No'})`;
-            }
-            responseText += `\n\n`;
+      if (targetAccount) {
+        const associatedCards = getAssociatedDebitCards(targetAccount);
+        if (associatedCards.length > 0) {
+          let ansText = `💳 **Debit Card with ${targetAccount.accountName} (${targetAccount.bank}):**\n\n`;
+          associatedCards.forEach((c, idx) => {
+            ansText += `**${idx + 1}. ${c.cardName}** (${c.network || 'Visa/RuPay'})\n`;
+            ansText += `• **Annual Fee**: ${c.annualFee || 'Free'}\n`;
+            ansText += `• **Daily ATM Limit**: ₹${(c.atmLimit || c.limits?.atmLimit || 50000).toLocaleString('en-IN')}\n`;
+            ansText += `• **Daily POS Limit**: ₹${(c.posLimit || c.limits?.posLimit || 100000).toLocaleString('en-IN')}\n`;
+            ansText += `• **International Usage**: ${c.international ? 'Allowed' : 'Domestic Only'}\n`;
+            ansText += `• **Contactless Tap & Pay**: ${c.contactless ? 'Supported' : 'Not Supported'}\n`;
+            ansText += `• **Lounge Access**: ${c.loungeAccess || 'No'}\n`;
+            ansText += `• **Perks & Cashback**: ${c.cashback || c.benefits || 'Merchant Discounts'}\n\n`;
           });
+          ansText += `*Please verify the latest information on the bank's official website before making a financial decision.*`;
 
           return {
-            text: responseText,
-            type: "savings_list",
-            matchedAccounts: topAccounts,
+            text: ansText,
+            type: "associated_debit_card",
+            matchedAccounts: [targetAccount],
+            matchedCards: associatedCards,
+            conversationState: {
+              ...conversationState,
+              lastMentionedBank: targetAccount.bank,
+              lastMentionedAccount: targetAccount,
+              lastMentionedCard: associatedCards[0]
+            },
+            timestamp
+          };
+        } else {
+          return {
+            text: `Debit card information is not available for **${targetAccount.accountName}** in the current D.CARD database.\n\n*Please verify the latest details on the bank's official website.*`,
+            type: "no_data",
+            conversationState: {
+              ...conversationState,
+              lastMentionedBank: targetAccount.bank,
+              lastMentionedAccount: targetAccount
+            },
             timestamp
           };
         }
       }
+    }
 
-      matchedCards = (allCards || []).filter(c => {
+    // Direct Intent Check B: Savings Accounts query (Filtering & Comparison)
+    const isSavingsQuery = lowerMsg.includes("savings") || lowerMsg.includes("account") || lowerMsg.includes("minimum balance") || lowerMsg.includes("zero balance") || lowerMsg.includes("interest rate") || lowerMsg.includes("video kyc") || lowerMsg.includes("online opening") || lowerMsg.includes("student") || lowerMsg.includes("salary") || lowerMsg.includes("senior") || lowerMsg.includes("women");
+
+    if (isSavingsQuery && Array.isArray(allAccounts) && allAccounts.length > 0) {
+      let matchedAccounts = allAccounts.filter(acc => {
+        if (!acc) return false;
+        const aName = String(acc.accountName || "").toLowerCase();
+        const aBank = canonicalBankName(acc.bank || "").toLowerCase();
+        const aType = String(acc.accountType || "").toLowerCase();
+
+        if (detectedBank) {
+          const canonical = canonicalBankName(detectedBank).toLowerCase();
+          if (!aBank.includes(canonical) && !aName.includes(canonical)) return false;
+        }
+
+        if (lowerMsg.includes("zero balance") || lowerMsg.includes("zero min")) {
+          if (!acc.isZeroBalance && acc.minimumBalanceValue !== 0) return false;
+        }
+        if (lowerMsg.includes("online") || lowerMsg.includes("video kyc") || lowerMsg.includes("digital")) {
+          if (!acc.isOnlineOpening && !acc.isDigital) return false;
+        }
+        if (lowerMsg.includes("student") && !acc.isStudent && !aType.includes("student")) return false;
+        if (lowerMsg.includes("salary") && !acc.isSalary && !aType.includes("salary")) return false;
+        if (lowerMsg.includes("senior") && !acc.isSeniorCitizen && !aType.includes("senior")) return false;
+        if (lowerMsg.includes("women") && !acc.isWomenSpecial && !aType.includes("women")) return false;
+
+        return true;
+      });
+
+      if (matchedAccounts.length > 0) {
+        const isCompareQuery = lowerMsg.includes("compare") || lowerMsg.includes("versus") || lowerMsg.includes("vs");
+        const topAccounts = matchedAccounts.slice(0, 4);
+
+        if (isCompareQuery) {
+          let compareText = `🏦 **Firestore Side-by-Side Savings Account Comparison**:\n\n`;
+          topAccounts.slice(0, 3).forEach((acc, idx) => {
+            const cards = getAssociatedDebitCards(acc);
+            const cardName = cards.length > 0 ? cards.map(c => c.cardName).join(', ') : (acc.associatedDebitCardName || 'Standard Card');
+            compareText += `**${idx + 1}. ${acc.accountName} (${acc.bank})**\n`;
+            compareText += `• **Category**: ${acc.accountType}\n`;
+            compareText += `• **Max Interest Rate**: ${acc.interestRate}\n`;
+            compareText += `• **Minimum Balance**: ${acc.minimumBalance}\n`;
+            compareText += `• **Zero Balance**: ${acc.isZeroBalance ? "✓ Yes" : "No"}\n`;
+            compareText += `• **Video KYC**: ${acc.isOnlineOpening ? "✓ Online" : "Branch"}\n`;
+            compareText += `• **Associated Debit Card**: ${cardName}\n\n`;
+          });
+          compareText += `*Based on verified D.CARD database attributes. Please verify latest rates on official bank portals.*`;
+
+          return {
+            text: compareText,
+            type: "compare_savings",
+            matchedAccounts: topAccounts.slice(0, 3),
+            conversationState: {
+              ...conversationState,
+              lastMentionedBank: topAccounts[0].bank,
+              lastMentionedAccount: topAccounts[0]
+            },
+            timestamp
+          };
+        }
+
+        let responseText = `🏦 **Based on the available D.CARD data, these savings accounts match your query:**\n\n`;
+        topAccounts.forEach((acc, idx) => {
+          const cards = getAssociatedDebitCards(acc);
+          const cardStr = cards.length > 0 ? `${cards[0].cardName} (${cards[0].network || 'Visa'})` : (acc.associatedDebitCardName || 'Standard Card');
+          responseText += `**${idx + 1}. ${acc.accountName}** (${acc.bank})\n`;
+          responseText += `• **Category**: ${acc.accountType}\n`;
+          responseText += `• **Interest Rate**: ${acc.interestRate}\n`;
+          responseText += `• **Minimum Balance**: ${acc.minimumBalance}\n`;
+          responseText += `• **Online Video KYC**: ${acc.isOnlineOpening ? '✓ Instant Online' : 'Branch Visit'}\n`;
+          responseText += `• **Associated Debit Card**: ${cardStr}\n\n`;
+        });
+        responseText += `*Please verify the latest details on the respective bank's official website.*`;
+
+        return {
+          text: responseText,
+          type: "savings_list",
+          matchedAccounts: topAccounts,
+          conversationState: {
+            ...conversationState,
+            lastMentionedBank: topAccounts[0].bank,
+            lastMentionedAccount: topAccounts[0]
+          },
+          timestamp
+        };
+      }
+    }
+
+    // Direct Intent Check C: Debit Cards query
+    const isDebitCardQuery = lowerMsg.includes("card") || lowerMsg.includes("rupay") || lowerMsg.includes("visa") || lowerMsg.includes("mastercard") || lowerMsg.includes("lounge") || lowerMsg.includes("atm limit") || lowerMsg.includes("pos limit") || lowerMsg.includes("cashback") || lowerMsg.includes("forex");
+
+    if (isDebitCardQuery && Array.isArray(allCards) && allCards.length > 0) {
+      let matchedCards = allCards.filter(c => {
         if (!c) return false;
         const cName = String(c.cardName || "").toLowerCase();
-        const cBank = String(c.bank || "").toLowerCase();
+        const cBank = canonicalBankName(c.bank || "").toLowerCase();
         const cNetwork = String(c.network || "").toLowerCase();
 
         if (lowerMsg.includes("rupay") && !cNetwork.includes("rupay") && !cName.includes("rupay")) return false;
         if (lowerMsg.includes("visa") && !cNetwork.includes("visa") && !cName.includes("visa")) return false;
         if (lowerMsg.includes("mastercard") && !cNetwork.includes("mastercard") && !cName.includes("mastercard")) return false;
 
-        const bankMentions = ["sbi", "hdfc", "icici", "axis", "kotak", "idfc", "canara", "indusind", "pnb", "baroda"].filter(b => lowerMsg.includes(b));
-        if (bankMentions.length > 0) {
-          const matches = bankMentions.some(b => cBank.includes(b) || cName.includes(b));
-          if (!matches) return false;
+        if (detectedBank) {
+          const canonical = canonicalBankName(detectedBank).toLowerCase();
+          if (!cBank.includes(canonical) && !cName.includes(canonical)) return false;
         }
 
         if (lowerMsg.includes("lounge") && !String(c.loungeAccess || "").toLowerCase().includes("lounge") && !String(c.loungeAccess || "").toLowerCase().includes("yes")) return false;
@@ -405,9 +481,6 @@ User Question: "${userMessage}"`;
         return true;
       });
 
-      console.log("Firestore Results Count:", matchedCards.length);
-
-      // If cards found in Firestore, return cards directly
       if (matchedCards.length > 0) {
         const isCompareQuery = lowerMsg.includes("compare") || lowerMsg.includes("versus") || lowerMsg.includes("vs");
         const topCards = matchedCards.slice(0, 4);
@@ -416,7 +489,7 @@ User Question: "${userMessage}"`;
           let compareText = `📊 **Firestore Side-by-Side Card Comparison**:\n\n`;
           topCards.slice(0, 3).forEach((c, idx) => {
             const feeStr = c.annualFee === 0 ? "FREE (₹0)" : `₹${c.annualFee}/yr`;
-            const atmStr = typeof c.limits?.atmLimit === 'number' ? `₹${c.limits.atmLimit.toLocaleString()}/day` : "Standard Limit";
+            const atmStr = typeof c.limits?.atmLimit === 'number' ? `₹${c.limits.atmLimit.toLocaleString()}/day` : (c.atmLimit ? `₹${c.atmLimit}/day` : "₹50,000/day");
             const loungeStr = c.loungeAccess || "Check Spend Qualifier";
 
             compareText += `**${idx + 1}. ${c.cardName} (${c.bank})**\n`;
@@ -426,19 +499,25 @@ User Question: "${userMessage}"`;
             compareText += `• **Lounge Access**: ${loungeStr}\n`;
             compareText += `• **Rating**: ${c.rating || 4.5} ★\n\n`;
           });
+          compareText += `*Please verify the latest card fee schedule on the bank's official website.*`;
 
           return {
             text: compareText,
             type: "compare",
             matchedCards: topCards.slice(0, 3),
+            conversationState: {
+              ...conversationState,
+              lastMentionedBank: topCards[0].bank,
+              lastMentionedCard: topCards[0]
+            },
             timestamp
           };
         }
 
-        let responseText = `💳 **Found ${matchedCards.length} Matching Card(s) in Database:**\n\n`;
+        let responseText = `💳 **Based on the available D.CARD database, these debit cards match your requirements:**\n\n`;
         topCards.forEach((c, idx) => {
           const feeStr = c.annualFee === 0 ? "FREE (Zero Fee)" : `₹${c.annualFee}/year`;
-          const atmStr = typeof c.limits?.atmLimit === 'number' ? `₹${c.limits.atmLimit.toLocaleString()}/day` : "Standard Limit";
+          const atmStr = typeof c.limits?.atmLimit === 'number' ? `₹${c.limits.atmLimit.toLocaleString()}/day` : (c.atmLimit ? `₹${c.atmLimit}/day` : "₹50,000/day");
           const loungeStr = c.loungeAccess ? c.loungeAccess : "N/A";
 
           responseText += `**${idx + 1}. ${c.cardName}** (${c.bank})\n`;
@@ -447,21 +526,24 @@ User Question: "${userMessage}"`;
           responseText += `• **ATM Limit**: ${atmStr}\n`;
           responseText += `• **Lounge Access**: ${loungeStr}\n\n`;
         });
+        responseText += `*Please verify current card terms on the bank's official portal.*`;
 
         return {
           text: responseText,
           type: "cards_list",
           matchedCards: topCards,
+          conversationState: {
+            ...conversationState,
+            lastMentionedBank: topCards[0].bank,
+            lastMentionedCard: topCards[0]
+          },
           timestamp
         };
       }
-
-      console.log("Fallback to Gemini");
     }
 
-    // Non-banking query OR no cards found in Firestore -> Ask Gemini AI
-    if (!data) data = await this.getFirestoreData();
-    const geminiResult = await this.generateGeminiResponse(cleanMsg, data);
+    // Step 3: Grounded Gemini Response for unhandled/complex queries
+    const geminiResult = await this.generateGeminiResponse(cleanMsg, data, conversationState);
 
     if (geminiResult.error) {
       return {
@@ -474,11 +556,12 @@ User Question: "${userMessage}"`;
     return {
       text: geminiResult.text,
       type: "ai_response",
-      matchedCards: [],
+      conversationState,
       timestamp
     };
   },
 
+  // Save chat history to Firestore
   async saveUserChatHistory(userId, messages) {
     if (!userId || !Array.isArray(messages)) return;
     try {
@@ -493,6 +576,7 @@ User Question: "${userMessage}"`;
     }
   },
 
+  // Load chat history from Firestore
   async loadUserChatHistory(userId) {
     if (!userId) return null;
     try {
