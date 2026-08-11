@@ -5,6 +5,7 @@ import { useWishlist } from '../context/WishlistContext';
 import { useToast } from '../context/ToastContext';
 import { compareService } from '../services/compareService';
 import { debitCards } from '../data/mockData';
+import { savingsAccounts } from '../data/mockSavingsAccounts';
 import { INDIAN_LOCATIONS } from '../data/indianLocations';
 import DebitCardVisual from './DebitCardVisual';
 import { ShieldCheck, Lock, Bell, Sparkles, Check, CheckCircle2, AlertCircle, RefreshCw, Key, Shield, Smartphone, ChevronRight } from 'lucide-react';
@@ -125,13 +126,26 @@ function UserProfilePage({ activeTab = "profile", onSelectCard, onCompareCards, 
 
   const availableCities = INDIAN_LOCATIONS[state] || ["Other"];
 
-  // Saved Wishlist full card items
+  // Saved Wishlist full card / account items
   const savedCardObjects = useMemo(() => {
     return wishlist.map(item => {
-      const full = debitCards.find(c => c.id === item.id);
-      return full || item;
+      const isSavings = item.productType === 'savingsAccount' || Boolean(item.accountName);
+      if (isSavings) {
+        const fullSavings = savingsAccounts.find(s => String(s.id) === String(item.id));
+        return fullSavings || item;
+      }
+      const fullCard = debitCards.find(c => String(c.id) === String(item.id));
+      return fullCard || item;
     });
   }, [wishlist]);
+
+  const debitCardsCount = useMemo(() => {
+    return savedCardObjects.filter(item => !item.accountName && item.productType !== 'savingsAccount').length;
+  }, [savedCardObjects]);
+
+  const savingsAccountsCount = useMemo(() => {
+    return savedCardObjects.filter(item => !!item.accountName || item.productType === 'savingsAccount').length;
+  }, [savedCardObjects]);
 
   // Recommended Cards tailored to user occupation / profile
   const recommendedCards = useMemo(() => {
@@ -246,7 +260,7 @@ function UserProfilePage({ activeTab = "profile", onSelectCard, onCompareCards, 
               <p className="text-xl sm:text-2xl font-extrabold text-emerald-400 mt-0.5">{portfolioStats.fitScore}/100</p>
             </div>
             <div className="text-center px-1 border-x border-white/10">
-              <p className="text-[10px] font-extrabold text-[#60A5FA] uppercase tracking-wider">SAVED CARDS</p>
+              <p className="text-[10px] font-extrabold text-[#60A5FA] uppercase tracking-wider">SAVED PRODUCTS</p>
               <p className="text-xl sm:text-2xl font-extrabold text-white mt-0.5">{portfolioStats.cardCount}</p>
             </div>
             <div className="text-center px-1">
@@ -313,7 +327,7 @@ function UserProfilePage({ activeTab = "profile", onSelectCard, onCompareCards, 
         {[
           { id: "profile", tab: "profile", label: "My Profile", icon: "👤" },
           { id: "security", tab: "security", label: "Security & Alerts Center", icon: "🛡️" },
-          { id: "saved", tab: "saved", label: `Saved Wallet (${wishlist.length})`, icon: "💳" },
+          { id: "saved", tab: "saved", label: `Saved Products (${wishlist.length})`, icon: "❤️" },
           { id: "recommended", tab: "recommended", label: "AI Recommendations", icon: "✨" },
           { id: "compare", tab: "compare", label: "Compare History", icon: "🔄" }
         ].map((item) => (
@@ -532,7 +546,7 @@ function UserProfilePage({ activeTab = "profile", onSelectCard, onCompareCards, 
           </motion.form>
         )}
 
-        {/* 4. SAVED CARDS & SAVINGS ACCOUNTS WALLET TAB */}
+        {/* 4. SAVED PRODUCTS WALLET TAB */}
         {currentTab === 'saved' && (
           <motion.div
             key="saved"
@@ -541,43 +555,52 @@ function UserProfilePage({ activeTab = "profile", onSelectCard, onCompareCards, 
             exit={{ opacity: 0, y: -15 }}
             className="space-y-6 text-left"
           >
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-              <h3 className="text-lg font-black text-[#1F2937] dark:text-white flex items-center gap-2">
-                ❤️ Saved Products Portfolio ({savedCardObjects.length})
-              </h3>
+            <div className="p-6 rounded-3xl glass-card-premium border border-[#E5E7EB] dark:border-slate-800 shadow-soft flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div>
+                <h3 className="text-xl font-black text-[#1F2937] dark:text-white flex items-center gap-2">
+                  ❤️ Saved Products
+                </h3>
+                <p className="text-xs text-[#6B7280] dark:text-slate-400 mt-0.5">
+                  All your saved debit cards and savings accounts in one place
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2 text-xs font-extrabold">
+                <span className="px-3.5 py-1.5 rounded-xl bg-blue-50 dark:bg-slate-800 text-[#2563EB] dark:text-[#60A5FA] border border-blue-200 dark:border-slate-700 shadow-xs">
+                  Debit Cards ({debitCardsCount})
+                </span>
+                <span className="px-3.5 py-1.5 rounded-xl bg-emerald-50 dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-slate-700 shadow-xs">
+                  Savings Accounts ({savingsAccountsCount})
+                </span>
+              </div>
             </div>
 
             {savedCardObjects.length === 0 ? (
               <div className="py-16 text-center rounded-3xl glass-card-premium border border-[#E5E7EB] dark:border-slate-800 space-y-3">
                 <div className="text-5xl">❤️</div>
-                <h4 className="text-lg font-black text-[#1F2937] dark:text-white">Your Saved Portfolio is Empty</h4>
+                <h4 className="text-lg font-black text-[#1F2937] dark:text-white">Your Saved Products List is Empty</h4>
                 <p className="text-xs text-[#6B7280] dark:text-slate-400 max-w-sm mx-auto">
-                  Click the heart icon on any debit card or savings account while browsing to save it to your personal wallet.
+                  Click the heart icon on any debit card or savings account while browsing to save it here.
                 </p>
               </div>
             ) : (
-              <div className="space-y-6">
-                {/* Savings Accounts Section */}
-                {savedCardObjects.some(item => !!item.accountName || item.productType === 'savingsAccount') && (
-                  <div className="space-y-3">
-                    <h4 className="text-xs font-black uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA]">
-                      🏦 Bookmarked Savings Accounts ({savedCardObjects.filter(item => !!item.accountName || item.productType === 'savingsAccount').length})
-                    </h4>
+              <div className="space-y-8">
+                {/* Debit Cards Section */}
+                {debitCardsCount > 0 && (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
+                      <h4 className="text-sm font-black uppercase tracking-wider text-slate-800 dark:text-white flex items-center gap-2">
+                        <span>💳 Debit Cards</span>
+                        <span className="px-2 py-0.5 rounded-md bg-blue-100 dark:bg-slate-800 text-[#2563EB] dark:text-[#60A5FA] text-xs font-bold">
+                          {debitCardsCount}
+                        </span>
+                      </h4>
+                    </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {savedCardObjects.filter(item => !!item.accountName || item.productType === 'savingsAccount').map(item => (
-                        <div key={item.id} className="p-5 rounded-3xl glass-card-premium border border-[#E5E7EB] dark:border-slate-800 shadow-soft flex flex-col justify-between space-y-3">
-                          <div className="space-y-2">
-                            <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA]">
-                              🏦 {item.bank}
-                            </span>
-                            <h4 className="font-extrabold text-sm text-slate-800 dark:text-white">{item.accountName}</h4>
-                            <div className="flex items-center gap-2 text-xs font-bold text-slate-600 dark:text-slate-300">
-                              <span>Rate: {item.interestRate || '3.5% p.a.'}</span>
-                              <span>•</span>
-                              <span>Min Bal: {item.minimumBalance || '₹0'}</span>
-                            </div>
-                          </div>
-                          <div className="pt-3 border-t border-[#E5E7EB] dark:border-slate-800 flex items-center justify-between">
+                      {savedCardObjects.filter(item => !item.accountName && item.productType !== 'savingsAccount').map(item => (
+                        <div key={item.id} className="p-4 rounded-3xl glass-card-premium border border-[#E5E7EB] dark:border-slate-800 shadow-soft flex flex-col justify-between">
+                          <DebitCardVisual mode="grid" card={item} />
+                          <div className="mt-3 pt-3 border-t border-[#E5E7EB] dark:border-slate-800 flex items-center justify-between">
                             <button
                               onClick={() => onSelectCard && onSelectCard(item)}
                               className="text-xs font-bold text-[#2563EB] dark:text-[#60A5FA] hover:underline cursor-pointer"
@@ -597,17 +620,32 @@ function UserProfilePage({ activeTab = "profile", onSelectCard, onCompareCards, 
                   </div>
                 )}
 
-                {/* Debit Cards Section */}
-                {savedCardObjects.some(item => !item.accountName && item.productType !== 'savingsAccount') && (
-                  <div className="space-y-3 pt-2">
-                    <h4 className="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                      💳 Bookmarked Debit Cards ({savedCardObjects.filter(item => !item.accountName && item.productType !== 'savingsAccount').length})
-                    </h4>
+                {/* Savings Accounts Section */}
+                {savingsAccountsCount > 0 && (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
+                      <h4 className="text-sm font-black uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA] flex items-center gap-2">
+                        <span>🏦 Savings Accounts</span>
+                        <span className="px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-slate-800 text-emerald-700 dark:text-emerald-400 text-xs font-bold">
+                          {savingsAccountsCount}
+                        </span>
+                      </h4>
+                    </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {savedCardObjects.filter(item => !item.accountName && item.productType !== 'savingsAccount').map(item => (
-                        <div key={item.id} className="p-4 rounded-3xl glass-card-premium border border-[#E5E7EB] dark:border-slate-800 shadow-soft flex flex-col justify-between">
-                          <DebitCardVisual mode="grid" card={item} />
-                          <div className="mt-3 pt-3 border-t border-[#E5E7EB] dark:border-slate-800 flex items-center justify-between">
+                      {savedCardObjects.filter(item => !!item.accountName || item.productType === 'savingsAccount').map(item => (
+                        <div key={item.id} className="p-5 rounded-3xl glass-card-premium border border-[#E5E7EB] dark:border-slate-800 shadow-soft flex flex-col justify-between space-y-3">
+                          <div className="space-y-2">
+                            <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA]">
+                              🏦 {item.bank}
+                            </span>
+                            <h4 className="font-extrabold text-sm text-slate-800 dark:text-white">{item.accountName}</h4>
+                            <div className="flex items-center gap-2 text-xs font-bold text-slate-600 dark:text-slate-300">
+                              <span>Rate: {item.interestRate || '3.5% p.a.'}</span>
+                              <span>•</span>
+                              <span>Min Bal: {item.minimumBalance || '₹0'}</span>
+                            </div>
+                          </div>
+                          <div className="pt-3 border-t border-[#E5E7EB] dark:border-slate-800 flex items-center justify-between">
                             <button
                               onClick={() => onSelectCard && onSelectCard(item)}
                               className="text-xs font-bold text-[#2563EB] dark:text-[#60A5FA] hover:underline cursor-pointer"
