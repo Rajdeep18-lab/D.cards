@@ -21,6 +21,7 @@ import {
   ChevronRight
 } from 'lucide-react';
 import AnimatedStatCounter from './AnimatedStatCounter';
+import GlobalSearchInput from './GlobalSearchInput';
 import { debitCards } from '../data/mockData';
 import { savingsAccounts } from '../data/mockSavingsAccounts';
 import { getCoveredBanksDirectory } from '../utils/bankDirectoryUtils';
@@ -256,105 +257,13 @@ function HeroSection({ query = '', setQuery = () => {}, onViewDetails = null }) 
             </button>
           </div>
 
-          {/* Search & Categorized Live Dropdown */}
+          {/* Global Search Input Component */}
           <div className="w-full max-w-lg select-none relative z-30 pt-2">
-            <div className="flex flex-col sm:flex-row gap-2 bg-white dark:bg-[#1E293B] p-2 rounded-2xl border border-[#E5E7EB] dark:border-slate-700 shadow-lg hover:border-[#2563EB]/50 transition-colors">
-              <div className="relative flex-1 flex items-center pl-3">
-                <Search className="w-4 h-4 text-[#6B7280] dark:text-slate-400 flex-shrink-0" />
-                <input
-                  type="text"
-                  value={searchVal}
-                  onFocus={() => setIsSearchFocused(true)}
-                  onChange={(e) => setSearchVal(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') handleSearchSubmit();
-                  }}
-                  placeholder="Search banks, debit cards or savings accounts (e.g. SBI, RuPay, Zero Balance)..."
-                  className="w-full bg-transparent border-none text-xs font-normal pl-2.5 py-3 outline-none text-[#1F2937] dark:text-white placeholder-[#9CA3AF]"
-                />
-              </div>
-              
-              <button
-                onClick={handleSearchSubmit}
-                className="px-6 py-3.5 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-bold tracking-wide uppercase shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
-              >
-                <span>Search</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* Categorized Dropdown Menu */}
-            <AnimatePresence>
-              {isSearchFocused && searchVal.trim().length > 0 && hasResults && (
-                <motion.div
-                  initial={{ opacity: 0, y: 5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 5 }}
-                  className="absolute top-full left-0 right-0 mt-2 p-4 rounded-2xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-2xl z-50 space-y-3 text-xs max-h-96 overflow-y-auto custom-scrollbar"
-                >
-                  {/* Banks Category */}
-                  {searchResults.banks.length > 0 && (
-                    <div className="space-y-1.5">
-                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA] flex items-center gap-1">
-                        <Building2 className="w-3 h-3" /> Banks
-                      </span>
-                      {searchResults.banks.map(b => (
-                        <div
-                          key={b.id}
-                          onClick={() => { setIsSearchFocused(false); navigate(`/banks/${b.id}`); }}
-                          className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer flex items-center justify-between font-bold text-slate-800 dark:text-slate-100"
-                        >
-                          <span>{b.name}</span>
-                          <span className="text-[10px] font-normal text-slate-400">{b.cardCount} Cards • {b.accountCount || 0} Accounts</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Debit Cards Category */}
-                  {searchResults.cards.length > 0 && (
-                    <div className="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
-                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA] flex items-center gap-1">
-                        <CreditCard className="w-3 h-3" /> Debit Cards
-                      </span>
-                      {searchResults.cards.map(c => (
-                        <div
-                          key={c.id}
-                          onClick={() => {
-                            setIsSearchFocused(false);
-                            if (onViewDetails) onViewDetails(c);
-                            else navigate('/cards');
-                          }}
-                          className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer flex items-center justify-between font-bold text-slate-800 dark:text-slate-100"
-                        >
-                          <span>{c.cardName} ({c.bank})</span>
-                          <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Savings Accounts Category */}
-                  {searchResults.accounts.length > 0 && (
-                    <div className="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
-                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                        <Landmark className="w-3 h-3" /> Savings Accounts
-                      </span>
-                      {searchResults.accounts.map(s => (
-                        <div
-                          key={s.id}
-                          onClick={() => { setIsSearchFocused(false); navigate(`/savings-accounts/${s.id}`); }}
-                          className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer flex items-center justify-between font-bold text-slate-800 dark:text-slate-100"
-                        >
-                          <span>{s.accountName} ({s.bank})</span>
-                          <span className="text-[10px] text-emerald-600 font-extrabold">{s.interestRate}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </motion.div>
-              )}
-            </AnimatePresence>
+            <GlobalSearchInput 
+              query={query} 
+              setQuery={setQuery} 
+              onViewDetails={onViewDetails} 
+            />
           </div>
 
           {/* Platform Stat Badges */}
