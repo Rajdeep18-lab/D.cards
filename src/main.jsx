@@ -5,7 +5,7 @@ import { SpeedInsights } from "@vercel/speed-insights/react";
 import App from "./App";
 import "./index.css";
 
-const isProduction = import.meta.env.PROD || process.env.NODE_ENV === 'production';
+const isProduction = import.meta.env.PROD;
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
