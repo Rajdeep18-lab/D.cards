@@ -30,6 +30,7 @@ import {
 } from 'lucide-react';
 import { debitCards as defaultDebitCards } from '../data/mockData';
 import { savingsAccounts as defaultSavingsAccounts, getAssociatedDebitCards, getAssociatedDebitCard } from '../data/mockSavingsAccounts';
+import { savingsAccountService } from '../services/savingsAccountService';
 import { getCoveredBanksDirectory, getInstitutionalProfileForBank, canonicalBankName, getBankBrandTheme } from '../utils/bankDirectoryUtils';
 import { useWishlist } from '../context/WishlistContext';
 import DebitCardCard from '../components/DebitCardCard';
@@ -107,6 +108,16 @@ function BanksPage({
   const [bankSearchQuery, setBankSearchQuery] = useState('');
   const [productCategoryFilter, setProductCategoryFilter] = useState('All'); // 'All' | 'Debit Cards' | 'Savings Accounts'
 
+  const [allSavingsAccounts, setAllSavingsAccounts] = useState(defaultSavingsAccounts);
+
+  useEffect(() => {
+    savingsAccountService.getSavingsAccounts()
+      .then(res => {
+        if (res && res.length > 0) setAllSavingsAccounts(res);
+      })
+      .catch(err => console.warn('Notice loading savings accounts in BanksPage:', err));
+  }, []);
+
   // Get active bank details, debit cards, and savings accounts
   const bankProfileData = useMemo(() => {
     const canonicalName = canonicalBankName(selectedBankName);
@@ -120,7 +131,7 @@ function BanksPage({
     });
 
     // Filter Savings Accounts for this bank
-    const bankAccounts = defaultSavingsAccounts.filter(s => {
+    const bankAccounts = allSavingsAccounts.filter(s => {
       const sBank = canonicalBankName(s.bank || s.bankId || "");
       return sBank.toLowerCase() === canonicalName.toLowerCase() || String(s.bankId || '').toLowerCase() === canonicalName.toLowerCase();
     });
@@ -134,7 +145,7 @@ function BanksPage({
       bankCards,
       bankAccounts
     };
-  }, [coveredBanks, selectedBankName, activeCardsList]);
+  }, [coveredBanks, selectedBankName, activeCardsList, allSavingsAccounts]);
 
   const { canonicalName, currentBankObj, profile, bankCards, bankAccounts } = bankProfileData;
   const brandTheme = getBankBrandTheme(canonicalName);

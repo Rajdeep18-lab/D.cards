@@ -1,5 +1,5 @@
-import dcardDebitCardsRaw from "../../dcard_debit_cards.json";
-import { normalizeCard, deduplicateCards } from "../utils/compareUtils";
+import dcardDebitCardsRaw from "../../dcard_debit_cards.json" with { type: "json" };
+import { normalizeCard, deduplicateCards } from "../utils/compareUtils.js";
 
 export const bankCards = [
   { id: 1,

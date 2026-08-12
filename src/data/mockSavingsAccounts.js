@@ -1,4 +1,4 @@
-import { debitCards } from "./mockData";
+import { debitCards } from "./mockData.js";
 
 export const savingsAccounts = [
   {
