@@ -223,7 +223,7 @@ function HeroSection({ query = '', setQuery = () => {}, onSearchSubmit = null, o
           {/* Badge */}
           <span className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold tracking-widest uppercase border border-[#2563EB]/25 bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] shadow-xs select-none">
             <Sparkles className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#60A5FA] animate-pulse" />
-            INDEPENDENT BANKING DISCOVERY PLATFORM
+            BANKING PRODUCT DISCOVERY PLATFORM
           </span>
 
           {/* Core Headline */}
@@ -231,11 +231,11 @@ function HeroSection({ query = '', setQuery = () => {}, onSearchSubmit = null, o
             Find the Right <br className="hidden sm:block" />
             <span className="text-gradient">
               Banking Product
-            </span> for You.
+            </span> for You
           </h1>
 
           <p className="max-w-xl text-sm sm:text-lg text-[#6B7280] dark:text-slate-300 leading-relaxed font-normal">
-            Explore, compare and discover debit cards and savings accounts from India's leading banks.
+            Explore savings accounts and debit cards from leading banks. Compare rates, fees, features and benefits before you choose.
           </p>
 
           {/* Primary & Secondary CTAs */}
@@ -253,7 +253,7 @@ function HeroSection({ query = '', setQuery = () => {}, onSearchSubmit = null, o
               className="px-5 py-3 sm:py-3.5 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-[#2563EB] dark:text-[#60A5FA] border border-[#2563EB]/30 text-xs font-bold tracking-wide uppercase shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 min-h-[44px]"
             >
               <Bot className="w-4 h-4" />
-              <span>Ask AI Advisor</span>
+              <span>Ask D.CARD AI</span>
             </button>
           </div>
 

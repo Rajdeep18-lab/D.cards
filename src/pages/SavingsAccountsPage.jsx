@@ -501,10 +501,10 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
             SAVINGS DISCOVERY ENGINE
           </span>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1F2937] dark:text-white tracking-tight">
-            Find the Right Savings Account
+            Savings Accounts
           </h1>
           <p className="text-xs sm:text-sm text-[#6B7280] dark:text-slate-400 mt-1 font-normal max-w-3xl">
-            Explore and compare savings accounts from top Indian banks with real-time smart filters.
+            Explore savings accounts based on interest rates, balance requirements, features, charges and eligibility.
           </p>
         </div>
 
@@ -892,10 +892,10 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
             <div className="p-12 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 text-center space-y-4 my-8 shadow-soft">
               <Building2 className="w-12 h-12 text-slate-300 dark:text-slate-600 mx-auto" />
               <h3 className="text-lg font-bold text-slate-800 dark:text-white">
-                No savings accounts match your current filters.
+                No savings accounts found.
               </h3>
               <p className="text-xs text-slate-500 max-w-md mx-auto">
-                Try widening your search terms, unchecking specific bank filters, or clearing active chips.
+                Try changing your filters or search criteria.
               </p>
               <button
                 onClick={resetAllFilters}

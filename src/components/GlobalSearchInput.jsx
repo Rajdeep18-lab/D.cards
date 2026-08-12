@@ -228,7 +228,7 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
                 handleExecuteSearchSubmit();
               }
             }}
-            placeholder="Search banks, debit cards, savings accounts or features..."
+            placeholder="Search banks, savings accounts, debit cards or features..."
             className="w-full bg-transparent border-none text-xs font-normal pl-2.5 py-3 outline-none text-[#1F2937] dark:text-white placeholder-[#9CA3AF]"
           />
 

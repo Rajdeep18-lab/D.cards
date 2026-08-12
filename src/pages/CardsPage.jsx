@@ -100,10 +100,10 @@ function CardsPage({
             FINANCIAL INFORMATION DATABASE
           </span>
           <h1 className="text-3xl font-extrabold text-[#1F2937] dark:text-white">
-            Debit Cards & Account Limits
+            Debit Cards
           </h1>
           <p className="text-xs sm:text-sm text-[#6B7280] dark:text-slate-400 mt-1 font-normal">
-            Compare annual fees, ATM limits, POS spend caps, cashback, and lounge access across {filteredCards.length} matching cards
+            Compare debit cards based on fees, limits, network, benefits and features.
           </p>
         </div>
 
@@ -301,10 +301,10 @@ function CardsPage({
                 🔍
               </div>
               <h3 className="text-xl font-extrabold text-[#1F2937] dark:text-white">
-                No cards match your selected filters.
+                No debit cards found.
               </h3>
               <p className="text-xs text-[#6B7280] dark:text-slate-400 max-w-sm mx-auto font-normal">
-                Try clearing one or two filter criteria to view more debit card options.
+                Try changing your filters or search criteria.
               </p>
               <button
                 onClick={handleResetFilters}

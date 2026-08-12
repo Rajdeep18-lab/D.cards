@@ -76,7 +76,7 @@ function SavedCardsPage({ setSelectedCard, toggleCompareQueue, compareQueue, use
             ❤️ Saved Products
           </h1>
           <p className="text-xs sm:text-sm text-[#6B7280] dark:text-slate-400 mt-1 font-normal max-w-2xl leading-relaxed">
-            Your personally bookmarked debit cards and savings accounts.
+            Keep your preferred banking products in one place.
           </p>
         </div>
 
@@ -98,63 +98,96 @@ function SavedCardsPage({ setSelectedCard, toggleCompareQueue, compareQueue, use
           >
             Explore Cards
           </Link>
-          <Link
-            to="/savings-accounts"
-            className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:shadow-[0_0_18px_rgba(37,99,235,0.4)] text-white font-bold text-xs shadow-md transition-all flex items-center gap-1.5"
-          >
-            <span>Savings Accounts</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
         </div>
       </div>
 
-      {/* ── 2. Summary Statistics Grid ── */}
-      {wishlist.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="p-5 rounded-2xl glass-card-premium border border-[#E5E7EB] dark:border-slate-800 shadow-soft">
-            <span className="text-[11px] font-extrabold text-[#6B7280] uppercase tracking-wider block">Total Saved</span>
-            <p className="text-3xl font-extrabold text-[#1F2937] dark:text-white mt-1">{stats.totalItems}</p>
+      {/* ── 2. Top Summary Statistics Bar ── */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div className="p-4 rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-800 shadow-xs flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-500 flex items-center justify-center flex-shrink-0">
+            <Heart className="w-5 h-5 fill-rose-500" />
           </div>
-          <div className="p-5 rounded-2xl glass-card-premium border border-[#E5E7EB] dark:border-slate-800 shadow-soft">
-            <span className="text-[11px] font-extrabold text-[#6B7280] uppercase tracking-wider block">Debit Cards</span>
-            <p className="text-3xl font-extrabold text-[#2563EB] dark:text-[#60A5FA] mt-1">{stats.debitCardsCount}</p>
-          </div>
-          <div className="p-5 rounded-2xl glass-card-premium border border-[#E5E7EB] dark:border-slate-800 shadow-soft">
-            <span className="text-[11px] font-extrabold text-[#6B7280] uppercase tracking-wider block">Savings Accounts</span>
-            <p className="text-3xl font-extrabold text-emerald-500 mt-1">{stats.savingsAccountsCount}</p>
+          <div>
+            <span className="text-lg font-black text-[#1F2937] dark:text-white leading-none block">
+              {stats.totalItems}
+            </span>
+            <span className="text-[10.5px] font-bold text-[#6B7280] dark:text-slate-400 uppercase tracking-wider">
+              Total Saved
+            </span>
           </div>
         </div>
-      )}
 
-      {/* ── 3. Search & Category Tabs Bar ── */}
-      {wishlist.length > 0 && (
-        <div className="p-4 rounded-3xl glass-card-premium border border-[#E5E7EB] dark:border-slate-800 shadow-soft flex flex-col md:flex-row items-center justify-between gap-4">
-          {/* Product Type Tabs */}
-          <div className="flex items-center gap-2 w-full md:w-auto">
-            {['All', 'Debit Cards', 'Savings Accounts'].map(pt => (
-              <button
-                key={pt}
-                onClick={() => setSelectedProductType(pt)}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                  selectedProductType === pt
-                    ? 'bg-[#2563EB] text-white shadow-xs'
-                    : 'bg-[#F8FAFC] dark:bg-slate-900 text-[#6B7280] dark:text-slate-300 border border-[#E5E7EB] dark:border-slate-800 hover:border-[#2563EB]'
-                }`}
-              >
-                {pt}
-              </button>
-            ))}
+        <div className="p-4 rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-800 shadow-xs flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] flex items-center justify-center flex-shrink-0">
+            <CreditCard className="w-5 h-5" />
           </div>
+          <div>
+            <span className="text-lg font-black text-[#1F2937] dark:text-white leading-none block">
+              {stats.debitCardsCount}
+            </span>
+            <span className="text-[10.5px] font-bold text-[#6B7280] dark:text-slate-400 uppercase tracking-wider">
+              Debit Cards
+            </span>
+          </div>
+        </div>
 
-          <div className="relative w-full md:w-72">
+        <div className="p-4 rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-800 shadow-xs flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center flex-shrink-0">
+            <Building2 className="w-5 h-5" />
+          </div>
+          <div>
+            <span className="text-lg font-black text-[#1F2937] dark:text-white leading-none block">
+              {stats.savingsAccountsCount}
+            </span>
+            <span className="text-[10.5px] font-bold text-[#6B7280] dark:text-slate-400 uppercase tracking-wider">
+              Savings Accounts
+            </span>
+          </div>
+        </div>
+
+        <div className="p-4 rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-800 shadow-xs flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center flex-shrink-0">
+            <ShieldCheck className="w-5 h-5" />
+          </div>
+          <div>
+            <span className="text-lg font-black text-[#1F2937] dark:text-white leading-none block">
+              {stats.uniqueBanks}
+            </span>
+            <span className="text-[10.5px] font-bold text-[#6B7280] dark:text-slate-400 uppercase tracking-wider">
+              Banks Covered
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* ── 3. Filters & Search Bar ── */}
+      {wishlist.length > 0 && (
+        <div className="p-4 rounded-3xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-800 shadow-soft flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="relative flex-1 w-full">
             <Search className="w-4 h-4 text-[#6B7280] absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search saved cards or accounts..."
-              className="w-full pl-9 pr-4 py-2 rounded-xl bg-[#F8FAFC] dark:bg-slate-900 border border-[#E5E7EB] dark:border-slate-800 text-xs text-[#1F2937] dark:text-white outline-none focus:border-[#2563EB]"
+              className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-[#F8FAFC] dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs outline-none focus:border-[#2563EB] font-medium text-[#1F2937] dark:text-white"
             />
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2 text-xs font-bold w-full md:w-auto">
+            {['All', 'Debit Cards', 'Savings Accounts'].map(pt => (
+              <button
+                key={pt}
+                onClick={() => setSelectedProductType(pt)}
+                className={`px-3.5 py-2 rounded-xl transition-all cursor-pointer ${
+                  selectedProductType === pt
+                    ? 'bg-[#2563EB] text-white shadow-xs'
+                    : 'bg-slate-100 dark:bg-slate-900 text-[#6B7280] hover:text-[#1F2937] dark:hover:text-white'
+                }`}
+              >
+                {pt}
+              </button>
+            ))}
           </div>
         </div>
       )}
@@ -175,7 +208,7 @@ function SavedCardsPage({ setSelectedCard, toggleCompareQueue, compareQueue, use
               You haven't saved any products yet.
             </h2>
             <p className="text-xs text-[#6B7280] dark:text-slate-400 leading-relaxed font-normal">
-              Tap the heart icon on any debit card or savings account to bookmark it here for instant access.
+              Tap the heart icon to save a banking product.
             </p>
           </div>
 

@@ -41,13 +41,13 @@ function Footer({ onOpenLegal }) {
                 D.<span className="text-[#2563EB]">CARD</span>
               </span>
               <span className="text-[9px] font-bold text-[#2563EB] dark:text-[#60A5FA] tracking-widest uppercase mt-0.5">
-                COMPARE. CHOOSE. BENEFIT MORE.
+                COMPARE. CHOOSE. BENEFIT.
               </span>
             </div>
           </Link>
           
           <p className="text-xs leading-relaxed text-[#6B7280] dark:text-slate-400 max-w-[280px] font-normal">
-            Independent Debit Card Comparison & Financial Information Platform. Verified ratings, fee breakdowns, and lounge access rules.
+            Explore and compare savings accounts and debit cards from leading banks in one place. Structured product specs, fee breakdowns, and lounge access rules.
           </p>
 
           {/* Social Links */}

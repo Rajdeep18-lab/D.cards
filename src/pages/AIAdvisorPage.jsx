@@ -76,13 +76,13 @@ function AIAdvisorPage({ onOpenContact, onSelectDebitCard, toggleCompareQueue, s
         <div>
           <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] text-xs font-semibold tracking-widest uppercase rounded-full mb-2">
             <Sparkles className="w-3.5 h-3.5 animate-pulse text-[#2563EB]" />
-            AI POWERED FINANCIAL INTELLIGENCE
+            PRODUCT DISCOVERY ASSISTANCE
           </span>
           <h1 className="text-3xl font-extrabold text-[#1F2937] dark:text-white tracking-tight">
-            D.CARD AI Advisor
+            Not Sure What to Choose?
           </h1>
           <p className="text-xs sm:text-sm text-[#6B7280] dark:text-slate-400 mt-1 font-normal max-w-3xl">
-            Ask any question about savings accounts, zero balance rules, lounge access, RuPay vs Visa, or associated debit card perks — verified strictly against live database records.
+            Tell D.CARD what you're looking for and get product suggestions based on the information available on our platform.
           </p>
         </div>
 

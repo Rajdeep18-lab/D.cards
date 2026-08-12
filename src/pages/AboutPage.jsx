@@ -184,7 +184,7 @@ function AboutPage() {
           About <span className="text-gradient">D.CARD</span>
         </h1>
         <p className="text-base sm:text-lg text-[#6B7280] dark:text-slate-300 mt-2 max-w-3xl font-normal leading-relaxed">
-          India's Independent Debit Card & Savings Accounts Discovery Platform.
+          D.CARD is a banking-product discovery and comparison platform designed to simplify the way users explore savings accounts and debit cards.
         </p>
       </section>
 

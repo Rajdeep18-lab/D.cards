@@ -60,7 +60,7 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
                 D.<span className="text-[#2563EB]">CARD</span>
               </span>
               <span className="text-[8.5px] sm:text-[9px] font-bold text-[#6B7280] dark:text-slate-400 tracking-wider uppercase mt-1 leading-tight whitespace-nowrap">
-                COMPARE. CHOOSE. BENEFIT MORE.
+                COMPARE. CHOOSE. BENEFIT.
               </span>
             </div>
           </Link>

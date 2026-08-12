@@ -235,10 +235,10 @@ function BanksPage({
                 </span>
               </div>
               <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
-                {canonicalName}
+                {canonicalName} Banking Products
               </h1>
               <p className="text-xs sm:text-sm text-white/80 font-medium max-w-2xl leading-relaxed">
-                {profile.overviewHistory}
+                Explore savings accounts and debit cards offered by {canonicalName} and compare their key features.
               </p>
             </div>
           </div>
