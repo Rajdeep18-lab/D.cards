@@ -20,7 +20,6 @@ import {
   Bot,
   ChevronRight
 } from 'lucide-react';
-import AnimatedStatCounter from './AnimatedStatCounter';
 import GlobalSearchInput from './GlobalSearchInput';
 import { debitCards } from '../data/mockData';
 import { savingsAccounts } from '../data/mockSavingsAccounts';
