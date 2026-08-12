@@ -87,7 +87,8 @@ function HomePage({
       {/* ── 1. Hero Section ── */}
       <HeroSection 
         query={query} 
-        setQuery={handleHeroSearchSubmit} 
+        setQuery={setQuery}
+        onSearchSubmit={handleHeroSearchSubmit}
         onViewDetails={onViewDetails} 
       />
 

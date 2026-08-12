@@ -151,7 +151,7 @@ const HeroVisual = memo(({ isMobile }) => {
   );
 });
 
-function HeroSection({ query = '', setQuery = () => {}, onViewDetails = null }) {
+function HeroSection({ query = '', setQuery = () => {}, onSearchSubmit = null, onViewDetails = null }) {
   const navigate = useNavigate();
   const [searchVal, setSearchVal] = useState(query);
   const [isMobile, setIsMobile] = useState(false);
@@ -262,6 +262,7 @@ function HeroSection({ query = '', setQuery = () => {}, onViewDetails = null }) 
             <GlobalSearchInput 
               query={query} 
               setQuery={setQuery} 
+              onSearchSubmit={onSearchSubmit}
               onViewDetails={onViewDetails} 
             />
           </div>

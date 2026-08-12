@@ -21,7 +21,7 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
   }, []);
 
   const navLinks = [
-    { name: "Home", path: "/" },
+    { name: "Home", path: "/", end: true },
     { name: "Debit Cards", path: "/cards" },
     { name: "Savings Accounts", path: "/savings-accounts" },
     { name: "Compare", path: "/compare" },
@@ -41,26 +41,26 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
           : "border-b border-[#E5E7EB]/60 dark:border-slate-800/60 bg-white/90 dark:bg-[#0F172A]/90 backdrop-blur-md"
       }`}
     >
-      <div className="w-full max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between gap-4">
+      <div className="w-full max-w-[1536px] mx-auto px-3 sm:px-5 lg:px-6 h-full flex items-center justify-between gap-2 sm:gap-4">
         
         {/* ==================================================
             1. LEFT BRAND SECTION
            ================================================== */}
-        <div className="min-w-[210px] max-w-[260px] shrink-0 flex items-center">
+        <div className="min-w-[190px] max-w-[240px] shrink-0 flex items-center select-none">
           <Link
             to="/"
-            className="flex items-center gap-3 group select-none text-left bg-transparent border-0 cursor-pointer focus:outline-none"
+            className="flex items-center gap-2.5 group text-left bg-transparent border-0 cursor-pointer focus:outline-none"
           >
             <img 
               src="/logo-mark.png" 
               alt="D.CARD Logo" 
-              className="h-11 w-auto object-contain group-hover:scale-105 transition-transform duration-300 shrink-0"
+              className="h-10 sm:h-11 w-auto object-contain group-hover:scale-105 transition-transform duration-300 shrink-0"
             />
             <div className="flex flex-col justify-center">
-              <span className="text-xl font-extrabold tracking-tight leading-none text-[#0F172A] dark:text-white font-sans">
+              <span className="text-lg sm:text-xl font-extrabold tracking-tight leading-none text-[#0F172A] dark:text-white font-sans">
                 D.<span className="text-[#2563EB]">CARD</span>
               </span>
-              <span className="text-[9px] font-bold text-[#6B7280] dark:text-slate-400 tracking-wider uppercase mt-1 leading-tight whitespace-nowrap">
+              <span className="text-[8.5px] sm:text-[9px] font-bold text-[#6B7280] dark:text-slate-400 tracking-wider uppercase mt-1 leading-tight whitespace-nowrap">
                 COMPARE. CHOOSE. BENEFIT MORE.
               </span>
             </div>
@@ -70,13 +70,14 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
         {/* ==================================================
             2. CENTER NAVIGATION SECTION (Desktop >=1280px)
            ================================================== */}
-        <nav className="hidden xl:flex items-center justify-center gap-1 2xl:gap-2 flex-1 min-w-0 px-2">
+        <nav className="hidden xl:flex items-center justify-center gap-0.5 2xl:gap-1.5 flex-1 min-w-0 px-1">
           {navLinks.map((link) => (
             <NavLink
               key={link.name}
               to={link.path}
+              end={link.end}
               className={({ isActive }) =>
-                `px-2.5 py-1.5 rounded-xl text-[13px] font-semibold transition-all whitespace-nowrap flex items-center gap-1 ${
+                `px-1.5 2xl:px-2.5 py-1.5 rounded-xl text-[11.5px] 2xl:text-[13px] font-semibold transition-all whitespace-nowrap flex items-center gap-1 shrink-0 ${
                   isActive
                     ? 'text-[#2563EB] dark:text-[#60A5FA] font-bold bg-[#EFF6FF] dark:bg-slate-800/80 shadow-xs border border-[#2563EB]/15 dark:border-[#60A5FA]/20'
                     : 'text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] dark:hover:text-[#60A5FA] hover:bg-gray-100/60 dark:hover:bg-slate-800/40'
@@ -96,14 +97,14 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
         {/* ==================================================
             3. RIGHT USER ACTIONS SECTION
            ================================================== */}
-        <div className="flex items-center gap-2 sm:gap-2.5 shrink-0 justify-end">
-          {/* Order: My Profile -> ❤️ Favourite -> ⚖️ Legal / Trust -> 🌙 Theme -> [ User Avatar / Login ] */}
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 justify-end">
+          {/* Order: My Profile -> ❤️ Favourite -> ⚖️ Legal -> 🌙 Theme -> [ User Avatar / Login ] */}
 
           {/* 1. My Profile text link */}
           <NavLink
             to="/profile"
             className={({ isActive }) =>
-              `hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[13px] font-semibold transition-all whitespace-nowrap ${
+              `hidden xl:flex items-center gap-1.5 px-2 2xl:px-2.5 py-1.5 rounded-xl text-[11.5px] 2xl:text-[13px] font-semibold transition-all whitespace-nowrap shrink-0 ${
                 isActive
                   ? 'text-[#2563EB] dark:text-[#60A5FA] font-bold bg-[#EFF6FF] dark:bg-slate-800/80 shadow-xs border border-[#2563EB]/15 dark:border-[#60A5FA]/20'
                   : 'text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] dark:hover:text-[#60A5FA] hover:bg-gray-100/60 dark:hover:bg-slate-800/40'
@@ -113,14 +114,13 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
             <span>My Profile</span>
           </NavLink>
 
-          {/* 2. ❤️ Favourite button with non-overlapping inline badge */}
+          {/* 2. ❤️ Favourite button with attached counter badge */}
           <Link
             to="/saved-cards"
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[13px] font-semibold text-[#4B5563] dark:text-slate-300 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-slate-800/60 transition-all group shrink-0"
+            className="flex items-center gap-1 px-2 2xl:px-2.5 py-1.5 rounded-xl text-[11.5px] 2xl:text-[13px] font-semibold text-[#4B5563] dark:text-slate-300 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-slate-800/60 transition-all group shrink-0"
             title="Saved Favourites"
           >
             <Heart className="w-4 h-4 text-rose-500 fill-rose-500/20 group-hover:fill-rose-500 transition-all shrink-0" />
-            <span className="hidden md:inline">Favourite</span>
             {wishlist && wishlist.length > 0 && (
               <span className="inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-extrabold rounded-full bg-rose-500 text-white leading-none shadow-xs">
                 {wishlist.length}
@@ -128,14 +128,14 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
             )}
           </Link>
 
-          {/* 3. ⚖️ Legal / Trust Button */}
+          {/* 3. ⚖️ Legal / Terms Button */}
           <button
             onClick={() => onOpenLegal ? onOpenLegal('terms') : null}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[13px] font-semibold text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] dark:hover:text-[#60A5FA] hover:bg-[#EFF6FF] dark:hover:bg-slate-800/60 transition-all cursor-pointer shrink-0"
+            className="hidden sm:flex items-center gap-1.5 px-2 2xl:px-2.5 py-1.5 rounded-xl text-[11.5px] 2xl:text-[13px] font-semibold text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] dark:hover:text-[#60A5FA] hover:bg-[#EFF6FF] dark:hover:bg-slate-800/60 transition-all cursor-pointer shrink-0"
             title="Legal & Terms"
           >
             <Scale className="w-4 h-4 text-[#2563EB] dark:text-[#60A5FA] shrink-0" />
-            <span className="hidden lg:inline">Legal</span>
+            <span>Legal</span>
           </button>
 
           {/* 4. 🌙 Theme Toggle Button */}
@@ -148,17 +148,17 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
             {isDarkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-[#2563EB]" />}
           </button>
 
-          {/* 5. [ R Rajdeep ] User Profile / Login Dropdown Button */}
+          {/* 5. User Profile / Login Dropdown Button */}
           {user ? (
             <div className="relative shrink-0">
               <button
                 onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                className="flex items-center gap-2 p-1 pr-2.5 rounded-full border border-[#E5E7EB] dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-[#2563EB] dark:hover:border-[#60A5FA] transition-all cursor-pointer shadow-xs"
+                className="flex items-center gap-1.5 sm:gap-2 p-1 pr-2 rounded-full border border-[#E5E7EB] dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-[#2563EB] dark:hover:border-[#60A5FA] transition-all cursor-pointer shadow-xs"
               >
                 <div className="w-7 h-7 rounded-full bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white flex items-center justify-center font-bold text-xs shadow-xs shrink-0">
                   {user.email ? user.email.charAt(0).toUpperCase() : 'U'}
                 </div>
-                <span className="hidden sm:inline text-xs font-bold text-[#1F2937] dark:text-white max-w-[100px] truncate">
+                <span className="hidden sm:inline text-xs font-bold text-[#1F2937] dark:text-white max-w-[90px] truncate">
                   {profile?.full_name || user.displayName || 'Account'}
                 </span>
                 <ChevronDown className="w-3.5 h-3.5 text-gray-400 shrink-0" />
@@ -198,7 +198,7 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
           ) : (
             <button
               onClick={onOpenAuth}
-              className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:opacity-95 text-white text-xs font-semibold shadow-md flex items-center gap-1.5 cursor-pointer transition-all active:scale-95 shrink-0"
+              className="px-3 sm:px-4 py-2 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:opacity-95 text-white text-xs font-semibold shadow-md flex items-center gap-1.5 cursor-pointer transition-all active:scale-95 shrink-0"
             >
               <LogIn className="w-3.5 h-3.5" />
               <span>Login</span>
@@ -238,6 +238,7 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
             <NavLink
               key={link.name}
               to={link.path}
+              end={link.end}
               onClick={() => setIsMobileMenuOpen(false)}
               className={({ isActive }) =>
                 `flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all min-h-[44px] ${

@@ -31,7 +31,7 @@ const DEFAULT_SUGGESTIONS = [
   "Lounge Access"
 ];
 
-function GlobalSearchInput({ query = '', setQuery = () => {}, onViewDetails = null }) {
+function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = null, onViewDetails = null }) {
   const navigate = useNavigate();
   const searchContainerRef = useRef(null);
 
@@ -90,7 +90,9 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onViewDetails = nu
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedTerm(searchTerm);
-      setQuery(searchTerm);
+      if (typeof setQuery === 'function') {
+        setQuery(searchTerm);
+      }
     }, 200);
     return () => clearTimeout(timer);
   }, [searchTerm, setQuery]);
@@ -200,6 +202,16 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onViewDetails = nu
     saveRecentSearch(sug);
   };
 
+  const handleExecuteSearchSubmit = () => {
+    saveRecentSearch(searchTerm);
+    setIsFocused(false);
+    if (onSearchSubmit) {
+      onSearchSubmit(searchTerm);
+    } else {
+      navigate('/cards');
+    }
+  };
+
   return (
     <div ref={searchContainerRef} className="w-full relative z-40 select-none">
       {/* ── Search Input Box ── */}
@@ -213,9 +225,7 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onViewDetails = nu
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
-                saveRecentSearch(searchTerm);
-                setIsFocused(false);
-                navigate('/cards');
+                handleExecuteSearchSubmit();
               }
             }}
             placeholder="Search banks, debit cards, savings accounts or features..."
@@ -228,7 +238,7 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onViewDetails = nu
               onClick={() => {
                 setSearchTerm('');
                 setDebouncedTerm('');
-                setQuery('');
+                if (typeof setQuery === 'function') setQuery('');
               }}
               className="p-1 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors mr-2 cursor-pointer"
               title="Clear search"
@@ -239,11 +249,7 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onViewDetails = nu
         </div>
 
         <button
-          onClick={() => {
-            saveRecentSearch(searchTerm);
-            setIsFocused(false);
-            navigate('/cards');
-          }}
+          onClick={handleExecuteSearchSubmit}
           className="px-6 py-3.5 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-bold tracking-wide uppercase shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 shrink-0"
         >
           <span>Search</span>
