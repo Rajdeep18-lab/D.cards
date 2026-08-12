@@ -35,6 +35,8 @@ import { useWishlist } from '../context/WishlistContext';
 import DebitCardCard from '../components/DebitCardCard';
 import SavingsAccountCard from '../components/SavingsAccountCard';
 import BankBrandLogo from '../components/BankBrandLogo';
+import IDFCTierEligibilityCalculator from '../components/IDFCTierEligibilityCalculator';
+import IDFCTierBenefitsComparison from '../components/IDFCTierBenefitsComparison';
 
 function BanksPage({ 
   activeCardsList = null, 
@@ -624,6 +626,17 @@ function BanksPage({
                   </div>
                 );
               })}
+            </div>
+          )}
+
+          {/* ── IDFC FIRST BANK SPECIAL CALCULATOR & MATRIX ── */}
+          {canonicalName.toLowerCase().includes('idfc') && (
+            <div className="space-y-8 pt-6 border-t border-slate-200 dark:border-slate-800">
+              {/* Eligibility Calculator */}
+              <IDFCTierEligibilityCalculator />
+
+              {/* Privilege Tier Benefits Comparison Matrix */}
+              <IDFCTierBenefitsComparison />
             </div>
           )}
         </div>

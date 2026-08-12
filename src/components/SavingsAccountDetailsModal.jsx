@@ -20,6 +20,10 @@ import {
 } from 'lucide-react';
 import { getAssociatedDebitCard, getAssociatedDebitCards } from '../data/mockSavingsAccounts';
 import { useWishlist } from '../context/WishlistContext';
+import IDFCTierEligibilityCalculator from './IDFCTierEligibilityCalculator';
+import IDFCTierBenefitsComparison from './IDFCTierBenefitsComparison';
+import IDFC25KHighlights from './IDFC25KHighlights';
+import IDFCCreditCardRelationship from './IDFCCreditCardRelationship';
 
 function SavingsAccountDetailsModal({ isOpen, onClose, account, onSelectDebitCard, onToggleCompare, isCompared }) {
   const { isWishlisted, toggleWishlist } = useWishlist();
@@ -294,6 +298,23 @@ function SavingsAccountDetailsModal({ isOpen, onClose, account, onSelectDebitCar
                     </div>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {/* ── IDFC FIRST BANK SPECIAL SECTIONS ── */}
+            {(account.bankId === 'idfc-first-bank' || account.bank === 'IDFC FIRST Bank') && (
+              <div className="space-y-6 pt-4 border-t border-slate-200 dark:border-slate-800">
+                {/* 7 Amazing Benefits for ₹25K AMB */}
+                {account.sevenAmazingBenefits && <IDFC25KHighlights />}
+
+                {/* Eligibility Calculator */}
+                <IDFCTierEligibilityCalculator />
+
+                {/* Benefits Comparison Matrix */}
+                <IDFCTierBenefitsComparison />
+
+                {/* Credit Card Relationships */}
+                <IDFCCreditCardRelationship currentTier={account.tier || account.accountName} />
               </div>
             )}
 

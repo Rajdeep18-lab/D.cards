@@ -314,41 +314,56 @@ export const savingsAccounts = [
     bankId: "idfc-first-bank",
     bank: "IDFC FIRST Bank",
     logo: "ID",
-    accountName: "IDFC FIRST FIRST Progress Savings Account",
-    accountType: "Premium Savings",
-    accountTypeBadges: ["High Interest", "Zero Charges", "Premium"],
-    interestRate: "3.00% - 7.00% p.a.",
+    accountName: "₹25K AMB Savings",
+    tier: "₹25K AMB Savings",
+    accountType: "Regular Savings",
+    accountTypeBadges: ["Zero Fee Banking", "Monthly Interest", "Regular"],
+    interestRate: "Up to 7.00% p.a.",
     interestRateValue: 7.0,
-    minimumBalance: "₹10,000",
-    minimumBalanceValue: 10000,
+    minimumBalance: "₹25,000",
+    minimumBalanceValue: 25000,
     isZeroBalance: false,
     isOnlineOpening: true,
     isStudent: false,
     isSalary: true,
-    isSeniorCitizen: true,
-    isWomenSpecial: true,
+    isSeniorCitizen: false,
+    isWomenSpecial: false,
     isDigital: true,
-    isPremium: true,
+    isPremium: false,
     isNRI: false,
-    rating: 4.9,
+    rating: 2.0,
     isPopular: true,
     officialSourceUrl: "https://www.idfcfirstbank.com/personal-banking/accounts/savings-account",
     lastVerified: "August 2026",
-    description: "Industry-leading savings interest rate up to 7.00% p.a. with monthly interest payout, zero fee on 28 essential banking services, and Visa Signature debit card.",
+    description: "IDFC FIRST Bank ₹25K AMB Savings Account offering zero fee banking on 28 essential services, monthly interest credit up to 7.00% p.a., and free unlimited ATM withdrawals.",
+    maintenanceCriteriaText: "ANY ONE: AMB ₹25,000",
+    maintenanceCriteria: { amb: 25000, salary: 0, aum: 0, orv: 0 },
     keyBenefits: [
-      "Earn up to 7.00% p.a. interest with MONTHLY interest credit",
-      "Zero fee on 28 common banking services (IMPS, ATM, Chequebook, SMS)",
-      "Free Visa Signature / Wealth Debit Card with Airport Lounge access",
-      "Personal Accident Insurance up to ₹35 Lakhs & Lost Card liability cover"
+      "Zero fee on 28 essential banking services (IMPS, ATM, Chequebook, SMS)",
+      "Up to 7.00% p.a. interest rate with monthly interest credit",
+      "Free Unlimited ATM withdrawals at any bank ATM in India",
+      "Complimentary Personal Accident Cover of ₹35 Lakhs"
     ],
+    sevenAmazingBenefits: [
+      "Zero fee on 28 essential banking services (IMPS, ATM, Chequebook, Demand Drafts)",
+      "Up to 7.00% p.a. interest rate with monthly interest credit",
+      "Free Unlimited ATM withdrawals at any bank ATM in India",
+      "Complimentary Personal Accident Insurance Cover of ₹35 Lakhs",
+      "Free Air Accident Insurance Cover of ₹1 Crore",
+      "Contactless RuPay / Visa Signature Debit Card with zero lost card liability",
+      "Instant 100% paperless Video KYC online account opening"
+    ],
+    travelBenefits: "Standard debit card domestic access rules as applicable",
+    valueAddedServices: "Free NetBanking, iMobile app, e-statements & 24/7 helpline",
     associatedDebitCardId: 10,
-    associatedDebitCardName: "IDFC FIRST Wealth Debit Card",
+    associatedDebitCardName: "IDFC FIRST Classic Debit Card",
+    associatedCreditCard: null,
     interestSlabs: [
       "Balance up to ₹1 Lakh: 3.00% p.a.",
       "Balance > ₹1 Lakh to ₹10 Lakhs: 6.00% p.a.",
       "Balance > ₹10 Lakhs to ₹5 Crores: 7.00% p.a."
     ],
-    ambAqbText: "Average Monthly Balance: ₹10,000 or ₹25,000 variant options",
+    ambAqbText: "Average Monthly Balance (AMB): ₹25,000",
     nonMaintenanceCharges: "Proportional fee capped at ₹400/month max",
     accountOpeningFeatures: [
       "100% Paperless Online Video KYC",
@@ -356,18 +371,233 @@ export const savingsAccounts = [
       "Initial Deposit funding via UPI/Netbanking"
     ],
     eligibility: [
-      "Resident Indian Individuals",
-      "Single or Joint Account holders"
+      "Resident Indian Individual",
+      "ANY ONE: AMB ₹25,000"
     ],
-    documentsRequired: [
-      "Aadhaar Card",
-      "PAN Card"
-    ],
+    documentsRequired: ["Aadhaar Card", "PAN Card"],
     bankingFeatures: [
       "Monthly Interest Credit into Account",
       "Zero Fee on Unlimited ATM Withdrawals across any bank ATM",
       "Free IMPS, NEFT, RTGS & UPI transfers",
       "Free Doorstep Banking Services"
+    ]
+  },
+  {
+    id: 1061,
+    bankId: "idfc-first-bank",
+    bank: "IDFC FIRST Bank",
+    logo: "ID",
+    accountName: "FIRST Select",
+    tier: "FIRST Select",
+    accountType: "Premium Savings",
+    accountTypeBadges: ["Select Tier", "Lounge Access", "Priority Support"],
+    interestRate: "Up to 7.00% p.a.",
+    interestRateValue: 7.0,
+    minimumBalance: "₹1,00,000",
+    minimumBalanceValue: 100000,
+    isZeroBalance: false,
+    isOnlineOpening: true,
+    isStudent: false,
+    isSalary: true,
+    isSeniorCitizen: false,
+    isWomenSpecial: false,
+    isDigital: true,
+    isPremium: true,
+    isNRI: false,
+    rating: 3.0,
+    isPopular: true,
+    officialSourceUrl: "https://www.idfcfirstbank.com/personal-banking/accounts/savings-account",
+    lastVerified: "August 2026",
+    description: "IDFC FIRST Bank FIRST Select Privilege Savings Account with priority banking desk, complimentary airport lounge access, and lifetime-free FIRST Select Credit Card.",
+    maintenanceCriteriaText: "ANY ONE: AMB ₹1L | Net Monthly Salary ₹1L | AUM ₹5L | ORV ₹10L",
+    maintenanceCriteria: { amb: 100000, salary: 100000, aum: 500000, orv: 1000000 },
+    keyBenefits: [
+      "4 Complimentary Domestic Airport Lounge visits per quarter",
+      "Lifetime-Free FIRST Select Credit Card with 3X/6X Rewards",
+      "Priority Desk Customer Support & Personal Banker",
+      "Zero fee on 28 essential banking transactions"
+    ],
+    travelBenefits: "4 Complimentary Domestic Airport Lounge access passes per quarter; Discounted 1.99% Forex Markup",
+    valueAddedServices: "Priority Desk Customer Support, Family Account Bundling up to 4 members",
+    associatedDebitCardId: 11,
+    associatedDebitCardName: "IDFC FIRST Select Debit Card",
+    associatedCreditCard: {
+      cardName: "FIRST Select Credit Card",
+      lifetimeFee: "Lifetime Free",
+      incomeReq: "Net Monthly Salary ₹1,00,000+ or FIRST Select Account",
+      keyBenefits: [
+        "3X Rewards on offline & 6X Rewards on online spend",
+        "4 Complimentary Domestic Airport Lounge visits per quarter",
+        "Buy 1 Get 1 Free Movie ticket offer via Paytm Movies"
+      ]
+    },
+    interestSlabs: [
+      "Balance up to ₹1 Lakh: 3.00% p.a.",
+      "Balance > ₹1 Lakh to ₹10 Lakhs: 6.00% p.a.",
+      "Balance > ₹10 Lakhs to ₹5 Crores: 7.00% p.a."
+    ],
+    ambAqbText: "Average Monthly Balance (AMB): ₹1,00,000 or Net Salary ₹1,00,000/mo",
+    nonMaintenanceCharges: "Information not available",
+    accountOpeningFeatures: [
+      "100% Paperless Online Video KYC",
+      "Instant Account Number & Virtual Debit Card",
+      "Priority Doorstep Banking Setup"
+    ],
+    eligibility: [
+      "Resident Indian Individual",
+      "ANY ONE: AMB ₹1L | Net Monthly Salary ₹1L | AUM ₹5L | ORV ₹10L"
+    ],
+    documentsRequired: ["Aadhaar Card", "PAN Card", "Salary proof (if salary linked)"],
+    bankingFeatures: [
+      "Priority Desk Relationship Support",
+      "Free Unlimited ATM Withdrawals in India",
+      "Free IMPS, NEFT, RTGS & UPI transfers"
+    ]
+  },
+  {
+    id: 1062,
+    bankId: "idfc-first-bank",
+    bank: "IDFC FIRST Bank",
+    logo: "ID",
+    accountName: "FIRST Wealth",
+    tier: "FIRST Wealth",
+    accountType: "Wealth Savings",
+    accountTypeBadges: ["Wealth Tier", "Int Lounge", "RM Managed"],
+    interestRate: "Up to 7.00% p.a.",
+    interestRateValue: 7.0,
+    minimumBalance: "₹10,00,000",
+    minimumBalanceValue: 1000000,
+    isZeroBalance: false,
+    isOnlineOpening: true,
+    isStudent: false,
+    isSalary: true,
+    isSeniorCitizen: false,
+    isWomenSpecial: false,
+    isDigital: true,
+    isPremium: true,
+    isNRI: false,
+    rating: 4.0,
+    isPopular: true,
+    officialSourceUrl: "https://www.idfcfirstbank.com/personal-banking/accounts/savings-account",
+    lastVerified: "August 2026",
+    description: "IDFC FIRST Bank FIRST Wealth Account delivering dedicated Wealth Relationship Management, international lounge access, low 1.5% forex markup, and FIRST Wealth Credit Card.",
+    maintenanceCriteriaText: "ANY ONE: AMB ₹10L | Net Monthly Salary ₹3L | AUM ₹30L | ORV ₹50L",
+    maintenanceCriteria: { amb: 1000000, salary: 300000, aum: 3000000, orv: 5000000 },
+    keyBenefits: [
+      "Dedicated Wealth Relationship Manager & Wealth Management Services",
+      "4 Domestic + 4 International Airport Lounge access passes per quarter",
+      "Low 1.5% Forex Markup fee on debit and credit card spends",
+      "Lifetime-Free FIRST Wealth Credit Card with 10X Rewards & Golf Privileges"
+    ],
+    travelBenefits: "4 Domestic + 4 International Airport Lounge access passes per quarter; Low 1.5% Forex Markup",
+    valueAddedServices: "Dedicated Wealth RM, Free Golf Coaching (2 rounds/mo), 24/7 Concierge",
+    associatedDebitCardId: 12,
+    associatedDebitCardName: "IDFC FIRST Wealth Debit Card",
+    associatedCreditCard: {
+      cardName: "FIRST Wealth Credit Card",
+      lifetimeFee: "Lifetime Free",
+      incomeReq: "Net Monthly Salary ₹3,00,000+ or FIRST Wealth Account",
+      keyBenefits: [
+        "10X Rewards on spend above threshold & birthday spends",
+        "4 Domestic + 4 International Lounge visits per quarter",
+        "Low 1.5% Foreign Exchange Markup fee",
+        "Complimentary Spa access & Golf privileges"
+      ]
+    },
+    interestSlabs: [
+      "Balance up to ₹1 Lakh: 3.00% p.a.",
+      "Balance > ₹1 Lakh to ₹10 Lakhs: 6.00% p.a.",
+      "Balance > ₹10 Lakhs to ₹5 Crores: 7.00% p.a."
+    ],
+    ambAqbText: "Average Monthly Balance (AMB): ₹10,00,000 or Net Salary ₹3,00,000/mo",
+    nonMaintenanceCharges: "Information not available",
+    accountOpeningFeatures: [
+      "Dedicated Wealth RM Onboarding",
+      "Paperless Digital Video KYC",
+      "Instant Portfolio Integration"
+    ],
+    eligibility: [
+      "Resident Indian Individual",
+      "ANY ONE: AMB ₹10L | Net Monthly Salary ₹3L | AUM ₹30L | ORV ₹50L"
+    ],
+    documentsRequired: ["Aadhaar Card", "PAN Card", "Wealth Statement / Income Proof"],
+    bankingFeatures: [
+      "Dedicated Wealth Relationship Manager",
+      "Free Unlimited International & Domestic Lounge Access",
+      "Low Forex Markup rates"
+    ]
+  },
+  {
+    id: 1063,
+    bankId: "idfc-first-bank",
+    bank: "IDFC FIRST Bank",
+    logo: "ID",
+    accountName: "FIRST Private",
+    tier: "FIRST Private",
+    accountType: "Private Banking",
+    accountTypeBadges: ["Private Banking", "Zero Forex", "Bespoke Suite"],
+    interestRate: "Up to 7.00% p.a.",
+    interestRateValue: 7.0,
+    minimumBalance: "₹1,00,00,000",
+    minimumBalanceValue: 10000000,
+    isZeroBalance: false,
+    isOnlineOpening: true,
+    isStudent: false,
+    isSalary: true,
+    isSeniorCitizen: false,
+    isWomenSpecial: false,
+    isDigital: true,
+    isPremium: true,
+    isNRI: false,
+    rating: 5.0,
+    isPopular: true,
+    officialSourceUrl: "https://www.idfcfirstbank.com/personal-banking/accounts/savings-account",
+    lastVerified: "August 2026",
+    description: "IDFC FIRST Bank's ultra-premium private banking experience featuring bespoke global concierge, zero forex markup, unlimited lounge access globally, and invitation-only privileges.",
+    maintenanceCriteriaText: "ANY ONE: AMB ₹1Cr | Net Monthly Salary ₹10L | AUM ₹2Cr | ORV ₹5Cr",
+    maintenanceCriteria: { amb: 10000000, salary: 1000000, aum: 20000000, orv: 50000000 },
+    keyBenefits: [
+      "0.00% Zero Foreign Exchange Markup fee worldwide",
+      "Unlimited Complimentary Airport Lounge Access globally",
+      "Bespoke Senior Private Banker & 24/7 Global Concierge Desk",
+      "Lifetime-Free FIRST Private Credit Card with Taj Epicure Membership"
+    ],
+    travelBenefits: "Unlimited Complimentary Airport Lounge Access Globally; 0.00% Zero Forex Markup",
+    valueAddedServices: "Senior Private Banker, 24/7 Global Concierge, Taj Epicure Membership, Art & Estate Advisory",
+    associatedDebitCardId: 13,
+    associatedDebitCardName: "FIRST Private Debit Card",
+    associatedCreditCard: {
+      cardName: "FIRST Private Credit Card",
+      lifetimeFee: "Lifetime Free",
+      incomeReq: "By invitation or FIRST Private Banking Relationship",
+      keyBenefits: [
+        "Bespoke 24/7 Global Concierge Desk & Art Advisory",
+        "Unlimited Complimentary Airport Lounge Access globally",
+        "0.00% Zero Foreign Exchange Markup fee on international spends",
+        "Taj Epicure membership & bespoke lifestyle privileges"
+      ]
+    },
+    interestSlabs: [
+      "Balance up to ₹1 Lakh: 3.00% p.a.",
+      "Balance > ₹1 Lakh to ₹10 Lakhs: 6.00% p.a.",
+      "Balance > ₹10 Lakhs to ₹5 Crores: 7.00% p.a."
+    ],
+    ambAqbText: "Average Monthly Balance (AMB): ₹1,00,00,000 or Net Salary ₹10,00,000/mo",
+    nonMaintenanceCharges: "Information not available",
+    accountOpeningFeatures: [
+      "Private Banker Doorstep Concierge Onboarding",
+      "Instant Bespoke Digital Setup",
+      "Dedicated Private Banking Desk"
+    ],
+    eligibility: [
+      "Resident Indian Individual",
+      "ANY ONE: AMB ₹1Cr | Net Monthly Salary ₹10L | AUM ₹2Cr | ORV ₹5Cr"
+    ],
+    documentsRequired: ["Aadhaar Card", "PAN Card", "Private Banking KYC & Income Proof"],
+    bankingFeatures: [
+      "Senior Private Banker & Desk",
+      "Zero Forex Markup on transactions",
+      "Unlimited Global Lounge Access"
     ]
   },
   {
