@@ -217,6 +217,14 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
 
       </div>
 
+      {/* Backdrop overlay when mobile menu is open */}
+      {isMobileMenuOpen && (
+        <div
+          onClick={() => setIsMobileMenuOpen(false)}
+          className="fixed inset-0 top-[88px] bg-black/60 backdrop-blur-xs xl:hidden z-[54]"
+        />
+      )}
+
       {/* ==================================================
           MOBILE & TABLET DRAWER NAVIGATION (<1280px)
          ================================================== */}
@@ -232,7 +240,7 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
               to={link.path}
               onClick={() => setIsMobileMenuOpen(false)}
               className={({ isActive }) =>
-                `flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                `flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all min-h-[44px] ${
                   isActive
                     ? 'bg-[#2563EB] text-white font-bold shadow-xs'
                     : 'text-[#1F2937] dark:text-slate-200 hover:bg-[#EFF6FF] dark:hover:bg-slate-800'
@@ -257,7 +265,7 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
               to="/profile"
               onClick={() => setIsMobileMenuOpen(false)}
               className={({ isActive }) =>
-                `flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold ${
+                `flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold min-h-[44px] ${
                   isActive ? 'bg-[#2563EB] text-white font-bold' : 'text-[#1F2937] dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800'
                 }`
               }
@@ -271,7 +279,7 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
                 setIsMobileMenuOpen(false);
                 if (onOpenLegal) onOpenLegal('terms');
               }}
-              className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-[#1F2937] dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800 cursor-pointer text-left"
+              className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-[#1F2937] dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800 cursor-pointer text-left min-h-[44px]"
             >
               <Scale className="w-4 h-4 text-[#2563EB]" />
               <span>Legal & Terms</span>
@@ -283,7 +291,7 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
                   setIsMobileMenuOpen(false);
                   logout();
                 }}
-                className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 cursor-pointer text-left"
+                className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 cursor-pointer text-left min-h-[44px]"
               >
                 <LogOut className="w-4 h-4 text-rose-500" />
                 <span>Sign Out ({user.email})</span>
@@ -294,7 +302,7 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
                   setIsMobileMenuOpen(false);
                   onOpenAuth();
                 }}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#2563EB] text-white font-semibold text-xs shadow-md mt-2 cursor-pointer"
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#2563EB] text-white font-semibold text-xs shadow-md mt-2 cursor-pointer min-h-[44px]"
               >
                 <LogIn className="w-4 h-4" />
                 <span>Sign In / Register</span>

@@ -214,7 +214,11 @@ function AIChatAssistant({
             }}
             exit={{ opacity: 0, y: 30, scale: 0.95 }}
             transition={{ type: "spring", stiffness: 350, damping: 28 }}
-            className={`${embeddedPage ? "w-full h-full" : "w-[420px] sm:w-[500px] lg:w-[900px] max-w-[95vw] sm:max-w-[90vw] max-h-[calc(100vh-var(--compare-dock-height,0px)-100px)]"} rounded-3xl bg-white dark:bg-[#0F172A] border border-[#E5E7EB] dark:border-slate-800 shadow-[0_24px_80px_rgba(15,23,42,0.35)] backdrop-blur-2xl flex flex-col overflow-hidden text-left transition-all duration-300`}
+            className={`${
+              embeddedPage 
+                ? "w-full h-full" 
+                : "w-[calc(100vw-16px)] max-w-[430px] sm:w-[500px] lg:w-[900px] sm:max-w-[90vw] max-h-[calc(100vh-var(--compare-dock-height,0px)-32px)] sm:max-h-[calc(100vh-var(--compare-dock-height,0px)-100px)]"
+            } rounded-3xl bg-white dark:bg-[#0F172A] border border-[#E5E7EB] dark:border-slate-800 shadow-[0_24px_80px_rgba(15,23,42,0.35)] backdrop-blur-2xl flex flex-col overflow-hidden text-left transition-all duration-300`}
           >
             {/* Header Bar */}
             <div className="px-5 py-4 bg-gradient-to-r from-[#0B3D91] via-[#1E3A8A] to-[#1E293B] text-white flex items-center justify-between shadow-md flex-shrink-0 border-b border-slate-800/80">
