@@ -276,8 +276,6 @@ function HomePage({
           </div>
         </section>
 
-        {/* ── 11. FAQ SECTION ── */}
-        <FaqSection />
       </main>
     </div>
   );
