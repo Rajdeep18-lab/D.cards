@@ -235,25 +235,25 @@ function HeroSection({ query = '', setQuery = () => {}, onSearchSubmit = null, o
           </h1>
 
           <p className="max-w-xl text-sm sm:text-lg text-[#6B7280] dark:text-slate-300 leading-relaxed font-normal">
-            Explore savings accounts and debit cards from leading banks. Compare rates, fees, features and benefits before you choose.
+            Explore and compare savings accounts and debit cards from leading banks in one place.
           </p>
 
           {/* Primary & Secondary CTAs */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 pt-1 w-full max-w-lg">
             <button
-              onClick={scrollToCategories}
+              onClick={() => navigate('/savings-accounts')}
               className="px-5 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[#2563EB] via-[#3B82F6] to-[#2563EB] hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] text-white text-xs font-bold tracking-wide uppercase shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 min-h-[44px]"
             >
-              <span>Explore Banking Products</span>
+              <span>Explore Savings Accounts</span>
               <ArrowRight className="w-4 h-4" />
             </button>
 
             <button
-              onClick={() => navigate('/ai-advisor')}
+              onClick={() => navigate('/cards')}
               className="px-5 py-3 sm:py-3.5 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-[#2563EB] dark:text-[#60A5FA] border border-[#2563EB]/30 text-xs font-bold tracking-wide uppercase shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 min-h-[44px]"
             >
-              <Bot className="w-4 h-4" />
-              <span>Ask D.CARD AI</span>
+              <CreditCard className="w-4 h-4" />
+              <span>Explore Debit Cards</span>
             </button>
           </div>
 

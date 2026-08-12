@@ -6,44 +6,28 @@ import DebitCardCard from '../components/DebitCardCard';
 import BankCard from '../components/BankCard';
 import FaqSection from '../components/FaqSection';
 import { debitCards } from '../data/mockData';
-import { savingsAccounts, getAssociatedDebitCards } from '../data/mockSavingsAccounts';
+import { savingsAccounts } from '../data/mockSavingsAccounts';
 import { getCoveredBanksDirectory } from '../utils/bankDirectoryUtils';
 import { useWishlist } from '../context/WishlistContext';
 import { 
-  GraduationCap, 
-  UserCheck, 
-  HeartHandshake, 
-  Plane, 
-  DollarSign, 
-  Crown, 
-  ShieldPlus, 
   Sparkles, 
   Bot, 
   ArrowRight, 
   ShieldCheck, 
-  BarChart3, 
   CheckCircle2,
-  Layers,
   CreditCard,
   Percent,
   Search,
   Scale,
   Heart,
-  HelpCircle,
   Landmark,
-  ChevronRight,
-  ArrowDown
+  ChevronRight
 } from 'lucide-react';
 
 function HomePage({
   query,
   setQuery,
   onViewDetails,
-  activeFilters,
-  setActiveFilters,
-  STATIC_AI_PILL_COUNTS,
-  toggleBank,
-  selectSingleBank,
   activeCardsList,
   toggleCompareQueue,
   compareQueue = [],
@@ -68,7 +52,7 @@ function HomePage({
   }, [activeCardsList]);
 
   const featuredSavingsAccounts = useMemo(() => {
-    return savingsAccounts.slice(0, 4);
+    return savingsAccounts.slice(0, 3);
   }, []);
 
   const handleToggleSavingsCompare = (acc) => {
@@ -82,19 +66,10 @@ function HomePage({
     });
   };
 
-  const handlePillClick = (pillText) => {
-    if (pillText.toLowerCase().includes('savings') || pillText.toLowerCase().includes('interest') || pillText.toLowerCase().includes('student account') || pillText.toLowerCase().includes('zero balance')) {
-      navigate('/savings-accounts');
-    } else {
-      setQuery(pillText);
-      navigate('/cards');
-    }
-  };
-
   return (
     <div className="space-y-12 overflow-hidden select-none">
       
-      {/* ── 1. Hero Section ── */}
+      {/* ── 1. HERO SECTION ── */}
       <HeroSection 
         query={query} 
         setQuery={setQuery}
@@ -104,23 +79,23 @@ function HomePage({
 
       <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-16 space-y-20">
         
-        {/* ── 2. PRODUCT CATEGORY SECTION (Explore Banking Products) ── */}
+        {/* ── 2. PRODUCT DISCOVERY SECTION (Explore Banking Products) ── */}
         <section id="product-categories" className="select-none scroll-mt-24">
-          <div className="text-center max-w-2xl mx-auto space-y-3 mb-10">
+          <div className="text-center max-w-2xl mx-auto space-y-2.5 mb-10">
             <span className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] text-xs font-bold tracking-widest uppercase rounded-full border border-[#2563EB]/20">
               <Sparkles className="w-3.5 h-3.5 text-[#2563EB]" />
-              EXPLORE BANKING PRODUCTS
+              BANKING PRODUCT DISCOVERY
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-[#1F2937] dark:text-white tracking-tight">
               Explore Banking Products
             </h2>
             <p className="text-xs sm:text-sm text-[#6B7280] dark:text-slate-400 font-normal">
-              Discover products based on what matters to you.
+              Find products based on the features, benefits and requirements that matter to you.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
-            {/* 🏦 SAVINGS ACCOUNTS CARD */}
+            {/* CARD 1: SAVINGS ACCOUNTS */}
             <motion.div
               whileHover={{ y: -6, scale: 1.01 }}
               transition={{ type: "spring", stiffness: 350, damping: 25 }}
@@ -136,11 +111,11 @@ function HomePage({
                     SAVINGS ACCOUNTS
                   </span>
                   <h3 className="text-2xl font-black text-slate-800 dark:text-white mt-0.5">
-                    Savings Accounts
+                    Find a Savings Account
                   </h3>
                 </div>
                 <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
-                  Find a savings account that fits your needs.
+                  Explore savings accounts from different banks and compare interest, balance requirements, features, charges and eligibility.
                 </p>
 
                 <ul className="grid grid-cols-2 gap-2 pt-2 text-xs text-slate-700 dark:text-slate-300 font-medium">
@@ -150,7 +125,7 @@ function HomePage({
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                    <span>Minimum balance</span>
+                    <span>Balance requirements</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
@@ -158,21 +133,13 @@ function HomePage({
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                    <span>Account features</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                    <span>Eligibility</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                    <span>Associated debit cards</span>
+                    <span>Eligibility criteria</span>
                   </li>
                 </ul>
               </div>
 
               <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-400">40+ Accounts Indexed</span>
+                <span className="text-xs font-bold text-slate-400">Verified Banks Indexed</span>
                 <button
                   onClick={(e) => { e.stopPropagation(); navigate('/savings-accounts'); }}
                   className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
@@ -183,7 +150,7 @@ function HomePage({
               </div>
             </motion.div>
 
-            {/* 💳 DEBIT CARDS CARD */}
+            {/* CARD 2: DEBIT CARDS */}
             <motion.div
               whileHover={{ y: -6, scale: 1.01 }}
               transition={{ type: "spring", stiffness: 350, damping: 25 }}
@@ -199,11 +166,11 @@ function HomePage({
                     DEBIT CARDS
                   </span>
                   <h3 className="text-2xl font-black text-slate-800 dark:text-white mt-0.5">
-                    Debit Cards
+                    Find a Debit Card
                   </h3>
                 </div>
                 <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
-                  Compare debit cards based on fees, limits and benefits.
+                  Compare debit cards based on fees, transaction limits, rewards, lounge access, network and other benefits.
                 </p>
 
                 <ul className="grid grid-cols-2 gap-2 pt-2 text-xs text-slate-700 dark:text-slate-300 font-medium">
@@ -213,29 +180,21 @@ function HomePage({
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" />
-                    <span>ATM & transaction limits</span>
+                    <span>Transaction limits</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" />
-                    <span>Lounge access</span>
+                    <span>Airport lounge access</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" />
-                    <span>Rewards</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" />
-                    <span>International usage</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" />
-                    <span>Card benefits</span>
+                    <span>Rewards & cashback</span>
                   </li>
                 </ul>
               </div>
 
               <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-400">106+ Cards Indexed</span>
+                <span className="text-xs font-bold text-slate-400">100+ Cards Lineup</span>
                 <button
                   onClick={(e) => { e.stopPropagation(); navigate('/cards'); }}
                   className="px-5 py-2.5 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white font-extrabold text-xs transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
@@ -248,68 +207,284 @@ function HomePage({
           </div>
         </section>
 
-        {/* ── 3. ACCOUNT + CARD CONNECTION SECTION ── */}
-        <section className="select-none text-left p-8 sm:p-12 rounded-3xl bg-gradient-to-r from-slate-900 via-[#1E293B] to-[#0F172A] text-white shadow-xl space-y-8 border border-slate-800 relative overflow-hidden">
-          <div className="space-y-3 max-w-2xl">
-            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#2563EB]/20 text-[#60A5FA] text-xs font-bold uppercase tracking-wider border border-[#2563EB]/30">
-              <Layers className="w-3.5 h-3.5 text-[#60A5FA]" />
-              INTEGRATED PRODUCT VIEW
+        {/* ── 3. FEATURED SAVINGS ACCOUNTS SECTION ── */}
+        <section className="select-none text-left space-y-6">
+          <div className="flex items-end justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
+            <div>
+              <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 tracking-widest uppercase block mb-1">
+                FEATURED ACCOUNTS
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-800 dark:text-white">
+                Explore Savings Accounts
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 font-normal">
+                Compare savings accounts from different banks and find one that fits your requirements.
+              </p>
+            </div>
+
+            <button
+              onClick={() => navigate('/savings-accounts')}
+              className="text-xs text-[#2563EB] dark:text-[#60A5FA] font-extrabold hover:underline flex items-center gap-1 cursor-pointer shrink-0"
+            >
+              <span>View All Savings Accounts →</span>
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {featuredSavingsAccounts.map((account) => (
+              <div
+                key={account.id}
+                className="p-6 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft hover:shadow-xl transition-all duration-300 space-y-4 flex flex-col justify-between"
+              >
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-extrabold text-[#2563EB] dark:text-[#60A5FA] uppercase tracking-wider">
+                      {account.bank}
+                    </span>
+                    <button
+                      onClick={() => toggleWishlist(account)}
+                      className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all cursor-pointer ${
+                        isWishlisted(account.id)
+                          ? 'bg-rose-50 dark:bg-rose-950/40 border-rose-200 text-rose-500'
+                          : 'bg-slate-50 dark:bg-slate-800 border-slate-200 text-slate-400 hover:text-rose-500'
+                      }`}
+                    >
+                      <Heart className={`w-4 h-4 ${isWishlisted(account.id) ? 'fill-rose-500' : ''}`} />
+                    </button>
+                  </div>
+
+                  <h3 className="text-lg font-black text-slate-800 dark:text-white leading-snug">
+                    {account.accountName}
+                  </h3>
+
+                  <div className="flex flex-wrap gap-1.5 text-[10.5px]">
+                    <span className="px-2.5 py-0.5 rounded-full font-extrabold bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] border border-[#2563EB]/20">
+                      {account.accountType}
+                    </span>
+                    {account.isZeroBalance && (
+                      <span className="px-2.5 py-0.5 rounded-full font-extrabold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                        Zero Balance
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3 pt-1 text-xs">
+                    <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase block">Interest Rate</span>
+                      <span className="text-base font-black text-emerald-600 dark:text-emerald-400 mt-0.5 block">{account.interestRate}</span>
+                    </div>
+                    <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase block">Min Balance</span>
+                      <span className="text-base font-black text-slate-800 dark:text-white mt-0.5 block">{account.minimumBalance}</span>
+                    </div>
+                  </div>
+
+                  {account.keyBenefits && (
+                    <ul className="space-y-1.5 text-xs text-slate-600 dark:text-slate-300 font-normal pt-1">
+                      {account.keyBenefits.slice(0, 2).map((b, i) => (
+                        <li key={i} className="flex items-start gap-1.5">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
+                          <span>{b}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+
+                <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
+                  <Link
+                    to={`/savings-accounts/${account.id}`}
+                    className="px-4 py-2 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white font-extrabold text-xs transition-all shadow-xs flex items-center gap-1"
+                  >
+                    <span>View Details</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </Link>
+
+                  <button
+                    onClick={() => handleToggleSavingsCompare(account)}
+                    className={`px-3 py-2 rounded-xl text-xs font-bold transition-all border cursor-pointer flex items-center gap-1 ${
+                      savingsCompareQueue.some(a => String(a.id) === String(account.id))
+                        ? 'bg-[#2563EB] text-white border-[#2563EB]'
+                        : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-200'
+                    }`}
+                  >
+                    <Scale className="w-3.5 h-3.5" />
+                    <span>{savingsCompareQueue.some(a => String(a.id) === String(account.id)) ? 'Queued' : 'Compare'}</span>
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ── 4. FEATURED DEBIT CARDS SECTION ── */}
+        <section className="select-none text-left space-y-6">
+          <div className="flex items-end justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
+            <div>
+              <span className="text-xs font-bold text-[#2563EB] dark:text-[#60A5FA] tracking-widest uppercase block mb-1">
+                FEATURED DEBIT CARDS
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-800 dark:text-white">
+                Explore Debit Cards
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 font-normal">
+                Discover debit cards and compare their fees, limits, rewards and additional benefits.
+              </p>
+            </div>
+
+            <button
+              onClick={() => navigate('/cards')}
+              className="text-xs text-[#2563EB] dark:text-[#60A5FA] font-extrabold hover:underline flex items-center gap-1 cursor-pointer shrink-0"
+            >
+              <span>View All Debit Cards →</span>
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {featuredDebitCards.map((card) => (
+              <DebitCardCard
+                key={card.id}
+                card={card}
+                onViewDetails={() => onViewDetails && onViewDetails(card)}
+                onCompare={() => toggleCompareQueue && toggleCompareQueue(card)}
+                isCompared={compareQueue.some(c => String(c.id) === String(card.id))}
+              />
+            ))}
+          </div>
+        </section>
+
+        {/* ── 5. COMPARE BEFORE YOU CHOOSE SECTION ── */}
+        <section className="select-none text-left space-y-8">
+          <div className="text-center max-w-2xl mx-auto space-y-2.5">
+            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] text-xs font-bold tracking-widest uppercase rounded-full border border-[#2563EB]/20">
+              <Scale className="w-4 h-4 text-[#2563EB]" />
+              SIDE-BY-SIDE COMPARISON
             </span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
-              See the Complete Banking Picture
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-[#1F2937] dark:text-white tracking-tight">
+              Compare Before You Choose
             </h2>
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
-              Understand which debit cards are available with different savings accounts and compare the features and charges together.
+            <p className="text-xs sm:text-sm text-[#6B7280] dark:text-slate-400 font-normal">
+              Compare banking products side by side to understand the differences before making a decision.
             </p>
           </div>
 
-          {/* Visual Flow Diagram */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center pt-2">
-            <div className="p-6 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 text-center space-y-2">
-              <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto">
-                <Percent className="w-5 h-5" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Visual representation: Savings Account -> Compare */}
+            <div className="p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-4 flex flex-col justify-between">
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center justify-center">
+                    <Percent className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Savings Account → Compare</span>
+                    <h3 className="text-xl font-extrabold text-slate-800 dark:text-white">Savings Accounts Matrix</h3>
+                  </div>
+                </div>
+                <p className="text-xs text-slate-600 dark:text-slate-300 font-normal">
+                  Compare interest rates, balance requirements, video KYC online opening, and account charges side-by-side.
+                </p>
               </div>
-              <h4 className="text-base font-extrabold text-white">Savings Account</h4>
-              <p className="text-xs text-slate-300">Interest rate, MAB, Video KYC, charges</p>
+
+              <div className="pt-2">
+                <button
+                  onClick={() => navigate('/compare')}
+                  className="w-full sm:w-auto px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs transition-all shadow-md cursor-pointer flex items-center justify-center gap-2"
+                >
+                  <span>Start Comparing</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
             </div>
 
-            <div className="flex flex-col items-center justify-center text-[#60A5FA] py-2 md:py-0">
-              <div className="hidden md:flex items-center gap-1 text-xs font-bold uppercase tracking-widest bg-white/10 px-3 py-1.5 rounded-full border border-white/10">
-                <span>Associated Card</span>
-                <ArrowRight className="w-4 h-4" />
+            {/* Visual representation: Debit Card -> Compare */}
+            <div className="p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-4 flex flex-col justify-between">
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] border border-[#2563EB]/20 flex items-center justify-center">
+                    <CreditCard className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Debit Card → Compare</span>
+                    <h3 className="text-xl font-extrabold text-slate-800 dark:text-white">Debit Cards Matrix</h3>
+                  </div>
+                </div>
+                <p className="text-xs text-slate-600 dark:text-slate-300 font-normal">
+                  Compare annual fees, daily ATM/POS limits, airport lounge access passes, and reward programs.
+                </p>
               </div>
-              <div className="flex md:hidden items-center gap-1 text-xs font-bold uppercase tracking-widest bg-white/10 px-3 py-1.5 rounded-full border border-white/10">
-                <ArrowDown className="w-4 h-4" />
-              </div>
-            </div>
 
-            <div className="p-6 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 text-center space-y-2">
-              <div className="w-10 h-10 rounded-xl bg-[#2563EB]/20 text-[#60A5FA] flex items-center justify-center mx-auto">
-                <CreditCard className="w-5 h-5" />
+              <div className="pt-2">
+                <button
+                  onClick={() => navigate('/compare')}
+                  className="w-full sm:w-auto px-6 py-3 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white font-extrabold text-xs transition-all shadow-md cursor-pointer flex items-center justify-center gap-2"
+                >
+                  <span>Start Comparing</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
               </div>
-              <h4 className="text-base font-extrabold text-white">Associated Debit Card</h4>
-              <p className="text-xs text-slate-300">Annual fees, ATM limits, lounge perks, rewards</p>
             </div>
           </div>
-
-          <p className="text-xs sm:text-sm text-slate-300 italic text-center sm:text-left pt-2 font-medium">
-            "Instead of comparing an account and card separately, D.CARD helps you understand how they work together."
-          </p>
         </section>
 
-        {/* ── 4. HOW D.CARD WORKS SECTION ── */}
+        {/* ── 6. D.CARD AI ADVISOR SECTION ── */}
+        <section className="select-none text-left">
+          <div className="p-8 sm:p-10 rounded-3xl bg-gradient-to-r from-[#0B3D91] via-[#1E3A8A] to-[#1E293B] text-white shadow-xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8 border border-slate-700/80">
+            <div className="space-y-4 max-w-xl text-left z-10">
+              <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md text-xs font-bold text-[#60A5FA] uppercase tracking-wider border border-white/10">
+                <Bot className="w-4 h-4 text-[#60A5FA]" />
+                D.CARD AI ADVISOR
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight leading-tight">
+                Not Sure What to Choose?
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
+                Tell us what you're looking for and explore banking products that match your requirements.
+              </p>
+
+              <div className="p-3.5 rounded-2xl bg-white/10 border border-white/15 text-xs text-slate-200 italic font-medium">
+                💡 Example: "I'm a student looking for a low-cost savings account with a useful debit card."
+              </div>
+
+              <div className="pt-2 flex flex-wrap items-center gap-3">
+                <button
+                  onClick={() => navigate('/ai-advisor')}
+                  className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] text-white font-bold text-xs tracking-wide uppercase shadow-md transition-all cursor-pointer flex items-center gap-2 active:scale-95"
+                >
+                  <Bot className="w-4 h-4" />
+                  <span>Ask D.CARD AI</span>
+                </button>
+
+                <span className="text-[11px] text-slate-400 font-normal">
+                  * Information-based product discovery.
+                </span>
+              </div>
+            </div>
+
+            <div className="w-40 h-40 sm:w-48 sm:h-48 rounded-3xl bg-white/10 backdrop-blur-md border border-white/20 flex flex-col items-center justify-center text-white shadow-2xl relative z-10 flex-shrink-0 p-4 space-y-2 text-center">
+              <Bot className="w-16 h-16 text-[#60A5FA] animate-bounce" style={{ animationDuration: '3s' }} />
+              <span className="text-xs font-extrabold text-white">Product Discovery Assistant</span>
+              <span className="text-[10px] text-emerald-400 font-semibold uppercase flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                Live Database Grounded
+              </span>
+            </div>
+          </div>
+        </section>
+
+        {/* ── 7. HOW D.CARD WORKS SECTION (01 Explore, 02 Compare, 03 Choose) ── */}
         <section className="select-none text-left space-y-8">
-          <div className="text-center max-w-2xl mx-auto space-y-3">
+          <div className="text-center max-w-2xl mx-auto space-y-2.5">
             <span className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] text-xs font-bold tracking-widest uppercase rounded-full border border-[#2563EB]/20">
-              <BarChart3 className="w-4 h-4 text-[#2563EB]" />
-              SIMPLE WORKFLOW
+              <ShieldCheck className="w-4 h-4 text-[#2563EB]" />
+              SIMPLE 3-STEP PROCESS
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-[#1F2937] dark:text-white tracking-tight">
               How D.CARD Works
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               {
                 step: "01",
@@ -319,144 +494,29 @@ function HomePage({
               {
                 step: "02",
                 title: "Compare",
-                desc: "Compare rates, fees, limits, features and benefits side by side."
+                desc: "Compare fees, features, eligibility and benefits side by side."
               },
               {
                 step: "03",
                 title: "Choose",
-                desc: "Shortlist products based on your requirements."
-              },
-              {
-                step: "04",
-                title: "Verify",
-                desc: "Review the official source and applicable conditions before making a decision."
+                desc: "Shortlist the products that match your requirements."
               }
             ].map((st, idx) => (
               <div
                 key={idx}
-                className="p-6 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-3 relative overflow-hidden hover:border-[#2563EB]/40 transition-all"
+                className="p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-3 relative overflow-hidden hover:border-[#2563EB]/40 transition-all"
               >
-                <span className="text-3xl font-black text-[#2563EB]/20 dark:text-[#60A5FA]/20 absolute right-4 top-4">
+                <span className="text-4xl font-black text-[#2563EB]/20 dark:text-[#60A5FA]/20 absolute right-6 top-6">
                   {st.step}
                 </span>
-                <h3 className="text-lg font-extrabold text-slate-800 dark:text-white pt-2">{st.title}</h3>
-                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-normal">{st.desc}</p>
+                <h3 className="text-xl font-extrabold text-slate-800 dark:text-white pt-2">{st.title}</h3>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-normal">{st.desc}</p>
               </div>
             ))}
           </div>
         </section>
 
-        {/* ── 5. SEARCH BANKING PRODUCTS YOUR WAY ── */}
-        <section className="select-none text-left p-8 sm:p-10 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-6">
-          <div className="space-y-2">
-            <span className="text-xs font-bold text-[#2563EB] dark:text-[#60A5FA] uppercase tracking-wider block">
-              INSTANT FEATURE FILTERING
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-800 dark:text-white">
-              Search Banking Products Your Way
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-normal">
-              Looking for a specific feature? Search across banks, savings accounts and debit cards in one place.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap gap-2.5 pt-2">
-            {[
-              "Student account",
-              "Zero balance",
-              "High interest",
-              "RuPay",
-              "Lounge access",
-              "Low annual fee",
-              "Online account opening"
-            ].map((pillText, idx) => (
-              <button
-                key={idx}
-                onClick={() => handlePillClick(pillText)}
-                className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-[#2563EB] hover:text-white text-slate-700 dark:text-slate-300 font-bold text-xs transition-all cursor-pointer border border-slate-200 dark:border-slate-700"
-              >
-                🔍 {pillText}
-              </button>
-            ))}
-          </div>
-
-          <div className="pt-2">
-            <button
-              onClick={() => navigate('/cards')}
-              className="px-6 py-3 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white font-extrabold text-xs transition-all shadow-md inline-flex items-center gap-2 cursor-pointer"
-            >
-              <Search className="w-4 h-4" />
-              <span>Start Searching</span>
-            </button>
-          </div>
-        </section>
-
-        {/* ── 6. COMPARISON SECTION (Compare Before You Choose) ── */}
-        <section className="select-none text-left space-y-8">
-          <div className="text-center max-w-2xl mx-auto space-y-3">
-            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] text-xs font-bold tracking-widest uppercase rounded-full border border-[#2563EB]/20">
-              <Scale className="w-4 h-4 text-[#2563EB]" />
-              SIDE-BY-SIDE MATRIX
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-[#1F2937] dark:text-white tracking-tight">
-              Compare Before You Choose
-            </h2>
-            <p className="text-xs sm:text-sm text-[#6B7280] dark:text-slate-400 font-normal">
-              Make informed comparisons using the information that matters to you.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-4">
-              <h3 className="text-xl font-extrabold text-slate-800 dark:text-white flex items-center gap-2">
-                <Percent className="w-5 h-5 text-emerald-600" />
-                Savings Account Comparison
-              </h3>
-              <ul className="space-y-2.5 text-xs text-slate-600 dark:text-slate-300 font-normal">
-                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" /> Interest rate</li>
-                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" /> Minimum balance requirement</li>
-                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" /> Account maintenance charges</li>
-                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" /> Digital Video KYC features</li>
-                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" /> Eligibility criteria</li>
-                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" /> Debit card availability</li>
-              </ul>
-              <div className="pt-2">
-                <button
-                  onClick={() => navigate('/compare')}
-                  className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs transition-all shadow-md cursor-pointer"
-                >
-                  Start Comparing Savings →
-                </button>
-              </div>
-            </div>
-
-            <div className="p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-4">
-              <h3 className="text-xl font-extrabold text-slate-800 dark:text-white flex items-center gap-2">
-                <CreditCard className="w-5 h-5 text-[#2563EB]" />
-                Debit Card Comparison
-              </h3>
-              <ul className="space-y-2.5 text-xs text-slate-600 dark:text-slate-300 font-normal">
-                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" /> Annual fee breakdown</li>
-                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" /> Daily ATM withdrawal limits</li>
-                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" /> POS & online transaction limits</li>
-                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" /> Network (RuPay, Visa, Mastercard)</li>
-                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" /> Airport & railway lounge access</li>
-                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" /> Rewards & cashback points</li>
-                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" /> International usage fees</li>
-              </ul>
-              <div className="pt-2">
-                <button
-                  onClick={() => navigate('/compare')}
-                  className="px-5 py-2.5 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white font-extrabold text-xs transition-all shadow-md cursor-pointer"
-                >
-                  Start Comparing Cards →
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ── 7. EXPLORE BANKS SECTION ── */}
+        {/* ── 8. EXPLORE BANKS SECTION ── */}
         <section className="select-none text-left space-y-6">
           <div className="flex items-end justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
             <div>
@@ -467,13 +527,13 @@ function HomePage({
                 Explore Banks
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 font-normal">
-                Discover savings accounts and debit cards offered by leading banks.
+                Explore savings accounts and debit cards offered by different banks.
               </p>
             </div>
 
             <button
               onClick={() => navigate('/banks')}
-              className="text-xs text-[#2563EB] dark:text-[#60A5FA] font-bold hover:underline flex items-center gap-1 cursor-pointer"
+              className="text-xs text-[#2563EB] dark:text-[#60A5FA] font-extrabold hover:underline flex items-center gap-1 cursor-pointer shrink-0"
             >
               <span>View All Banks →</span>
             </button>
@@ -490,72 +550,51 @@ function HomePage({
           </div>
         </section>
 
-        {/* ── 8. AI ADVISOR SECTION ── */}
-        <section className="select-none text-left">
-          <div className="p-8 sm:p-10 rounded-3xl bg-gradient-to-r from-[#0B3D91] via-[#1E3A8A] to-[#1E293B] text-white shadow-xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8 border border-slate-700/80">
-            <div className="space-y-4 max-w-xl text-left z-10">
-              <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md text-xs font-bold text-[#60A5FA] uppercase tracking-wider border border-white/10">
-                <Bot className="w-4 h-4 text-[#60A5FA]" />
-                D.CARD AI ADVISOR
-              </span>
-              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight leading-tight">
-                Not Sure What to Choose?
-              </h2>
-              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
-                Tell D.CARD what you're looking for and get product suggestions based on the information available on our platform.
-              </p>
-
-              <div className="p-3.5 rounded-2xl bg-white/10 border border-white/15 text-xs text-slate-200 italic font-medium">
-                💡 Example: "I am a student looking for a low-cost savings account with a useful debit card."
-              </div>
-
-              <div className="pt-2 flex flex-wrap items-center gap-3">
-                <button
-                  onClick={() => navigate('/ai-advisor')}
-                  className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] text-white font-bold text-xs tracking-wide uppercase shadow-md transition-all cursor-pointer flex items-center gap-2 active:scale-95"
-                >
-                  <Bot className="w-4 h-4" />
-                  <span>Ask D.CARD AI</span>
-                </button>
-
-                <span className="text-[11px] text-slate-400 font-normal">
-                  * Product discovery assistance & information-based recommendations.
-                </span>
-              </div>
-            </div>
-
-            <div className="w-40 h-40 sm:w-48 sm:h-48 rounded-3xl bg-white/10 backdrop-blur-md border border-white/20 flex flex-col items-center justify-center text-white shadow-2xl relative z-10 flex-shrink-0 p-4 space-y-2 text-center">
-              <Bot className="w-16 h-16 text-[#60A5FA] animate-bounce" style={{ animationDuration: '3s' }} />
-              <span className="text-xs font-extrabold text-white">Product Discovery Assistant</span>
-              <span className="text-[10px] text-emerald-400 font-semibold uppercase flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                Live Database Grounded
-              </span>
-            </div>
+        {/* ── 9. SAVE PRODUCTS YOU LIKE SECTION ── */}
+        <section className="select-none text-left p-8 sm:p-10 rounded-3xl bg-gradient-to-br from-rose-500/10 via-slate-50 to-white dark:from-rose-950/30 dark:via-[#1E293B] dark:to-[#1E293B] border border-rose-200/60 dark:border-rose-900/40 shadow-soft flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div className="space-y-2 max-w-xl">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 text-xs font-bold uppercase tracking-wider border border-rose-500/20">
+              <Heart className="w-3.5 h-3.5 fill-rose-500 text-rose-500" />
+              SAVED PRODUCTS
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-800 dark:text-white">
+              Save Products You Like
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-normal">
+              Use the heart icon to save savings accounts and debit cards and access them later from your profile.
+            </p>
           </div>
+
+          <button
+            onClick={() => navigate('/saved-cards')}
+            className="px-6 py-3.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs transition-all shadow-md flex items-center gap-2 cursor-pointer shrink-0"
+          >
+            <Heart className="w-4 h-4 fill-white" />
+            <span>View Saved Products</span>
+          </button>
         </section>
 
-        {/* ── 9. TRUST & TRANSPARENCY SECTION ── */}
+        {/* ── 10. TRUST SECTION (Banking Information, Made Simpler) ── */}
         <section className="select-none text-left p-8 sm:p-10 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-6">
           <div className="space-y-2">
             <span className="text-xs font-bold text-[#2563EB] dark:text-[#60A5FA] uppercase tracking-wider block">
-              DATA METHODOLOGY & TRANSPARENCY
+              TRANSPARENT METHODOLOGY
             </span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-800 dark:text-white">
-              Banking Information, Structured for You
+              Banking Information, Made Simpler
             </h2>
             <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-normal">
-              D.CARD organizes banking product information into a simple format so you can review features, charges and conditions more easily.
+              D.CARD organizes banking product information into a clear and easy-to-understand format so users can compare important details in one place.
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 pt-2">
             {[
-              "Structured Product Information",
-              "Official Sources",
-              "Clear Fees & Charges",
-              "Applicable Conditions",
-              "Easy Comparison"
+              "Clear Product Information",
+              "Easy Comparison",
+              "Structured Benefits",
+              "Transparent Conditions",
+              "Source-Based Information"
             ].map((tp, idx) => (
               <div key={idx} className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 flex items-center gap-2.5">
                 <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" />
@@ -565,7 +604,7 @@ function HomePage({
           </div>
         </section>
 
-        {/* ── 10. FAQ Section ── */}
+        {/* ── 11. FAQ SECTION ── */}
         <FaqSection />
       </main>
     </div>
