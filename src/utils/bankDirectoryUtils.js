@@ -1,5 +1,5 @@
-import dcardDebitCardsRaw from "../../dcard_debit_cards.json";
-import { normalizeCard } from "./compareUtils";
+import dcardDebitCardsRaw from "../../dcard_debit_cards.json" with { type: "json" };
+import { normalizeCard } from "./compareUtils.js";
 
 // Bank Interest Rates Lookup (defaults by bank category)
 const BANK_INTEREST_RATES = {
@@ -560,7 +560,7 @@ export function getBankBrandTheme(rawName = "") {
   };
 }
 
-import { savingsAccounts as defaultSavingsAccounts } from '../data/mockSavingsAccounts';
+import { savingsAccounts as defaultSavingsAccounts } from '../data/mockSavingsAccounts.js';
 
 /**
  * Main Dynamic Generator: Reads card dataset and automatically generates deduplicated covered banks array.

@@ -1,4 +1,5 @@
 import { debitCards } from "./mockData.js";
+import { canonicalBankName } from "../utils/bankDirectoryUtils.js";
 
 export const savingsAccounts = [
   {
@@ -220,7 +221,7 @@ export const savingsAccounts = [
       "Earn up to 4.00% p.a. interest rate on daily balances",
       "Instant Video KYC completion in under 3 minutes"
     ],
-    associatedDebitCardId: 9,
+    associatedDebitCardId: 12,
     associatedDebitCardName: "Kotak 811 Debit Card",
     interestSlabs: [
       "Daily balance up to ₹1 Lakh: 3.50% p.a.",
@@ -280,7 +281,7 @@ export const savingsAccounts = [
       "Complimentary Axis Liberty Debit Card with lounge access",
       "Personal Accident Insurance Cover of ₹5 Lakhs"
     ],
-    associatedDebitCardId: 8,
+    associatedDebitCardId: 7,
     associatedDebitCardName: "Priority Debit Card",
     interestSlabs: [
       "Daily balance up to ₹50 Lakhs: 3.00% p.a.",
@@ -813,7 +814,7 @@ export const savingsAccounts = [
       "Smart Jar automated savings rules (e.g. Save ₹50 every time India wins)",
       "Free Instant Fund Transfers with zero hidden charges"
     ],
-    associatedDebitCardId: 14,
+    associatedDebitCardId: null,
     associatedDebitCardName: "Fi Money Digital Debit Card",
     interestSlabs: [
       "Savings account balance: 3.00% p.a.",
