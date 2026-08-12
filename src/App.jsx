@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, useCallback, lazy, Suspense } from "react";
-import { BrowserRouter, Routes, Route, useLocation, useNavigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation, useNavigate, Navigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import ErrorBoundary from "./components/ErrorBoundary";
 import Navbar from "./components/Navbar";
@@ -1012,11 +1012,11 @@ function AppContent() {
           />
           <Route 
             path="/founders" 
-            element={<FoundersPage />} 
+            element={<Navigate to="/about" replace />} 
           />
           <Route 
             path="/team" 
-            element={<FoundersPage />} 
+            element={<Navigate to="/about" replace />} 
           />
           <Route 
             path="/contact" 
