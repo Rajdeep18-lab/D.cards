@@ -258,16 +258,18 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
       <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-[#EFF6FF] via-[#DBEAFE]/30 to-white dark:from-slate-900 dark:via-slate-900/90 dark:to-slate-800 border-2 border-[#2563EB]/40 shadow-md space-y-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-[#2563EB]/20 pb-4">
           <div>
-            <span className="inline-flex items-center gap-1.5 px-3 py-0.5 bg-[#2563EB] text-white text-[10px] font-black uppercase tracking-widest rounded-full mb-1">
-              OFFICIAL LINKED CARD
-            </span>
+            {associatedCards.length > 0 && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-0.5 bg-[#2563EB] text-white text-[10px] font-black uppercase tracking-widest rounded-full mb-1">
+                OFFICIAL LINKED CARD
+              </span>
+            )}
             <h2 className="text-xl sm:text-2xl font-black text-[#0B3D91] dark:text-[#60A5FA] flex items-center gap-2">
               <CreditCard className="w-6 h-6 text-[#2563EB]" />
               <span>
                 {associatedCards.length > 1
                   ? "Available Debit Cards"
                   : associatedCards.length === 1
-                  ? "Debit Card with this Account"
+                  ? "Debit Card Provided with this Account"
                   : "Debit Card Information"}
               </span>
             </h2>
@@ -478,7 +480,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
           <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-center space-y-2">
             <CreditCard className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto" />
             <p className="text-sm font-bold text-slate-700 dark:text-slate-200">
-              Debit card information is not available for this account.
+              Debit card information not available in the provided source.
             </p>
             <p className="text-xs text-slate-400">
               Check back soon or consult the bank's official schedule of charges.

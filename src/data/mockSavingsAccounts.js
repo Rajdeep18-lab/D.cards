@@ -355,7 +355,7 @@ export const savingsAccounts = [
     ],
     travelBenefits: "Standard debit card domestic access rules as applicable",
     valueAddedServices: "Free NetBanking, iMobile app, e-statements & 24/7 helpline",
-    associatedDebitCardId: 10,
+    associatedDebitCardId: 52,
     associatedDebitCardName: "IDFC FIRST Classic Debit Card",
     associatedCreditCard: null,
     interestSlabs: [
@@ -419,7 +419,7 @@ export const savingsAccounts = [
     ],
     travelBenefits: "4 Complimentary Domestic Airport Lounge access passes per quarter; Discounted 1.99% Forex Markup",
     valueAddedServices: "Priority Desk Customer Support, Family Account Bundling up to 4 members",
-    associatedDebitCardId: 11,
+    associatedDebitCardId: 53,
     associatedDebitCardName: "IDFC FIRST Select Debit Card",
     associatedCreditCard: {
       cardName: "FIRST Select Credit Card",
@@ -491,8 +491,8 @@ export const savingsAccounts = [
     ],
     travelBenefits: "4 Domestic + 4 International Airport Lounge access passes per quarter; Low 1.5% Forex Markup",
     valueAddedServices: "Dedicated Wealth RM, Free Golf Coaching (2 rounds/mo), 24/7 Concierge",
-    associatedDebitCardId: 12,
-    associatedDebitCardName: "IDFC FIRST Wealth Debit Card",
+    associatedDebitCardId: 54,
+    associatedDebitCardName: "IDFC FIRST World Debit Card",
     associatedCreditCard: {
       cardName: "FIRST Wealth Credit Card",
       lifetimeFee: "Lifetime Free",
@@ -564,8 +564,8 @@ export const savingsAccounts = [
     ],
     travelBenefits: "Unlimited Complimentary Airport Lounge Access Globally; 0.00% Zero Forex Markup",
     valueAddedServices: "Senior Private Banker, 24/7 Global Concierge, Taj Epicure Membership, Art & Estate Advisory",
-    associatedDebitCardId: 13,
-    associatedDebitCardName: "FIRST Private Debit Card",
+    associatedDebitCardId: 54,
+    associatedDebitCardName: "IDFC FIRST World Debit Card",
     associatedCreditCard: {
       cardName: "FIRST Private Credit Card",
       lifetimeFee: "Lifetime Free",
@@ -632,7 +632,7 @@ export const savingsAccounts = [
       "Complimentary AU Royale RuPay Platinum Debit Card",
       "Discounts on dining, OTT subscriptions, and online shopping"
     ],
-    associatedDebitCardId: 12,
+    associatedDebitCardId: null,
     associatedDebitCardName: "AU Royale Debit Card",
     interestSlabs: [
       "Balance up to ₹1 Lakh: 3.50% p.a.",
@@ -693,7 +693,7 @@ export const savingsAccounts = [
       "Complimentary bob World RuPay Platinum Debit Card",
       "Free Credit Card against fixed deposits"
     ],
-    associatedDebitCardId: 13,
+    associatedDebitCardId: null,
     associatedDebitCardName: "BOB World Platinum Debit Card",
     interestSlabs: [
       "Balance up to ₹10 Lakhs: 2.75% p.a.",
@@ -753,7 +753,7 @@ export const savingsAccounts = [
       "High interest rate up to 6.75% p.a.",
       "50% discount on small & medium lockers for 1st year"
     ],
-    associatedDebitCardId: 11,
+    associatedDebitCardId: null,
     associatedDebitCardName: "IndusInd Signature Debit Card",
     interestSlabs: [
       "Balance up to ₹1 Lakh: 3.50% p.a.",
@@ -1047,7 +1047,7 @@ export const savingsAccounts = [
       "4 Free ATM Withdrawals per month across any bank ATM",
       "Deposit of cash & cheques at branch with zero charges"
     ],
-    associatedDebitCardId: 8,
+    associatedDebitCardId: 7,
     associatedDebitCardName: "Priority Debit Card",
     interestSlabs: [
       "Daily balance up to ₹50 Lakhs: 3.00% p.a."
@@ -1076,22 +1076,49 @@ export const savingsAccounts = [
 export function getAssociatedDebitCards(accountOrId) {
   if (!accountOrId) return [];
 
+  let account = null;
   if (typeof accountOrId === 'object') {
-    if (Array.isArray(accountOrId.debitCardIds) && accountOrId.debitCardIds.length > 0) {
-      return accountOrId.debitCardIds
-        .map(id => debitCards.find(c => Number(c.id) === Number(id)))
-        .filter(Boolean);
+    account = accountOrId;
+  } else {
+    account = savingsAccounts.find(s => Number(s.id) === Number(accountOrId));
+    if (!account) {
+      account = savingsAccounts.find(s => Number(s.associatedDebitCardId) === Number(accountOrId) || (Array.isArray(s.debitCardIds) && s.debitCardIds.includes(Number(accountOrId))));
     }
-    const singleId = accountOrId.debitCardId || accountOrId.associatedDebitCardId;
-    if (singleId) {
-      const found = debitCards.find(c => Number(c.id) === Number(singleId));
-      return found ? [found] : [];
-    }
-    return [];
   }
 
-  const found = debitCards.find(c => Number(c.id) === Number(accountOrId));
-  return found ? [found] : [];
+  if (!account) return [];
+
+  const accountBankCanonical = canonicalBankName(account.bank || "").toLowerCase();
+  let candidateCards = [];
+
+  if (Array.isArray(account.debitCardIds) && account.debitCardIds.length > 0) {
+    candidateCards = account.debitCardIds
+      .map(id => debitCards.find(c => Number(c.id) === Number(id)))
+      .filter(Boolean);
+  } else if (account.debitCardId || account.associatedDebitCardId) {
+    const singleId = account.debitCardId || account.associatedDebitCardId;
+    const found = debitCards.find(c => Number(c.id) === Number(singleId));
+    if (found) candidateCards = [found];
+  } else if (account.associatedDebitCardName) {
+    const found = debitCards.find(c => 
+      c.cardName && c.cardName.toLowerCase() === account.associatedDebitCardName.toLowerCase()
+    );
+    if (found) candidateCards = [found];
+  }
+
+  // STRICT BANK-SAFE RELATIONSHIP RULE:
+  // A linked debit card may ONLY be returned if card.bank === account.bank (canonical check)
+  const bankSafeCards = candidateCards.filter(card => {
+    if (!card || !card.bank || !account.bank) return false;
+    const cardBankCanonical = canonicalBankName(card.bank).toLowerCase();
+    return accountBankCanonical && cardBankCanonical && (
+      accountBankCanonical === cardBankCanonical ||
+      accountBankCanonical.includes(cardBankCanonical) ||
+      cardBankCanonical.includes(accountBankCanonical)
+    );
+  });
+
+  return bankSafeCards;
 }
 
 export function getAssociatedDebitCard(accountOrId) {

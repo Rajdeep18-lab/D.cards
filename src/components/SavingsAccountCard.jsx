@@ -10,7 +10,7 @@ function SavingsAccountCard({ account, onViewDetails, onToggleCompare, isCompare
   const wishlisted = isWishlisted(account.id);
 
   const associatedCards = getAssociatedDebitCards(account);
-  const associatedCard = associatedCards.length > 0 ? associatedCards[0] : getAssociatedDebitCard(account.associatedDebitCardId);
+  const associatedCard = associatedCards.length > 0 ? associatedCards[0] : null;
 
   return (
     <motion.div

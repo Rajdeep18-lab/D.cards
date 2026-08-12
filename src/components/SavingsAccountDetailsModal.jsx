@@ -228,8 +228,8 @@ function SavingsAccountDetailsModal({ isOpen, onClose, account, onSelectDebitCar
                   ))}
                 </div>
               ) : (
-                <div className="p-3 bg-white/80 dark:bg-slate-900/80 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300">
-                  Debit card information is not available for this account.
+                <div className="p-3.5 bg-white/80 dark:bg-slate-900/80 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300">
+                  Debit card information not available in the provided source.
                 </div>
               )}
             </div>
