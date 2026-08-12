@@ -31,24 +31,23 @@ import { useAuth } from '../hooks/useAuth';
 import { useWishlist } from '../context/WishlistContext';
 
 const QUICK_ACTIONS = [
+  { label: "Student Savings Account", query: "I am a student looking for a low-cost savings account." },
   { label: "Zero Balance Savings", query: "Which savings account has zero minimum balance?" },
   { label: "Compare Savings", query: "Compare SBI and HDFC savings accounts" },
-  { label: "Student Savings Account", query: "Which savings account is suitable for a student?" },
+  { label: "IDFC FIRST Tiers", query: "Which IDFC FIRST Bank savings tier can I qualify for?" },
   { label: "Account Debit Card", query: "What debit card comes with SBI Savings Plus Account?" },
   { label: "Online Video KYC", query: "Which savings accounts can be opened online?" },
   { label: "Airport Lounge Cards", query: "Which debit cards offer Airport Lounge Access?" },
-  { label: "Zero Annual Fee Cards", query: "Show me Zero Annual Fee Debit Cards" },
-  { label: "Cashback Cards", query: "Show me Cashback Debit Cards" },
-  { label: "RuPay Cards", query: "Show me the best RuPay Debit Card" },
-  { label: "Senior Citizen Accounts", query: "Show me senior citizen savings accounts" }
+  { label: "Zero Annual Fee Cards", query: "Show me Zero Annual Fee Debit Cards" }
 ];
 
 const STARTER_PROMPTS = [
+  { label: "Student Low-Cost Savings", query: "I am a student looking for a low-cost savings account." },
   { label: "Zero Balance Savings", query: "Which savings account has zero minimum balance?" },
   { label: "Compare SBI vs HDFC", query: "Compare SBI and HDFC savings accounts" },
-  { label: "Student Savings Account", query: "Which savings account is suitable for a student?" },
+  { label: "IDFC FIRST Wealth Tier", query: "What is FIRST Wealth savings account and requirements?" },
   { label: "Account Debit Card Perks", query: "What debit card comes with SBI Savings Plus Account?" },
-  { label: "Online Video KYC Accounts", query: "Which savings accounts can be opened online?" }
+  { label: "Airport Lounge Cards", query: "Which debit cards offer Airport Lounge Access?" }
 ];
 
 function AIChatAssistant({ 

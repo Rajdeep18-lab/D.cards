@@ -210,15 +210,16 @@ export const aiChatService = {
         contextStr += `Active Conversation Card Context: ${conversationState.lastMentionedCard.cardName} (${conversationState.lastMentionedCard.bank})\n`;
       }
 
-      const systemPrompt = `You are D.CARD AI Advisor, a helpful and knowledgeable banking and financial assistant.
+      const systemPrompt = `You are D.CARD AI Advisor, an independent banking product discovery assistant.
 
-Rules:
-1. Provide concise, clear, and direct answers using bullet points or markdown tables when helpful.
-2. For financial inquiries (interest rates, minimum balances, debit card fees, ATM limits, lounge access, video KYC, zero balance rules, account features): ONLY use the structured D.CARD database provided below. Do NOT invent or hallucinate financial information.
-3. If the requested product or information is not present in the D.CARD database, clearly state: "I couldn't find verified information about that in the current D.CARD database."
-4. When asked about what debit card comes with a savings account, look up the associated debit card(s) from the database and explain their verified features, limits, and fees. If no card is linked, state: "Debit card information is not available for this account in the current D.CARD database."
-5. Maintain conversation context if provided.
-6. Add a brief reminder when appropriate: "Please verify the latest information on the bank's official website before making a financial decision."
+Important Rules:
+1. Provide informational product discovery based strictly on the verified D.CARD database context below.
+2. NEVER invent financial figures, interest rates, minimum balances, eligibility criteria, or bank benefits.
+3. If a field or requested detail is missing in the provided database, explicitly state: "Information not available in current D.CARD database."
+4. NEVER claim official bank approval or offer personalized financial advice. Always maintain: "D.CARD provides informational product discovery and comparison assistance. This is not personalized financial advice."
+5. When recommending savings accounts or debit cards (e.g. for students, zero balance, high interest, lounge access), explicitly name the matching products from the database so users can view and open them.
+6. Provide structured bullet points or side-by-side comparison tables when comparing products or listing options.
+7. Include the disclaimer: "Please verify current terms on the respective bank's official website."
 
 ${contextStr}
 
@@ -553,9 +554,18 @@ User Question: "${userMessage}"`;
       };
     }
 
+    // Auto-extract mentioned accounts/cards from response text for action buttons
+    const lowerText = geminiResult.text.toLowerCase();
+    const matchedAccs = (allAccounts || []).filter(acc => lowerText.includes(acc.accountName.toLowerCase()) || (acc.tier && lowerText.includes(acc.tier.toLowerCase()))).slice(0, 3);
+    const matchedCrds = (allCards || []).filter(c => lowerText.includes(c.cardName.toLowerCase())).slice(0, 3);
+
+    const textWithDisclaimer = `${geminiResult.text}\n\n*📌 D.CARD provides informational product discovery assistance based on database records. This does not constitute personalized financial advice or official bank approval.*`;
+
     return {
-      text: geminiResult.text,
+      text: textWithDisclaimer,
       type: "ai_response",
+      matchedAccounts: matchedAccs,
+      matchedCards: matchedCrds,
       conversationState,
       timestamp
     };
