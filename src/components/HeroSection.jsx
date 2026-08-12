@@ -268,28 +268,6 @@ function HeroSection({ query = '', setQuery = () => {}, onSearchSubmit = null, o
             />
           </div>
 
-          {/* Platform Stat Badges */}
-          <div className="pt-4 grid grid-cols-3 gap-4 w-full max-w-lg text-left select-none border-t border-[#E5E7EB] dark:border-slate-800">
-            <div>
-              <p className="text-xl sm:text-2xl font-extrabold text-[#1F2937] dark:text-white tracking-tight">
-                <AnimatedStatCounter value={106} suffix="+" />
-              </p>
-              <p className="text-[11px] font-semibold text-[#6B7280] dark:text-slate-400 uppercase tracking-wider">Debit Cards</p>
-            </div>
-            <div>
-              <p className="text-xl sm:text-2xl font-extrabold text-emerald-600 dark:text-emerald-400 tracking-tight">
-                <AnimatedStatCounter value={40} suffix="+" />
-              </p>
-              <p className="text-[11px] font-semibold text-[#6B7280] dark:text-slate-400 uppercase tracking-wider">Savings Accounts</p>
-            </div>
-            <div>
-              <p className="text-xl sm:text-2xl font-extrabold text-[#2563EB] dark:text-[#60A5FA] tracking-tight">
-                <AnimatedStatCounter value={15} suffix=" Banks" />
-              </p>
-              <p className="text-[11px] font-semibold text-[#6B7280] dark:text-slate-400 uppercase tracking-wider">Indexed</p>
-            </div>
-          </div>
-
         </div>
 
         {/* ── Right Column: 3D Floating Vector Cards Infographic ── */}
