@@ -100,39 +100,39 @@ function HomePage({
               whileHover={{ y: -6, scale: 1.01 }}
               transition={{ type: "spring", stiffness: 350, damping: 25 }}
               onClick={() => navigate('/savings-accounts')}
-              className="p-8 rounded-3xl bg-gradient-to-br from-white via-slate-50 to-emerald-50/40 dark:from-[#1E293B] dark:via-[#1E293B] dark:to-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500/50 shadow-soft hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-between space-y-6"
+              className="p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 hover:border-[#2563EB]/50 shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-between space-y-6"
             >
               <div className="space-y-4">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-lg">
-                  <Percent className="w-7 h-7" />
+                <div className="w-14 h-14 rounded-2xl bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] flex items-center justify-center text-2xl font-bold shadow-sm border border-[#2563EB]/20">
+                  🏦
                 </div>
                 <div>
-                  <span className="text-[11px] font-extrabold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider block">
-                    SAVINGS ACCOUNTS
+                  <span className="text-[11px] font-extrabold text-[#2563EB] dark:text-[#60A5FA] uppercase tracking-wider block">
+                    PRIMARY CATEGORY
                   </span>
                   <h3 className="text-2xl font-black text-slate-800 dark:text-white mt-0.5">
-                    Find a Savings Account
+                    Savings Accounts
                   </h3>
                 </div>
                 <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
-                  Explore savings accounts from different banks and compare interest, balance requirements, features, charges and eligibility.
+                  Compare account types, balance requirements, benefits, eligibility and more.
                 </p>
 
                 <ul className="grid grid-cols-2 gap-2 pt-2 text-xs text-slate-700 dark:text-slate-300 font-medium">
                   <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                    <span>Interest rates</span>
+                    <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" />
+                    <span>Account types & tiers</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" />
                     <span>Balance requirements</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                    <span>Account charges</span>
+                    <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" />
+                    <span>Interest rates & perks</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" />
                     <span>Eligibility criteria</span>
                   </li>
                 </ul>
@@ -142,7 +142,7 @@ function HomePage({
                 <span className="text-xs font-bold text-slate-400">Verified Banks Indexed</span>
                 <button
                   onClick={(e) => { e.stopPropagation(); navigate('/savings-accounts'); }}
-                  className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
+                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:from-[#1D4ED8] hover:to-[#2563EB] text-white font-extrabold text-xs transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
                 >
                   <span>Explore Savings Accounts</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -155,32 +155,32 @@ function HomePage({
               whileHover={{ y: -6, scale: 1.01 }}
               transition={{ type: "spring", stiffness: 350, damping: 25 }}
               onClick={() => navigate('/cards')}
-              className="p-8 rounded-3xl bg-gradient-to-br from-white via-slate-50 to-blue-50/40 dark:from-[#1E293B] dark:via-[#1E293B] dark:to-slate-900 border border-slate-200 dark:border-slate-800 hover:border-[#2563EB]/50 shadow-soft hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-between space-y-6"
+              className="p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 hover:border-[#2563EB]/50 shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-between space-y-6"
             >
               <div className="space-y-4">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#0B3D91] to-[#2563EB] text-white flex items-center justify-center shadow-lg">
-                  <CreditCard className="w-7 h-7" />
+                <div className="w-14 h-14 rounded-2xl bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] flex items-center justify-center text-2xl font-bold shadow-sm border border-[#2563EB]/20">
+                  💳
                 </div>
                 <div>
                   <span className="text-[11px] font-extrabold text-[#2563EB] dark:text-[#60A5FA] uppercase tracking-wider block">
-                    DEBIT CARDS
+                    PRIMARY CATEGORY
                   </span>
                   <h3 className="text-2xl font-black text-slate-800 dark:text-white mt-0.5">
-                    Find a Debit Card
+                    Debit Cards
                   </h3>
                 </div>
                 <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
-                  Compare debit cards based on fees, transaction limits, rewards, lounge access, network and other benefits.
+                  Compare fees, limits, rewards, lounge access and other card benefits.
                 </p>
 
                 <ul className="grid grid-cols-2 gap-2 pt-2 text-xs text-slate-700 dark:text-slate-300 font-medium">
                   <li className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" />
-                    <span>Annual fees</span>
+                    <span>Annual fees & waivers</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" />
-                    <span>Transaction limits</span>
+                    <span>Daily ATM & POS limits</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" />
@@ -197,7 +197,7 @@ function HomePage({
                 <span className="text-xs font-bold text-slate-400">100+ Cards Lineup</span>
                 <button
                   onClick={(e) => { e.stopPropagation(); navigate('/cards'); }}
-                  className="px-5 py-2.5 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white font-extrabold text-xs transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
+                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:from-[#1D4ED8] hover:to-[#2563EB] text-white font-extrabold text-xs transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
                 >
                   <span>Explore Debit Cards</span>
                   <ArrowRight className="w-3.5 h-3.5" />
