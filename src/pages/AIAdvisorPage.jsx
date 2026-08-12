@@ -62,8 +62,17 @@ const SUGGESTED_PROMPTS = [
   }
 ];
 
+import { useLocation } from 'react-router-dom';
+
 function AIAdvisorPage({ onOpenContact, onSelectDebitCard, toggleCompareQueue, setSavingsCompareQueue }) {
-  const [activeExternalQuery, setActiveExternalQuery] = useState(null);
+  const location = useLocation();
+  const [activeExternalQuery, setActiveExternalQuery] = useState(location.state?.query || null);
+
+  React.useEffect(() => {
+    if (location.state?.query) {
+      setActiveExternalQuery(location.state.query);
+    }
+  }, [location.state]);
 
   const handlePromptClick = (queryText) => {
     setActiveExternalQuery(queryText);

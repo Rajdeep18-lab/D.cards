@@ -433,37 +433,50 @@ function HomePage({
             <div className="space-y-4 max-w-xl text-left z-10">
               <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md text-xs font-bold text-[#60A5FA] uppercase tracking-wider border border-white/10">
                 <Bot className="w-4 h-4 text-[#60A5FA]" />
-                D.CARD AI ADVISOR
+                PRODUCT DISCOVERY & INFORMATION ASSISTANT
               </span>
+
               <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight leading-tight">
-                Not Sure What to Choose?
+                Not Sure What Fits You?
               </h2>
+
               <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
-                Tell us what you're looking for and explore banking products that match your requirements.
+                Tell D.CARD what you're looking for and explore banking products that match your preferences.
               </p>
 
-              <div className="p-3.5 rounded-2xl bg-white/10 border border-white/15 text-xs text-slate-200 italic font-medium">
-                💡 Example: "I'm a student looking for a low-cost savings account with a useful debit card."
+              {/* Example User Query Bubble */}
+              <div 
+                onClick={() => navigate('/ai-advisor', { state: { query: "I'm a student looking for a savings account with low balance requirements." } })}
+                className="p-3.5 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/15 text-xs text-slate-200 font-medium cursor-pointer transition-all flex items-start gap-2.5 group"
+              >
+                <span className="text-sm shrink-0">💡</span>
+                <div className="flex-1 min-w-0">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">Example Query</span>
+                  <p className="group-hover:text-white transition-colors">
+                    "I'm a student looking for a savings account with low balance requirements."
+                  </p>
+                </div>
+                <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-[#60A5FA] group-hover:translate-x-1 transition-all shrink-0 mt-1" />
               </div>
 
-              <div className="pt-2 flex flex-wrap items-center gap-3">
+              <div className="pt-2 flex flex-wrap items-center gap-4">
                 <button
                   onClick={() => navigate('/ai-advisor')}
-                  className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] text-white font-bold text-xs tracking-wide uppercase shadow-md transition-all cursor-pointer flex items-center gap-2 active:scale-95"
+                  className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] text-white font-bold text-xs tracking-wide uppercase shadow-md transition-all cursor-pointer flex items-center gap-2 active:scale-95 min-h-[44px]"
                 >
                   <Bot className="w-4 h-4" />
                   <span>Ask D.CARD AI</span>
                 </button>
 
-                <span className="text-[11px] text-slate-400 font-normal">
-                  * Information-based product discovery.
-                </span>
+                <p className="text-[11px] text-slate-300 font-medium">
+                  Explore savings accounts 🏦 and debit cards 💳 based on what matters to you.
+                </p>
               </div>
             </div>
 
-            <div className="w-40 h-40 sm:w-48 sm:h-48 rounded-3xl bg-white/10 backdrop-blur-md border border-white/20 flex flex-col items-center justify-center text-white shadow-2xl relative z-10 flex-shrink-0 p-4 space-y-2 text-center">
-              <Bot className="w-16 h-16 text-[#60A5FA] animate-bounce" style={{ animationDuration: '3s' }} />
-              <span className="text-xs font-extrabold text-white">Product Discovery Assistant</span>
+            <div className="w-full md:w-52 h-44 rounded-3xl bg-white/10 backdrop-blur-md border border-white/20 flex flex-col items-center justify-center text-white shadow-2xl relative z-10 flex-shrink-0 p-4 space-y-2 text-center">
+              <Bot className="w-12 h-12 text-[#60A5FA]" />
+              <span className="text-xs font-extrabold text-white">Product Discovery & Information Assistant</span>
               <span className="text-[10px] text-emerald-400 font-semibold uppercase flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                 Live Database Grounded
