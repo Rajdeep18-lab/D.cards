@@ -1,4 +1,4 @@
-import dcardDebitCardsRaw from "../../dcard_debit_cards.json" with { type: "json" };
+import { masterDebitCards } from "./debitCardsData.js";
 import { normalizeCard, deduplicateCards } from "../utils/compareUtils.js";
 
 export const bankCards = [
@@ -6326,9 +6326,9 @@ export const filterOptions = [
   "Zero Fee",
 ];
 
-export const jsonDebitCards = (dcardDebitCardsRaw || []).map(c => normalizeCard({
+export const jsonDebitCards = (masterDebitCards || []).map(c => normalizeCard({
   ...c,
-  id: `json-${c.id}`,
+  id: c.card_id,
   dataset: 'json'
 }));
 

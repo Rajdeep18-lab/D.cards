@@ -1,1129 +1,2589 @@
-import { debitCards } from "./mockData.js";
 import { canonicalBankName } from "../utils/bankDirectoryUtils.js";
+import { masterDebitCardsMap } from "./debitCardsData.js";
+import { getAccountDebitCardMappings } from "./accountDebitCardMappings.js";
 
+/**
+ * BANK COMPARISON PLATFORM - SAVINGS ACCOUNTS & ASSOCIATED DEBIT CARDS
+ * Architecture: BANK -> SAVINGS ACCOUNT -> DEBIT CARD ASSOCIATED WITH THAT SPECIFIC ACCOUNT
+ */
 export const savingsAccounts = [
   {
-    id: 101,
-    bankId: "hdfc-bank",
-    bank: "HDFC Bank",
-    logo: "HD",
-    accountName: "HDFC SavingsMax Account",
-    accountType: "Premium Savings",
-    accountTypeBadges: ["Premium", "Salary", "High Rewards"],
-    interestRate: "3.00% - 3.50% p.a.",
-    interestRateValue: 3.5,
-    minimumBalance: "₹25,000",
-    minimumBalanceValue: 25000,
-    isZeroBalance: false,
-    isOnlineOpening: true,
-    isStudent: false,
-    isSalary: true,
-    isSeniorCitizen: false,
-    isWomenSpecial: false,
-    isDigital: true,
-    isPremium: true,
-    isNRI: false,
-    rating: 4.8,
-    isPopular: true,
-    officialSourceUrl: "https://www.hdfcbank.com/personal/save/accounts/savings-accounts/savingsmax-account",
-    lastVerified: "August 2026",
-    description: "A feature-packed premium savings account offering complimentary EasyShop Platinum Debit Card, lifetime free accidental insurance, and automatic sweep-in benefits.",
-    keyBenefits: [
+    "id": 1031,
+    "product_id": "sbi-regular-savings",
+    "bank_id": "sbi",
+    "bank_name": "State Bank of India",
+    "bank": "State Bank of India",
+    "logo": "SB",
+    "variant_name": "SBI Regular Savings Account",
+    "accountName": "SBI Regular Savings Account",
+    "account_type": "Regular Savings",
+    "accountType": "Regular Savings",
+    "target_segment": "General Public",
+    "accountTypeBadges": [
+      "Regular",
+      "Popular",
+      "Government Bank"
+    ],
+    "interest_rate": "2.70% p.a.",
+    "interestRate": "2.70% p.a.",
+    "interestRateValue": 2.7,
+    "minimum_balance": "₹0",
+    "minimumBalance": "₹0",
+    "minimumBalanceValue": 0,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "Nil (Waiver active across all branches)",
+    "nonMaintenanceCharges": "Nil (Waiver active across all branches)",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": true,
+    "isOnlineOpening": true,
+    "isStudent": true,
+    "isSalary": false,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": false,
+    "isDigital": true,
+    "isPremium": false,
+    "isNRI": false,
+    "rating": 4.6,
+    "isPopular": true,
+    "source": "https://sbi.co.in/web/personal-banking/accounts/savings-account",
+    "officialSourceUrl": "https://sbi.co.in/web/personal-banking/accounts/savings-account",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "India's most popular savings account with zero minimum balance requirement, widespread ATM access, and YONO digital banking integration.",
+    "eligibility": [
+      "Resident Indian Individual",
+      "Age: 18 years and above",
+      "Single or Joint Account operation"
+    ],
+    "benefits": [
+      "Zero monthly average balance maintenance requirement",
+      "Free YONO SBI Mobile Banking & Internet Banking",
+      "Free 10 cheque leaves per financial year",
+      "Access to India's largest network of ATMs & branches"
+    ],
+    "keyBenefits": [
+      "Zero monthly average balance maintenance requirement",
+      "Free YONO SBI Mobile Banking & Internet Banking",
+      "Free 10 cheque leaves per financial year",
+      "Access to India's largest network of ATMs & branches"
+    ],
+    "features": [
+      "Instant Video KYC account opening via YONO App",
+      "Complimentary SBI Classic or Global RuPay/Visa Debit Card",
+      "SMS alerts & E-Statements included",
+      "Auto-sweep (MOD) option available upon request"
+    ],
+    "bankingFeatures": [
+      "Instant Video KYC account opening via YONO App",
+      "Complimentary SBI Classic or Global RuPay/Visa Debit Card",
+      "SMS alerts & E-Statements included",
+      "Auto-sweep (MOD) option available upon request"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "sbi-classic-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      },
+      {
+        "card_id": "sbi-global-debit-card",
+        "relationship": "optional",
+        "verification_status": "verified"
+      }
+    ]
+  },
+  {
+    "id": 103,
+    "product_id": "sbi-savings-plus",
+    "bank_id": "sbi",
+    "bank_name": "State Bank of India",
+    "bank": "State Bank of India",
+    "logo": "SB",
+    "variant_name": "SBI Savings Plus Account",
+    "accountName": "SBI Savings Plus Account",
+    "account_type": "Auto-Sweep Savings",
+    "accountType": "Regular Savings",
+    "target_segment": "General Public & High Savers",
+    "accountTypeBadges": [
+      "Auto-Sweep",
+      "High Returns",
+      "Government Bank"
+    ],
+    "interest_rate": "2.70% - 6.80% p.a.",
+    "interestRate": "2.70% - 6.80% p.a.",
+    "interestRateValue": 2.7,
+    "minimum_balance": "₹0",
+    "minimumBalance": "₹0",
+    "minimumBalanceValue": 0,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "Nil",
+    "nonMaintenanceCharges": "Nil",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": true,
+    "isOnlineOpening": true,
+    "isStudent": false,
+    "isSalary": false,
+    "isSeniorCitizen": true,
+    "isWomenSpecial": false,
+    "isDigital": true,
+    "isPremium": false,
+    "isNRI": false,
+    "rating": 4.7,
+    "isPopular": true,
+    "source": "https://sbi.co.in/web/personal-banking/accounts/savings-account/savings-plus-account",
+    "officialSourceUrl": "https://sbi.co.in/web/personal-banking/accounts/savings-account/savings-plus-account",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "Linked to MOD (Multi Option Deposit) scheme, automatically transferring surplus funds above ₹35,000 into high-yielding Term Deposits while retaining instant liquidity.",
+    "eligibility": [
+      "Resident Indian Individuals eligible",
+      "Single or Joint Account operation"
+    ],
+    "benefits": [
+      "Auto-sweep facility into MODD (Term Deposits) for higher FD returns",
+      "Unmatched ATM network access across all Indian cities & rural hubs",
+      "Zero minimum balance maintenance requirement",
+      "Complimentary SBI Global / Platinum International Debit Card options"
+    ],
+    "keyBenefits": [
+      "Auto-sweep facility into MODD (Term Deposits) for higher FD returns",
+      "Unmatched ATM network access across all Indian cities & rural hubs",
+      "Zero minimum balance maintenance requirement",
+      "Complimentary SBI Global / Platinum International Debit Card options"
+    ],
+    "features": [
+      "Automatic reverse sweep when liquidity is required",
+      "YONO SBI App online management",
+      "Free e-statements & digital passbook"
+    ],
+    "bankingFeatures": [
+      "Automatic reverse sweep when liquidity is required",
+      "YONO SBI App online management",
+      "Free e-statements & digital passbook"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "sbi-global-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      },
+      {
+        "card_id": "sbi-platinum-debit-card",
+        "relationship": "upgrade",
+        "verification_status": "verified"
+      }
+    ]
+  },
+  {
+    "id": 1032,
+    "product_id": "sbi-bsbda",
+    "bank_id": "sbi",
+    "bank_name": "State Bank of India",
+    "bank": "State Bank of India",
+    "logo": "SB",
+    "variant_name": "SBI Basic Savings Bank Deposit Account (BSBDA)",
+    "accountName": "SBI Basic Savings Bank Deposit Account (BSBDA)",
+    "account_type": "BSBDA",
+    "accountType": "Zero Balance",
+    "target_segment": "Financially Excluded / Basic Banking",
+    "accountTypeBadges": [
+      "BSBDA",
+      "Zero Balance",
+      "Government Scheme"
+    ],
+    "interest_rate": "2.70% p.a.",
+    "interestRate": "2.70% p.a.",
+    "interestRateValue": 2.7,
+    "minimum_balance": "₹0",
+    "minimumBalance": "₹0",
+    "minimumBalanceValue": 0,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "Nil",
+    "nonMaintenanceCharges": "Nil",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": true,
+    "isOnlineOpening": true,
+    "isStudent": true,
+    "isSalary": false,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": false,
+    "isDigital": false,
+    "isPremium": false,
+    "isNRI": false,
+    "rating": 4.5,
+    "isPopular": false,
+    "source": "https://sbi.co.in/web/personal-banking/accounts/savings-account/bsbda",
+    "officialSourceUrl": "https://sbi.co.in/web/personal-banking/accounts/savings-account/bsbda",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "RBI mandated basic savings account for all Indian citizens without minimum balance criteria or maintenance charges.",
+    "eligibility": [
+      "Any Resident Indian Individual with valid KYC documents",
+      "Must not hold another BSBD savings account with SBI"
+    ],
+    "benefits": [
+      "100% Zero minimum balance maintenance requirement",
+      "Free basic RuPay Debit Card",
+      "4 free ATM withdrawals per month"
+    ],
+    "keyBenefits": [
+      "100% Zero minimum balance maintenance requirement",
+      "Free basic RuPay Debit Card",
+      "4 free ATM withdrawals per month"
+    ],
+    "features": [
+      "Free deposit and receipt of money through all electronic channels",
+      "No account closure fees"
+    ],
+    "bankingFeatures": [
+      "Free deposit and receipt of money through all electronic channels",
+      "No account closure fees"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "sbi-classic-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      }
+    ]
+  },
+  {
+    "id": 115,
+    "product_id": "sbi-pehla-kadam-minor",
+    "bank_id": "sbi",
+    "bank_name": "State Bank of India",
+    "bank": "State Bank of India",
+    "logo": "SB",
+    "variant_name": "SBI Pehla Kadam Minor Savings Account",
+    "accountName": "SBI Pehla Kadam Minor Savings Account",
+    "account_type": "Minor Savings",
+    "accountType": "Minor Savings",
+    "target_segment": "Minors & Kids",
+    "accountTypeBadges": [
+      "Minor Special",
+      "Zero Balance",
+      "Kids Banking"
+    ],
+    "interest_rate": "2.70% p.a.",
+    "interestRate": "2.70% p.a.",
+    "interestRateValue": 2.7,
+    "minimum_balance": "₹0",
+    "minimumBalance": "₹0",
+    "minimumBalanceValue": 0,
+    "maximum_balance": "₹10,000 (Account Balance Cap)",
+    "non_maintenance_penalty": "Nil",
+    "nonMaintenanceCharges": "Nil",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": true,
+    "isOnlineOpening": false,
+    "isStudent": true,
+    "isSalary": false,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": false,
+    "isDigital": false,
+    "isPremium": false,
+    "isNRI": false,
+    "rating": 4.4,
+    "isPopular": false,
+    "source": "https://sbi.co.in/web/personal-banking/accounts/savings-account/pehla-kadam-pehli-udaan",
+    "officialSourceUrl": "https://sbi.co.in/web/personal-banking/accounts/savings-account/pehla-kadam-pehli-udaan",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "Specially crafted savings account for kids under 18 years operated jointly with parents to build financial discipline early.",
+    "eligibility": [
+      "Minors of any age operated jointly with Parents/Guardians"
+    ],
+    "benefits": [
+      "Custom photo debit card with child & parent photo option",
+      "Zero monthly balance penalty",
+      "Per-day transaction cap to enforce prudent spending"
+    ],
+    "keyBenefits": [
+      "Custom photo debit card with child & parent photo option",
+      "Zero monthly balance penalty",
+      "Per-day transaction cap to enforce prudent spending"
+    ],
+    "features": [
+      "Specially curated mobile banking app for minors",
+      "Auto-deposit facility"
+    ],
+    "bankingFeatures": [
+      "Specially curated mobile banking app for minors",
+      "Auto-deposit facility"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "sbi-yuva-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      }
+    ]
+  },
+  {
+    "id": 1011,
+    "product_id": "hdfc-regular-savings",
+    "bank_id": "hdfc-bank",
+    "bank_name": "HDFC Bank",
+    "bank": "HDFC Bank",
+    "logo": "HD",
+    "variant_name": "HDFC Regular Savings Account",
+    "accountName": "HDFC Regular Savings Account",
+    "account_type": "Regular Savings",
+    "accountType": "Regular Savings",
+    "target_segment": "General Public",
+    "accountTypeBadges": [
+      "Regular",
+      "Popular",
+      "Private Bank"
+    ],
+    "interest_rate": "3.00% - 3.50% p.a.",
+    "interestRate": "3.00% - 3.50% p.a.",
+    "interestRateValue": 3.5,
+    "minimum_balance": "₹10,000",
+    "minimumBalance": "₹10,000",
+    "minimumBalanceValue": 10000,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "₹150 to ₹600 per quarter depending on shortfall",
+    "nonMaintenanceCharges": "₹150 to ₹600 per quarter depending on shortfall",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": false,
+    "isOnlineOpening": true,
+    "isStudent": false,
+    "isSalary": false,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": false,
+    "isDigital": true,
+    "isPremium": false,
+    "isNRI": false,
+    "rating": 4.7,
+    "isPopular": true,
+    "source": "https://www.hdfcbank.com/personal/save/accounts/savings-accounts/regular-savings-account",
+    "officialSourceUrl": "https://www.hdfcbank.com/personal/save/accounts/savings-accounts/regular-savings-account",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "HDFC Bank's signature Everyday Savings Account providing seamless digital banking, bill pay, and MoneyBack debit card benefits.",
+    "eligibility": [
+      "Resident Indian Individuals (Single or Joint)",
+      "Age: 18 years and above"
+    ],
+    "benefits": [
+      "Access to HDFC NetBanking & MobileBanking App",
+      "Free safe deposit locker discounts for eligible balances",
+      "Free 25 cheque leaves per year"
+    ],
+    "keyBenefits": [
+      "Access to HDFC NetBanking & MobileBanking App",
+      "Free safe deposit locker discounts for eligible balances",
+      "Free 25 cheque leaves per year"
+    ],
+    "features": [
+      "Instant Video KYC onboarding",
+      "Free fund transfers via NEFT / RTGS / IMPS online"
+    ],
+    "bankingFeatures": [
+      "Instant Video KYC onboarding",
+      "Free fund transfers via NEFT / RTGS / IMPS online"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "hdfc-bank-hdfc-millennia-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      },
+      {
+        "card_id": "hdfc-bank-hdfc-easyshop-platinum-debit-card",
+        "relationship": "upgrade",
+        "verification_status": "verified"
+      }
+    ]
+  },
+  {
+    "id": 101,
+    "product_id": "hdfc-savingsmax",
+    "bank_id": "hdfc-bank",
+    "bank_name": "HDFC Bank",
+    "bank": "HDFC Bank",
+    "logo": "HD",
+    "variant_name": "HDFC SavingsMax Account",
+    "accountName": "HDFC SavingsMax Account",
+    "account_type": "Premium Savings",
+    "accountType": "Premium Savings",
+    "target_segment": "HNI & High Balances",
+    "accountTypeBadges": [
+      "Premium",
+      "Salary",
+      "High Rewards"
+    ],
+    "interest_rate": "3.00% - 3.50% p.a.",
+    "interestRate": "3.00% - 3.50% p.a.",
+    "interestRateValue": 3.5,
+    "minimum_balance": "₹25,000",
+    "minimumBalance": "₹25,000",
+    "minimumBalanceValue": 25000,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "₹600/quarter if AMB falls below threshold",
+    "nonMaintenanceCharges": "₹600/quarter if AMB falls below threshold",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": false,
+    "isOnlineOpening": true,
+    "isStudent": false,
+    "isSalary": true,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": false,
+    "isDigital": true,
+    "isPremium": true,
+    "isNRI": false,
+    "rating": 4.8,
+    "isPopular": true,
+    "source": "https://www.hdfcbank.com/personal/save/accounts/savings-accounts/savingsmax-account",
+    "officialSourceUrl": "https://www.hdfcbank.com/personal/save/accounts/savings-accounts/savingsmax-account",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "A feature-packed premium savings account offering lifetime free EasyShop Platinum Debit Card, accidental insurance, and automatic sweep-in benefits.",
+    "eligibility": [
+      "Resident Indian Individual",
+      "Age: 18 years and above",
+      "Valid Aadhaar Number & PAN Card required"
+    ],
+    "benefits": [
       "Lifetime Free HDFC EasyShop Platinum Debit Card (1% Cashback)",
       "Accidental Death Cover of ₹10 Lakhs & Air Cover of ₹30 Lakhs",
       "Free Unlimited ATM transactions at all HDFC Bank ATMs",
       "Auto-sweep facility to earn fixed deposit interest rates"
     ],
-    associatedDebitCardId: 3,
-    associatedDebitCardName: "EasyShop Platinum Debit Card",
-    interestSlabs: [
-      "Balance below ₹50 Lakhs: 3.00% p.a.",
-      "Balance ₹50 Lakhs & above: 3.50% p.a."
+    "keyBenefits": [
+      "Lifetime Free HDFC EasyShop Platinum Debit Card (1% Cashback)",
+      "Accidental Death Cover of ₹10 Lakhs & Air Cover of ₹30 Lakhs",
+      "Free Unlimited ATM transactions at all HDFC Bank ATMs",
+      "Auto-sweep facility to earn fixed deposit interest rates"
     ],
-    ambAqbText: "Average Monthly Balance (AMB): ₹25,000 across urban/metro branches",
-    nonMaintenanceCharges: "₹600/quarter if AMB falls below threshold",
-    accountOpeningFeatures: [
-      "Instant Online Video KYC Account Opening",
-      "Zero Paperwork & Digital Signature Verification",
-      "Initial Deposit: ₹25,000",
-      "Instant Access to NetBanking & HDFC Bank MobileBanking App"
+    "features": [
+      "Instant Video KYC Account Opening",
+      "Priority teller desk service at branches"
     ],
-    eligibility: [
-      "Resident Indian Individual",
-      "Age: 18 years and above",
-      "Valid Aadhaar Number & PAN Card required"
+    "bankingFeatures": [
+      "Instant Video KYC Account Opening",
+      "Priority teller desk service at branches"
     ],
-    documentsRequired: [
-      "Aadhaar Card (Mobile number linked for OTP)",
-      "Original Physical PAN Card for Video KYC",
-      "Passport size photograph & Signature sample"
-    ],
-    bankingFeatures: [
-      "Free Unlimited NEFT, RTGS & IMPS Online Transfers",
-      "Free 25 Cheque Leaves per year",
-      "Complimentary BillPay & Auto-debit services",
-      "Free E-Statements & Passbook facility",
-      "Priority customer service desk at branches"
+    "debit_card_relationships": [
+      {
+        "card_id": "hdfc-bank-hdfc-easyshop-platinum-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      }
     ]
   },
   {
-    id: 102,
-    bankId: "icici-bank",
-    bank: "ICICI Bank",
-    logo: "IC",
-    accountName: "ICICI MINE Savings Account",
-    accountType: "Digital Savings",
-    accountTypeBadges: ["Digital", "Youth", "Zero Balance"],
-    interestRate: "3.00% - 3.50% p.a.",
-    interestRateValue: 3.5,
-    minimumBalance: "₹0",
-    minimumBalanceValue: 0,
-    isZeroBalance: true,
-    isOnlineOpening: true,
-    isStudent: true,
-    isSalary: false,
-    isSeniorCitizen: false,
-    isWomenSpecial: false,
-    isDigital: true,
-    isPremium: false,
-    isNRI: false,
-    rating: 4.7,
-    isPopular: true,
-    officialSourceUrl: "https://www.icicibank.com/personal-banking/accounts/savings-account/mine-account",
-    lastVerified: "August 2026",
-    description: "India's first millennial-focused zero balance digital savings account with customizable debit cards, instant iMobile Pay setup, and online shopping cashbacks.",
-    keyBenefits: [
+    "id": 1012,
+    "product_id": "hdfc-digisave-youth",
+    "bank_id": "hdfc-bank",
+    "bank_name": "HDFC Bank",
+    "bank": "HDFC Bank",
+    "logo": "HD",
+    "variant_name": "HDFC DigiSave Youth / Millennia Savings Account",
+    "accountName": "HDFC DigiSave Youth Savings Account",
+    "account_type": "Youth Savings",
+    "accountType": "Youth",
+    "target_segment": "Youth & Students (18-25 yrs)",
+    "accountTypeBadges": [
+      "Youth",
+      "Digital",
+      "Cashback"
+    ],
+    "interest_rate": "3.00% - 3.50% p.a.",
+    "interestRate": "3.00% - 3.50% p.a.",
+    "interestRateValue": 3.5,
+    "minimum_balance": "₹5,000",
+    "minimumBalance": "₹5,000",
+    "minimumBalanceValue": 5000,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "₹300/quarter",
+    "nonMaintenanceCharges": "₹300/quarter",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": false,
+    "isOnlineOpening": true,
+    "isStudent": true,
+    "isSalary": false,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": false,
+    "isDigital": true,
+    "isPremium": false,
+    "isNRI": false,
+    "rating": 4.8,
+    "isPopular": true,
+    "source": "https://www.hdfcbank.com/personal/save/accounts/savings-accounts/digisave-youth-account",
+    "officialSourceUrl": "https://www.hdfcbank.com/personal/save/accounts/savings-accounts/digisave-youth-account",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "Designed for young adults aged 18-25 with Millennia debit card cashback, OTT subscription discounts, and low balance requirements.",
+    "eligibility": [
+      "Resident Individuals aged between 18 and 25 years"
+    ],
+    "benefits": [
+      "5% CashBack on PayZapp, SmartBuy, Amazon & Flipkart spends",
+      "Complimentary HDFC Millennia Debit Card",
+      "Special discounts on food delivery & ride hailing apps"
+    ],
+    "keyBenefits": [
+      "5% CashBack on PayZapp, SmartBuy, Amazon & Flipkart spends",
+      "Complimentary HDFC Millennia Debit Card",
+      "Special discounts on food delivery & ride hailing apps"
+    ],
+    "features": [
+      "100% Digital Video KYC account opening",
+      "Virtual debit card instant access"
+    ],
+    "bankingFeatures": [
+      "100% Digital Video KYC account opening",
+      "Virtual debit card instant access"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "hdfc-bank-hdfc-millennia-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      }
+    ]
+  },
+  {
+    "id": 1013,
+    "product_id": "hdfc-womens-savings",
+    "bank_id": "hdfc-bank",
+    "bank_name": "HDFC Bank",
+    "bank": "HDFC Bank",
+    "logo": "HD",
+    "variant_name": "HDFC Women's Savings Account",
+    "accountName": "HDFC Women's Savings Account",
+    "account_type": "Women's Savings",
+    "accountType": "Women Special",
+    "target_segment": "Women",
+    "accountTypeBadges": [
+      "Women Special",
+      "Insurance Cover",
+      "Shopping Deals"
+    ],
+    "interest_rate": "3.00% - 3.50% p.a.",
+    "interestRate": "3.00% - 3.50% p.a.",
+    "interestRateValue": 3.5,
+    "minimum_balance": "₹10,000",
+    "minimumBalance": "₹10,000",
+    "minimumBalanceValue": 10000,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "₹450/quarter",
+    "nonMaintenanceCharges": "₹450/quarter",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": false,
+    "isOnlineOpening": true,
+    "isStudent": false,
+    "isSalary": false,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": true,
+    "isDigital": true,
+    "isPremium": false,
+    "isNRI": false,
+    "rating": 4.7,
+    "isPopular": false,
+    "source": "https://www.hdfcbank.com/personal/save/accounts/savings-accounts/women-savings-account",
+    "officialSourceUrl": "https://www.hdfcbank.com/personal/save/accounts/savings-accounts/women-savings-account",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "Curated for women offering preferential personal loan rates, higher daily debit card spending limits, and health insurance covers.",
+    "eligibility": [
+      "Resident Women Individuals (Single or Primary Holder)"
+    ],
+    "benefits": [
+      "EasyShop Women's Advantage Debit Card with cashback on shopping",
+      "Accidental death cover of ₹10 Lakhs & critical illness insurance options",
+      "Preferential rates on gold loans and personal loans"
+    ],
+    "keyBenefits": [
+      "EasyShop Women's Advantage Debit Card with cashback on shopping",
+      "Accidental death cover of ₹10 Lakhs & critical illness insurance options",
+      "Preferential rates on gold loans and personal loans"
+    ],
+    "features": [
+      "Free Unlimited demand drafts & online NEFT/RTGS",
+      "Exclusive discounts on health checkups and wellness"
+    ],
+    "bankingFeatures": [
+      "Free Unlimited demand drafts & online NEFT/RTGS",
+      "Exclusive discounts on health checkups and wellness"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "hdfc-bank-hdfc-easyshop-woman-s-advantage-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      }
+    ]
+  },
+  {
+    "id": 1014,
+    "product_id": "hdfc-senior-citizen",
+    "bank_id": "hdfc-bank",
+    "bank_name": "HDFC Bank",
+    "bank": "HDFC Bank",
+    "logo": "HD",
+    "variant_name": "HDFC Senior Citizen Savings Account",
+    "accountName": "HDFC Senior Citizen Savings Account",
+    "account_type": "Senior Citizen",
+    "accountType": "Senior Citizen",
+    "target_segment": "Senior Citizens (60+ yrs)",
+    "accountTypeBadges": [
+      "Senior Citizen",
+      "Higher FD Interest",
+      "Free Banking"
+    ],
+    "interest_rate": "3.00% - 3.50% p.a.",
+    "interestRate": "3.00% - 3.50% p.a.",
+    "interestRateValue": 3.5,
+    "minimum_balance": "₹5,000",
+    "minimumBalance": "₹5,000",
+    "minimumBalanceValue": 5000,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "₹300/quarter",
+    "nonMaintenanceCharges": "₹300/quarter",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": false,
+    "isOnlineOpening": true,
+    "isStudent": false,
+    "isSalary": false,
+    "isSeniorCitizen": true,
+    "isWomenSpecial": false,
+    "isDigital": true,
+    "isPremium": false,
+    "isNRI": false,
+    "rating": 4.8,
+    "isPopular": false,
+    "source": "https://www.hdfcbank.com/personal/save/accounts/savings-accounts/senior-citizen-account",
+    "officialSourceUrl": "https://www.hdfcbank.com/personal/save/accounts/savings-accounts/senior-citizen-account",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "Dedicated account for individuals aged 60 and above offering higher FD interest rates, lifetime free debit card, and door-step banking assistance.",
+    "eligibility": [
+      "Resident Indian Senior Citizens aged 60 years and above"
+    ],
+    "benefits": [
+      "0.50% p.a. additional interest rate on Fixed Deposits",
+      "Lifetime Free EasyShop Platinum Debit Card",
+      "Free doorstep banking services and priority branch teller access"
+    ],
+    "keyBenefits": [
+      "0.50% p.a. additional interest rate on Fixed Deposits",
+      "Lifetime Free EasyShop Platinum Debit Card",
+      "Free doorstep banking services and priority branch teller access"
+    ],
+    "features": [
+      "Free quarterly physical account statements",
+      "Free Demat account AMC waiver for first year"
+    ],
+    "bankingFeatures": [
+      "Free quarterly physical account statements",
+      "Free Demat account AMC waiver for first year"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "hdfc-bank-hdfc-easyshop-platinum-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      }
+    ]
+  },
+  {
+    "id": 1015,
+    "product_id": "hdfc-bsbda",
+    "bank_id": "hdfc-bank",
+    "bank_name": "HDFC Bank",
+    "bank": "HDFC Bank",
+    "logo": "HD",
+    "variant_name": "HDFC Basic Savings Bank Deposit Account (BSBDA)",
+    "accountName": "HDFC Basic Savings Bank Deposit Account (BSBDA)",
+    "account_type": "BSBDA",
+    "accountType": "Zero Balance",
+    "target_segment": "Basic Banking",
+    "accountTypeBadges": [
+      "BSBDA",
+      "Zero Balance"
+    ],
+    "interest_rate": "3.00% - 3.50% p.a.",
+    "interestRate": "3.00% - 3.50% p.a.",
+    "interestRateValue": 3.5,
+    "minimum_balance": "₹0",
+    "minimumBalance": "₹0",
+    "minimumBalanceValue": 0,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "Nil",
+    "nonMaintenanceCharges": "Nil",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": true,
+    "isOnlineOpening": true,
+    "isStudent": true,
+    "isSalary": false,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": false,
+    "isDigital": false,
+    "isPremium": false,
+    "isNRI": false,
+    "rating": 4.5,
+    "isPopular": false,
+    "source": "https://www.hdfcbank.com/personal/save/accounts/savings-accounts/basic-savings-bank-deposit-account",
+    "officialSourceUrl": "https://www.hdfcbank.com/personal/save/accounts/savings-accounts/basic-savings-bank-deposit-account",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "Zero balance basic savings deposit account aligned with RBI BSBD guidelines.",
+    "eligibility": [
+      "Resident Individuals who do not hold any other savings account in HDFC Bank"
+    ],
+    "benefits": [
+      "Zero Minimum Balance criteria",
+      "Free basic RuPay debit card",
+      "4 free ATM withdrawals every month"
+    ],
+    "keyBenefits": [
+      "Zero Minimum Balance criteria",
+      "Free basic RuPay debit card",
+      "4 free ATM withdrawals every month"
+    ],
+    "features": [
+      "Free NetBanking & Mobile Banking",
+      "No maintenance penalty"
+    ],
+    "bankingFeatures": [
+      "Free NetBanking & Mobile Banking",
+      "No maintenance penalty"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "hdfc-bank-hdfc-moneyback-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      }
+    ]
+  },
+  {
+    "id": 116,
+    "product_id": "hdfc-nre-premium",
+    "bank_id": "hdfc-bank",
+    "bank_name": "HDFC Bank",
+    "bank": "HDFC Bank",
+    "logo": "HD",
+    "variant_name": "HDFC NRE Premium Savings Account",
+    "accountName": "HDFC NRE Premium Savings Account",
+    "account_type": "NRI Savings",
+    "accountType": "NRI Account",
+    "target_segment": "Non-Resident Indians",
+    "accountTypeBadges": [
+      "NRI",
+      "Tax Free",
+      "Foreign Remittance"
+    ],
+    "interest_rate": "3.00% - 3.50% p.a.",
+    "interestRate": "3.00% - 3.50% p.a.",
+    "interestRateValue": 3.5,
+    "minimum_balance": "₹10,000",
+    "minimumBalance": "₹10,000",
+    "minimumBalanceValue": 10000,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "₹500/quarter",
+    "nonMaintenanceCharges": "₹500/quarter",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": false,
+    "isOnlineOpening": true,
+    "isStudent": false,
+    "isSalary": false,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": false,
+    "isDigital": true,
+    "isPremium": true,
+    "isNRI": true,
+    "rating": 4.7,
+    "isPopular": false,
+    "source": "https://www.hdfcbank.com/nri-banking/save/savings-accounts/nre-savings-account",
+    "officialSourceUrl": "https://www.hdfcbank.com/nri-banking/save/savings-accounts/nre-savings-account",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "Tax-free interest account for NRIs allowing 100% repatriability of principal and interest earned back to overseas country.",
+    "eligibility": [
+      "Non-Resident Indians (NRIs) or Persons of Indian Origin (PIOs)"
+    ],
+    "benefits": [
+      "100% Tax-free interest in India",
+      "Full repatriability of funds",
+      "Global access via HDFC EasyShop NRE Platinum Debit Card"
+    ],
+    "keyBenefits": [
+      "100% Tax-free interest in India",
+      "Full repatriability of funds",
+      "Global access via HDFC EasyShop NRE Platinum Debit Card"
+    ],
+    "features": [
+      "24/7 overseas remittance tracking",
+      "Family mandate card facility in India"
+    ],
+    "bankingFeatures": [
+      "24/7 overseas remittance tracking",
+      "Family mandate card facility in India"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "hdfc-bank-hdfc-easyshop-platinum-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      }
+    ]
+  },
+  {
+    "id": 1021,
+    "product_id": "icici-regular-savings",
+    "bank_id": "icici-bank",
+    "bank_name": "ICICI Bank",
+    "bank": "ICICI Bank",
+    "logo": "IC",
+    "variant_name": "ICICI Regular Savings Account",
+    "accountName": "ICICI Regular Savings Account",
+    "account_type": "Regular Savings",
+    "accountType": "Regular Savings",
+    "target_segment": "General Public",
+    "accountTypeBadges": [
+      "Regular",
+      "iMobile Banking",
+      "Private Bank"
+    ],
+    "interest_rate": "3.00% - 3.50% p.a.",
+    "interestRate": "3.00% - 3.50% p.a.",
+    "interestRateValue": 3.5,
+    "minimum_balance": "₹10,000",
+    "minimumBalance": "₹10,000",
+    "minimumBalanceValue": 10000,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "₹500/month or 6% of shortfall (whichever is lower)",
+    "nonMaintenanceCharges": "₹500/month or 6% of shortfall (whichever is lower)",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": false,
+    "isOnlineOpening": true,
+    "isStudent": false,
+    "isSalary": false,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": false,
+    "isDigital": true,
+    "isPremium": false,
+    "isNRI": false,
+    "rating": 4.7,
+    "isPopular": true,
+    "source": "https://www.icicibank.com/personal-banking/accounts/savings-account",
+    "officialSourceUrl": "https://www.icicibank.com/personal-banking/accounts/savings-account",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "Everyday banking power backed by iMobile Pay app, smart lock safety, and nationwide branch accessibility.",
+    "eligibility": [
+      "Resident Indian Individuals aged 18+"
+    ],
+    "benefits": [
+      "Access to iMobile Pay app with 350+ financial services",
+      "Smart Shopper Silver / Coral Debit Card options",
+      "Free e-passbook and e-statements"
+    ],
+    "keyBenefits": [
+      "Access to iMobile Pay app with 350+ financial services",
+      "Smart Shopper Silver / Coral Debit Card options",
+      "Free e-passbook and e-statements"
+    ],
+    "features": [
+      "Video KYC instant online verification",
+      "Money Manager automated budget expense tracker"
+    ],
+    "bankingFeatures": [
+      "Video KYC instant online verification",
+      "Money Manager automated budget expense tracker"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "icici-bank-icici-coral-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      },
+      {
+        "card_id": "icici-bank-icici-rubyx-debit-card",
+        "relationship": "upgrade",
+        "verification_status": "verified"
+      }
+    ]
+  },
+  {
+    "id": 102,
+    "product_id": "icici-mine-student",
+    "bank_id": "icici-bank",
+    "bank_name": "ICICI Bank",
+    "bank": "ICICI Bank",
+    "logo": "IC",
+    "variant_name": "ICICI MINE Savings Account",
+    "accountName": "ICICI MINE Savings Account",
+    "account_type": "Digital Savings",
+    "accountType": "Digital Savings",
+    "target_segment": "Youth & Students (18-35 yrs)",
+    "accountTypeBadges": [
+      "Digital",
+      "Youth",
+      "Zero Balance"
+    ],
+    "interest_rate": "3.00% - 3.50% p.a.",
+    "interestRate": "3.00% - 3.50% p.a.",
+    "interestRateValue": 3.5,
+    "minimum_balance": "₹0",
+    "minimumBalance": "₹0",
+    "minimumBalanceValue": 0,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "Nil (Zero Balance Account)",
+    "nonMaintenanceCharges": "Nil (Zero Balance Account)",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": true,
+    "isOnlineOpening": true,
+    "isStudent": true,
+    "isSalary": false,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": false,
+    "isDigital": true,
+    "isPremium": false,
+    "isNRI": false,
+    "rating": 4.7,
+    "isPopular": true,
+    "source": "https://www.icicibank.com/personal-banking/accounts/savings-account/mine-account",
+    "officialSourceUrl": "https://www.icicibank.com/personal-banking/accounts/savings-account/mine-account",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "India's first millennial-focused zero balance digital savings account with customizable debit cards, instant iMobile Pay setup, and online shopping cashbacks.",
+    "eligibility": [
+      "Resident Indian Individuals aged between 18 to 35 years",
+      "Valid PAN Card & Aadhaar linked with mobile number"
+    ],
+    "benefits": [
       "100% Zero Minimum Balance Account for 18-35 age group",
       "Customizable iMobile Debit Card with instant cashback offers",
       "Instant account opening via Video KYC under 5 minutes",
       "Exclusive discounts on Myntra, Swiggy, Zomato & BookMyShow"
     ],
-    associatedDebitCardId: 5,
-    associatedDebitCardName: "Coral Debit Card",
-    interestSlabs: [
-      "Daily balance up to ₹50 Lakhs: 3.00% p.a.",
-      "Daily balance above ₹50 Lakhs: 3.50% p.a."
+    "keyBenefits": [
+      "100% Zero Minimum Balance Account for 18-35 age group",
+      "Customizable iMobile Debit Card with instant cashback offers",
+      "Instant account opening via Video KYC under 5 minutes",
+      "Exclusive discounts on Myntra, Swiggy, Zomato & BookMyShow"
     ],
-    ambAqbText: "Zero Minimum Balance (No penalty charges)",
-    nonMaintenanceCharges: "Nil (Zero Balance Account)",
-    accountOpeningFeatures: [
-      "Instant Video KYC via iMobile Pay App",
-      "Zero initial funding mandatory",
-      "Instant Virtual Debit Card generation",
-      "Paperless onboarding using Aadhaar OTP"
-    ],
-    eligibility: [
-      "Resident Indian Individuals aged between 18 to 35 years",
-      "Valid PAN Card & Aadhaar linked with mobile number"
-    ],
-    documentsRequired: [
-      "Aadhaar Card with active mobile number",
-      "PAN Card for video verification"
-    ],
-    bankingFeatures: [
+    "features": [
       "Instant UPI setup & Money Transfer via iMobile Pay",
-      "Free E-Statements & Digital Passbook",
-      "Sub-accounts for budgeting & goal savings",
-      "24/7 AI Chatbot Assistance"
+      "Sub-accounts for budgeting & goal savings"
+    ],
+    "bankingFeatures": [
+      "Instant UPI setup & Money Transfer via iMobile Pay",
+      "Sub-accounts for budgeting & goal savings"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "icici-bank-icici-expressions-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      }
     ]
   },
   {
-    id: 103,
-    bankId: "sbi",
-    bank: "State Bank of India",
-    logo: "SB",
-    accountName: "SBI Savings Plus Account",
-    accountType: "Regular Savings",
-    accountTypeBadges: ["Regular", "Auto-Sweep", "Government Bank"],
-    interestRate: "2.70% p.a.",
-    interestRateValue: 2.7,
-    minimumBalance: "₹0",
-    minimumBalanceValue: 0,
-    isZeroBalance: true,
-    isOnlineOpening: true,
-    isStudent: true,
-    isSalary: false,
-    isSeniorCitizen: true,
-    isWomenSpecial: false,
-    isDigital: false,
-    isPremium: false,
-    isNRI: false,
-    rating: 4.6,
-    isPopular: true,
-    officialSourceUrl: "https://sbi.co.in/web/personal-banking/accounts/savings-account/savings-plus-account",
-    lastVerified: "August 2026",
-    description: "Linked to MOD (Multi Option Deposit) scheme, automatically transferring surplus funds above ₹35,000 into high-yielding Term Deposits while retaining liquidity.",
-    keyBenefits: [
-      "Auto-sweep facility into MODD (Term Deposits) for higher returns",
-      "Unmatched ATM network access across all Indian cities & rural hubs",
+    "id": 1022,
+    "product_id": "icici-salary-savings",
+    "bank_id": "icici-bank",
+    "bank_name": "ICICI Bank",
+    "bank": "ICICI Bank",
+    "logo": "IC",
+    "variant_name": "ICICI Salary Savings Account",
+    "accountName": "ICICI Salary Savings Account",
+    "account_type": "Salary Savings",
+    "accountType": "Salary",
+    "target_segment": "Salaried Corporate Employees",
+    "accountTypeBadges": [
+      "Salary Special",
+      "Zero Balance",
+      "Overdraft"
+    ],
+    "interest_rate": "3.00% - 3.50% p.a.",
+    "interestRate": "3.00% - 3.50% p.a.",
+    "interestRateValue": 3.5,
+    "minimum_balance": "₹0",
+    "minimumBalance": "₹0",
+    "minimumBalanceValue": 0,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "Nil (As long as regular salary credit occurs)",
+    "nonMaintenanceCharges": "Nil (As long as regular salary credit occurs)",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": true,
+    "isOnlineOpening": true,
+    "isStudent": false,
+    "isSalary": true,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": false,
+    "isDigital": true,
+    "isPremium": true,
+    "isNRI": false,
+    "rating": 4.8,
+    "isPopular": true,
+    "source": "https://www.icicibank.com/personal-banking/accounts/salary-account",
+    "officialSourceUrl": "https://www.icicibank.com/personal-banking/accounts/salary-account",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "Corporate salary account offering zero minimum balance, pre-approved personal loans, complimentary Titanium debit card, and instant salary overdraft.",
+    "eligibility": [
+      "Salaried Employees working with eligible corporate tie-ups"
+    ],
+    "benefits": [
       "Zero minimum balance maintenance requirement",
-      "Complimentary SBI Global / Platinum International Debit Card options"
+      "Instant Salary Overdraft facility up to 3x net monthly salary",
+      "Complimentary ICICI Titanium / Platinum Salary Debit Card",
+      "Free unlimited transactions at ICICI Bank ATMs"
     ],
-    associatedDebitCardId: 1,
-    debitCardIds: [1, 2],
-    associatedDebitCardName: "SBI Global / Platinum Debit Cards",
-    interestSlabs: [
-      "Savings Balance: 2.70% p.a.",
-      "MOD (Sweep FD) Portion: Up to 6.80% p.a."
+    "keyBenefits": [
+      "Zero minimum balance maintenance requirement",
+      "Instant Salary Overdraft facility up to 3x net monthly salary",
+      "Complimentary ICICI Titanium / Platinum Salary Debit Card",
+      "Free unlimited transactions at ICICI Bank ATMs"
     ],
-    ambAqbText: "Zero AMB (No minimum balance maintenance requirement)",
-    nonMaintenanceCharges: "Nil",
-    accountOpeningFeatures: [
-      "Online application via YONO SBI App",
-      "Video KYC / Branch visit verification options",
-      "Instant YONO App credentials"
+    "features": [
+      "Pre-approved home loan and car loan rates",
+      "Personal accident death cover up to ₹30 Lakhs"
     ],
-    eligibility: [
-      "All Resident Indian Individuals eligible",
-      "Single or Joint Account operation"
+    "bankingFeatures": [
+      "Pre-approved home loan and car loan rates",
+      "Personal accident death cover up to ₹30 Lakhs"
     ],
-    documentsRequired: [
-      "Aadhaar Card",
-      "PAN Card or Form 60",
-      "Proof of Residence"
-    ],
-    bankingFeatures: [
-      "Free YONO SBI Mobile App Access",
-      "Free Internet Banking & Mobile Banking",
-      "Chequebook & Passbook facility",
-      "Auto-sweep & Reverse-sweep flexi liquidity"
+    "debit_card_relationships": [
+      {
+        "card_id": "icici-bank-icici-coral-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      }
     ]
   },
   {
-    id: 104,
-    bankId: "kotak-mahindra-bank",
-    bank: "Kotak Mahindra Bank",
-    logo: "KO",
-    accountName: "Kotak 811 Full KYC Zero Balance Account",
-    accountType: "Zero Balance",
-    accountTypeBadges: ["Zero Balance", "Digital", "Virtual Card"],
-    interestRate: "3.50% - 4.00% p.a.",
-    interestRateValue: 4.0,
-    minimumBalance: "₹0",
-    minimumBalanceValue: 0,
-    isZeroBalance: true,
-    isOnlineOpening: true,
-    isStudent: true,
-    isSalary: false,
-    isSeniorCitizen: false,
-    isWomenSpecial: false,
-    isDigital: true,
-    isPremium: false,
-    isNRI: false,
-    rating: 4.8,
-    isPopular: true,
-    officialSourceUrl: "https://www.kotak.com/en/personal-banking/accounts/savings-account/811-savings-account.html",
-    lastVerified: "August 2026",
-    description: "India's premier digital zero balance account with instant Video KYC, free virtual debit card, and zero non-maintenance penalties for life.",
-    keyBenefits: [
+    "id": 114,
+    "product_id": "icici-advantage-woman",
+    "bank_id": "icici-bank",
+    "bank_name": "ICICI Bank",
+    "bank": "ICICI Bank",
+    "logo": "IC",
+    "variant_name": "ICICI Advantage Woman Savings Account",
+    "accountName": "ICICI Advantage Woman Savings Account",
+    "account_type": "Women's Savings",
+    "accountType": "Women Special",
+    "target_segment": "Women",
+    "accountTypeBadges": [
+      "Women Special",
+      "Cashback Deals",
+      "Locker Discounts"
+    ],
+    "interest_rate": "3.00% - 3.50% p.a.",
+    "interestRate": "3.00% - 3.50% p.a.",
+    "interestRateValue": 3.5,
+    "minimum_balance": "₹10,000",
+    "minimumBalance": "₹10,000",
+    "minimumBalanceValue": 10000,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "₹500/month",
+    "nonMaintenanceCharges": "₹500/month",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": false,
+    "isOnlineOpening": true,
+    "isStudent": false,
+    "isSalary": false,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": true,
+    "isDigital": true,
+    "isPremium": false,
+    "isNRI": false,
+    "rating": 4.7,
+    "isPopular": false,
+    "source": "https://www.icicibank.com/personal-banking/accounts/savings-account/women-savings-account",
+    "officialSourceUrl": "https://www.icicibank.com/personal-banking/accounts/savings-account/women-savings-account",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "Designed specifically for modern women, combining financial independence with everyday shopping discounts, healthcare offers, and locker concessions.",
+    "eligibility": [
+      "Resident Women Individuals aged 18 and above"
+    ],
+    "benefits": [
+      "Custom Advantage Woman Debit Card with cashback on shopping & dining",
+      "50% discount on locker rental for the first year",
+      "Unlimited free transactions at ICICI Bank ATMs"
+    ],
+    "keyBenefits": [
+      "Custom Advantage Woman Debit Card with cashback on shopping & dining",
+      "50% discount on locker rental for the first year",
+      "Unlimited free transactions at ICICI Bank ATMs"
+    ],
+    "features": [
+      "Complimentary Cancer Cover insurance option",
+      "iMobile Pay online account control"
+    ],
+    "bankingFeatures": [
+      "Complimentary Cancer Cover insurance option",
+      "iMobile Pay online account control"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "icici-bank-icici-coral-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      }
+    ]
+  },
+  {
+    "id": 1051,
+    "product_id": "axis-regular-savings",
+    "bank_id": "axis-bank",
+    "bank_name": "Axis Bank",
+    "bank": "Axis Bank",
+    "logo": "AX",
+    "variant_name": "Axis Regular Savings Account",
+    "accountName": "Axis Regular Savings Account",
+    "account_type": "Regular Savings",
+    "accountType": "Regular Savings",
+    "target_segment": "General Public",
+    "accountTypeBadges": [
+      "Regular",
+      "Personalized",
+      "Private Bank"
+    ],
+    "interest_rate": "3.00% - 3.50% p.a.",
+    "interestRate": "3.00% - 3.50% p.a.",
+    "interestRateValue": 3.5,
+    "minimum_balance": "₹10,000",
+    "minimumBalance": "₹10,000",
+    "minimumBalanceValue": 10000,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "₹500 or ₹10 per ₹100 of shortfall",
+    "nonMaintenanceCharges": "₹500 or ₹10 per ₹100 of shortfall",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": false,
+    "isOnlineOpening": true,
+    "isStudent": false,
+    "isSalary": false,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": false,
+    "isDigital": true,
+    "isPremium": false,
+    "isNRI": false,
+    "rating": 4.6,
+    "isPopular": true,
+    "source": "https://www.axisbank.com/retail/accounts/savings-account/easy-access-savings-account",
+    "officialSourceUrl": "https://www.axisbank.com/retail/accounts/savings-account/easy-access-savings-account",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "Axis Easy Access regular savings account offering high-value digital deals, Online Rewards debit card, and Axis Mobile App control.",
+    "eligibility": [
+      "Resident Indian Individuals (Single or Joint operation)"
+    ],
+    "benefits": [
+      "Online Rewards Debit Card with FLAT cashback on e-commerce",
+      "Axis e-Debit card instant access upon Video KYC",
+      "Free monthly e-statements"
+    ],
+    "keyBenefits": [
+      "Online Rewards Debit Card with FLAT cashback on e-commerce",
+      "Axis e-Debit card instant access upon Video KYC",
+      "Free monthly e-statements"
+    ],
+    "features": [
+      "100% paperless onboarding via ASAP Video KYC",
+      "Grab Deals portal discounts on major merchants"
+    ],
+    "bankingFeatures": [
+      "100% paperless onboarding via ASAP Video KYC",
+      "Grab Deals portal discounts on major merchants"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "axis-bank-delight-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      },
+      {
+        "card_id": "axis-bank-priority-platinum-debit-card",
+        "relationship": "upgrade",
+        "verification_status": "verified"
+      }
+    ]
+  },
+  {
+    "id": 105,
+    "product_id": "axis-liberty",
+    "bank_id": "axis-bank",
+    "bank_name": "Axis Bank",
+    "logo": "AX",
+    "variant_name": "Axis Liberty Savings Account",
+    "accountName": "Axis Liberty Savings Account",
+    "account_type": "Lifestyle Savings",
+    "accountType": "Lifestyle Savings",
+    "target_segment": "Young Professionals & Lifestyle Shoppers",
+    "accountTypeBadges": [
+      "Lifestyle",
+      "Cashback",
+      "Vouchers"
+    ],
+    "interest_rate": "3.00% - 3.50% p.a.",
+    "interestRate": "3.00% - 3.50% p.a.",
+    "interestRateValue": 3.5,
+    "minimum_balance": "₹25,000",
+    "minimumBalance": "₹25,000",
+    "minimumBalanceValue": 25000,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "₹600/quarter",
+    "nonMaintenanceCharges": "₹600/quarter",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": false,
+    "isOnlineOpening": true,
+    "isStudent": false,
+    "isSalary": true,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": false,
+    "isDigital": true,
+    "isPremium": true,
+    "isNRI": false,
+    "rating": 4.8,
+    "isPopular": true,
+    "source": "https://www.axisbank.com/retail/accounts/savings-account/liberty-savings-account",
+    "officialSourceUrl": "https://www.axisbank.com/retail/accounts/savings-account/liberty-savings-account",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "Lifestyle-centric account rewarding spends on food, entertainment, and fashion with ₹750 monthly vouchers and flat cashback.",
+    "eligibility": [
+      "Resident Indian Individuals",
+      "Age: 18 years and above"
+    ],
+    "benefits": [
+      "FLAT ₹750 gift vouchers monthly on spending ₹10,000 using Liberty Debit Card",
+      "5% cashback on weekend food & entertainment spends",
+      "Complimentary ₹20 Lakhs personal accident cover"
+    ],
+    "keyBenefits": [
+      "FLAT ₹750 gift vouchers monthly on spending ₹10,000 using Liberty Debit Card",
+      "5% cashback on weekend food & entertainment spends",
+      "Complimentary ₹20 Lakhs personal accident cover"
+    ],
+    "features": [
+      "Instant ASAP digital Video KYC",
+      "Quarterly shopping milestone rewards"
+    ],
+    "bankingFeatures": [
+      "Instant ASAP digital Video KYC",
+      "Quarterly shopping milestone rewards"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "axis-bank-liberty-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      }
+    ]
+  },
+  {
+    "id": 117,
+    "product_id": "axis-basic-small",
+    "bank_id": "axis-bank",
+    "bank_name": "Axis Bank",
+    "logo": "AX",
+    "variant_name": "Axis Basic Small Savings Account (BSBD)",
+    "accountName": "Axis Basic Small Savings Account (BSBD)",
+    "account_type": "BSBDA",
+    "accountType": "Zero Balance",
+    "target_segment": "Basic Banking",
+    "accountTypeBadges": [
+      "BSBDA",
+      "Zero Balance",
+      "No Maintenance Fee"
+    ],
+    "interest_rate": "3.00% - 3.50% p.a.",
+    "interestRate": "3.00% - 3.50% p.a.",
+    "interestRateValue": 3.5,
+    "minimum_balance": "₹0",
+    "minimumBalance": "₹0",
+    "minimumBalanceValue": 0,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "Nil (Protected under RBI BSBD Norms)",
+    "nonMaintenanceCharges": "Nil (Protected under RBI BSBD Norms)",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": true,
+    "isOnlineOpening": true,
+    "isStudent": true,
+    "isSalary": false,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": false,
+    "isDigital": false,
+    "isPremium": false,
+    "isNRI": false,
+    "rating": 4.4,
+    "isPopular": false,
+    "source": "https://www.axisbank.com/retail/accounts/savings-account/basic-savings-account",
+    "officialSourceUrl": "https://www.axisbank.com/retail/accounts/savings-account/basic-savings-account",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "Zero maintenance fee account protecting low-income and first-time account holders with essential banking services.",
+    "eligibility": [
+      "All Resident Indian Individuals who do not hold another BSBD account in Axis Bank"
+    ],
+    "benefits": [
+      "Zero AMB requirement",
+      "Free basic RuPay debit card",
+      "4 free ATM withdrawals per month"
+    ],
+    "keyBenefits": [
+      "Zero AMB requirement",
+      "Free basic RuPay debit card",
+      "4 free ATM withdrawals per month"
+    ],
+    "features": [
+      "Simple e-KYC Branch or Online onboarding",
+      "Free Direct Benefit Transfer (DBT) government subsidy credits"
+    ],
+    "bankingFeatures": [
+      "Simple e-KYC Branch or Online onboarding",
+      "Free Direct Benefit Transfer (DBT) government subsidy credits"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "axis-bank-delight-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      }
+    ]
+  },
+  {
+    "id": 1052,
+    "product_id": "axis-prestige",
+    "bank_id": "axis-bank",
+    "bank_name": "Axis Bank",
+    "logo": "AX",
+    "variant_name": "Axis Prestige Savings Account",
+    "accountName": "Axis Prestige Savings Account",
+    "account_type": "Premium Savings",
+    "accountType": "Premium Savings",
+    "target_segment": "HNI & Mass Affluent",
+    "accountTypeBadges": [
+      "Premium",
+      "Lounge Access",
+      "Movie Cashback"
+    ],
+    "interest_rate": "3.00% - 3.50% p.a.",
+    "interestRate": "3.00% - 3.50% p.a.",
+    "interestRateValue": 3.5,
+    "minimum_balance": "₹75,000",
+    "minimumBalance": "₹75,000",
+    "minimumBalanceValue": 75000,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "₹800/quarter",
+    "nonMaintenanceCharges": "₹800/quarter",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": false,
+    "isOnlineOpening": true,
+    "isStudent": false,
+    "isSalary": true,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": false,
+    "isDigital": true,
+    "isPremium": true,
+    "isNRI": false,
+    "rating": 4.8,
+    "isPopular": false,
+    "source": "https://www.axisbank.com/retail/accounts/savings-account/prestige-savings-account",
+    "officialSourceUrl": "https://www.axisbank.com/retail/accounts/savings-account/prestige-savings-account",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "Premium banking tier offering dedicated relation support, Prestige debit card lounge perks, and Buy 1 Get 1 movie offers.",
+    "eligibility": [
+      "Resident Individuals maintaining AQB of ₹75,000 or salary credit of ₹1 Lakh/month"
+    ],
+    "benefits": [
+      "Complimentary Axis Prestige Debit Card",
+      "Buy 1 Get 1 Free movie tickets on Paytm Movies",
+      "Free airport lounge access & priority banking desks"
+    ],
+    "keyBenefits": [
+      "Complimentary Axis Prestige Debit Card",
+      "Buy 1 Get 1 Free movie tickets on Paytm Movies",
+      "Free airport lounge access & priority banking desks"
+    ],
+    "features": [
+      "Preferential rates on loans & lockers",
+      "Zero fee on NEFT/RTGS/IMPS"
+    ],
+    "bankingFeatures": [
+      "Preferential rates on loans & lockers",
+      "Zero fee on NEFT/RTGS/IMPS"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "axis-bank-priority-platinum-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      }
+    ]
+  },
+  {
+    "id": 1053,
+    "product_id": "axis-senior-privilege",
+    "bank_id": "axis-bank",
+    "bank_name": "Axis Bank",
+    "logo": "AX",
+    "variant_name": "Axis Senior Privilege Savings Account",
+    "accountName": "Axis Senior Privilege Savings Account",
+    "account_type": "Senior Citizen",
+    "accountType": "Senior Citizen",
+    "target_segment": "Senior Citizens (60+ yrs)",
+    "accountTypeBadges": [
+      "Senior Citizen",
+      "Health Perks",
+      "Free Banking"
+    ],
+    "interest_rate": "3.00% - 3.50% p.a.",
+    "interestRate": "3.00% - 3.50% p.a.",
+    "interestRateValue": 3.5,
+    "minimum_balance": "₹10,000",
+    "minimumBalance": "₹10,000",
+    "minimumBalanceValue": 10000,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "₹450/quarter",
+    "nonMaintenanceCharges": "₹450/quarter",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": false,
+    "isOnlineOpening": true,
+    "isStudent": false,
+    "isSalary": false,
+    "isSeniorCitizen": true,
+    "isWomenSpecial": false,
+    "isDigital": true,
+    "isPremium": false,
+    "isNRI": false,
+    "rating": 4.7,
+    "isPopular": false,
+    "source": "https://www.axisbank.com/retail/accounts/savings-account/senior-privilege-savings-account",
+    "officialSourceUrl": "https://www.axisbank.com/retail/accounts/savings-account/senior-privilege-savings-account",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "Tailored account for senior citizens offering higher returns on fixed deposits, discount on healthcare diagnostics, and dedicated senior debit card.",
+    "eligibility": [
+      "Resident Senior Citizens aged 60 years and above"
+    ],
+    "benefits": [
+      "Higher FD interest rate boost (+0.50% p.a.)",
+      "Special discounts on Apollo Pharmacy & health checkups",
+      "Complimentary Senior Privilege Debit Card"
+    ],
+    "keyBenefits": [
+      "Higher FD interest rate boost (+0.50% p.a.)",
+      "Special discounts on Apollo Pharmacy & health checkups",
+      "Complimentary Senior Privilege Debit Card"
+    ],
+    "features": [
+      "Priority customer care assistance",
+      "Free quarterly physical account statements"
+    ],
+    "bankingFeatures": [
+      "Priority customer care assistance",
+      "Free quarterly physical account statements"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "axis-bank-rewards-plus-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      }
+    ]
+  },
+  {
+    "id": 1054,
+    "product_id": "axis-future-stars-minor",
+    "bank_id": "axis-bank",
+    "bank_name": "Axis Bank",
+    "logo": "AX",
+    "variant_name": "Axis Future Stars Minor Savings Account",
+    "accountName": "Axis Future Stars Savings Account",
+    "account_type": "Minor Savings",
+    "accountType": "Minor Savings",
+    "target_segment": "Minors (Under 18 yrs)",
+    "accountTypeBadges": [
+      "Minor Special",
+      "Kids Card",
+      "Savings Habit"
+    ],
+    "interest_rate": "3.00% - 3.50% p.a.",
+    "interestRate": "3.00% - 3.50% p.a.",
+    "interestRateValue": 3.5,
+    "minimum_balance": "₹2,500",
+    "minimumBalance": "₹2,500",
+    "minimumBalanceValue": 2500,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "₹150/quarter",
+    "nonMaintenanceCharges": "₹150/quarter",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": false,
+    "isOnlineOpening": false,
+    "isStudent": true,
+    "isSalary": false,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": false,
+    "isDigital": false,
+    "isPremium": false,
+    "isNRI": false,
+    "rating": 4.5,
+    "isPopular": false,
+    "source": "https://www.axisbank.com/retail/accounts/savings-account/future-stars-savings-account",
+    "officialSourceUrl": "https://www.axisbank.com/retail/accounts/savings-account/future-stars-savings-account",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "Account created for minors under 18 years operated under guardian guidance to encourage smart savings early.",
+    "eligibility": [
+      "Minors under 18 years represented by parent/guardian"
+    ],
+    "benefits": [
+      "Custom Smart Pay Youth Debit Card for children aged 10+",
+      "Low minimum balance requirement of ₹2,500",
+      "Personal accident insurance cover for guardian"
+    ],
+    "keyBenefits": [
+      "Custom Smart Pay Youth Debit Card for children aged 10+",
+      "Low minimum balance requirement of ₹2,500",
+      "Personal accident insurance cover for guardian"
+    ],
+    "features": [
+      "Daily transaction caps for safety",
+      "Auto-recurring deposit facility"
+    ],
+    "bankingFeatures": [
+      "Daily transaction caps for safety",
+      "Auto-recurring deposit facility"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "axis-bank-delight-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      }
+    ]
+  },
+  {
+    "id": 104,
+    "product_id": "kotak-811-full-kyc",
+    "bank_id": "kotak-mahindra-bank",
+    "bank_name": "Kotak Mahindra Bank",
+    "bank": "Kotak Mahindra Bank",
+    "logo": "KO",
+    "variant_name": "Kotak 811 Full KYC Zero Balance Account",
+    "accountName": "Kotak 811 Full KYC Zero Balance Account",
+    "account_type": "Zero Balance",
+    "accountType": "Zero Balance",
+    "target_segment": "Digital Natives & Youth",
+    "accountTypeBadges": [
+      "Zero Balance",
+      "Digital",
+      "Virtual Card"
+    ],
+    "interest_rate": "3.50% - 4.00% p.a.",
+    "interestRate": "3.50% - 4.00% p.a.",
+    "interestRateValue": 4,
+    "minimum_balance": "₹0",
+    "minimumBalance": "₹0",
+    "minimumBalanceValue": 0,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "Nil (Lifetime Zero Balance)",
+    "nonMaintenanceCharges": "Nil (Lifetime Zero Balance)",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": true,
+    "isOnlineOpening": true,
+    "isStudent": true,
+    "isSalary": false,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": false,
+    "isDigital": true,
+    "isPremium": false,
+    "isNRI": false,
+    "rating": 4.8,
+    "isPopular": true,
+    "source": "https://www.kotak.com/en/personal-banking/accounts/savings-account/811-savings-account.html",
+    "officialSourceUrl": "https://www.kotak.com/en/personal-banking/accounts/savings-account/811-savings-account.html",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "India's premier digital zero balance account with instant Video KYC, free virtual debit card, and zero non-maintenance penalties for life.",
+    "eligibility": [
+      "Resident Indians aged 18 years and above",
+      "Aadhaar & PAN mandatory"
+    ],
+    "benefits": [
       "Lifetime Zero Minimum Balance Account",
       "Free Virtual Visa Debit Card inside Kotak 811 App",
       "Earn up to 4.00% p.a. interest rate on daily balances",
       "Instant Video KYC completion in under 3 minutes"
     ],
-    associatedDebitCardId: 12,
-    associatedDebitCardName: "Kotak 811 Debit Card",
-    interestSlabs: [
-      "Daily balance up to ₹1 Lakh: 3.50% p.a.",
-      "Daily balance above ₹1 Lakh: 4.00% p.a."
+    "keyBenefits": [
+      "Lifetime Zero Minimum Balance Account",
+      "Free Virtual Visa Debit Card inside Kotak 811 App",
+      "Earn up to 4.00% p.a. interest rate on daily balances",
+      "Instant Video KYC completion in under 3 minutes"
     ],
-    ambAqbText: "Zero AMB for life",
-    nonMaintenanceCharges: "Nil",
-    accountOpeningFeatures: [
-      "100% Online Paperless Video KYC",
-      "Instant Virtual Debit Card activation",
-      "Zero initial deposit required"
+    "features": [
+      "Scan & Pay free instant UPI transactions",
+      "In-app shopping offers via KayMall"
     ],
-    eligibility: [
-      "Resident Indians aged 18 years and above",
-      "Aadhaar & PAN mandatory"
+    "bankingFeatures": [
+      "Scan & Pay free instant UPI transactions",
+      "In-app shopping offers via KayMall"
     ],
-    documentsRequired: [
-      "Aadhaar Card",
-      "Original Physical PAN Card"
-    ],
-    bankingFeatures: [
-      "Free Instant Fund Transfers via Scan & Pay",
-      "811 Virtual Card for online shopping",
-      "KayMall in-app discounts on flights & shopping",
-      "Digital passbook & e-statements"
+    "debit_card_relationships": [
+      {
+        "card_id": "kotak-mahindra-bank-kotak-811-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      }
     ]
   },
   {
-    id: 105,
-    bankId: "axis-bank",
-    bank: "Axis Bank",
-    logo: "AX",
-    accountName: "Axis Liberty Savings Account",
-    accountType: "Salary Account",
-    accountTypeBadges: ["Salary", "Cashback", "Lifestyle"],
-    interestRate: "3.00% - 3.50% p.a.",
-    interestRateValue: 3.5,
-    minimumBalance: "₹25,000",
-    minimumBalanceValue: 25000,
-    isZeroBalance: false,
-    isOnlineOpening: true,
-    isStudent: false,
-    isSalary: true,
-    isSeniorCitizen: false,
-    isWomenSpecial: false,
-    isDigital: false,
-    isPremium: true,
-    isNRI: false,
-    rating: 4.7,
-    isPopular: true,
-    officialSourceUrl: "https://www.axisbank.com/retail/accounts/savings-account/liberty-savings-account",
-    lastVerified: "August 2026",
-    description: "Designed for young professionals, offering ₹750 monthly cashback vouchers on spending ₹10,000 quarterly, plus Axis Priority privileges.",
-    keyBenefits: [
-      "Flat 5% flat cashback on food, entertainment, and shopping",
-      "₹750 quarterly gift voucher on maintaining ₹25,000 AMB or spending ₹10k/month",
-      "Complimentary Axis Liberty Debit Card with lounge access",
-      "Personal Accident Insurance Cover of ₹5 Lakhs"
+    "id": 1041,
+    "product_id": "kotak-811-edge",
+    "bank_id": "kotak-mahindra-bank",
+    "bank_name": "Kotak Mahindra Bank",
+    "bank": "Kotak Mahindra Bank",
+    "logo": "KO",
+    "variant_name": "Kotak 811 Edge Savings Account",
+    "accountName": "Kotak 811 Edge Savings Account",
+    "account_type": "Regular Savings",
+    "accountType": "Regular Savings",
+    "target_segment": "General Public",
+    "accountTypeBadges": [
+      "Regular",
+      "Physical Card",
+      "Low AMB"
     ],
-    associatedDebitCardId: 7,
-    associatedDebitCardName: "Priority Debit Card",
-    interestSlabs: [
-      "Daily balance up to ₹50 Lakhs: 3.00% p.a.",
-      "Daily balance above ₹50 Lakhs: 3.50% p.a."
+    "interest_rate": "3.50% - 4.00% p.a.",
+    "interestRate": "3.50% - 4.00% p.a.",
+    "interestRateValue": 4,
+    "minimum_balance": "₹10,000",
+    "minimumBalance": "₹10,000",
+    "minimumBalanceValue": 10000,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "₹500/quarter",
+    "nonMaintenanceCharges": "₹500/quarter",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": false,
+    "isOnlineOpening": true,
+    "isStudent": false,
+    "isSalary": false,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": false,
+    "isDigital": true,
+    "isPremium": false,
+    "isNRI": false,
+    "rating": 4.7,
+    "isPopular": false,
+    "source": "https://www.kotak.com/en/personal-banking/accounts/savings-account/811-edge-savings-account.html",
+    "officialSourceUrl": "https://www.kotak.com/en/personal-banking/accounts/savings-account/811-edge-savings-account.html",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "Hybrid savings account combining digital 811 benefits with physical branch services and Classic debit card.",
+    "eligibility": [
+      "Resident Indian Individuals (Single/Joint)"
     ],
-    ambAqbText: "Average Monthly Balance: ₹25,000 OR spend ₹25,000/month via debit card",
-    nonMaintenanceCharges: "₹500/month if conditions are unmet",
-    accountOpeningFeatures: [
-      "Online Video KYC Account Opening",
-      "Doorstep Document Verification option",
-      "Instant Axis Mobile App Login"
+    "benefits": [
+      "Physical Classic Debit Card bundled",
+      "Free fund transfers via IMPS, NEFT & RTGS online",
+      "Earn up to 4.00% p.a. interest rate"
     ],
-    eligibility: [
-      "Salaried & Self-Employed Resident Individuals",
-      "Age: 18 to 55 years"
+    "keyBenefits": [
+      "Physical Classic Debit Card bundled",
+      "Free fund transfers via IMPS, NEFT & RTGS online",
+      "Earn up to 4.00% p.a. interest rate"
     ],
-    documentsRequired: [
-      "Aadhaar Card",
-      "PAN Card",
-      "Salary slip / Employment proof (if salary linked)"
+    "features": [
+      "Full branch banking access nationwide",
+      "Chequebook facility provided"
     ],
-    bankingFeatures: [
-      "Axis EDGE REWARD Points on all transactions",
-      "Free Unlimited NEFT & RTGS transactions",
-      "Dedicated Relationship Manager for wealth portfolios",
-      "Free Chequebook & Passbook"
+    "bankingFeatures": [
+      "Full branch banking access nationwide",
+      "Chequebook facility provided"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "kotak-mahindra-bank-kotak-pro-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      }
     ]
   },
   {
-    id: 106,
-    bankId: "idfc-first-bank",
-    bank: "IDFC FIRST Bank",
-    logo: "ID",
-    accountName: "₹25K AMB Savings",
-    tier: "₹25K AMB Savings",
-    accountType: "Regular Savings",
-    accountTypeBadges: ["Zero Fee Banking", "Monthly Interest", "Regular"],
-    interestRate: "Up to 7.00% p.a.",
-    interestRateValue: 7.0,
-    minimumBalance: "₹25,000",
-    minimumBalanceValue: 25000,
-    isZeroBalance: false,
-    isOnlineOpening: true,
-    isStudent: false,
-    isSalary: true,
-    isSeniorCitizen: false,
-    isWomenSpecial: false,
-    isDigital: true,
-    isPremium: false,
-    isNRI: false,
-    rating: 2.0,
-    isPopular: true,
-    officialSourceUrl: "https://www.idfcfirstbank.com/personal-banking/accounts/savings-account",
-    lastVerified: "August 2026",
-    description: "IDFC FIRST Bank ₹25K AMB Savings Account offering zero fee banking on 28 essential services, monthly interest credit up to 7.00% p.a., and free unlimited ATM withdrawals.",
-    maintenanceCriteriaText: "ANY ONE: AMB ₹25,000",
-    maintenanceCriteria: { amb: 25000, salary: 0, aum: 0, orv: 0 },
-    keyBenefits: [
-      "Zero fee on 28 essential banking services (IMPS, ATM, Chequebook, SMS)",
-      "Up to 7.00% p.a. interest rate with monthly interest credit",
-      "Free Unlimited ATM withdrawals at any bank ATM in India",
-      "Complimentary Personal Accident Cover of ₹35 Lakhs"
+    "id": 1042,
+    "product_id": "kotak-811-super",
+    "bank_id": "kotak-mahindra-bank",
+    "bank_name": "Kotak Mahindra Bank",
+    "bank": "Kotak Mahindra Bank",
+    "logo": "KO",
+    "variant_name": "Kotak 811 Super Savings Account",
+    "accountName": "Kotak 811 Super Savings Account",
+    "account_type": "High Yield Savings",
+    "accountType": "Digital Savings",
+    "target_segment": "High Yield Seekers",
+    "accountTypeBadges": [
+      "High Interest",
+      "Platinum Card",
+      "Cashback"
     ],
-    sevenAmazingBenefits: [
-      "Zero fee on 28 essential banking services (IMPS, ATM, Chequebook, Demand Drafts)",
-      "Up to 7.00% p.a. interest rate with monthly interest credit",
-      "Free Unlimited ATM withdrawals at any bank ATM in India",
-      "Complimentary Personal Accident Insurance Cover of ₹35 Lakhs",
-      "Free Air Accident Insurance Cover of ₹1 Crore",
-      "Contactless RuPay / Visa Signature Debit Card with zero lost card liability",
-      "Instant 100% paperless Video KYC online account opening"
+    "interest_rate": "3.50% - 4.00% p.a.",
+    "interestRate": "3.50% - 4.00% p.a.",
+    "interestRateValue": 4,
+    "minimum_balance": "₹0",
+    "minimumBalance": "₹0",
+    "minimumBalanceValue": 0,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "Nil (Zero balance with monthly deposit commitment)",
+    "nonMaintenanceCharges": "Nil (Zero balance with monthly deposit commitment)",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": true,
+    "isOnlineOpening": true,
+    "isStudent": false,
+    "isSalary": false,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": false,
+    "isDigital": true,
+    "isPremium": false,
+    "isNRI": false,
+    "rating": 4.8,
+    "isPopular": true,
+    "source": "https://www.kotak.com/en/personal-banking/accounts/savings-account/811-super-savings-account.html",
+    "officialSourceUrl": "https://www.kotak.com/en/personal-banking/accounts/savings-account/811-super-savings-account.html",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "Supercharged zero balance account offering 1.5% cashback on debit card spends and higher transaction limits.",
+    "eligibility": [
+      "Resident Indians maintaining monthly auto-deposit of ₹5,000"
     ],
-    travelBenefits: "Standard debit card domestic access rules as applicable",
-    valueAddedServices: "Free NetBanking, iMobile app, e-statements & 24/7 helpline",
-    associatedDebitCardId: 52,
-    associatedDebitCardName: "IDFC FIRST Classic Debit Card",
-    associatedCreditCard: null,
-    interestSlabs: [
-      "Balance up to ₹1 Lakh: 3.00% p.a.",
-      "Balance > ₹1 Lakh to ₹10 Lakhs: 6.00% p.a.",
-      "Balance > ₹10 Lakhs to ₹5 Crores: 7.00% p.a."
+    "benefits": [
+      "1.5% cashback on all online spends via Platinum Debit Card",
+      "Zero AMB requirement",
+      "Free unlimited online fund transfers"
     ],
-    ambAqbText: "Average Monthly Balance (AMB): ₹25,000",
-    nonMaintenanceCharges: "Proportional fee capped at ₹400/month max",
-    accountOpeningFeatures: [
-      "100% Paperless Online Video KYC",
-      "Instant Account Number & Virtual Debit Card",
-      "Initial Deposit funding via UPI/Netbanking"
+    "keyBenefits": [
+      "1.5% cashback on all online spends via Platinum Debit Card",
+      "Zero AMB requirement",
+      "Free unlimited online fund transfers"
     ],
-    eligibility: [
+    "features": [
+      "Kotak Mobile App privilege access",
+      "Instant e-KYC account setup"
+    ],
+    "bankingFeatures": [
+      "Kotak Mobile App privilege access",
+      "Instant e-KYC account setup"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "kotak-mahindra-bank-kotak-platinum-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      }
+    ]
+  },
+  {
+    "id": 1043,
+    "product_id": "kotak-activemoney",
+    "bank_id": "kotak-mahindra-bank",
+    "bank_name": "Kotak Mahindra Bank",
+    "bank": "Kotak Mahindra Bank",
+    "logo": "KO",
+    "variant_name": "Kotak ActiveMoney Savings Account",
+    "accountName": "Kotak ActiveMoney Savings Account",
+    "account_type": "Auto-Sweep Savings",
+    "accountType": "Auto-Sweep",
+    "target_segment": "High Liquidity Savers",
+    "accountTypeBadges": [
+      "7.00% FD Returns",
+      "Flexi Sweep",
+      "Popular"
+    ],
+    "interest_rate": "3.50% - 7.00% p.a.",
+    "interestRate": "3.50% - 7.00% p.a.",
+    "interestRateValue": 7,
+    "minimum_balance": "₹10,000",
+    "minimumBalance": "₹10,000",
+    "minimumBalanceValue": 10000,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "₹500/quarter",
+    "nonMaintenanceCharges": "₹500/quarter",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": false,
+    "isOnlineOpening": true,
+    "isStudent": false,
+    "isSalary": false,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": false,
+    "isDigital": true,
+    "isPremium": true,
+    "isNRI": false,
+    "rating": 4.9,
+    "isPopular": true,
+    "source": "https://www.kotak.com/en/personal-banking/accounts/savings-account/active-money.html",
+    "officialSourceUrl": "https://www.kotak.com/en/personal-banking/accounts/savings-account/active-money.html",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "Earn FD interest rates up to 7.00% p.a. on surplus funds above threshold with automatic sweep-in and zero withdrawal penalty.",
+    "eligibility": [
+      "Resident Indian Individuals (Single / Joint)"
+    ],
+    "benefits": [
+      "Earn up to 7.00% p.a. FD interest rate via auto-sweep",
+      "Zero premature withdrawal penalty on auto-sweep FDs",
+      "Kotak PayShopMore Debit Card bundled"
+    ],
+    "keyBenefits": [
+      "Earn up to 7.00% p.a. FD interest rate via auto-sweep",
+      "Zero premature withdrawal penalty on auto-sweep FDs",
+      "Kotak PayShopMore Debit Card bundled"
+    ],
+    "features": [
+      "Automatic sweep threshold of ₹25,000",
+      "FD tenure default set to 180 days for maximum yield"
+    ],
+    "bankingFeatures": [
+      "Automatic sweep threshold of ₹25,000",
+      "FD tenure default set to 180 days for maximum yield"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "kotak-mahindra-bank-kotak-ace-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      }
+    ]
+  },
+  {
+    "id": 106,
+    "product_id": "idfc-first-classic",
+    "bank_id": "idfc-first-bank",
+    "bank_name": "IDFC FIRST Bank",
+    "bank": "IDFC FIRST Bank",
+    "logo": "ID",
+    "variant_name": "FIRST Classic Savings Account",
+    "accountName": "FIRST Classic Savings Account",
+    "account_type": "Savings Account",
+    "accountType": "Regular Savings",
+    "target_segment": "General Public",
+    "accountTypeBadges": [
+      "7% Interest",
+      "Monthly Interest",
+      "Zero Charges"
+    ],
+    "interest_rate": "3.00% - 7.00% p.a.",
+    "interestRate": "3.00% - 7.00% p.a.",
+    "interestRateValue": 7,
+    "minimum_balance": "₹10,000",
+    "minimumBalance": "₹10,000",
+    "minimumBalanceValue": 10000,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "Nil (Zero fee policy on 28+ basic banking services)",
+    "nonMaintenanceCharges": "Nil (Zero fee policy on 28+ basic banking services)",
+    "interest_credit_frequency": "Monthly",
+    "isZeroBalance": false,
+    "isOnlineOpening": true,
+    "isStudent": false,
+    "isSalary": false,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": false,
+    "isDigital": true,
+    "isPremium": false,
+    "isNRI": false,
+    "rating": 4.8,
+    "isPopular": true,
+    "source": "https://www.idfcfirstbank.com/personal-banking/accounts/savings-account/10k-amb-savings-account",
+    "officialSourceUrl": "https://www.idfcfirstbank.com/personal-banking/accounts/savings-account/10k-amb-savings-account",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "Industry-leading monthly interest payouts with zero fee policy on 28+ essential services including IMPS, ATM, & Chequebook.",
+    "eligibility": [
       "Resident Indian Individual",
-      "ANY ONE: AMB ₹25,000"
+      "Age: 18 years and above"
     ],
-    documentsRequired: ["Aadhaar Card", "PAN Card"],
-    bankingFeatures: [
-      "Monthly Interest Credit into Account",
-      "Zero Fee on Unlimited ATM Withdrawals across any bank ATM",
-      "Free IMPS, NEFT, RTGS & UPI transfers",
-      "Free Doorstep Banking Services"
+    "benefits": [
+      "Monthly Interest Credits directly into your savings account",
+      "Earn up to 7.00% p.a. interest rate on balance slabs",
+      "Zero fee policy on 28+ common banking services",
+      "IDFC FIRST Classic Visa Debit Card with insurance covers"
+    ],
+    "keyBenefits": [
+      "Monthly Interest Credits directly into your savings account",
+      "Earn up to 7.00% p.a. interest rate on balance slabs",
+      "Zero fee policy on 28+ common banking services",
+      "IDFC FIRST Classic Visa Debit Card with insurance covers"
+    ],
+    "features": [
+      "Instant Video KYC online account opening",
+      "Free unlimited ATM transactions at any bank ATM in India"
+    ],
+    "bankingFeatures": [
+      "Instant Video KYC online account opening",
+      "Free unlimited ATM transactions at any bank ATM in India"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "idfc-first-bank-idfc-first-classic-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      }
     ]
   },
   {
-    id: 1061,
-    bankId: "idfc-first-bank",
-    bank: "IDFC FIRST Bank",
-    logo: "ID",
-    accountName: "FIRST Select",
-    tier: "FIRST Select",
-    accountType: "Premium Savings",
-    accountTypeBadges: ["Select Tier", "Lounge Access", "Priority Support"],
-    interestRate: "Up to 7.00% p.a.",
-    interestRateValue: 7.0,
-    minimumBalance: "₹1,00,000",
-    minimumBalanceValue: 100000,
-    isZeroBalance: false,
-    isOnlineOpening: true,
-    isStudent: false,
-    isSalary: true,
-    isSeniorCitizen: false,
-    isWomenSpecial: false,
-    isDigital: true,
-    isPremium: true,
-    isNRI: false,
-    rating: 3.0,
-    isPopular: true,
-    officialSourceUrl: "https://www.idfcfirstbank.com/personal-banking/accounts/savings-account",
-    lastVerified: "August 2026",
-    description: "IDFC FIRST Bank FIRST Select Privilege Savings Account with priority banking desk, complimentary airport lounge access, and lifetime-free FIRST Select Credit Card.",
-    maintenanceCriteriaText: "ANY ONE: AMB ₹1L | Net Monthly Salary ₹1L | AUM ₹5L | ORV ₹10L",
-    maintenanceCriteria: { amb: 100000, salary: 100000, aum: 500000, orv: 1000000 },
-    keyBenefits: [
-      "4 Complimentary Domestic Airport Lounge visits per quarter",
-      "Lifetime-Free FIRST Select Credit Card with 3X/6X Rewards",
-      "Priority Desk Customer Support & Personal Banker",
-      "Zero fee on 28 essential banking transactions"
+    "id": 107,
+    "product_id": "idfc-first-select",
+    "bank_id": "idfc-first-bank",
+    "bank_name": "IDFC FIRST Bank",
+    "bank": "IDFC FIRST Bank",
+    "logo": "ID",
+    "variant_name": "FIRST Select Savings Account",
+    "accountName": "FIRST Select Savings Account",
+    "account_type": "Premium Savings",
+    "accountType": "Premium Savings",
+    "target_segment": "Mass Affluent & Professionals",
+    "accountTypeBadges": [
+      "7% Interest",
+      "Lounge Access",
+      "Visa Signature"
     ],
-    travelBenefits: "4 Complimentary Domestic Airport Lounge access passes per quarter; Discounted 1.99% Forex Markup",
-    valueAddedServices: "Priority Desk Customer Support, Family Account Bundling up to 4 members",
-    associatedDebitCardId: 53,
-    associatedDebitCardName: "IDFC FIRST Select Debit Card",
-    associatedCreditCard: {
-      cardName: "FIRST Select Credit Card",
-      lifetimeFee: "Lifetime Free",
-      incomeReq: "Net Monthly Salary ₹1,00,000+ or FIRST Select Account",
-      keyBenefits: [
-        "3X Rewards on offline & 6X Rewards on online spend",
-        "4 Complimentary Domestic Airport Lounge visits per quarter",
-        "Buy 1 Get 1 Free Movie ticket offer via Paytm Movies"
-      ]
-    },
-    interestSlabs: [
-      "Balance up to ₹1 Lakh: 3.00% p.a.",
-      "Balance > ₹1 Lakh to ₹10 Lakhs: 6.00% p.a.",
-      "Balance > ₹10 Lakhs to ₹5 Crores: 7.00% p.a."
+    "interest_rate": "3.00% - 7.00% p.a.",
+    "interestRate": "3.00% - 7.00% p.a.",
+    "interestRateValue": 7,
+    "minimum_balance": "₹25,000",
+    "minimumBalance": "₹25,000",
+    "minimumBalanceValue": 25000,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "Nil (Zero fee policy on 28+ services)",
+    "nonMaintenanceCharges": "Nil (Zero fee policy on 28+ services)",
+    "interest_credit_frequency": "Monthly",
+    "isZeroBalance": false,
+    "isOnlineOpening": true,
+    "isStudent": false,
+    "isSalary": true,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": false,
+    "isDigital": true,
+    "isPremium": true,
+    "isNRI": false,
+    "rating": 4.9,
+    "isPopular": true,
+    "source": "https://www.idfcfirstbank.com/personal-banking/accounts/savings-account/25k-amb-savings-account",
+    "officialSourceUrl": "https://www.idfcfirstbank.com/personal-banking/accounts/savings-account/25k-amb-savings-account",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "Premium ₹25,000 AMB tier savings account with monthly compounding interest, airport lounge access debit card, and zero fee policy.",
+    "eligibility": [
+      "Resident Indian Individuals",
+      "Age: 18 years and above"
     ],
-    ambAqbText: "Average Monthly Balance (AMB): ₹1,00,000 or Net Salary ₹1,00,000/mo",
-    nonMaintenanceCharges: "Information not available",
-    accountOpeningFeatures: [
-      "100% Paperless Online Video KYC",
-      "Instant Account Number & Virtual Debit Card",
-      "Priority Doorstep Banking Setup"
+    "benefits": [
+      "Monthly Interest Credits",
+      "Complimentary FIRST Select Visa Signature Debit Card",
+      "Free domestic airport lounge access (2 visits/quarter)",
+      "Personal accident cover of ₹35 Lakhs & Air accident cover of ₹1 Crore"
     ],
-    eligibility: [
-      "Resident Indian Individual",
-      "ANY ONE: AMB ₹1L | Net Monthly Salary ₹1L | AUM ₹5L | ORV ₹10L"
+    "keyBenefits": [
+      "Monthly Interest Credits",
+      "Complimentary FIRST Select Visa Signature Debit Card",
+      "Free domestic airport lounge access (2 visits/quarter)",
+      "Personal accident cover of ₹35 Lakhs & Air accident cover of ₹1 Crore"
     ],
-    documentsRequired: ["Aadhaar Card", "PAN Card", "Salary proof (if salary linked)"],
-    bankingFeatures: [
-      "Priority Desk Relationship Support",
-      "Free Unlimited ATM Withdrawals in India",
-      "Free IMPS, NEFT, RTGS & UPI transfers"
+    "features": [
+      "Zero fee policy across all digital and branch banking services",
+      "Free unlimited domestic ATM withdrawals"
+    ],
+    "bankingFeatures": [
+      "Zero fee policy across all digital and branch banking services",
+      "Free unlimited domestic ATM withdrawals"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "idfc-first-bank-idfc-first-select-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      }
     ]
   },
   {
-    id: 1062,
-    bankId: "idfc-first-bank",
-    bank: "IDFC FIRST Bank",
-    logo: "ID",
-    accountName: "FIRST Wealth",
-    tier: "FIRST Wealth",
-    accountType: "Wealth Savings",
-    accountTypeBadges: ["Wealth Tier", "Int Lounge", "RM Managed"],
-    interestRate: "Up to 7.00% p.a.",
-    interestRateValue: 7.0,
-    minimumBalance: "₹10,00,000",
-    minimumBalanceValue: 1000000,
-    isZeroBalance: false,
-    isOnlineOpening: true,
-    isStudent: false,
-    isSalary: true,
-    isSeniorCitizen: false,
-    isWomenSpecial: false,
-    isDigital: true,
-    isPremium: true,
-    isNRI: false,
-    rating: 4.0,
-    isPopular: true,
-    officialSourceUrl: "https://www.idfcfirstbank.com/personal-banking/accounts/savings-account",
-    lastVerified: "August 2026",
-    description: "IDFC FIRST Bank FIRST Wealth Account delivering dedicated Wealth Relationship Management, international lounge access, low 1.5% forex markup, and FIRST Wealth Credit Card.",
-    maintenanceCriteriaText: "ANY ONE: AMB ₹10L | Net Monthly Salary ₹3L | AUM ₹30L | ORV ₹50L",
-    maintenanceCriteria: { amb: 1000000, salary: 300000, aum: 3000000, orv: 5000000 },
-    keyBenefits: [
-      "Dedicated Wealth Relationship Manager & Wealth Management Services",
-      "4 Domestic + 4 International Airport Lounge access passes per quarter",
-      "Low 1.5% Forex Markup fee on debit and credit card spends",
-      "Lifetime-Free FIRST Wealth Credit Card with 10X Rewards & Golf Privileges"
+    "id": 108,
+    "product_id": "idfc-first-wealth",
+    "bank_id": "idfc-first-bank",
+    "bank_name": "IDFC FIRST Bank",
+    "bank": "IDFC FIRST Bank",
+    "logo": "ID",
+    "variant_name": "FIRST Wealth Savings Account",
+    "accountName": "FIRST Wealth Savings Account",
+    "account_type": "Wealth Savings",
+    "accountType": "Wealth Tier",
+    "target_segment": "High Net-Worth Individuals (HNI)",
+    "accountTypeBadges": [
+      "Wealth Banking",
+      "Visa Infinite",
+      "Golf Access"
     ],
-    travelBenefits: "4 Domestic + 4 International Airport Lounge access passes per quarter; Low 1.5% Forex Markup",
-    valueAddedServices: "Dedicated Wealth RM, Free Golf Coaching (2 rounds/mo), 24/7 Concierge",
-    associatedDebitCardId: 54,
-    associatedDebitCardName: "IDFC FIRST World Debit Card",
-    associatedCreditCard: {
-      cardName: "FIRST Wealth Credit Card",
-      lifetimeFee: "Lifetime Free",
-      incomeReq: "Net Monthly Salary ₹3,00,000+ or FIRST Wealth Account",
-      keyBenefits: [
-        "10X Rewards on spend above threshold & birthday spends",
-        "4 Domestic + 4 International Lounge visits per quarter",
-        "Low 1.5% Foreign Exchange Markup fee",
-        "Complimentary Spa access & Golf privileges"
-      ]
-    },
-    interestSlabs: [
-      "Balance up to ₹1 Lakh: 3.00% p.a.",
-      "Balance > ₹1 Lakh to ₹10 Lakhs: 6.00% p.a.",
-      "Balance > ₹10 Lakhs to ₹5 Crores: 7.00% p.a."
+    "interest_rate": "3.00% - 7.25% p.a.",
+    "interestRate": "3.00% - 7.25% p.a.",
+    "interestRateValue": 7.25,
+    "minimum_balance": "₹1,00,000",
+    "minimumBalance": "₹1,00,000",
+    "minimumBalanceValue": 100000,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "Nil (Zero charges under IDFC FIRST transparent policy)",
+    "nonMaintenanceCharges": "Nil (Zero charges under IDFC FIRST transparent policy)",
+    "interest_credit_frequency": "Monthly",
+    "isZeroBalance": false,
+    "isOnlineOpening": true,
+    "isStudent": false,
+    "isSalary": false,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": false,
+    "isDigital": true,
+    "isPremium": true,
+    "isNRI": false,
+    "rating": 5,
+    "isPopular": true,
+    "source": "https://www.idfcfirstbank.com/personal-banking/accounts/savings-account/wealth-savings-account",
+    "officialSourceUrl": "https://www.idfcfirstbank.com/personal-banking/accounts/savings-account/wealth-savings-account",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "IDFC FIRST Bank's ultra-premium tier providing monthly interest payouts, dedicated wealth managers, Visa Infinite debit card, and golf privileges.",
+    "eligibility": [
+      "Resident Indian Individuals maintaining AMB of ₹1,00,000 or Relationship Value of ₹10 Lakhs"
     ],
-    ambAqbText: "Average Monthly Balance (AMB): ₹10,00,000 or Net Salary ₹3,00,000/mo",
-    nonMaintenanceCharges: "Information not available",
-    accountOpeningFeatures: [
-      "Dedicated Wealth RM Onboarding",
-      "Paperless Digital Video KYC",
-      "Instant Portfolio Integration"
+    "benefits": [
+      "Highest monthly interest credit earnings",
+      "Complimentary FIRST Wealth Visa Infinite Debit Card",
+      "Unlimited domestic airport lounge access + Spa access",
+      "Complimentary Golf rounds & lessons at premium clubs"
     ],
-    eligibility: [
-      "Resident Indian Individual",
-      "ANY ONE: AMB ₹10L | Net Monthly Salary ₹3L | AUM ₹30L | ORV ₹50L"
+    "keyBenefits": [
+      "Highest monthly interest credit earnings",
+      "Complimentary FIRST Wealth Visa Infinite Debit Card",
+      "Unlimited domestic airport lounge access + Spa access",
+      "Complimentary Golf rounds & lessons at premium clubs"
     ],
-    documentsRequired: ["Aadhaar Card", "PAN Card", "Wealth Statement / Income Proof"],
-    bankingFeatures: [
-      "Dedicated Wealth Relationship Manager",
-      "Free Unlimited International & Domestic Lounge Access",
-      "Low Forex Markup rates"
+    "features": [
+      "Dedicated Relationship Manager (RM)",
+      "Zero cross-currency mark-up fees on overseas debit card spends"
+    ],
+    "bankingFeatures": [
+      "Dedicated Relationship Manager (RM)",
+      "Zero cross-currency mark-up fees on overseas debit card spends"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "idfc-first-bank-idfc-first-world-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      }
     ]
   },
   {
-    id: 1063,
-    bankId: "idfc-first-bank",
-    bank: "IDFC FIRST Bank",
-    logo: "ID",
-    accountName: "FIRST Private",
-    tier: "FIRST Private",
-    accountType: "Private Banking",
-    accountTypeBadges: ["Private Banking", "Zero Forex", "Bespoke Suite"],
-    interestRate: "Up to 7.00% p.a.",
-    interestRateValue: 7.0,
-    minimumBalance: "₹1,00,00,000",
-    minimumBalanceValue: 10000000,
-    isZeroBalance: false,
-    isOnlineOpening: true,
-    isStudent: false,
-    isSalary: true,
-    isSeniorCitizen: false,
-    isWomenSpecial: false,
-    isDigital: true,
-    isPremium: true,
-    isNRI: false,
-    rating: 5.0,
-    isPopular: true,
-    officialSourceUrl: "https://www.idfcfirstbank.com/personal-banking/accounts/savings-account",
-    lastVerified: "August 2026",
-    description: "IDFC FIRST Bank's ultra-premium private banking experience featuring bespoke global concierge, zero forex markup, unlimited lounge access globally, and invitation-only privileges.",
-    maintenanceCriteriaText: "ANY ONE: AMB ₹1Cr | Net Monthly Salary ₹10L | AUM ₹2Cr | ORV ₹5Cr",
-    maintenanceCriteria: { amb: 10000000, salary: 1000000, aum: 20000000, orv: 50000000 },
-    keyBenefits: [
-      "0.00% Zero Foreign Exchange Markup fee worldwide",
-      "Unlimited Complimentary Airport Lounge Access globally",
-      "Bespoke Senior Private Banker & 24/7 Global Concierge Desk",
-      "Lifetime-Free FIRST Private Credit Card with Taj Epicure Membership"
+    "id": 109,
+    "product_id": "idfc-first-senior",
+    "bank_id": "idfc-first-bank",
+    "bank_name": "IDFC FIRST Bank",
+    "logo": "ID",
+    "variant_name": "FIRST Senior Citizen Savings Account",
+    "accountName": "FIRST Senior Citizen Savings Account",
+    "account_type": "Senior Citizen",
+    "accountType": "Senior Citizen",
+    "target_segment": "Senior Citizens (60+ yrs)",
+    "accountTypeBadges": [
+      "Senior Privilege",
+      "Monthly Payout",
+      "Health Perks"
     ],
-    travelBenefits: "Unlimited Complimentary Airport Lounge Access Globally; 0.00% Zero Forex Markup",
-    valueAddedServices: "Senior Private Banker, 24/7 Global Concierge, Taj Epicure Membership, Art & Estate Advisory",
-    associatedDebitCardId: 54,
-    associatedDebitCardName: "IDFC FIRST World Debit Card",
-    associatedCreditCard: {
-      cardName: "FIRST Private Credit Card",
-      lifetimeFee: "Lifetime Free",
-      incomeReq: "By invitation or FIRST Private Banking Relationship",
-      keyBenefits: [
-        "Bespoke 24/7 Global Concierge Desk & Art Advisory",
-        "Unlimited Complimentary Airport Lounge Access globally",
-        "0.00% Zero Foreign Exchange Markup fee on international spends",
-        "Taj Epicure membership & bespoke lifestyle privileges"
-      ]
-    },
-    interestSlabs: [
-      "Balance up to ₹1 Lakh: 3.00% p.a.",
-      "Balance > ₹1 Lakh to ₹10 Lakhs: 6.00% p.a.",
-      "Balance > ₹10 Lakhs to ₹5 Crores: 7.00% p.a."
+    "interest_rate": "3.00% - 7.00% p.a.",
+    "interestRate": "3.00% - 7.00% p.a.",
+    "interestRateValue": 7,
+    "minimum_balance": "₹10,000",
+    "minimumBalance": "₹10,000",
+    "minimumBalanceValue": 10000,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "Nil",
+    "nonMaintenanceCharges": "Nil",
+    "interest_credit_frequency": "Monthly",
+    "isZeroBalance": false,
+    "isOnlineOpening": true,
+    "isStudent": false,
+    "isSalary": false,
+    "isSeniorCitizen": true,
+    "isWomenSpecial": false,
+    "isDigital": true,
+    "isPremium": false,
+    "isNRI": false,
+    "rating": 4.9,
+    "isPopular": false,
+    "source": "https://www.idfcfirstbank.com/personal-banking/accounts/savings-account/senior-citizen-account",
+    "officialSourceUrl": "https://www.idfcfirstbank.com/personal-banking/accounts/savings-account/senior-citizen-account",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "Monthly income flow for senior citizens through monthly interest credits, doorstep banking support, and zero fee structure.",
+    "eligibility": [
+      "Resident Senior Citizens aged 60 years and above"
     ],
-    ambAqbText: "Average Monthly Balance (AMB): ₹1,00,00,000 or Net Salary ₹10,00,000/mo",
-    nonMaintenanceCharges: "Information not available",
-    accountOpeningFeatures: [
-      "Private Banker Doorstep Concierge Onboarding",
-      "Instant Bespoke Digital Setup",
-      "Dedicated Private Banking Desk"
+    "benefits": [
+      "Monthly Interest Income credited on 1st of every month",
+      "Doorstep banking for cash pickup and cheque submission",
+      "Free Senior Privilege Debit Card with health discounts"
     ],
-    eligibility: [
-      "Resident Indian Individual",
-      "ANY ONE: AMB ₹1Cr | Net Monthly Salary ₹10L | AUM ₹2Cr | ORV ₹5Cr"
+    "keyBenefits": [
+      "Monthly Interest Income credited on 1st of every month",
+      "Doorstep banking for cash pickup and cheque submission",
+      "Free Senior Privilege Debit Card with health discounts"
     ],
-    documentsRequired: ["Aadhaar Card", "PAN Card", "Private Banking KYC & Income Proof"],
-    bankingFeatures: [
-      "Senior Private Banker & Desk",
-      "Zero Forex Markup on transactions",
-      "Unlimited Global Lounge Access"
+    "features": [
+      "Priority teller desk service at all IDFC FIRST branches",
+      "Free physical passbook & monthly statements"
+    ],
+    "bankingFeatures": [
+      "Priority teller desk service at all IDFC FIRST branches",
+      "Free physical passbook & monthly statements"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "idfc-first-bank-idfc-first-millennia-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      }
     ]
   },
   {
-    id: 107,
-    bankId: "au-small-finance-bank",
-    bank: "AU Small Finance Bank",
-    logo: "AU",
-    accountName: "AU Digital Savings Account",
-    accountType: "Digital Savings",
-    accountTypeBadges: ["High Interest", "Monthly Credit", "Digital"],
-    interestRate: "3.50% - 7.25% p.a.",
-    interestRateValue: 7.25,
-    minimumBalance: "₹0",
-    minimumBalanceValue: 0,
-    isZeroBalance: true,
-    isOnlineOpening: true,
-    isStudent: true,
-    isSalary: false,
-    isSeniorCitizen: true,
-    isWomenSpecial: true,
-    isDigital: true,
-    isPremium: false,
-    isNRI: false,
-    rating: 4.8,
-    isPopular: true,
-    officialSourceUrl: "https://www.aubank.in/personal-banking/savings-account/au-digital-savings-account",
-    lastVerified: "August 2026",
-    description: "High interest rate savings account offering up to 7.25% p.a. with monthly payouts, zero balance option for digital onboarding, and AU Royale Visa debit card privileges.",
-    keyBenefits: [
-      "Highest interest rates up to 7.25% p.a. credited monthly",
-      "100% Video KYC digital account opening",
-      "Complimentary AU Royale RuPay Platinum Debit Card",
-      "Discounts on dining, OTT subscriptions, and online shopping"
+    "id": 110,
+    "product_id": "au-digital-savings",
+    "bank_id": "au-small-finance-bank",
+    "bank_name": "AU Small Finance Bank",
+    "bank": "AU Small Finance Bank",
+    "logo": "AU",
+    "variant_name": "AU Digital Savings Account",
+    "accountName": "AU Digital Savings Account",
+    "account_type": "Digital Savings",
+    "accountType": "Digital Savings",
+    "target_segment": "General Public",
+    "accountTypeBadges": [
+      "7.25% Interest",
+      "Monthly Interest",
+      "Video KYC"
     ],
-    associatedDebitCardId: null,
-    associatedDebitCardName: "AU Royale Debit Card",
-    interestSlabs: [
-      "Balance up to ₹1 Lakh: 3.50% p.a.",
-      "Balance > ₹1 Lakh to ₹10 Lakhs: 6.00% p.a.",
-      "Balance > ₹10 Lakhs to ₹25 Lakhs: 7.25% p.a."
+    "interest_rate": "3.50% - 7.25% p.a.",
+    "interestRate": "3.50% - 7.25% p.a.",
+    "interestRateValue": 7.25,
+    "minimum_balance": "₹0",
+    "minimumBalance": "₹0",
+    "minimumBalanceValue": 0,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "Nil",
+    "nonMaintenanceCharges": "Nil",
+    "interest_credit_frequency": "Monthly",
+    "isZeroBalance": true,
+    "isOnlineOpening": true,
+    "isStudent": false,
+    "isSalary": false,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": false,
+    "isDigital": true,
+    "isPremium": false,
+    "isNRI": false,
+    "rating": 4.7,
+    "isPopular": false,
+    "source": "https://www.aubank.in/personal-banking/accounts/savings-account/au-digital-savings-account",
+    "officialSourceUrl": "https://www.aubank.in/personal-banking/accounts/savings-account/au-digital-savings-account",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "High interest rates up to 7.25% p.a. paid out monthly with 100% video KYC zero balance digital account setup.",
+    "eligibility": [
+      "Resident Indian Individuals aged 18+"
     ],
-    ambAqbText: "Zero AMB for AU Digital Savings Variant",
-    nonMaintenanceCharges: "Nil",
-    accountOpeningFeatures: [
-      "Video KYC onboarding in 5 minutes",
-      "Zero initial deposit option",
-      "Instant AU 0101 SuperApp access"
+    "benefits": [
+      "Monthly interest payout",
+      "Earn up to 7.25% p.a. interest",
+      "AU Royale / Platinum Debit Card bundled"
     ],
-    eligibility: [
-      "Resident Indians aged 18 and above",
-      "Aadhaar linked with active mobile number"
+    "keyBenefits": [
+      "Monthly interest payout",
+      "Earn up to 7.25% p.a. interest",
+      "AU Royale / Platinum Debit Card bundled"
     ],
-    documentsRequired: [
-      "PAN Card",
-      "Aadhaar Card"
+    "features": [
+      "AU 0101 Mobile Banking app access",
+      "Zero paperwork onboarding"
     ],
-    bankingFeatures: [
-      "Monthly Interest Credit",
-      "AU 0101 SuperApp for investments & fixed deposits",
-      "Free 24/7 IMPS & UPI transfers",
-      "Doorstep cash collection & cheque pick-up"
+    "bankingFeatures": [
+      "AU 0101 Mobile Banking app access",
+      "Zero paperwork onboarding"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "au-small-finance-bank-au-bank-platinum-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      }
     ]
   },
   {
-    id: 108,
-    bankId: "bank-of-baroda",
-    bank: "Bank of Baroda",
-    logo: "BO",
-    accountName: "bob Advantage Savings Account",
-    accountType: "Regular Savings",
-    accountTypeBadges: ["Government Bank", "Low Fees", "Public Sector"],
-    interestRate: "2.75% - 3.20% p.a.",
-    interestRateValue: 3.2,
-    minimumBalance: "₹2,000",
-    minimumBalanceValue: 2000,
-    isZeroBalance: false,
-    isOnlineOpening: true,
-    isStudent: true,
-    isSalary: false,
-    isSeniorCitizen: true,
-    isWomenSpecial: false,
-    isDigital: true,
-    isPremium: false,
-    isNRI: false,
-    rating: 4.5,
-    isPopular: false,
-    officialSourceUrl: "https://www.bankofbaroda.in/personal-banking/accounts/savings-accounts/bob-advantage-savings-account",
-    lastVerified: "August 2026",
-    description: "Reliable public sector savings account with low minimum balance requirement (₹2,000 in metro), free bob World digital banking app, and RuPay Platinum Debit Card.",
-    keyBenefits: [
-      "Low minimum balance requirement (₹1,000 semi-urban / ₹2,000 metro)",
-      "Free bob World Mobile Banking App with 220+ services",
-      "Complimentary bob World RuPay Platinum Debit Card",
-      "Free Credit Card against fixed deposits"
+    "id": 111,
+    "product_id": "bob-advantage-savings",
+    "bank_id": "bank-of-baroda",
+    "bank_name": "Bank of Baroda",
+    "bank": "Bank of Baroda",
+    "logo": "BO",
+    "variant_name": "bob Advantage Savings Account",
+    "accountName": "bob Advantage Savings Account",
+    "account_type": "Regular Savings",
+    "accountType": "Regular Savings",
+    "target_segment": "General Public",
+    "accountTypeBadges": [
+      "Government Bank",
+      "bob World App"
     ],
-    associatedDebitCardId: null,
-    associatedDebitCardName: "BOB World Platinum Debit Card",
-    interestSlabs: [
-      "Balance up to ₹10 Lakhs: 2.75% p.a.",
-      "Balance above ₹10 Lakhs: 3.20% p.a."
+    "interest_rate": "2.75% - 3.20% p.a.",
+    "interestRate": "2.75% - 3.20% p.a.",
+    "interestRateValue": 3.2,
+    "minimum_balance": "₹1,000",
+    "minimumBalance": "₹1,000",
+    "minimumBalanceValue": 1000,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "₹100/quarter",
+    "nonMaintenanceCharges": "₹100/quarter",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": false,
+    "isOnlineOpening": true,
+    "isStudent": false,
+    "isSalary": false,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": false,
+    "isDigital": true,
+    "isPremium": false,
+    "isNRI": false,
+    "rating": 4.5,
+    "isPopular": false,
+    "source": "https://www.bankofbaroda.in/personal-banking/accounts/savings-account/baroda-advantage-savings-account",
+    "officialSourceUrl": "https://www.bankofbaroda.in/personal-banking/accounts/savings-account/baroda-advantage-savings-account",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "Public sector banking stability backed by bob World mobile app and RuPay Platinum debit card rewards.",
+    "eligibility": [
+      "Resident Individuals aged 18+"
     ],
-    ambAqbText: "Average Quarterly Balance: ₹2,000 (Metro/Urban), ₹1,000 (Semi-Urban)",
-    nonMaintenanceCharges: "₹150/quarter if AQB is not maintained",
-    accountOpeningFeatures: [
-      "Online Video KYC via bob World App",
-      "Branch onboarding across 8,000+ branches"
+    "benefits": [
+      "Low minimum balance requirement",
+      "bob World App for digital payments",
+      "Free 30 cheque leaves per year"
     ],
-    eligibility: [
-      "Resident Individuals (Single or Joint)",
-      "Minors above 10 years eligible under guardian"
+    "keyBenefits": [
+      "Low minimum balance requirement",
+      "bob World App for digital payments",
+      "Free 30 cheque leaves per year"
     ],
-    documentsRequired: [
-      "Aadhaar Card",
-      "PAN Card",
-      "2 Passport photos"
+    "features": [
+      "Pan-India branch network",
+      "Direct Benefit Transfer support"
     ],
-    bankingFeatures: [
-      "Free bob World Digital Passbook",
-      "NEFT/RTGS/IMPS via Internet & Mobile Banking",
-      "Chequebook facility (30 leaves free/year)",
-      "Locker fee concession for senior citizens"
+    "bankingFeatures": [
+      "Pan-India branch network",
+      "Direct Benefit Transfer support"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "bank-of-baroda-bob-rupay-platinum-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      }
     ]
   },
   {
-    id: 109,
-    bankId: "indusind-bank",
-    bank: "IndusInd Bank",
-    logo: "IN",
-    accountName: "IndusInd Privilege Savings Account",
-    accountType: "Premium Savings",
-    accountTypeBadges: ["Custom Account Number", "High Cashback", "Premium"],
-    interestRate: "3.50% - 6.75% p.a.",
-    interestRateValue: 6.75,
-    minimumBalance: "₹10,000",
-    minimumBalanceValue: 10000,
-    isZeroBalance: false,
-    isOnlineOpening: true,
-    isStudent: false,
-    isSalary: true,
-    isSeniorCitizen: true,
-    isWomenSpecial: false,
-    isDigital: true,
-    isPremium: true,
-    isNRI: false,
-    rating: 4.7,
-    isPopular: false,
-    officialSourceUrl: "https://www.indusind.com/in/en/personal/accounts/savings-account/indus-privilege.html",
-    lastVerified: "August 2026",
-    description: "Allows choosing your own Account Number (My Account My Number), complimentary IndusInd Signature Debit Card with BOGO movie deals, and up to 6.75% p.a. interest.",
-    keyBenefits: [
-      "Choose your own Account Number (Mobile number / Birthday / Lucky digit)",
-      "Buy 1 Get 1 Free movie tickets on BookMyShow via Signature Debit Card",
-      "High interest rate up to 6.75% p.a.",
-      "50% discount on small & medium lockers for 1st year"
+    "id": 112,
+    "product_id": "indusind-privilege-savings",
+    "bank_id": "indusind-bank",
+    "bank_name": "IndusInd Bank",
+    "bank": "IndusInd Bank",
+    "logo": "IN",
+    "variant_name": "IndusInd Privilege Savings Account",
+    "accountName": "IndusInd Privilege Savings Account",
+    "account_type": "Premium Savings",
+    "accountType": "Premium Savings",
+    "target_segment": "Mass Affluent",
+    "accountTypeBadges": [
+      "My Account Number",
+      "Signature Perks"
     ],
-    associatedDebitCardId: null,
-    associatedDebitCardName: "IndusInd Signature Debit Card",
-    interestSlabs: [
-      "Balance up to ₹1 Lakh: 3.50% p.a.",
-      "Balance > ₹1 Lakh to ₹5 Lakhs: 5.00% p.a.",
-      "Balance > ₹5 Lakhs: 6.75% p.a."
+    "interest_rate": "3.50% - 6.75% p.a.",
+    "interestRate": "3.50% - 6.75% p.a.",
+    "interestRateValue": 6.75,
+    "minimum_balance": "₹10,000",
+    "minimumBalance": "₹10,000",
+    "minimumBalanceValue": 10000,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "₹450/quarter",
+    "nonMaintenanceCharges": "₹450/quarter",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": false,
+    "isOnlineOpening": true,
+    "isStudent": false,
+    "isSalary": false,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": false,
+    "isDigital": true,
+    "isPremium": true,
+    "isNRI": false,
+    "rating": 4.7,
+    "isPopular": false,
+    "source": "https://www.indusind.com/in/en/personal/accounts/savings-account/indus-privilege.html",
+    "officialSourceUrl": "https://www.indusind.com/in/en/personal/accounts/savings-account/indus-privilege.html",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "Choose your own account number with IndusInd Privilege savings account offering Signature Debit Card and movie discounts.",
+    "eligibility": [
+      "Resident Individuals aged 18+"
     ],
-    ambAqbText: "Average Monthly Balance: ₹10,000",
-    nonMaintenanceCharges: "₹350/quarter max",
-    accountOpeningFeatures: [
-      "Instant Video KYC with account number customization",
-      "Digital initial funding via Netbanking/UPI"
+    "benefits": [
+      "Custom Account Number of your choice (Mobile number, birth date, etc.)",
+      "IndusInd Signature Debit Card bundled",
+      "BookMyShow BOGO movie deals"
     ],
-    eligibility: [
-      "Resident Indian Individuals (Age 18+)",
-      "Salaried / Self-employed professionals"
+    "keyBenefits": [
+      "Custom Account Number of your choice (Mobile number, birth date, etc.)",
+      "IndusInd Signature Debit Card bundled",
+      "BookMyShow BOGO movie deals"
     ],
-    documentsRequired: [
-      "Aadhaar Card",
-      "PAN Card"
+    "features": [
+      "Doorstep banking services",
+      "Free unlimited fund transfers online"
     ],
-    bankingFeatures: [
-      "Free Unlimited ATM Withdrawals across any bank ATM in India",
-      "Free Doorstep Banking (Cash & Cheque pickup)",
-      "Free IMPS/NEFT/RTGS transfers",
-      "IndusMobile App with biometric login"
+    "bankingFeatures": [
+      "Doorstep banking services",
+      "Free unlimited fund transfers online"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "indusind-bank-indusind-platinum-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      }
     ]
   },
   {
-    id: 110,
-    bankId: "fi-money",
-    bank: "Fi Money (Federal Bank)",
-    logo: "FI",
-    accountName: "Fi Money Smart Digital Savings Account",
-    accountType: "Zero Balance",
-    accountTypeBadges: ["Zero Balance", "Neobank", "Zero Forex"],
-    interestRate: "3.00% - 5.50% p.a.",
-    interestRateValue: 5.5,
-    minimumBalance: "₹0",
-    minimumBalanceValue: 0,
-    isZeroBalance: true,
-    isOnlineOpening: true,
-    isStudent: true,
-    isSalary: true,
-    isSeniorCitizen: false,
-    isWomenSpecial: false,
-    isDigital: true,
-    isPremium: false,
-    isNRI: false,
-    rating: 4.9,
-    isPopular: true,
-    officialSourceUrl: "https://fi.money/features/savings-account",
-    lastVerified: "August 2026",
-    description: "Neobanking digital savings account partnered with Federal Bank, featuring zero minimum balance, automated Smart Deposit rules, and Zero Forex Debit Card.",
-    keyBenefits: [
-      "100% Zero Minimum Balance Account powered by Federal Bank",
-      "Zero Forex Markup Debit Card for international spends & online trials",
-      "Smart Jar automated savings rules (e.g. Save ₹50 every time India wins)",
-      "Free Instant Fund Transfers with zero hidden charges"
+    "id": 113,
+    "product_id": "fi-money-smart-digital",
+    "bank_id": "fi-money",
+    "bank_name": "Fi Money",
+    "bank": "Fi Money",
+    "logo": "FI",
+    "variant_name": "Fi Money Smart Digital Savings Account",
+    "accountName": "Fi Money Smart Digital Savings Account",
+    "account_type": "Neobank Savings",
+    "accountType": "Zero Balance",
+    "target_segment": "Tech Professionals & Millennial Freelancers",
+    "accountTypeBadges": [
+      "Zero Balance",
+      "Zero Forex",
+      "Neobank"
     ],
-    associatedDebitCardId: null,
-    associatedDebitCardName: "Fi Money Digital Debit Card",
-    interestSlabs: [
-      "Savings account balance: 3.00% p.a.",
-      "Smart Jars / Connected FDs: Up to 7.20% p.a."
+    "interest_rate": "3.00% - 7.00% p.a.",
+    "interestRate": "3.00% - 7.00% p.a.",
+    "interestRateValue": 7,
+    "minimum_balance": "₹0",
+    "minimumBalance": "₹0",
+    "minimumBalanceValue": 0,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "Nil",
+    "nonMaintenanceCharges": "Nil",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": true,
+    "isOnlineOpening": true,
+    "isStudent": true,
+    "isSalary": false,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": false,
+    "isDigital": true,
+    "isPremium": false,
+    "isNRI": false,
+    "rating": 4.8,
+    "isPopular": true,
+    "source": "https://fi.money/features/savings-account",
+    "officialSourceUrl": "https://fi.money/features/savings-account",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "Digital zero balance savings account in partnership with Federal Bank offering zero forex markup, smart automated savings jars, and Fi Visa Platinum card.",
+    "eligibility": [
+      "Resident Working Professionals & Individuals with Aadhaar & PAN"
     ],
-    ambAqbText: "Zero Minimum Balance required",
-    nonMaintenanceCharges: "Nil",
-    accountOpeningFeatures: [
-      "Under 3-minute Video KYC onboarding via Fi App",
-      "Instant Virtual Visa Platinum Card",
-      "Zero paper documentation"
+    "benefits": [
+      "Zero Minimum Balance Account",
+      "Zero Forex Markup on international online spends & travel",
+      "Smart Jars for automatic habit-based savings"
     ],
-    eligibility: [
-      "Salaried Working Professionals & College Students (Age 18+)",
-      "Aadhaar & PAN required"
+    "keyBenefits": [
+      "Zero Minimum Balance Account",
+      "Zero Forex Markup on international online spends & travel",
+      "Smart Jars for automatic habit-based savings"
     ],
-    documentsRequired: [
-      "Aadhaar Card",
-      "PAN Card"
+    "features": [
+      "FIT Rules automated savings triggers",
+      "Connected banking & expense analyzer"
     ],
-    bankingFeatures: [
-      "Fi Assistant AI expense analyzer",
-      "Free Unlimited NEFT/IMPS/UPI",
-      "Zero Maintenance Charge for life",
-      "Free Physical Visa Debit Card dispatched to home"
-    ]
-  },
-  {
-    id: 111,
-    bankId: "icici-bank",
-    bank: "ICICI Bank",
-    logo: "IC",
-    accountName: "ICICI Advantage Woman Savings Account",
-    accountType: "Women's",
-    accountTypeBadges: ["Women's", "Cashback", "Shopping"],
-    interestRate: "3.00% - 3.50% p.a.",
-    interestRateValue: 3.5,
-    minimumBalance: "₹10,000",
-    minimumBalanceValue: 10000,
-    isZeroBalance: false,
-    isOnlineOpening: true,
-    isStudent: false,
-    isSalary: false,
-    isSeniorCitizen: false,
-    isWomenSpecial: true,
-    isDigital: true,
-    isPremium: true,
-    isNRI: false,
-    rating: 4.8,
-    isPopular: true,
-    officialSourceUrl: "https://www.icicibank.com/personal-banking/accounts/savings-account/women-savings-account",
-    lastVerified: "August 2026",
-    description: "Specially tailored for modern women, featuring Smart Shopper Silver Debit Card with high cashback rates, free cancer insurance cover, and child education benefits.",
-    keyBenefits: [
-      "Cashback up to ₹750/month on shopping, dining & grocery spends",
-      "Complimentary Breast Cancer Insurance Cover up to ₹2 Lakhs",
-      "Discounts on skill development courses & wellness subscriptions",
-      "Special home & car loan interest concessions for women applicants"
+    "bankingFeatures": [
+      "FIT Rules automated savings triggers",
+      "Connected banking & expense analyzer"
     ],
-    associatedDebitCardId: 5,
-    associatedDebitCardName: "ICICI Coral PayWave Debit Card",
-    interestSlabs: [
-      "Daily balance up to ₹50 Lakhs: 3.00% p.a.",
-      "Daily balance above ₹50 Lakhs: 3.50% p.a."
-    ],
-    ambAqbText: "Average Monthly Balance: ₹10,000 (Metro/Urban branches)",
-    nonMaintenanceCharges: "₹500/quarter if AMB falls below threshold",
-    accountOpeningFeatures: [
-      "Instant Video KYC online onboarding",
-      "Zero paperwork doorstep assistant",
-      "Instant iMobile Pay app activation"
-    ],
-    eligibility: [
-      "Resident Indian Women aged 18 years and above",
-      "Single or Primary Joint Account Holder"
-    ],
-    documentsRequired: [
-      "Aadhaar Card",
-      "PAN Card",
-      "Proof of Identity & Address"
-    ],
-    bankingFeatures: [
-      "Free Unlimited NEFT & RTGS Online Transfers",
-      "Complimentary iMobile Pay App access",
-      "Free Chequebook (50 leaves/year)",
-      "Priority customer care desk at branches"
-    ]
-  },
-  {
-    id: 112,
-    bankId: "sbi",
-    bank: "State Bank of India",
-    logo: "SB",
-    accountName: "SBI Pehla Kadam Minor Savings Account",
-    accountType: "Minor",
-    accountTypeBadges: ["Minor", "Kids", "Financial Literacy"],
-    interestRate: "2.70% p.a.",
-    interestRateValue: 2.7,
-    minimumBalance: "₹0",
-    minimumBalanceValue: 0,
-    isZeroBalance: true,
-    isOnlineOpening: true,
-    isStudent: true,
-    isSalary: false,
-    isSeniorCitizen: false,
-    isWomenSpecial: false,
-    isDigital: true,
-    isPremium: false,
-    isNRI: false,
-    rating: 4.6,
-    isPopular: false,
-    officialSourceUrl: "https://sbi.co.in/web/personal-banking/accounts/savings-account/pehla-kadam-pehli-udaan",
-    lastVerified: "August 2026",
-    description: "Empowering children below 18 years with financial literacy, zero minimum balance requirement, photo-printed contact-less debit card, and capped daily transaction limits.",
-    keyBenefits: [
-      "Photo-printed SBI Pehla Kadam Debit Card for children",
-      "Zero Minimum Balance maintenance requirement",
-      "Capped per-day ATM withdrawal (₹5,000) & POS spending (₹5,000)",
-      "Automated Monthly Recurring Deposit auto-debit options"
-    ],
-    associatedDebitCardId: 1,
-    associatedDebitCardName: "SBI Global International Debit Card",
-    interestSlabs: [
-      "Daily balance up to ₹10 Crores: 2.70% p.a."
-    ],
-    ambAqbText: "Zero Minimum Balance (No penalty for non-maintenance)",
-    nonMaintenanceCharges: "Nil",
-    accountOpeningFeatures: [
-      "Joint opening with parent/guardian via SBI Branch or YONO",
-      "Simple birth certificate & guardian Aadhaar verification"
-    ],
-    eligibility: [
-      "Minors under 18 years of age (Jointly with Parent/Guardian for under 10 years)"
-    ],
-    documentsRequired: [
-      "Minor's Birth Certificate & Aadhaar",
-      "Guardian's PAN Card & Aadhaar"
-    ],
-    bankingFeatures: [
-      "Restricted YONO Mobile Banking view access",
-      "Personalized Chequebook with 10 free leaves",
-      "Auto-sweep into e-TDR/e-STDR deposits"
-    ]
-  },
-  {
-    id: 113,
-    bankId: "hdfc-bank",
-    bank: "HDFC Bank",
-    logo: "HD",
-    accountName: "HDFC NRE Premium Savings Account",
-    accountType: "NRI",
-    accountTypeBadges: ["NRI", "Tax Free Interest", "Zero Forex"],
-    interestRate: "3.00% - 3.50% p.a.",
-    interestRateValue: 3.5,
-    minimumBalance: "₹10,000",
-    minimumBalanceValue: 10000,
-    isZeroBalance: false,
-    isOnlineOpening: true,
-    isStudent: false,
-    isSalary: false,
-    isSeniorCitizen: false,
-    isWomenSpecial: false,
-    isDigital: true,
-    isPremium: true,
-    isNRI: true,
-    rating: 4.9,
-    isPopular: true,
-    officialSourceUrl: "https://www.hdfcbank.com/nri-banking/save/nre-savings-account",
-    lastVerified: "August 2026",
-    description: "Dedicated account for Non-Resident Indians allowing full repatriation of funds, tax-free interest earned in India, and international HDFC Platinum Debit Card privileges.",
-    keyBenefits: [
-      "100% Tax-Free Interest earned in India under Income Tax Act",
-      "Full and freely repatriable principal & interest funds back overseas",
-      "Complimentary HDFC Global NRE Platinum Debit Card",
-      "Free 24/7 dedicated International NRI Relationship Desk"
-    ],
-    associatedDebitCardId: 3,
-    associatedDebitCardName: "EasyShop Platinum Debit Card",
-    interestSlabs: [
-      "Daily balance below ₹50 Lakhs: 3.00% p.a.",
-      "Daily balance ₹50 Lakhs & above: 3.50% p.a."
-    ],
-    ambAqbText: "Average Monthly Balance: ₹10,000 in NRE Savings or ₹5 Lakhs overall Relationship",
-    nonMaintenanceCharges: "₹750/quarter if AMB is not maintained",
-    accountOpeningFeatures: [
-      "100% Paperless Remote Online Account Opening for NRIs",
-      "Attestation via Indian Embassy / Overseas Notary or Video KYC"
-    ],
-    eligibility: [
-      "Non-Resident Indians (NRIs) & Persons of Indian Origin (PIOs)"
-    ],
-    documentsRequired: [
-      "Valid Indian Passport & Overseas Work/Residence Visa",
-      "Overseas Proof of Address & PAN Card or Form 60"
-    ],
-    bankingFeatures: [
-      "Free Money2India Overseas Remittance Service",
-      "Preferential Forex Exchange Rates on INR Conversion",
-      "International ATM withdrawals & worldwide concierge"
-    ]
-  },
-  {
-    id: 114,
-    bankId: "axis-bank",
-    bank: "Axis Bank",
-    logo: "AX",
-    accountName: "Axis Basic Small Savings Account (BSBD)",
-    accountType: "Basic Savings",
-    accountTypeBadges: ["Basic Savings", "Zero Balance", "Govt Compliant"],
-    interestRate: "3.00% p.a.",
-    interestRateValue: 3.0,
-    minimumBalance: "₹0",
-    minimumBalanceValue: 0,
-    isZeroBalance: true,
-    isOnlineOpening: true,
-    isStudent: true,
-    isSalary: false,
-    isSeniorCitizen: true,
-    isWomenSpecial: false,
-    isDigital: false,
-    isPremium: false,
-    isNRI: false,
-    rating: 4.5,
-    isPopular: false,
-    officialSourceUrl: "https://www.axisbank.com/retail/accounts/savings-account/basic-savings-account",
-    lastVerified: "August 2026",
-    description: "RBI-mandated Basic Savings Bank Deposit (BSBD) account with zero minimum balance requirement, free RuPay debit card, and zero annual charges.",
-    keyBenefits: [
-      "100% Zero Minimum Balance requirement (BSBDA Guidelines)",
-      "Complimentary Basic RuPay Debit Card with Zero Joining or Annual Fee",
-      "4 Free ATM Withdrawals per month across any bank ATM",
-      "Deposit of cash & cheques at branch with zero charges"
-    ],
-    associatedDebitCardId: 7,
-    associatedDebitCardName: "Priority Debit Card",
-    interestSlabs: [
-      "Daily balance up to ₹50 Lakhs: 3.00% p.a."
-    ],
-    ambAqbText: "Zero AMB (No minimum balance maintenance requirement)",
-    nonMaintenanceCharges: "Nil (Protected under RBI BSBD Norms)",
-    accountOpeningFeatures: [
-      "Simple e-KYC Branch or Online onboarding",
-      "Aadhaar OTP instant verification"
-    ],
-    eligibility: [
-      "All Resident Indian Individuals who do not hold another BSBD account in Axis Bank"
-    ],
-    documentsRequired: [
-      "Aadhaar Card",
-      "PAN Card or Form 60"
-    ],
-    bankingFeatures: [
-      "Free E-Statements & Passbook update",
-      "Free Direct Benefit Transfer (DBT) government subsidy credits",
-      "Access to Mobile Banking & UPI"
+    "debit_card_relationships": [
+      {
+        "card_id": "fi-money-fi-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      }
     ]
   }
 ];
 
+/**
+ * HELPER: Retrieve associated debit cards strictly linked to a specific savings account
+ * STEP 4 BANK VALIDATION RULES:
+ * 1. card.bank_id === account.bank_id
+ * 2. Relationship exists in explicit accountDebitCardMappings or account.debit_card_relationships
+ * 3. verification_status === "verified"
+ * 4. Card is explicitly a debit card
+ *
+ * If any condition fails, do not render the card.
+ */
 export function getAssociatedDebitCards(accountOrId) {
   if (!accountOrId) return [];
 
   let account = null;
-  if (typeof accountOrId === 'object') {
+  if (typeof accountOrId === 'object' && accountOrId !== null) {
     account = accountOrId;
   } else {
-    account = savingsAccounts.find(s => Number(s.id) === Number(accountOrId));
-    if (!account) {
-      account = savingsAccounts.find(s => Number(s.associatedDebitCardId) === Number(accountOrId) || (Array.isArray(s.debitCardIds) && s.debitCardIds.includes(Number(accountOrId))));
+    account = savingsAccounts.find(s => 
+      String(s.id) === String(accountOrId) || 
+      String(s.product_id) === String(accountOrId)
+    );
+  }
+
+  if (!account || !account.bank_id) return [];
+
+  const accountBankId = String(account.bank_id).toLowerCase().trim();
+
+  // Combine explicit mappings from module and local account object
+  const moduleMappings = getAccountDebitCardMappings(account);
+  const localMappings = Array.isArray(account.debit_card_relationships) ? account.debit_card_relationships : [];
+
+  const combinedMappings = [...moduleMappings];
+  localMappings.forEach(lm => {
+    if (!combinedMappings.some(cm => cm.card_id === lm.card_id)) {
+      combinedMappings.push(lm);
+    }
+  });
+
+  if (combinedMappings.length === 0) {
+    return [];
+  }
+
+  const verifiedCards = [];
+  const seenCardIds = new Set();
+
+  for (const rel of combinedMappings) {
+    if (!rel || rel.verification_status !== 'verified' || !rel.card_id) {
+      continue;
+    }
+
+    if (seenCardIds.has(rel.card_id)) continue;
+
+    const card = masterDebitCardsMap.get(rel.card_id);
+    if (!card) continue;
+
+    // Strict Bank Validation & Card Type Check
+    const cardBankId = String(card.bank_id || "").toLowerCase().trim();
+    if (cardBankId === accountBankId) {
+      seenCardIds.add(rel.card_id);
+      verifiedCards.push({
+        ...card,
+        relationship: rel.relationship || 'provided',
+        verification_status: rel.verification_status
+      });
     }
   }
 
-  if (!account) return [];
-
-  const accountBankCanonical = canonicalBankName(account.bank || "").toLowerCase();
-  let candidateCards = [];
-
-  if (Array.isArray(account.debitCardIds) && account.debitCardIds.length > 0) {
-    candidateCards = account.debitCardIds
-      .map(id => debitCards.find(c => Number(c.id) === Number(id)))
-      .filter(Boolean);
-  } else if (account.debitCardId || account.associatedDebitCardId) {
-    const singleId = account.debitCardId || account.associatedDebitCardId;
-    const found = debitCards.find(c => Number(c.id) === Number(singleId));
-    if (found) candidateCards = [found];
-  } else if (account.associatedDebitCardName) {
-    const found = debitCards.find(c => 
-      c.cardName && c.cardName.toLowerCase() === account.associatedDebitCardName.toLowerCase()
-    );
-    if (found) candidateCards = [found];
-  }
-
-  // STRICT BANK-SAFE RELATIONSHIP RULE:
-  // A linked debit card may ONLY be returned if card.bank === account.bank (canonical check)
-  const bankSafeCards = candidateCards.filter(card => {
-    if (!card || !card.bank || !account.bank) return false;
-    const cardBankCanonical = canonicalBankName(card.bank).toLowerCase();
-    return accountBankCanonical && cardBankCanonical && (
-      accountBankCanonical === cardBankCanonical ||
-      accountBankCanonical.includes(cardBankCanonical) ||
-      cardBankCanonical.includes(accountBankCanonical)
-    );
-  });
-
-  return bankSafeCards;
+  return verifiedCards;
 }
 
+/**
+ * HELPER: Retrieve primary associated debit card for a savings account
+ * Returns null if no verified card exists for this specific account
+ */
 export function getAssociatedDebitCard(accountOrId) {
   const cards = getAssociatedDebitCards(accountOrId);
   return cards.length > 0 ? cards[0] : null;
 }
 
+/**
+ * HELPER: Retrieve full relationship status (verified, pending, or none)
+ */
+export function getDebitCardRelationshipStatus(accountOrId) {
+  if (!accountOrId) {
+    return { status: 'none', cards: [], message: 'Debit card information not available for this account.' };
+  }
+
+  let account = null;
+  if (typeof accountOrId === 'object' && accountOrId !== null) {
+    account = accountOrId;
+  } else {
+    account = savingsAccounts.find(s => 
+      String(s.id) === String(accountOrId) || 
+      String(s.product_id) === String(accountOrId)
+    );
+  }
+
+  if (!account || !account.bank_id) {
+    return { status: 'none', cards: [], message: 'Debit card information not available for this account.' };
+  }
+
+  const verifiedCards = getAssociatedDebitCards(account);
+  if (verifiedCards.length > 0) {
+    return { status: 'verified', cards: verifiedCards, message: null };
+  }
+
+  const moduleMappings = getAccountDebitCardMappings(account);
+  const localMappings = Array.isArray(account.debit_card_relationships) ? account.debit_card_relationships : [];
+  const allMappings = [...moduleMappings, ...localMappings];
+
+  const hasPending = allMappings.some(m => m.verification_status === 'pending');
+  if (hasPending) {
+    return { status: 'pending', cards: [], message: 'Debit card relationship pending verification.' };
+  }
+
+  return { status: 'none', cards: [], message: 'Debit card information not available for this account.' };
+}

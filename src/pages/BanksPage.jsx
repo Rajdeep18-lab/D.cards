@@ -480,7 +480,7 @@ function BanksPage({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {filteredSavingsAccounts.map(account => {
                 const associatedCards = getAssociatedDebitCards(account);
-                const linkedCard = associatedCards.length > 0 ? associatedCards[0] : getAssociatedDebitCard(account.associatedDebitCardId);
+                const linkedCard = associatedCards.length > 0 ? associatedCards[0] : null;
 
                 return (
                   <div 

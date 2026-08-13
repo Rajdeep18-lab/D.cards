@@ -39,7 +39,7 @@ export const cardService = {
       console.warn("Firestore fetch notice for debit_cards collection, using combined dataset:", err.message || err);
     }
 
-    const normalizedDebitCards = (debitCards || []).map(normalizeCard);
+    const normalizedDebitCards = (allDebitCards || []).map(normalizeCard);
     cachedCards = normalizedDebitCards;
     lastCacheTime = now;
     return normalizedDebitCards;

@@ -1,16 +1,23 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Heart, Scale, ExternalLink, CheckCircle2, CreditCard, ShieldCheck, Sparkles, Zap, Smartphone, ChevronRight } from 'lucide-react';
+import { Heart, Scale, CheckCircle2, CreditCard, ChevronRight, AlertCircle } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
-import { getAssociatedDebitCard, getAssociatedDebitCards } from '../data/mockSavingsAccounts';
+import { getAssociatedDebitCards, getDebitCardRelationshipStatus } from '../data/mockSavingsAccounts';
 
 function SavingsAccountCard({ account, onViewDetails, onToggleCompare, isCompared, onSelectDebitCard }) {
   const { isWishlisted, toggleWishlist } = useWishlist();
-  const wishlisted = isWishlisted(account.id);
+  const accountId = account.id || account.product_id;
+  const wishlisted = isWishlisted(accountId);
 
   const associatedCards = getAssociatedDebitCards(account);
-  const associatedCard = associatedCards.length > 0 ? associatedCards[0] : null;
+  const primaryCard = associatedCards.length > 0 ? associatedCards[0] : null;
+
+  const bankName = account.bank_name || account.bank || "Partner Bank";
+  const accountName = account.variant_name || account.accountName || "Savings Account";
+  const interestRate = account.interest_rate || account.interestRate || "N/A";
+  const minimumBalance = account.minimum_balance || account.minimumBalance || "N/A";
+  const keyBenefits = account.benefits || account.keyBenefits || [];
 
   return (
     <motion.div
@@ -24,21 +31,21 @@ function SavingsAccountCard({ account, onViewDetails, onToggleCompare, isCompare
       <div className="p-5 sm:p-6 pb-4 border-b border-slate-100 dark:border-slate-800/80">
         <div className="flex items-start justify-between gap-3 mb-3">
           <div className="flex items-center gap-3">
-            {/* Bank Mark Avatar */}
+            {/* Bank Logo Avatar */}
             <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#0B3D91] to-[#2563EB] text-white flex items-center justify-center font-extrabold text-sm shadow-md shadow-[#2563EB]/20 flex-shrink-0">
-              {account.logo || account.bank.substring(0, 2).toUpperCase()}
+              {account.logo || bankName.substring(0, 2).toUpperCase()}
             </div>
             <div>
               <span className="text-[11px] font-bold uppercase tracking-wider text-[#6B7280] dark:text-slate-400 block">
-                {account.bank}
+                {bankName}
               </span>
-              <Link to={`/savings-accounts/${account.id}`} className="text-base sm:text-lg font-extrabold text-[#1F2937] dark:text-white tracking-tight leading-snug group-hover:text-[#2563EB] dark:group-hover:text-[#60A5FA] transition-colors hover:underline">
-                {account.accountName}
+              <Link to={`/savings-accounts/${accountId}`} className="text-base sm:text-lg font-extrabold text-[#1F2937] dark:text-white tracking-tight leading-snug group-hover:text-[#2563EB] dark:group-hover:text-[#60A5FA] transition-colors hover:underline">
+                {accountName}
               </Link>
             </div>
           </div>
 
-          {/* Wishlist Heart Toggle */}
+          {/* Wishlist Toggle */}
           <button
             onClick={() => toggleWishlist(account)}
             aria-label="Save to Favourites"
@@ -69,12 +76,6 @@ function SavingsAccountCard({ account, onViewDetails, onToggleCompare, isCompare
               <span>Zero Balance</span>
             </span>
           )}
-
-          {account.isOnlineOpening && (
-            <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
-              ⚡ Instant Video KYC
-            </span>
-          )}
         </div>
       </div>
 
@@ -85,7 +86,7 @@ function SavingsAccountCard({ account, onViewDetails, onToggleCompare, isCompare
             Interest Rate
           </span>
           <span className="text-base sm:text-lg font-black text-emerald-600 dark:text-emerald-400 tracking-tight">
-            {account.interestRate}
+            {interestRate}
           </span>
         </div>
 
@@ -94,7 +95,7 @@ function SavingsAccountCard({ account, onViewDetails, onToggleCompare, isCompare
             Min. Balance
           </span>
           <span className="text-base sm:text-lg font-black text-[#1F2937] dark:text-white tracking-tight">
-            {account.minimumBalance}
+            {minimumBalance}
           </span>
         </div>
       </div>
@@ -105,7 +106,7 @@ function SavingsAccountCard({ account, onViewDetails, onToggleCompare, isCompare
           Key Account Features:
         </span>
         <ul className="space-y-2 text-xs text-[#1F2937] dark:text-slate-200 font-medium">
-          {account.keyBenefits && account.keyBenefits.slice(0, 3).map((benefit, i) => (
+          {keyBenefits && keyBenefits.slice(0, 3).map((benefit, i) => (
             <li key={i} className="flex items-start gap-2 text-left">
               <CheckCircle2 className="w-3.5 h-3.5 text-[#2563EB] shrink-0 mt-0.5" />
               <span className="leading-snug">{benefit}</span>
@@ -115,33 +116,31 @@ function SavingsAccountCard({ account, onViewDetails, onToggleCompare, isCompare
       </div>
 
       {/* Associated Debit Card Connection Box */}
-      {(associatedCards.length > 0 || account.associatedDebitCardName) && (
-        <div className="px-5 sm:px-6 py-3 bg-[#EFF6FF]/60 dark:bg-slate-800/50 border-t border-b border-[#2563EB]/15 flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2 text-left min-w-0">
-            <div className="w-7 h-7 rounded-xl bg-[#2563EB] text-white flex items-center justify-center shrink-0 shadow-xs">
-              <CreditCard className="w-3.5 h-3.5" />
-            </div>
-            <div className="min-w-0">
-              <span className="text-[9.5px] font-extrabold uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA] block leading-none">
-                {associatedCards.length > 1 ? `Provided Debit Cards (${associatedCards.length}):` : 'Provided Debit Card:'}
-              </span>
-              <span className="text-xs font-bold text-slate-800 dark:text-slate-100 truncate block mt-0.5">
-                {associatedCard?.cardName || account.associatedDebitCardName}
-              </span>
-            </div>
+      <div className="px-5 sm:px-6 py-3 bg-[#EFF6FF]/60 dark:bg-slate-800/50 border-t border-b border-[#2563EB]/15 flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2 text-left min-w-0">
+          <div className="w-7 h-7 rounded-xl bg-[#2563EB] text-white flex items-center justify-center shrink-0 shadow-xs">
+            <CreditCard className="w-3.5 h-3.5" />
           </div>
-
-          {associatedCard && onSelectDebitCard && (
-            <button
-              onClick={(e) => { e.stopPropagation(); onSelectDebitCard(associatedCard); }}
-              className="text-[10.5px] font-extrabold text-[#2563EB] dark:text-[#60A5FA] hover:underline flex items-center gap-1 shrink-0 cursor-pointer"
-            >
-              <span>Card Info</span>
-              <ChevronRight className="w-3 h-3" />
-            </button>
-          )}
+          <div className="min-w-0">
+            <span className="text-[9.5px] font-extrabold uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA] block leading-none">
+              {associatedCards.length > 1 ? `Provided Debit Cards (${associatedCards.length}):` : 'Provided Debit Card:'}
+            </span>
+            <span className="text-xs font-bold text-slate-800 dark:text-slate-100 truncate block mt-0.5">
+              {primaryCard ? (primaryCard.name || primaryCard.card_name || primaryCard.cardName) : (getDebitCardRelationshipStatus(account).message || 'Debit card information not available for this account.')}
+            </span>
+          </div>
         </div>
-      )}
+
+        {primaryCard && onSelectDebitCard && (
+          <button
+            onClick={(e) => { e.stopPropagation(); onSelectDebitCard(primaryCard); }}
+            className="text-[10.5px] font-extrabold text-[#2563EB] dark:text-[#60A5FA] hover:underline flex items-center gap-1 shrink-0 cursor-pointer"
+          >
+            <span>Card Info</span>
+            <ChevronRight className="w-3 h-3" />
+          </button>
+        )}
+      </div>
 
       {/* Action Buttons */}
       <div className="p-4 sm:p-5 pt-4 flex items-center gap-2">
@@ -158,7 +157,7 @@ function SavingsAccountCard({ account, onViewDetails, onToggleCompare, isCompare
         </button>
 
         <Link
-          to={`/savings-accounts/${account.id}`}
+          to={`/savings-accounts/${accountId}`}
           onClick={(e) => {
             if (onViewDetails) {
               e.preventDefault();

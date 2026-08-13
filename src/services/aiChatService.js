@@ -433,7 +433,7 @@ User Question: "${userMessage}"`;
         let responseText = `🏦 **Based on the available D.CARD data, these savings accounts match your query:**\n\n`;
         topAccounts.forEach((acc, idx) => {
           const cards = getAssociatedDebitCards(acc);
-          const cardStr = cards.length > 0 ? `${cards[0].cardName} (${cards[0].network || 'Visa'})` : (acc.associatedDebitCardName || 'Standard Card');
+          const cardStr = cards.length > 0 ? `${cards[0].card_name || cards[0].cardName} (${cards[0].network || 'Visa'})` : 'Debit card information not available';
           responseText += `**${idx + 1}. ${acc.accountName}** (${acc.bank})\n`;
           responseText += `• **Category**: ${acc.accountType}\n`;
           responseText += `• **Interest Rate**: ${acc.interestRate}\n`;

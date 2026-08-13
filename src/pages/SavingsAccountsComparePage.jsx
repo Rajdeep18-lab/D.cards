@@ -130,26 +130,25 @@ function SavingsAccountsComparePage({ compareQueue = [], setCompareQueue, onSele
                 <td className="p-4 font-black text-[#0B3D91] dark:text-[#60A5FA] uppercase text-xs">💳 Associated Debit Card</td>
                 {compareQueue.map(acc => {
                   const cards = getAssociatedDebitCards(acc);
-                  const card = cards.length > 0 ? cards[0] : getAssociatedDebitCard(acc.associatedDebitCardId);
+                  const card = cards.length > 0 ? cards[0] : null;
                   return (
                     <td key={acc.id} className="p-4 text-center align-top">
                       {card ? (
                         <div className="p-3.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-left space-y-1.5 shadow-xs">
                           <div className="flex items-center justify-between">
-                            <span className="text-[10px] font-bold text-[#2563EB] uppercase">{card.network || 'Visa'} • {card.category || 'Standard'}</span>
+                            <span className="text-[10px] font-bold text-[#2563EB] uppercase">{card.network || 'Visa'}</span>
                             {cards.length > 1 && (
                               <span className="px-1.5 py-0.5 rounded bg-blue-100 text-[#2563EB] font-bold text-[9px]">
                                 {cards.length} Cards
                               </span>
                             )}
                           </div>
-                          <h4 className="font-extrabold text-xs text-slate-800 dark:text-white leading-tight">{card.cardName}</h4>
+                          <h4 className="font-extrabold text-xs text-slate-800 dark:text-white leading-tight">{card.card_name || card.cardName}</h4>
                           <div className="text-[11px] text-slate-600 dark:text-slate-300 space-y-0.5 pt-1 border-t border-slate-100 dark:border-slate-700">
-                            <p><strong>Fee:</strong> {card.annualFee || 'Free'}</p>
-                            <p><strong>ATM Limit:</strong> ₹{(card.atmLimit || card.limits?.atmLimit || 50000).toLocaleString('en-IN')}/day</p>
-                            <p><strong>POS Limit:</strong> ₹{(card.posLimit || card.limits?.posLimit || 100000).toLocaleString('en-IN')}/day</p>
-                            <p><strong>Lounge Access:</strong> {card.loungeAccess || "No"}</p>
-                            <p><strong>International:</strong> {card.international ? 'Available' : 'Domestic Only'}</p>
+                            <p><strong>Fee:</strong> {card.annual_fee || card.annualFee || 'Information not available'}</p>
+                            <p><strong>ATM Limit:</strong> {card.atm_limit || card.cashWithdrawalLimit || 'Information not available'}</p>
+                            <p><strong>POS Limit:</strong> {card.pos_limit || card.purchaseLimit || 'Information not available'}</p>
+                            <p><strong>Lounge Access:</strong> {card.lounge_access || card.loungeAccess || 'Information not available'}</p>
                           </div>
                           {onSelectDebitCard && (
                             <button
@@ -162,7 +161,7 @@ function SavingsAccountsComparePage({ compareQueue = [], setCompareQueue, onSele
                         </div>
                       ) : (
                         <span className="text-xs font-semibold text-slate-500">
-                          {acc.associatedDebitCardName || "Debit card info not available"}
+                          Debit card information not available for this account.
                         </span>
                       )}
                     </td>

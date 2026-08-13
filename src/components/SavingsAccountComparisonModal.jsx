@@ -175,14 +175,14 @@ function SavingsAccountComparisonModal({ isOpen, onClose, compareQueue = [], onR
                     </td>
                     {compareQueue.map((acc) => {
                       const cards = getAssociatedDebitCards(acc);
-                      const associatedCard = cards.length > 0 ? cards[0] : getAssociatedDebitCard(acc.associatedDebitCardId);
+                      const associatedCard = cards.length > 0 ? cards[0] : null;
                       return (
                         <td key={acc.id} className="p-3.5 text-center align-top">
                           {associatedCard ? (
                             <div className="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-left space-y-1.5 shadow-xs">
                               <div className="flex items-center justify-between">
                                 <span className="text-[9.5px] font-bold text-[#2563EB] dark:text-[#60A5FA] uppercase tracking-wider block">
-                                  {associatedCard.network || 'Visa'} • {associatedCard.category || 'Standard'}
+                                  {associatedCard.network || 'Visa'}
                                 </span>
                                 {cards.length > 1 && (
                                   <span className="px-1.5 py-0.5 rounded bg-blue-100 dark:bg-slate-700 text-[#2563EB] dark:text-blue-300 font-bold text-[9px]">
@@ -191,27 +191,29 @@ function SavingsAccountComparisonModal({ isOpen, onClose, compareQueue = [], onR
                                 )}
                               </div>
                               <h5 className="font-extrabold text-xs text-slate-800 dark:text-white leading-tight">
-                                {associatedCard.cardName}
+                                {associatedCard.card_name || associatedCard.cardName}
                               </h5>
                               <div className="text-[11px] text-slate-600 dark:text-slate-300 space-y-0.5 pt-1 border-t border-slate-100 dark:border-slate-700">
-                                <p><strong>Fee:</strong> {associatedCard.annualFee || 'Free'}</p>
-                                <p><strong>ATM Limit:</strong> ₹{(associatedCard.atmLimit || associatedCard.limits?.atmLimit || 50000).toLocaleString('en-IN')}/day</p>
-                                <p><strong>POS Limit:</strong> ₹{(associatedCard.posLimit || associatedCard.limits?.posLimit || 100000).toLocaleString('en-IN')}/day</p>
-                                <p><strong>Lounge:</strong> {associatedCard.loungeAccess || "No"}</p>
-                                <p><strong>International:</strong> {associatedCard.international ? 'Available' : 'Domestic Only'}</p>
+                                <p><strong>Fee:</strong> {associatedCard.annual_fee || associatedCard.annualFee || 'Information not available'}</p>
+                                <p><strong>ATM Limit:</strong> {associatedCard.atm_limit || associatedCard.cashWithdrawalLimit || 'Information not available'}</p>
+                                <p><strong>POS Limit:</strong> {associatedCard.pos_limit || associatedCard.purchaseLimit || 'Information not available'}</p>
+                                <p><strong>Lounge:</strong> {associatedCard.lounge_access || associatedCard.loungeAccess || 'Information not available'}</p>
                               </div>
                               {onSelectDebitCard && (
                                 <button
-                                  onClick={() => { onClose(); onSelectDebitCard(associatedCard); }}
-                                  className="w-full mt-2 px-2 py-1 rounded bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] text-[10.5px] font-bold hover:bg-[#2563EB] hover:text-white transition-colors cursor-pointer text-center"
+                                  onClick={() => {
+                                    onClose();
+                                    onSelectDebitCard(associatedCard);
+                                  }}
+                                  className="w-full mt-2 py-1 rounded bg-[#2563EB]/10 hover:bg-[#2563EB] text-[#2563EB] hover:text-white font-bold text-[10px] transition-colors cursor-pointer text-center block"
                                 >
-                                  Full Card Details →
+                                  View Specs →
                                 </button>
                               )}
                             </div>
                           ) : (
                             <span className="text-xs font-semibold text-slate-500">
-                              {acc.associatedDebitCardName || "Debit card info not available"}
+                              Debit card information not available for this account.
                             </span>
                           )}
                         </td>

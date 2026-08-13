@@ -422,7 +422,7 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
                     <div className="space-y-2">
                       {searchResults.accounts.map(s => {
                         const associatedCards = getAssociatedDebitCards(s);
-                        const cardName = associatedCards.length > 0 ? associatedCards[0].cardName : (s.associatedDebitCardName || 'Standard Card');
+                        const cardName = associatedCards.length > 0 ? (associatedCards[0].card_name || associatedCards[0].cardName) : 'Debit card information not available';
 
                         return (
                           <div

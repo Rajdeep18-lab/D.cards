@@ -11,26 +11,21 @@ import {
   FileText, 
   UserCheck, 
   Percent, 
-  Zap, 
-  Lock, 
-  Smartphone, 
   ChevronRight,
-  Info,
   Scale,
   Heart,
   AlertCircle,
-  HelpCircle,
-  Clock,
-  DollarSign,
   Gift,
-  Award,
-  Globe,
-  Tag,
   Sliders,
-  Check
+  Sparkles,
+  Info,
+  Check,
+  Shield,
+  Award,
+  Globe
 } from 'lucide-react';
 import { savingsAccountService } from '../services/savingsAccountService';
-import { getAssociatedDebitCards } from '../data/mockSavingsAccounts';
+import { getAssociatedDebitCards, getDebitCardRelationshipStatus } from '../data/mockSavingsAccounts';
 import { useWishlist } from '../context/WishlistContext';
 import LoadingSkeleton from '../components/LoadingSkeleton';
 
@@ -85,13 +80,30 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
     );
   }
 
-  const wishlisted = isWishlisted(account.id);
+  const wishlisted = isWishlisted(account.id || account.product_id);
   const associatedCards = getAssociatedDebitCards(account);
-  const currentCard = associatedCards.length > 0 ? associatedCards[activeCardIndex] || associatedCards[0] : null;
+  const bankName = account.bank_name || account.bank || "Partner Bank";
+  const accountName = account.variant_name || account.accountName || "Savings Account";
+  const interestRate = account.interest_rate || account.interestRate || "Information not available";
+  const minimumBalance = account.minimum_balance || account.minimumBalance || "Information not available";
+  const penalty = account.non_maintenance_penalty || account.nonMaintenanceCharges || "Information not available";
+
+  const getRelationshipBadge = (rel) => {
+    switch (rel) {
+      case 'provided':
+        return { label: 'Provided with account', color: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/30' };
+      case 'optional':
+        return { label: 'Available as an option', color: 'bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/30' };
+      case 'upgrade':
+        return { label: 'Upgrade option', color: 'bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-500/30' };
+      default:
+        return { label: 'Provided with account', color: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/30' };
+    }
+  };
 
   return (
     <main className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-8 relative z-20 space-y-8 text-left select-none">
-      {/* Top Breadcrumb & Actions */}
+      {/* Top Navigation & Action Toolbar */}
       <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
         <Link
           to="/savings-accounts"
@@ -127,26 +139,29 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
         </div>
       </div>
 
-      {/* Main Account Hero Box */}
+      {/* 1. SAVINGS ACCOUNT DETAILS SECTION */}
       <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#0B3D91] to-[#2563EB] text-white font-black text-2xl flex items-center justify-center shadow-lg shadow-[#2563EB]/25 shrink-0">
-              {account.logo || account.bank.substring(0, 2).toUpperCase()}
+              {account.logo || bankName.substring(0, 2).toUpperCase()}
             </div>
             <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA] block">
-                {account.bank}
+              <span className="text-xs font-black uppercase tracking-widest text-[#2563EB] dark:text-[#60A5FA] block">
+                🏦 {bankName}
               </span>
-              <h1 className="text-2xl sm:text-3xl font-black text-[#1F2937] dark:text-white tracking-tight">
-                {account.accountName}
+              <h1 className="text-2xl sm:text-3xl font-black text-[#1F2937] dark:text-white tracking-tight mt-0.5">
+                Savings Account Details
               </h1>
+              <h2 className="text-base sm:text-lg font-bold text-slate-700 dark:text-slate-300">
+                {accountName}
+              </h2>
             </div>
           </div>
 
-          {account.officialSourceUrl && (
+          {(account.officialSourceUrl || account.source) && (
             <a
-              href={account.officialSourceUrl}
+              href={account.officialSourceUrl || account.source}
               target="_blank"
               rel="noopener noreferrer"
               className="px-6 py-3 rounded-2xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:shadow-lg hover:shadow-[#2563EB]/25 text-white font-extrabold text-xs transition-all shadow cursor-pointer active:scale-95 flex items-center gap-2"
@@ -160,16 +175,16 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
         {/* Badges Row */}
         <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
           <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] border border-[#2563EB]/20">
-            Category: {account.accountType}
+            Category: {account.account_type || account.accountType || "Savings"}
           </span>
           {account.isZeroBalance && (
             <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
               <CheckCircle2 className="w-3.5 h-3.5" /> Zero Minimum Balance
             </span>
           )}
-          {account.isOnlineOpening && (
-            <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
-              ⚡ Video KYC Available
+          {account.information_status === "Not verified" && (
+            <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 flex items-center gap-1">
+              <Info className="w-3.5 h-3.5" /> Status: Not verified
             </span>
           )}
           {account.accountTypeBadges && account.accountTypeBadges.map((b, i) => (
@@ -180,55 +195,52 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
         </div>
 
         <p className="text-sm sm:text-base text-slate-700 dark:text-slate-300 leading-relaxed font-normal">
-          {account.description}
+          {account.description || "Detailed savings account overview and financial product parameters."}
         </p>
-
-        {/* Key Benefits List */}
-        {account.keyBenefits && (
-          <div className="space-y-2.5 pt-4 border-t border-slate-100 dark:border-slate-800">
-            <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-400">
-              Key Highlights & Account Benefits:
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs sm:text-sm font-medium">
-              {account.keyBenefits.map((benefit, idx) => (
-                <div key={idx} className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0 mt-0.5" />
-                  <span className="text-slate-800 dark:text-slate-200 leading-snug">{benefit}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
 
-      {/* SECTION 2: INTEREST & BALANCE */}
+      {/* 2. INTEREST RATE & MINIMUM BALANCE & CHARGES */}
       <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-5">
         <h2 className="text-lg font-black text-[#1F2937] dark:text-white flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
           <Percent className="w-5 h-5 text-[#2563EB]" />
-          <span>Interest Rates & Balance Rules</span>
+          <span>Interest Rates, Balance Rules & Charges</span>
         </h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="p-4 rounded-2xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200/80 dark:border-emerald-900/50">
-            <span className="text-xs font-extrabold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 block">
-              Max Interest Rate
+            <span className="text-[11px] font-extrabold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 block">
+              Interest Rate
             </span>
             <span className="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1 block">
-              {account.interestRate}
+              {interestRate}
+            </span>
+            {account.interest_credit_frequency && (
+              <span className="text-[10px] font-bold text-emerald-600/80 block mt-1">
+                Credit: {account.interest_credit_frequency}
+              </span>
+            )}
+          </div>
+
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
+            <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 block">
+              Minimum Balance
+            </span>
+            <span className="text-2xl font-black text-[#1F2937] dark:text-white mt-1 block">
+              {minimumBalance}
             </span>
           </div>
 
           <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
-            <span className="text-xs font-extrabold uppercase tracking-wider text-slate-400 block">
-              Minimum Balance Requirement
+            <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 block">
+              Non-Maintenance Charges
             </span>
-            <span className="text-2xl font-black text-[#1F2937] dark:text-white mt-1 block">
-              {account.minimumBalance}
+            <span className="text-sm font-bold text-slate-800 dark:text-slate-200 mt-1 block leading-snug">
+              {penalty}
             </span>
           </div>
         </div>
 
-        {account.interestSlabs && (
+        {account.interestSlabs && account.interestSlabs.length > 0 && (
           <div className="space-y-2 pt-2">
             <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-400">Interest Rate Tier Slabs:</h4>
             <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 space-y-2 text-xs sm:text-sm">
@@ -241,322 +253,278 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
             </div>
           </div>
         )}
+      </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm pt-2">
-          <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
-            <span className="font-extrabold text-slate-400 uppercase text-[10px] block">AMB / AQB Criterion</span>
-            <p className="font-semibold text-slate-800 dark:text-slate-200 mt-0.5">{account.ambAqbText || "Standard Monthly Maintenance Rules"}</p>
-          </div>
-          <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
-            <span className="font-extrabold text-slate-400 uppercase text-[10px] block">Non-Maintenance Penalty</span>
-            <p className="font-semibold text-slate-800 dark:text-slate-200 mt-0.5">{account.nonMaintenanceCharges || "Applicable if AMB threshold is not maintained"}</p>
-          </div>
+      {/* 3. ELIGIBILITY, BENEFITS & FEATURES */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Eligibility & Target Segment */}
+        <div className="p-6 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-4">
+          <h3 className="text-base font-black text-slate-800 dark:text-white flex items-center gap-2">
+            <UserCheck className="w-5 h-5 text-[#2563EB]" />
+            <span>Eligibility & Criteria</span>
+          </h3>
+          {account.eligibility && (Array.isArray(account.eligibility) ? account.eligibility : [account.eligibility]).length > 0 ? (
+            <div className="space-y-2">
+              {(Array.isArray(account.eligibility) ? account.eligibility : [account.eligibility]).map((item, idx) => (
+                <div key={idx} className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/80 dark:border-slate-800 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 flex items-start gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                  <span>{item}</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-xs text-slate-500 font-medium">Information not available</p>
+          )}
+        </div>
+
+        {/* Benefits & Features */}
+        <div className="p-6 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-4">
+          <h3 className="text-base font-black text-slate-800 dark:text-white flex items-center gap-2">
+            <Gift className="w-5 h-5 text-[#2563EB]" />
+            <span>Account Benefits & Highlights</span>
+          </h3>
+          {(account.benefits || account.keyBenefits) && (account.benefits || account.keyBenefits).length > 0 ? (
+            <div className="space-y-2">
+              {(account.benefits || account.keyBenefits).map((b, idx) => (
+                <div key={idx} className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/80 dark:border-slate-800 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 flex items-start gap-2">
+                  <Sparkles className="w-4 h-4 text-[#2563EB] shrink-0 mt-0.5" />
+                  <span>{b}</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-xs text-slate-500 font-medium">Information not available</p>
+          )}
         </div>
       </div>
 
-      {/* SECTION 3: CORE FEATURE - SAVINGS ACCOUNT → ASSOCIATED DEBIT CARD */}
+      {/* 4. DEDICATED SECTION: DEBIT CARD(S) AVAILABLE WITH THIS ACCOUNT */}
       <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-[#EFF6FF] via-[#DBEAFE]/30 to-white dark:from-slate-900 dark:via-slate-900/90 dark:to-slate-800 border-2 border-[#2563EB]/40 shadow-md space-y-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-[#2563EB]/20 pb-4">
           <div>
-            {associatedCards.length > 0 && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-0.5 bg-[#2563EB] text-white text-[10px] font-black uppercase tracking-widest rounded-full mb-1">
-                OFFICIAL LINKED CARD
-              </span>
-            )}
+            <span className="inline-flex items-center gap-1.5 px-3 py-0.5 bg-[#2563EB] text-white text-[10px] font-black uppercase tracking-widest rounded-full mb-1">
+              SAME-BANK VERIFIED DEBIT LINK
+            </span>
             <h2 className="text-xl sm:text-2xl font-black text-[#0B3D91] dark:text-[#60A5FA] flex items-center gap-2">
               <CreditCard className="w-6 h-6 text-[#2563EB]" />
-              <span>
-                {associatedCards.length > 1
-                  ? "Available Debit Cards"
-                  : associatedCards.length === 1
-                  ? "Debit Card Provided with this Account"
-                  : "Debit Card Information"}
-              </span>
+              <span>Debit Card(s) Available With This Account</span>
             </h2>
           </div>
 
           <p className="text-xs text-[#2563EB] dark:text-[#60A5FA] font-bold">
             {associatedCards.length > 0
-              ? `${associatedCards.length} verified card option(s) available`
-              : "Debit card linkage details"}
+              ? `${associatedCards.length} verified debit card option(s)`
+              : "Debit card relationship status"}
           </p>
         </div>
 
-        {/* State B: Multiple Cards Switcher Tabs */}
-        {associatedCards.length > 1 && (
-          <div className="flex items-center gap-2 overflow-x-auto custom-scrollbar pb-2">
-            {associatedCards.map((c, idx) => (
-              <button
-                key={c.id || idx}
-                onClick={() => setActiveCardIndex(idx)}
-                className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all border cursor-pointer flex items-center gap-2 whitespace-nowrap ${
-                  activeCardIndex === idx
-                    ? 'bg-[#2563EB] text-white border-[#2563EB] shadow-md'
-                    : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-100'
-                }`}
-              >
-                <CreditCard className="w-3.5 h-3.5" />
-                <span>{c.cardName}</span>
-              </button>
-            ))}
-          </div>
-        )}
-
-        {currentCard ? (
-          <div className="space-y-6">
-            {/* Main Debit Card Banner Visual */}
-            <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-[#2563EB]/30 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-              <div className="flex items-center gap-4">
-                {currentCard.image ? (
-                  <img
-                    src={currentCard.image}
-                    alt={currentCard.cardName}
-                    className="w-24 h-16 object-cover rounded-xl shadow-md border border-slate-200 dark:border-slate-700 shrink-0"
-                    onError={(e) => { e.target.style.display = 'none'; }}
-                  />
-                ) : (
-                  <div className="w-20 h-14 rounded-xl bg-gradient-to-br from-[#0B3D91] to-[#2563EB] text-white flex flex-col items-center justify-center font-bold text-xs shadow-md shrink-0">
-                    <CreditCard className="w-5 h-5 mb-1" />
-                    <span>{currentCard.network || 'DEBIT'}</span>
-                  </div>
-                )}
-
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-[11px] font-extrabold text-[#2563EB] dark:text-[#60A5FA] uppercase tracking-wider">
-                      {currentCard.bank}
-                    </span>
-                    <span className="px-2 py-0.5 rounded-md bg-blue-50 dark:bg-slate-800 text-blue-700 dark:text-blue-300 font-bold text-[10px] border border-blue-200 dark:border-slate-700">
-                      {currentCard.network || 'Visa'}
-                    </span>
-                    {currentCard.category && (
-                      <span className="px-2 py-0.5 rounded-md bg-purple-50 dark:bg-slate-800 text-purple-700 dark:text-purple-300 font-bold text-[10px] border border-purple-200 dark:border-slate-700">
-                        {currentCard.category}
-                      </span>
-                    )}
-                  </div>
-                  <h3 className="text-xl font-black text-slate-800 dark:text-white tracking-tight">
-                    {currentCard.cardName}
-                  </h3>
-                  <p className="text-xs text-slate-500 font-medium">
-                    Best For: {currentCard.bestFor || 'Daily Purchases & ATM Withdrawals'}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3 w-full md:w-auto justify-end">
-                {onSelectDebitCard && (
-                  <button
-                    onClick={() => onSelectDebitCard(currentCard)}
-                    className="px-5 py-2.5 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-extrabold transition-all flex items-center gap-1.5 shadow-md cursor-pointer active:scale-95"
-                  >
-                    <span>View Full Debit Card Details →</span>
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* 1. DEBIT CARD LIMITS */}
-            <div className="space-y-3">
-              <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                <Sliders className="w-4 h-4 text-[#2563EB]" />
-                <span>Card Transaction Limits</span>
-              </h3>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-                <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-                  <span className="text-[10px] font-bold text-slate-400 block uppercase">ATM Withdrawal</span>
-                  <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mt-0.5 block">
-                    ₹{(currentCard.atmLimit || currentCard.limits?.atmLimit || 50000).toLocaleString('en-IN')} / day
-                  </span>
-                </div>
-                <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-                  <span className="text-[10px] font-bold text-slate-400 block uppercase">POS Purchases</span>
-                  <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mt-0.5 block">
-                    ₹{(currentCard.posLimit || currentCard.limits?.posLimit || 100000).toLocaleString('en-IN')} / day
-                  </span>
-                </div>
-                <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-                  <span className="text-[10px] font-bold text-slate-400 block uppercase">Online Spends</span>
-                  <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mt-0.5 block">
-                    ₹{(currentCard.onlineLimit || currentCard.limits?.onlineLimit || currentCard.posLimit || 100000).toLocaleString('en-IN')} / day
-                  </span>
-                </div>
-                <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-                  <span className="text-[10px] font-bold text-slate-400 block uppercase">International</span>
-                  <span className={`font-extrabold text-sm mt-0.5 block ${currentCard.international ? 'text-emerald-600' : 'text-slate-400'}`}>
-                    {currentCard.international ? 'Available' : 'Not Available'}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* 2. DEBIT CARD FEATURES */}
-            <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3">
-              <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                <ShieldCheck className="w-4 h-4 text-[#2563EB]" />
-                <span>Debit Card Features & Controls</span>
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 text-xs font-medium">
-                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                  <span>Contactless / Tap & Pay: {currentCard.contactless ? 'Supported' : 'Not Supported'}</span>
-                </div>
-                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                  <span>International POS/ATM: {currentCard.international ? 'Supported' : 'Domestic Only'}</span>
-                </div>
-                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                  <span>Card Controls: In-App Lock & Limit Setting</span>
-                </div>
-                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                  <span>Virtual Card Support: {account.isDigital || currentCard.virtualCard ? 'Available' : 'Physical Card'}</span>
-                </div>
-                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                  <span>Domestic Usage: All RuPay / Visa Terminals</span>
-                </div>
-                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                  <span>Online E-Commerce Spends: 3D Secure Verified</span>
-                </div>
-              </div>
-            </div>
-
-            {/* 3. CARD BENEFITS */}
-            <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3">
-              <h3 className="text-xs font-extrabold uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA] flex items-center gap-1.5">
-                <Gift className="w-4 h-4 text-[#2563EB]" />
-                <span>Card Benefits & Privileges</span>
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                <div className="p-3.5 rounded-xl bg-blue-50/50 dark:bg-slate-800/60 border border-blue-100 dark:border-slate-700 space-y-1">
-                  <span className="font-extrabold text-[#2563EB] dark:text-[#60A5FA] uppercase text-[10px] block">Airport Lounge Access</span>
-                  <p className="font-bold text-slate-800 dark:text-slate-100">{currentCard.loungeAccess || "No complimentary lounge access"}</p>
-                </div>
-                <div className="p-3.5 rounded-xl bg-purple-50/50 dark:bg-slate-800/60 border border-purple-100 dark:border-slate-700 space-y-1">
-                  <span className="font-extrabold text-purple-600 dark:text-purple-400 uppercase text-[10px] block">Cashback & Rewards</span>
-                  <p className="font-bold text-slate-800 dark:text-slate-100">{currentCard.cashback || "Merchant Discounts & Offers"}</p>
-                </div>
-                {currentCard.benefits && (
-                  <div className="p-3.5 rounded-xl bg-emerald-50/50 dark:bg-slate-800/60 border border-emerald-100 dark:border-slate-700 space-y-1 sm:col-span-2">
-                    <span className="font-extrabold text-emerald-600 dark:text-emerald-400 uppercase text-[10px] block">Verified Perks & Insurance</span>
-                    <p className="font-medium text-slate-800 dark:text-slate-100">{currentCard.benefits}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* 4. CARD CHARGES */}
-            <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3">
-              <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                <DollarSign className="w-4 h-4 text-[#2563EB]" />
-                <span>Debit Card Charges & Fees</span>
-              </h3>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700">
-                  <span className="text-[10px] text-slate-400 block font-bold uppercase">Issuance Fee</span>
-                  <span className="font-extrabold text-slate-800 dark:text-slate-200 mt-0.5 block">{currentCard.joiningFee || "₹0"}</span>
-                </div>
-                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700">
-                  <span className="text-[10px] text-slate-400 block font-bold uppercase">Annual / Renewal Fee</span>
-                  <span className="font-extrabold text-slate-800 dark:text-slate-200 mt-0.5 block">{currentCard.annualFee || "Free"}</span>
-                </div>
-                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700">
-                  <span className="text-[10px] text-slate-400 block font-bold uppercase">Forex Markup Fee</span>
-                  <span className="font-extrabold text-slate-800 dark:text-slate-200 mt-0.5 block">{currentCard.forexMarkup || "3.5%"}</span>
-                </div>
-                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700">
-                  <span className="text-[10px] text-slate-400 block font-bold uppercase">ATM Charges</span>
-                  <span className="font-extrabold text-slate-800 dark:text-slate-200 mt-0.5 block">{currentCard.atmCharges || "5 Free TXNs/mo"}</span>
-                </div>
-              </div>
-            </div>
+        {associatedCards.length === 0 ? (
+          /* NO VERIFIED CARD FALLBACK */
+          <div className="p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-center space-y-3">
+            <AlertCircle className="w-12 h-12 text-slate-400 mx-auto" />
+            <h3 className="text-lg font-bold text-slate-700 dark:text-slate-200">
+              {getDebitCardRelationshipStatus(account).status === 'pending'
+                ? 'Debit card relationship pending verification.'
+                : 'Debit card information not available for this account.'}
+            </h3>
+            <p className="text-xs text-slate-500 max-w-md mx-auto">
+              {getDebitCardRelationshipStatus(account).status === 'pending'
+                ? 'The debit card relationship for this account is being audited and is pending verification.'
+                : 'No verified debit card details are explicitly mapped to this specific account in the master bank directory.'}
+            </p>
           </div>
         ) : (
-          /* State C: No verified card found */
-          <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-center space-y-2">
-            <CreditCard className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto" />
-            <p className="text-sm font-bold text-slate-700 dark:text-slate-200">
-              Debit card information not available in the provided source.
-            </p>
-            <p className="text-xs text-slate-400">
-              Check back soon or consult the bank's official schedule of charges.
-            </p>
-          </div>
-        )}
-      </div>
-
-      {/* SECTION 4: BANKING FEATURES & DIGITIZATION */}
-      {account.bankingFeatures && (
-        <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-4">
-          <h2 className="text-lg font-black text-[#1F2937] dark:text-white flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
-            <ShieldCheck className="w-5 h-5 text-[#2563EB]" />
-            <span>Verified Banking Features & Services</span>
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-xs sm:text-sm font-medium">
-            {account.bankingFeatures.map((bFeat, i) => (
-              <div key={i} className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" />
-                <span>{bFeat}</span>
+          <div className="space-y-6">
+            {/* Multiple Cards Switcher Tabs if > 1 card */}
+            {associatedCards.length > 1 && (
+              <div className="flex items-center gap-2 overflow-x-auto custom-scrollbar pb-2">
+                {associatedCards.map((c, idx) => {
+                  return (
+                    <button
+                      key={c.card_id || c.id || idx}
+                      onClick={() => setActiveCardIndex(idx)}
+                      className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all border cursor-pointer flex items-center gap-2 whitespace-nowrap ${
+                        activeCardIndex === idx
+                          ? 'bg-[#2563EB] text-white border-[#2563EB] shadow-md'
+                          : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-100'
+                      }`}
+                    >
+                      <CreditCard className="w-3.5 h-3.5" />
+                      <span>{c.name || c.card_name || c.cardName}</span>
+                    </button>
+                  );
+                })}
               </div>
-            ))}
-          </div>
-        </div>
-      )}
+            )}
 
-      {/* SECTION 5: ELIGIBILITY & ONBOARDING */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {account.eligibility && (
-          <div className="p-6 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-3">
-            <h3 className="text-base font-extrabold text-[#1F2937] dark:text-white flex items-center gap-2">
-              <UserCheck className="w-5 h-5 text-[#2563EB]" />
-              <span>Eligibility Criteria</span>
-            </h3>
-            <ul className="space-y-2 text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-medium">
-              {account.eligibility.map((el, i) => (
-                <li key={i} className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0 mt-0.5" />
-                  <span>{el}</span>
-                </li>
-              ))}
-            </ul>
+            {/* Display Active Card Details */}
+            {(() => {
+              const card = associatedCards[activeCardIndex] || associatedCards[0];
+              if (!card) return null;
+
+              const relBadge = getRelationshipBadge(card.relationship);
+              const cardName = card.name || card.card_name || card.cardName || "Information not available";
+              const network = card.network || "Information not available";
+              const annualFee = card.annual_fee || card.annualFee || "Information not available";
+              const atmLimit = card.atm_limit || card.cashWithdrawalLimit || "Information not available";
+              const posLimit = card.pos_limit || card.purchaseLimit || "Information not available";
+              const loungeAccess = card.lounge_access || card.loungeAccess || "Information not available";
+              const insurance = card.insurance || "Information not available";
+              const rewards = card.rewards || card.rewardPoints || "Information not available";
+              const keyBenefits = card.key_benefits || card.bestFor || card.benefits || [];
+              const eligibilityText = card.eligibility 
+                ? (Array.isArray(card.eligibility) ? card.eligibility.join(', ') : card.eligibility)
+                : (card.salary_account ? "Salary Account Required" : "Provided with Savings Account");
+              const verificationInfo = card.verification_info || card.officialWebsite || "Information not available";
+
+              return (
+                <div className="space-y-6">
+                  {/* Card Main Banner Header */}
+                  <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-[#2563EB]/30 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                    <div className="flex items-center gap-4">
+                      <div className="w-20 h-14 rounded-xl bg-gradient-to-br from-[#0B3D91] to-[#2563EB] text-white flex flex-col items-center justify-center font-bold text-xs shadow-md shrink-0">
+                        <CreditCard className="w-6 h-6 mb-1" />
+                        <span>{network}</span>
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black border ${relBadge.color}`}>
+                            {relBadge.label}
+                          </span>
+                          <span className="px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-bold text-[10px]">
+                            ✓ Verified Card Linkage
+                          </span>
+                        </div>
+                        <h3 className="text-xl font-black text-slate-800 dark:text-white tracking-tight">
+                          💳 {cardName}
+                        </h3>
+                      </div>
+                    </div>
+
+                    {onSelectDebitCard && (
+                      <button
+                        onClick={() => onSelectDebitCard(card)}
+                        className="px-5 py-2.5 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-extrabold transition-all flex items-center gap-1.5 shadow-md cursor-pointer active:scale-95"
+                      >
+                        <span>View Full Card Profile →</span>
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+
+                  {/* 11 REQUIRED FIELD METRICS GRID */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+                    {/* 1. Card Name & Variant */}
+                    <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase block">Card Name & Variant</span>
+                      <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mt-1 block">
+                        {cardName} ({card.cardVariant || "Standard"})
+                      </span>
+                    </div>
+
+                    {/* 2. Network */}
+                    <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase block">Card Network</span>
+                      <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mt-1 block">
+                        {network}
+                      </span>
+                    </div>
+
+                    {/* 3. Annual/Maintenance Fee */}
+                    <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase block">Annual / Maintenance Fee</span>
+                      <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mt-1 block">
+                        {annualFee}
+                      </span>
+                    </div>
+
+                    {/* 4. ATM Limit */}
+                    <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase block">ATM Withdrawal Limit</span>
+                      <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mt-1 block">
+                        {atmLimit}
+                      </span>
+                    </div>
+
+                    {/* 5. POS Limit */}
+                    <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase block">POS / Shopping Limit</span>
+                      <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mt-1 block">
+                        {posLimit}
+                      </span>
+                    </div>
+
+                    {/* 6. Lounge Access */}
+                    <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase block">Airport Lounge Access</span>
+                      <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mt-1 block">
+                        {loungeAccess}
+                      </span>
+                    </div>
+
+                    {/* 7. Insurance */}
+                    <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase block flex items-center gap-1">
+                        <Shield className="w-3 h-3 text-emerald-500" /> Insurance Protection
+                      </span>
+                      <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mt-1 block">
+                        {insurance}
+                      </span>
+                    </div>
+
+                    {/* 8. Rewards */}
+                    <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase block flex items-center gap-1">
+                        <Award className="w-3 h-3 text-amber-500" /> Rewards & Points
+                      </span>
+                      <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mt-1 block">
+                        {rewards}
+                      </span>
+                    </div>
+
+                    {/* 9. Eligibility / Account Relationship */}
+                    <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase block">Eligibility & Relationship</span>
+                      <span className="font-extrabold text-[#2563EB] dark:text-[#60A5FA] text-sm mt-1 block">
+                        {eligibilityText}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* 10. Key Benefits */}
+                  <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3">
+                    <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA] flex items-center gap-1.5">
+                      <Gift className="w-4 h-4 text-[#2563EB]" />
+                      <span>Card Key Benefits & Best For</span>
+                    </h4>
+                    {keyBenefits && (Array.isArray(keyBenefits) ? keyBenefits : [keyBenefits]).length > 0 ? (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                        {(Array.isArray(keyBenefits) ? keyBenefits : [keyBenefits]).map((benefit, idx) => (
+                          <div key={idx} className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700 flex items-start gap-2 font-medium text-slate-700 dark:text-slate-300">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                            <span>{benefit}</span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-xs text-slate-500 font-medium">Information not available</p>
+                    )}
+                  </div>
+
+                  {/* 11. Verification / Source Information */}
+                  <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+                      <Globe className="w-4 h-4 text-[#2563EB]" />
+                      <span className="font-medium">Verification Status & Source:</span>
+                      <span className="font-bold text-slate-700 dark:text-slate-200">{verificationInfo}</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         )}
-
-        {account.accountOpeningFeatures && (
-          <div className="p-6 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-3">
-            <h3 className="text-base font-extrabold text-[#1F2937] dark:text-white flex items-center gap-2">
-              <Zap className="w-5 h-5 text-[#2563EB]" />
-              <span>Account Opening & Onboarding</span>
-            </h3>
-            <ul className="space-y-2 text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-medium">
-              {account.accountOpeningFeatures.map((aop, i) => (
-                <li key={i} className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                  <span>{aop}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
-
-      {/* STATUTORY DISCLAIMER */}
-      <div className="p-5 sm:p-6 rounded-3xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/60 space-y-3 text-amber-900 dark:text-amber-200 text-xs sm:text-sm">
-        <div className="flex items-center gap-2 font-black uppercase tracking-wider text-amber-800 dark:text-amber-300">
-          <Info className="w-4 h-4 shrink-0" />
-          <span>Statutory Disclaimer & Information Notice</span>
-        </div>
-        <p className="leading-relaxed font-normal">
-          Information is provided for informational and comparison purposes only. Interest rates, charges, eligibility criteria, account features and debit-card benefits may change. Please verify the latest information on the respective bank's official website before opening an account.
-        </p>
-        <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-amber-200/60 dark:border-amber-900/40 text-xs font-semibold">
-          <span>Source: Official Bank Website</span>
-          <span>Last Verified: {account.lastVerified || "August 2026"}</span>
-        </div>
       </div>
     </main>
   );

@@ -44,7 +44,7 @@ export const savingsAccountService = {
   async getSavingsAccountById(accountId) {
     const all = await this.getSavingsAccounts();
     const strId = String(accountId);
-    return all.find(acc => String(acc.id) === strId) || null;
+    return all.find(acc => String(acc.id) === strId || String(acc.product_id) === strId) || null;
   },
 
   clearCache() {
