@@ -38,6 +38,7 @@ import SavingsAccountCard from '../components/SavingsAccountCard';
 import BankBrandLogo from '../components/BankBrandLogo';
 import IDFCTierEligibilityCalculator from '../components/IDFCTierEligibilityCalculator';
 import IDFCTierBenefitsComparison from '../components/IDFCTierBenefitsComparison';
+import ICICIBSavingsDetailView from '../components/ICICIBSavingsDetailView';
 
 function BanksPage({ 
   activeCardsList = null, 
@@ -637,6 +638,13 @@ function BanksPage({
                   </div>
                 );
               })}
+            </div>
+          )}
+
+          {/* ── ICICI BANK SAVINGS ACCOUNT & PRIVILEGE BANKING SECTION ── */}
+          {canonicalName.toLowerCase().includes('icici') && (
+            <div className="space-y-8 pt-6 border-t border-slate-200 dark:border-slate-800">
+              <ICICIBSavingsDetailView onSelectDebitCard={onSelectDebitCard} />
             </div>
           )}
 

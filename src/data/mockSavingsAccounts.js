@@ -2467,6 +2467,183 @@ export const savingsAccounts = [
         "verification_status": "verified"
       }
     ]
+  },
+  {
+    "id": 1061,
+    "product_id": "icici-savings-privilege",
+    "bank_id": "icici",
+    "bank_name": "ICICI Bank",
+    "bank": "ICICI Bank",
+    "logo": "IC",
+    "variant_name": "ICICI Bank Savings Account & Privilege Banking",
+    "accountName": "ICICI Bank Savings Account & Privilege Banking",
+    "account_type": "Regular Savings",
+    "accountType": "Regular Savings",
+    "target_segment": "General Public, HNI & Senior Citizens",
+    "accountTypeBadges": [
+      "Regular Savings",
+      "Privilege Tiers",
+      "Senior Citizen",
+      "3-in-1 Account"
+    ],
+    "interest_rate": "3.00% - 3.50% p.a.",
+    "interestRate": "3.00% - 3.50% p.a.",
+    "interestRateValue": 3.5,
+    "minimum_balance": "₹10,000 (Metro/Urban)",
+    "minimumBalance": "₹10,000 (Metro/Urban)",
+    "minimumBalanceValue": 10000,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "6% of MAB shortfall or max ₹500/month",
+    "nonMaintenanceCharges": "6% of MAB shortfall or max ₹500/month",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": false,
+    "isOnlineOpening": true,
+    "isStudent": false,
+    "isSalary": false,
+    "isSeniorCitizen": true,
+    "isWomenSpecial": false,
+    "isDigital": true,
+    "isPremium": true,
+    "isNRI": false,
+    "rating": 4.8,
+    "isPopular": true,
+    "source": "https://www.icicibank.com/personal-banking/accounts/savings-account",
+    "officialSourceUrl": "https://www.icicibank.com/personal-banking/accounts/savings-account",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "Explore savings account requirements, privilege banking tiers, senior citizen benefits, debit-card benefits and account charges in one place.",
+    "eligibility": [
+      "Resident Indian Individual",
+      "Age: 18 years and above (Age 60+ for Senior Citizen Tier)",
+      "Single or Joint Account operation"
+    ],
+    "benefits": [
+      "Monthly Average Balance (MAB): ₹10,000 (Metro/Urban) / ₹5,000 (Semi-Urban) / ₹2,000 (Rural)",
+      "3-in-1 Account: Integrated Savings + Demat + Trading accounts",
+      "Debit Card Tiering: Smart Shopper Gold, Coral, Sapphiro & Private Banking variants",
+      "24×7 iMobile App banking with instant Video KYC",
+      "Air Accidental Death Insurance cover up to ₹3 Crores"
+    ],
+    "keyBenefits": [
+      "Monthly Average Balance (MAB): ₹10,000 (Metro/Urban) / ₹5,000 (Semi-Urban) / ₹2,000 (Rural)",
+      "3-in-1 Account: Integrated Savings + Demat + Trading accounts",
+      "Debit Card Tiering: Smart Shopper Gold, Coral, Sapphiro & Private Banking variants",
+      "24×7 iMobile App banking with instant Video KYC",
+      "Air Accidental Death Insurance cover up to ₹3 Crores"
+    ],
+    "features": [
+      "24x7 iMobile Pay & Retail Internet Banking (RIB) digital access",
+      "Select, Wealth Management & Private Banking Privilege Relationship Tiers",
+      "Senior Citizen Savings Tier with doorstep banking at no additional cost",
+      "Complimentary Airport & Railway Lounge Access on privilege debit cards"
+    ],
+    "bankingFeatures": [
+      "24x7 iMobile Pay & Retail Internet Banking (RIB) digital access",
+      "Select, Wealth Management & Private Banking Privilege Relationship Tiers",
+      "Senior Citizen Savings Tier with doorstep banking at no additional cost",
+      "Complimentary Airport & Railway Lounge Access on privilege debit cards"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "icici-coral-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      },
+      {
+        "card_id": "icici-sapphiro-debit-card",
+        "relationship": "optional",
+        "verification_status": "verified"
+      },
+      {
+        "card_id": "icici-private-banking-debit-card",
+        "relationship": "optional",
+        "verification_status": "verified"
+      },
+      {
+        "card_id": "icici-smart-shopper-gold-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      }
+    ]
+  },
+  {
+    "id": 1062,
+    "product_id": "icici-senior-citizen-savings",
+    "bank_id": "icici",
+    "bank_name": "ICICI Bank",
+    "bank": "ICICI Bank",
+    "logo": "IC",
+    "variant_name": "ICICI Senior Citizen Savings Account",
+    "accountName": "ICICI Senior Citizen Savings Account",
+    "account_type": "Senior Citizen",
+    "accountType": "Senior Citizen",
+    "target_segment": "Senior Citizens (Age 60+)",
+    "accountTypeBadges": [
+      "Senior Citizen",
+      "Zero Cost Banking",
+      "Doorstep Banking"
+    ],
+    "interest_rate": "3.00% - 3.50% p.a. + FD Bonus",
+    "interestRate": "3.00% - 3.50% p.a. + FD Bonus",
+    "interestRateValue": 3.5,
+    "minimum_balance": "₹15,000",
+    "minimumBalance": "₹15,000",
+    "minimumBalanceValue": 15000,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "6% of MAB shortfall or max ₹500/month",
+    "nonMaintenanceCharges": "6% of MAB shortfall or max ₹500/month",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": false,
+    "isOnlineOpening": true,
+    "isStudent": false,
+    "isSalary": false,
+    "isSeniorCitizen": true,
+    "isWomenSpecial": false,
+    "isDigital": true,
+    "isPremium": false,
+    "isNRI": false,
+    "rating": 4.8,
+    "isPopular": true,
+    "source": "https://www.icicibank.com/personal-banking/accounts/savings-account/senior-citizen-savings-account",
+    "officialSourceUrl": "https://www.icicibank.com/personal-banking/accounts/savings-account/senior-citizen-savings-account",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "Tailored savings account for senior citizens featuring All Banking Services at no cost*, doorstep banking, priority branch assistance, and SCSS government-backed investments.",
+    "eligibility": [
+      "Resident Senior Citizens",
+      "Age: 60 years and above"
+    ],
+    "benefits": [
+      "All Banking Services at no cost*",
+      "Doorstep Banking with no additional cost for cash pickup & cheque collection",
+      "Priority assistance at branches and dedicated 1800 1080 helpline",
+      "SCSS government-backed scheme with tax benefits + additional FD interest rate"
+    ],
+    "keyBenefits": [
+      "All Banking Services at no cost*",
+      "Doorstep Banking with no additional cost for cash pickup & cheque collection",
+      "Priority assistance at branches and dedicated 1800 1080 helpline",
+      "SCSS government-backed scheme with tax benefits + additional FD interest rate"
+    ],
+    "features": [
+      "iMobile + RIB digital banking access",
+      "Premium debit cards with lounge access based on MAB & spend criteria",
+      "Free physical passbook & monthly email statements"
+    ],
+    "bankingFeatures": [
+      "iMobile + RIB digital banking access",
+      "Premium debit cards with lounge access based on MAB & spend criteria",
+      "Free physical passbook & monthly email statements"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "icici-coral-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      }
+    ]
   }
 ];
 

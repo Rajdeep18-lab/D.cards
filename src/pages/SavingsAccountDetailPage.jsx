@@ -29,6 +29,8 @@ import { getAssociatedDebitCards, getDebitCardRelationshipStatus } from '../data
 import { useWishlist } from '../context/WishlistContext';
 import LoadingSkeleton from '../components/LoadingSkeleton';
 
+import ICICIBSavingsDetailView from '../components/ICICIBSavingsDetailView';
+
 function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompared }) {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -80,9 +82,15 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
     );
   }
 
+  const bankName = account.bank_name || account.bank || "Partner Bank";
+
+  // ICICI Bank Dedicated Detail View
+  if (account.bank_id === 'icici' || bankName.toLowerCase().includes('icici')) {
+    return <ICICIBSavingsDetailView onSelectDebitCard={onSelectDebitCard} />;
+  }
+
   const wishlisted = isWishlisted(account.id || account.product_id);
   const associatedCards = getAssociatedDebitCards(account);
-  const bankName = account.bank_name || account.bank || "Partner Bank";
   const accountName = account.variant_name || account.accountName || "Savings Account";
   const interestRate = account.interest_rate || account.interestRate || "Information not available";
   const minimumBalance = account.minimum_balance || account.minimumBalance || "Information not available";
