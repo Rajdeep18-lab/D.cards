@@ -296,7 +296,7 @@ function DebitCardCard({ card, onCompare, isQueued, onViewDetails, userProfile =
             e.stopPropagation();
             if (onViewDetails) onViewDetails(card);
           }}
-          className="flex-1 py-2.5 rounded-xl text-xs font-semibold border border-[#E5E7EB] dark:border-slate-700 text-[#1F2937] dark:text-white hover:border-[#2563EB] hover:text-[#2563EB] transition-all cursor-pointer"
+          className="flex-1 py-2.5 rounded-xl text-xs font-semibold border border-[#E5E7EB] dark:border-slate-700 text-[#1F2937] dark:text-white hover:border-[#2563EB] hover:text-[#2563EB] transition-all cursor-pointer min-h-[44px] flex items-center justify-center"
         >
           View Specs
         </motion.button>
@@ -305,7 +305,7 @@ function DebitCardCard({ card, onCompare, isQueued, onViewDetails, userProfile =
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={handleApplyClick}
-          className="flex-1 py-2.5 rounded-xl text-xs font-semibold text-white bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:opacity-95 transition-all shadow-sm cursor-pointer flex items-center justify-center gap-1"
+          className="flex-1 py-2.5 rounded-xl text-xs font-semibold text-white bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:opacity-95 transition-all shadow-sm cursor-pointer flex items-center justify-center gap-1 min-h-[44px]"
         >
           <span>Apply Now</span>
           <ExternalLink className="w-3.5 h-3.5" />
@@ -318,7 +318,7 @@ function DebitCardCard({ card, onCompare, isQueued, onViewDetails, userProfile =
             e.stopPropagation();
             onCompare();
           }}
-          className={`px-3 py-2.5 rounded-xl text-xs font-semibold text-white transition-all shadow-sm cursor-pointer ${
+          className={`px-3 py-2.5 rounded-xl text-xs font-semibold text-white transition-all shadow-sm cursor-pointer min-h-[44px] flex items-center justify-center ${
             isQueued
               ? "bg-emerald-600"
               : "bg-slate-800 dark:bg-slate-700 hover:bg-[#2563EB]"

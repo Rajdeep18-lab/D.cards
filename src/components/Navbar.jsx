@@ -45,21 +45,21 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
         {/* ==================================================
             1. LEFT BRAND SECTION
            ================================================== */}
-        <div className="min-w-[190px] max-w-[240px] shrink-0 flex items-center select-none">
+        <div className="min-w-0 shrink-0 flex items-center select-none">
           <Link
             to="/"
-            className="flex items-center gap-2.5 group text-left bg-transparent border-0 cursor-pointer focus:outline-none"
+            className="flex items-center gap-2 group text-left bg-transparent border-0 cursor-pointer focus:outline-none"
           >
             <img 
               src="/logo-mark.png" 
               alt="D.CARD Logo" 
-              className="h-10 sm:h-11 w-auto object-contain group-hover:scale-105 transition-transform duration-300 shrink-0"
+              className="h-9 sm:h-11 w-auto object-contain group-hover:scale-105 transition-transform duration-300 shrink-0"
             />
             <div className="flex flex-col justify-center">
-              <span className="text-lg sm:text-xl font-extrabold tracking-tight leading-none text-[#0F172A] dark:text-white font-sans">
+              <span className="text-base sm:text-xl font-extrabold tracking-tight leading-none text-[#0F172A] dark:text-white font-sans">
                 D.<span className="text-[#2563EB]">CARD</span>
               </span>
-              <span className="text-[8.5px] sm:text-[9px] font-bold text-[#6B7280] dark:text-slate-400 tracking-wider uppercase mt-1 leading-tight whitespace-nowrap">
+              <span className="hidden min-[380px]:block text-[8.5px] sm:text-[9px] font-bold text-[#6B7280] dark:text-slate-400 tracking-wider uppercase mt-0.5 sm:mt-1 leading-tight whitespace-nowrap">
                 COMPARE. CHOOSE. BENEFIT.
               </span>
             </div>
