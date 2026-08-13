@@ -31,6 +31,7 @@ import SavingsAccountComparisonDock from '../components/SavingsAccountComparison
 import SavingsAccountComparisonModal from '../components/SavingsAccountComparisonModal';
 import { savingsAccountService } from '../services/savingsAccountService';
 import { getAssociatedDebitCard } from '../data/mockSavingsAccounts';
+import { safeString, safeLower, safeArray, parseNumericValue } from '../utils/safeUtils';
 
 const BANK_OPTIONS = [
   "HDFC Bank",
@@ -141,21 +142,15 @@ function SavingsAccountSkeleton() {
   );
 }
 
-function parseNumericValue(valStr) {
-  if (!valStr) return 0;
-  if (typeof valStr === 'number') return valStr;
-  const cleaned = String(valStr).replace(/[^0-9.]/g, '');
-  const parsed = parseFloat(cleaned);
-  return isNaN(parsed) ? 0 : parsed;
-}
-
 function matchesAccountType(acc, type) {
-  const typeStr = (acc.accountType || acc.account_type || '').toLowerCase();
-  const nameStr = (acc.accountName || acc.variant_name || '').toLowerCase();
-  const badgesStr = (acc.accountTypeBadges || []).map(b => b.toLowerCase()).join(' ');
-  const targetStr = (acc.target_segment || '').toLowerCase();
-  const t = type.toLowerCase();
+  if (!acc) return false;
+  const typeStr = safeLower(acc.accountType || acc.account_type);
+  const nameStr = safeLower(acc.accountName || acc.variant_name);
+  const badgesStr = safeArray(acc.accountTypeBadges).map(safeLower).join(' ');
+  const targetStr = safeLower(acc.target_segment);
+  const t = safeLower(type);
 
+  if (!t) return true;
   if (typeStr.includes(t) || badgesStr.includes(t) || nameStr.includes(t)) return true;
   if (t.includes('zero') && (acc.isZeroBalance || parseNumericValue(acc.minimumBalance || acc.minimum_balance) === 0)) return true;
   if (t.includes('student') && (acc.isStudent || targetStr.includes('student') || nameStr.includes('student') || nameStr.includes('mine') || nameStr.includes('youth'))) return true;
@@ -172,6 +167,7 @@ function matchesAccountType(acc, type) {
 }
 
 function matchesBalanceRange(acc, rangeId) {
+  if (!acc) return false;
   const val = acc.minimumBalanceValue ?? parseNumericValue(acc.minimumBalance || acc.minimum_balance);
   const isZero = acc.isZeroBalance === true || val === 0;
 
@@ -192,13 +188,15 @@ function matchesBalanceRange(acc, rangeId) {
 }
 
 function matchesOpeningMethod(acc, method) {
-  const m = method.toLowerCase();
+  if (!acc) return false;
+  const m = safeLower(method);
   const accText = [
     acc.isOnlineOpening ? 'online video kyc' : '',
-    ...(acc.accountOpeningFeatures || []),
-    ...(acc.keyBenefits || []),
-    acc.description || ''
-  ].join(' ').toLowerCase();
+    ...(safeArray(acc.accountOpeningFeatures)),
+    ...(safeArray(acc.keyBenefits)),
+    ...(safeArray(acc.benefits)),
+    safeString(acc.description)
+  ].map(safeLower).join(' ');
 
   if (m === 'online') {
     return acc.isOnlineOpening === true || accText.includes('online') || accText.includes('digital');
@@ -216,13 +214,15 @@ function matchesOpeningMethod(acc, method) {
 }
 
 function matchesBankingFeature(acc, feature) {
-  const f = feature.toLowerCase();
+  if (!acc) return false;
+  const f = safeLower(feature);
   const accText = [
-    ...(acc.bankingFeatures || []),
-    ...(acc.keyBenefits || []),
-    ...(acc.accountOpeningFeatures || []),
-    acc.description || ''
-  ].join(' ').toLowerCase();
+    ...(safeArray(acc.bankingFeatures)),
+    ...(safeArray(acc.keyBenefits)),
+    ...(safeArray(acc.benefits)),
+    ...(safeArray(acc.accountOpeningFeatures)),
+    safeString(acc.description)
+  ].map(safeLower).join(' ');
 
   if (f === 'upi') return accText.includes('upi') || accText.includes('scan & pay');
   if (f === 'mobile banking') return accText.includes('mobile') || accText.includes('app');
@@ -238,23 +238,25 @@ function matchesBankingFeature(acc, feature) {
 }
 
 function matchesDebitCardFilter(acc, cardFilter) {
-  const cf = cardFilter.toLowerCase();
-  const card = getAssociatedDebitCard(acc.associatedDebitCardId);
-  const cardName = (acc.associatedDebitCardName || card?.cardName || '').toLowerCase();
-  const cardNetwork = (card?.network || '').toLowerCase();
+  if (!acc) return false;
+  const cf = safeLower(cardFilter);
+  const card = getAssociatedDebitCard(acc);
+  const cardName = safeLower(acc.associatedDebitCardName || card?.cardName || card?.card_name || card?.name);
+  const cardNetwork = safeLower(card?.network);
 
   const combinedText = [
     cardName,
     cardNetwork,
-    card?.bestFor || '',
-    card?.cashback || '',
-    card?.loungeAccess || '',
-    card?.annualFee || '',
-    ...(card?.features || []),
-    ...(card?.perks || []),
-    ...(acc.keyBenefits || []),
-    acc.description || ''
-  ].join(' ').toLowerCase();
+    safeString(card?.bestFor),
+    safeString(card?.cashback),
+    safeString(card?.loungeAccess),
+    safeString(card?.annualFee),
+    ...(safeArray(card?.features)),
+    ...(safeArray(card?.perks)),
+    ...(safeArray(acc.keyBenefits)),
+    ...(safeArray(acc.benefits)),
+    safeString(acc.description)
+  ].map(safeLower).join(' ');
 
   if (cf === 'debit card available') {
     return Boolean(acc.associatedDebitCardId || acc.associatedDebitCardName || card);
@@ -275,7 +277,7 @@ function matchesDebitCardFilter(acc, cardFilter) {
     return card?.international === true || combinedText.includes('international') || combinedText.includes('global') || combinedText.includes('forex');
   }
   if (cf === 'lounge access') {
-    const l = (card?.loungeAccess || '').toLowerCase();
+    const l = safeLower(card?.loungeAccess);
     return (Boolean(l) && !l.startsWith('no') && !l.includes('not available')) || combinedText.includes('lounge');
   }
   if (cf === 'insurance') {
@@ -285,7 +287,7 @@ function matchesDebitCardFilter(acc, cardFilter) {
     return combinedText.includes('reward') || combinedText.includes('points') || combinedText.includes('discount') || combinedText.includes('privilege');
   }
   if (cf === 'cashback') {
-    const cb = (card?.cashback || '').toLowerCase();
+    const cb = safeLower(card?.cashback);
     return (Boolean(cb) && !cb.startsWith('no') && !cb.includes('not available')) || combinedText.includes('cashback');
   }
 
@@ -363,9 +365,9 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
   const toggleCompareQueue = useCallback((account) => {
     if (!account) return;
     setCompareQueue(prev => {
-      const exists = prev.some(a => String(a.id) === String(account.id));
+      const exists = prev.some(a => String(a?.id || a?.product_id) === String(account?.id || account?.product_id));
       if (exists) {
-        return prev.filter(a => String(a.id) !== String(account.id));
+        return prev.filter(a => String(a?.id || a?.product_id) !== String(account?.id || account?.product_id));
       }
       if (prev.length >= 3) {
         alert("You can compare up to 3 savings accounts at a time");
@@ -377,30 +379,55 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
 
   // Filter & Sort Pipeline
   const filteredAccounts = useMemo(() => {
-    let result = [...accounts];
+    let result = [...accounts].filter(Boolean);
 
     // 1. Search Query Filter
-    const q = searchQuery.toLowerCase().trim();
+    const q = safeLower(searchQuery);
     if (q) {
       result = result.filter(acc => {
-        const card = getAssociatedDebitCard(acc.associatedDebitCardId);
+        if (!acc) return false;
+        const card = getAssociatedDebitCard(acc);
         const searchableText = [
-          acc.accountName,
+          acc.bank_name,
           acc.bank,
+          acc.variant_name,
+          acc.account_name,
+          acc.accountName,
+          acc.product_id,
+          acc.account_type,
           acc.accountType,
-          ...(acc.accountTypeBadges || []),
+          ...(safeArray(acc.accountTypeBadges)),
+          acc.target_segment,
+          acc.interest_rate,
+          acc.interestRate,
+          acc.minimum_balance,
+          acc.minimumBalance,
+          acc.maximum_balance,
+          acc.notes,
           acc.description,
-          ...(acc.keyBenefits || []),
-          ...(acc.bankingFeatures || []),
-          ...(acc.accountOpeningFeatures || []),
+          ...(safeArray(acc.features)),
+          ...(safeArray(acc.keyBenefits)),
+          ...(safeArray(acc.benefits)),
+          ...(safeArray(acc.bankingFeatures)),
+          ...(safeArray(acc.accountOpeningFeatures)),
+          acc.debit_card,
+          acc.debit_card_name,
+          acc.debit_card_network,
           acc.associatedDebitCardName,
+          card?.card_name,
           card?.cardName,
+          card?.name,
           card?.network,
-          card?.bestFor,
+          card?.category,
+          card?.bestFor ? safeArray(card.bestFor).join(' ') : '',
           card?.cashback,
           card?.loungeAccess,
-          ...(card?.features || [])
-        ].filter(Boolean).join(' ').toLowerCase();
+          ...(card?.features ? safeArray(card.features) : []),
+          ...(card?.perks ? safeArray(card.perks) : [])
+        ]
+          .filter(Boolean)
+          .map(val => safeLower(val))
+          .join(" ");
 
         return searchableText.includes(q);
       });
@@ -408,66 +435,135 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
 
     // 2. Bank Filter (OR within category)
     if (selectedBanks.length > 0) {
-      result = result.filter(acc => selectedBanks.some(b => acc.bank.toLowerCase().includes(b.toLowerCase())));
+      result = result.filter(acc => {
+        if (!acc) return false;
+        const accBank = safeLower(acc.bank || acc.bank_name || acc.bank_id);
+        return selectedBanks.some(b => accBank.includes(safeLower(b)));
+      });
     }
 
     // 3. Account Type Filter (OR within category)
     if (selectedAccountTypes.length > 0) {
-      result = result.filter(acc => selectedAccountTypes.some(t => matchesAccountType(acc, t)));
+      result = result.filter(acc => {
+        if (!acc) return false;
+        return selectedAccountTypes.some(t => matchesAccountType(acc, t));
+      });
     }
 
     // 4. Minimum Interest Rate Filter
     if (minInterestRate > 0) {
-      result = result.filter(acc => (acc.interestRateValue || 0) >= minInterestRate);
+      result = result.filter(acc => {
+        if (!acc) return false;
+        const rateVal = acc.interestRateValue ?? parseNumericValue(acc.interestRate || acc.interest_rate);
+        return rateVal >= minInterestRate;
+      });
     }
 
     // 5. Minimum Balance Range Filter (OR within category)
     if (selectedBalanceRanges.length > 0) {
-      result = result.filter(acc => selectedBalanceRanges.some(rId => matchesBalanceRange(acc, rId)));
+      result = result.filter(acc => {
+        if (!acc) return false;
+        return selectedBalanceRanges.some(rId => matchesBalanceRange(acc, rId));
+      });
     }
 
     // 6. Zero Balance Filter
     if (zeroBalanceFilter === 'yes') {
-      result = result.filter(acc => acc.isZeroBalance === true || acc.minimumBalanceValue === 0);
+      result = result.filter(acc => {
+        if (!acc) return false;
+        return acc.isZeroBalance === true || (acc.minimumBalanceValue ?? parseNumericValue(acc.minimumBalance || acc.minimum_balance)) === 0;
+      });
     } else if (zeroBalanceFilter === 'no') {
-      result = result.filter(acc => acc.isZeroBalance === false && (acc.minimumBalanceValue || 0) > 0);
+      result = result.filter(acc => {
+        if (!acc) return false;
+        return acc.isZeroBalance === false && (acc.minimumBalanceValue ?? parseNumericValue(acc.minimumBalance || acc.minimum_balance)) > 0;
+      });
     }
 
     // 7. Account Opening Method Filter (AND logic across selected methods)
     if (selectedOpeningMethods.length > 0) {
-      result = result.filter(acc => selectedOpeningMethods.every(m => matchesOpeningMethod(acc, m)));
+      result = result.filter(acc => {
+        if (!acc) return false;
+        return selectedOpeningMethods.every(m => matchesOpeningMethod(acc, m));
+      });
     }
 
     // 8. Banking Features Filter (AND logic across selected features)
     if (selectedBankingFeatures.length > 0) {
-      result = result.filter(acc => selectedBankingFeatures.every(f => matchesBankingFeature(acc, f)));
+      result = result.filter(acc => {
+        if (!acc) return false;
+        return selectedBankingFeatures.every(f => matchesBankingFeature(acc, f));
+      });
     }
 
     // 9. Debit Card Feature Filter (AND logic across selected debit card filters)
     if (selectedDebitCardFilters.length > 0) {
-      result = result.filter(acc => selectedDebitCardFilters.every(cf => matchesDebitCardFilter(acc, cf)));
+      result = result.filter(acc => {
+        if (!acc) return false;
+        return selectedDebitCardFilters.every(cf => matchesDebitCardFilter(acc, cf));
+      });
     }
 
     // 10. Sorting
     switch (sortBy) {
       case 'rate-desc':
-        result.sort((a, b) => (b.interestRateValue || 0) - (a.interestRateValue || 0));
+        result.sort((a, b) => {
+          const rA = a?.interestRateValue ?? parseNumericValue(a?.interestRate || a?.interest_rate);
+          const rB = b?.interestRateValue ?? parseNumericValue(b?.interestRate || b?.interest_rate);
+          return rB - rA;
+        });
         break;
       case 'rate-asc':
-        result.sort((a, b) => (a.interestRateValue || 0) - (b.interestRateValue || 0));
+        result.sort((a, b) => {
+          const rA = a?.interestRateValue ?? parseNumericValue(a?.interestRate || a?.interest_rate);
+          const rB = b?.interestRateValue ?? parseNumericValue(b?.interestRate || b?.interest_rate);
+          return rA - rB;
+        });
         break;
       case 'balance-asc':
-        result.sort((a, b) => (a.minimumBalanceValue || 0) - (b.minimumBalanceValue || 0));
+        result.sort((a, b) => {
+          const bA = a?.minimumBalanceValue ?? parseNumericValue(a?.minimumBalance || a?.minimum_balance);
+          const bB = b?.minimumBalanceValue ?? parseNumericValue(b?.minimumBalance || b?.minimum_balance);
+          return bA - bB;
+        });
         break;
       case 'balance-desc':
-        result.sort((a, b) => (b.minimumBalanceValue || 0) - (a.minimumBalanceValue || 0));
+        result.sort((a, b) => {
+          const bA = a?.minimumBalanceValue ?? parseNumericValue(a?.minimumBalance || a?.minimum_balance);
+          const bB = b?.minimumBalanceValue ?? parseNumericValue(b?.minimumBalance || b?.minimum_balance);
+          return bB - bA;
+        });
+        break;
+      case 'atm-desc':
+        result.sort((a, b) => {
+          const cA = getAssociatedDebitCard(a);
+          const cB = getAssociatedDebitCard(b);
+          const atmA = parseNumericValue(cA?.cashWithdrawalLimit || cA?.atm_limit);
+          const atmB = parseNumericValue(cB?.cashWithdrawalLimit || cB?.atm_limit);
+          return atmB - atmA;
+        });
+        break;
+      case 'fee-asc':
+        result.sort((a, b) => {
+          const cA = getAssociatedDebitCard(a);
+          const cB = getAssociatedDebitCard(b);
+          const feeA = parseNumericValue(cA?.annualFee || cA?.annual_fee);
+          const feeB = parseNumericValue(cB?.annualFee || cB?.annual_fee);
+          return feeA - feeB;
+        });
+        break;
+      case 'benefits-desc':
+        result.sort((a, b) => {
+          const numA = safeArray(a?.keyBenefits || a?.benefits).length;
+          const numB = safeArray(b?.keyBenefits || b?.benefits).length;
+          return numB - numA;
+        });
         break;
       case 'bank-asc':
-        result.sort((a, b) => (a.bank || '').localeCompare(b.bank || ''));
+        result.sort((a, b) => safeLower(a?.bank || a?.bank_name).localeCompare(safeLower(b?.bank || b?.bank_name)));
         break;
       case 'recommended':
       default:
-        // Keep initial dataset order
         break;
     }
 

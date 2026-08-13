@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { getAssociatedDebitCards } from '../data/mockSavingsAccounts';
 import { useWishlist } from '../context/WishlistContext';
+import { safeString, safeArray } from '../utils/safeUtils';
 
 function SavingsAccountDetailsModal({ isOpen, onClose, account, onSelectDebitCard, onToggleCompare, isCompared }) {
   const { isWishlisted, toggleWishlist } = useWishlist();

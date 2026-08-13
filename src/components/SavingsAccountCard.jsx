@@ -5,8 +5,12 @@ import { Heart, Scale, CheckCircle2, CreditCard, ChevronRight, AlertCircle } fro
 import { useWishlist } from '../context/WishlistContext';
 import { getAssociatedDebitCards, getDebitCardRelationshipStatus } from '../data/mockSavingsAccounts';
 
+import { safeString, safeLower, safeArray } from '../utils/safeUtils';
+
 function SavingsAccountCard({ account, onViewDetails, onToggleCompare, isCompared, onSelectDebitCard }) {
   const { isWishlisted, toggleWishlist } = useWishlist();
+  if (!account) return null;
+
   const accountId = account.id || account.product_id;
   const wishlisted = isWishlisted(accountId);
 
@@ -14,10 +18,10 @@ function SavingsAccountCard({ account, onViewDetails, onToggleCompare, isCompare
   const primaryCard = associatedCards.length > 0 ? associatedCards[0] : null;
 
   const bankName = account.bank_name || account.bank || "Partner Bank";
-  const accountName = account.variant_name || account.accountName || "Savings Account";
-  const interestRate = account.interest_rate || account.interestRate || "N/A";
-  const minimumBalance = account.minimum_balance || account.minimumBalance || "N/A";
-  const keyBenefits = account.benefits || account.keyBenefits || [];
+  const accountName = account.variant_name || account.accountName || account.account_name || "Savings Account";
+  const interestRate = account.interest_rate || account.interestRate || "Not specified";
+  const minimumBalance = account.minimum_balance || account.minimumBalance || "Not specified";
+  const keyBenefits = safeArray(account.benefits || account.keyBenefits);
 
   return (
     <motion.div
