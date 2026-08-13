@@ -61,53 +61,27 @@ const ACCOUNT_TYPE_OPTIONS = [
 ];
 
 const BALANCE_RANGE_OPTIONS = [
-  { id: 'zero', label: '₹0 (Zero Balance)' },
-  { id: 'below-1k', label: 'Below ₹1,000' },
-  { id: '1k-5k', label: '₹1,000–₹5,000' },
-  { id: '5k-10k', label: '₹5,000–₹10,000' },
-  { id: 'above-10k', label: 'Above ₹10,000' }
+  { id: 'zero', label: 'Zero Balance (₹0)' },
+  { id: 'up-to-2.5k', label: 'Up to ₹2,500' },
+  { id: 'up-to-5k', label: 'Up to ₹5,000' },
+  { id: 'up-to-10k', label: 'Up to ₹10,000' },
+  { id: 'above-10k', label: '₹10,000+' }
 ];
 
-const OPENING_METHOD_OPTIONS = [
-  "Online",
-  "Video KYC",
-  "Mobile App",
-  "Branch"
-];
-
-const BANKING_FEATURE_OPTIONS = [
-  "UPI",
-  "Mobile Banking",
-  "Internet Banking",
-  "NEFT",
-  "RTGS",
-  "IMPS",
-  "Cheque Book",
-  "Passbook",
-  "Auto Sweep",
-  "Nominee Facility"
-];
-
-const DEBIT_CARD_FILTER_OPTIONS = [
-  "Debit Card Available",
-  "Visa",
-  "Mastercard",
-  "RuPay",
-  "Contactless",
-  "International Usage",
-  "Lounge Access",
-  "Insurance",
-  "Rewards",
-  "Cashback"
+const INTEREST_RATE_OPTIONS = [
+  { id: 'up-to-2.5', label: 'Up to 2.5%' },
+  { id: '2.5-3', label: '2.5%–3%' },
+  { id: '3-4', label: '3%–4%' },
+  { id: 'above-4', label: '4%+' }
 ];
 
 const SORT_OPTIONS = [
   { id: 'recommended', label: 'Recommended' },
-  { id: 'rate-desc', label: 'Interest Rate: High → Low' },
-  { id: 'rate-asc', label: 'Interest Rate: Low → High' },
-  { id: 'balance-asc', label: 'Minimum Balance: Low → High' },
-  { id: 'balance-desc', label: 'Minimum Balance: High → Low' },
-  { id: 'bank-asc', label: 'Bank Name: A → Z' }
+  { id: 'rate-desc', label: 'Highest Interest Rate' },
+  { id: 'balance-asc', label: 'Lowest Minimum Balance' },
+  { id: 'atm-desc', label: 'Highest ATM Limit' },
+  { id: 'fee-asc', label: 'Lowest Debit Card Fee' },
+  { id: 'benefits-desc', label: 'Most Benefits' }
 ];
 
 function SavingsAccountSkeleton() {
@@ -134,39 +108,49 @@ function SavingsAccountSkeleton() {
   );
 }
 
+function parseNumericValue(valStr) {
+  if (!valStr) return 0;
+  if (typeof valStr === 'number') return valStr;
+  const cleaned = String(valStr).replace(/[^0-9.]/g, '');
+  const parsed = parseFloat(cleaned);
+  return isNaN(parsed) ? 0 : parsed;
+}
+
 function matchesAccountType(acc, type) {
-  const typeStr = (acc.accountType || '').toLowerCase();
+  const typeStr = (acc.accountType || acc.account_type || '').toLowerCase();
+  const nameStr = (acc.accountName || acc.variant_name || '').toLowerCase();
   const badgesStr = (acc.accountTypeBadges || []).map(b => b.toLowerCase()).join(' ');
+  const targetStr = (acc.target_segment || '').toLowerCase();
   const t = type.toLowerCase();
 
-  if (typeStr.includes(t) || badgesStr.includes(t)) return true;
-  if (t.includes('zero') && acc.isZeroBalance) return true;
-  if (t.includes('student') && acc.isStudent) return true;
-  if (t.includes('salary') && acc.isSalary) return true;
-  if (t.includes('senior') && acc.isSeniorCitizen) return true;
-  if (t.includes('women') && acc.isWomenSpecial) return true;
-  if (t.includes('digital') && acc.isDigital) return true;
-  if (t.includes('premium') && acc.isPremium) return true;
-  if (t.includes('nri') && acc.isNRI) return true;
-  if (t.includes('minor') && (acc.accountType?.toLowerCase().includes('minor') || acc.accountName?.toLowerCase().includes('minor') || acc.accountName?.toLowerCase().includes('kids') || acc.accountName?.toLowerCase().includes('pehla kadam'))) return true;
-  if (t.includes('basic') && (acc.accountType?.toLowerCase().includes('basic') || acc.accountTypeBadges?.some(b => b.toLowerCase().includes('basic')) || acc.accountName?.toLowerCase().includes('bsbd'))) return true;
+  if (typeStr.includes(t) || badgesStr.includes(t) || nameStr.includes(t)) return true;
+  if (t.includes('zero') && (acc.isZeroBalance || parseNumericValue(acc.minimumBalance || acc.minimum_balance) === 0)) return true;
+  if (t.includes('student') && (acc.isStudent || targetStr.includes('student') || nameStr.includes('student') || nameStr.includes('mine') || nameStr.includes('youth'))) return true;
+  if (t.includes('salary') && (acc.isSalary || targetStr.includes('salary') || nameStr.includes('salary'))) return true;
+  if (t.includes('senior') && (acc.isSeniorCitizen || targetStr.includes('senior') || nameStr.includes('senior') || nameStr.includes('citizen'))) return true;
+  if (t.includes('women') && (acc.isWomenSpecial || targetStr.includes('women') || nameStr.includes('woman') || nameStr.includes('women'))) return true;
+  if (t.includes('digital') && (acc.isDigital || badgesStr.includes('digital') || nameStr.includes('digi') || acc.isOnlineOpening)) return true;
+  if (t.includes('premium') && (acc.isPremium || badgesStr.includes('premium') || badgesStr.includes('privilege') || nameStr.includes('privilege') || nameStr.includes('wealth') || nameStr.includes('private'))) return true;
+  if (t.includes('nri') && (acc.isNRI || targetStr.includes('nri') || nameStr.includes('nre') || nameStr.includes('nro'))) return true;
+  if (t.includes('minor') && (typeStr.includes('minor') || nameStr.includes('minor') || nameStr.includes('kids') || nameStr.includes('pehla kadam'))) return true;
+  if (t.includes('basic') && (typeStr.includes('basic') || badgesStr.includes('basic') || nameStr.includes('bsbd'))) return true;
   if (t === 'other') return true;
   return false;
 }
 
 function matchesBalanceRange(acc, rangeId) {
-  const val = acc.minimumBalanceValue ?? 0;
+  const val = acc.minimumBalanceValue ?? parseNumericValue(acc.minimumBalance || acc.minimum_balance);
   const isZero = acc.isZeroBalance === true || val === 0;
 
   switch (rangeId) {
     case 'zero':
       return isZero;
-    case 'below-1k':
-      return !isZero && val > 0 && val < 1000;
-    case '1k-5k':
-      return val >= 1000 && val <= 5000;
-    case '5k-10k':
-      return val >= 5000 && val <= 10000;
+    case 'up-to-2.5k':
+      return isZero || val <= 2500;
+    case 'up-to-5k':
+      return isZero || val <= 5000;
+    case 'up-to-10k':
+      return isZero || val <= 10000;
     case 'above-10k':
       return val > 10000;
     default:
