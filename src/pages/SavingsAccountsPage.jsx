@@ -75,6 +75,39 @@ const INTEREST_RATE_OPTIONS = [
   { id: 'above-4', label: '4%+' }
 ];
 
+const OPENING_METHOD_OPTIONS = [
+  "Online",
+  "Video KYC",
+  "Mobile App",
+  "Branch"
+];
+
+const BANKING_FEATURE_OPTIONS = [
+  "UPI",
+  "Mobile Banking",
+  "Internet Banking",
+  "NEFT",
+  "RTGS",
+  "IMPS",
+  "Cheque Book",
+  "Passbook",
+  "Auto Sweep",
+  "Nominee Facility"
+];
+
+const DEBIT_CARD_FILTER_OPTIONS = [
+  "Debit Card Available",
+  "Visa",
+  "Mastercard",
+  "RuPay",
+  "Contactless",
+  "International Usage",
+  "Lounge Access",
+  "Insurance",
+  "Rewards",
+  "Cashback"
+];
+
 const SORT_OPTIONS = [
   { id: 'recommended', label: 'Recommended' },
   { id: 'rate-desc', label: 'Highest Interest Rate' },
