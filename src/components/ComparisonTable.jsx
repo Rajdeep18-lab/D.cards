@@ -301,45 +301,101 @@ function ComparisonTable({ cards = [] }) {
   ];
 
   return (
-    <div className="overflow-x-auto rounded-3xl border border-[#E5E7EB] dark:border-slate-800 bg-white dark:bg-[#1E293B] shadow-soft">
-      <table className="w-full text-left text-xs text-[#1F2937] dark:text-slate-200 border-collapse min-w-[600px]">
-        <thead>
-          <tr className="bg-[#F8FAFC] dark:bg-slate-900 border-b border-[#E5E7EB] dark:border-slate-800">
-            <th className="sticky left-0 z-20 bg-[#F8FAFC] dark:bg-slate-900 px-4 py-4 text-[#6B7280] dark:text-slate-400 font-semibold uppercase text-[10px] tracking-wider min-w-[140px]">
-              Features Matrix
-            </th>
-            {normalizedCards.map((card, idx) => (
-              <th key={card.id || idx} className="px-4 py-4 text-center min-w-[200px] max-w-[260px] align-top">
-                <div className="flex justify-center mb-2 transform hover:scale-105 transition-transform duration-300">
-                  <DebitCardVisual mode="compare" card={card} />
+    <div className="w-full space-y-6">
+      {/* ── MOBILE CARD COMPARISON VIEW (320px - 767px) ── */}
+      <div className="block md:hidden space-y-4">
+        <div className="text-center pb-2">
+          <span className="text-[11px] font-black uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA]">
+            Side-by-Side Mobile Comparison Cards ({normalizedCards.length})
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 gap-4">
+          {normalizedCards.map((card, idx) => (
+            <div 
+              key={card.id || idx}
+              className="p-5 rounded-3xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-800 shadow-soft space-y-4 text-left"
+            >
+              {/* Card Header & Visual */}
+              <div className="flex items-center gap-3 border-b border-slate-100 dark:border-slate-800 pb-3">
+                <div className="w-20 shrink-0">
+                  <DebitCardVisual mode="mini" card={card} />
                 </div>
-                <div className="font-bold text-[#1F2937] dark:text-white text-xs">
-                  {card.cardName}
+                <div className="min-w-0 flex-1">
+                  <span className="text-[10px] font-bold text-[#2563EB] dark:text-[#60A5FA] uppercase block truncate">
+                    {card.bank || "Bank"}
+                  </span>
+                  <h4 className="text-sm font-extrabold text-[#1F2937] dark:text-white leading-tight truncate">
+                    {card.cardName}
+                  </h4>
+                  <span className="inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-bold bg-[#EFF6FF] dark:bg-slate-800 text-[#2563EB] dark:text-[#60A5FA]">
+                    {card.network || "Visa"}
+                  </span>
                 </div>
-                <div className="text-[10px] font-semibold text-[#2563EB] dark:text-[#60A5FA] mt-0.5">
-                  {card.bank}
-                </div>
+              </div>
+
+              {/* Metrics Grid */}
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                {rowDefinitions.map((row) => {
+                  if (row.key === 'bank' || row.key === 'cardName' || row.key === 'network') return null;
+                  return (
+                    <div key={row.key} className="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between">
+                      <span className="text-[9.5px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5">
+                        {row.label}
+                      </span>
+                      <div className="text-xs font-semibold text-[#1F2937] dark:text-slate-200">
+                        {row.render(card)}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── DESKTOP MATRIX TABLE VIEW (>=768px) ── */}
+      <div className="hidden md:block overflow-x-auto rounded-3xl border border-[#E5E7EB] dark:border-slate-800 bg-white dark:bg-[#1E293B] shadow-soft">
+        <table className="w-full text-left text-xs text-[#1F2937] dark:text-slate-200 border-collapse min-w-[600px]">
+          <thead>
+            <tr className="bg-[#F8FAFC] dark:bg-slate-900 border-b border-[#E5E7EB] dark:border-slate-800">
+              <th className="sticky left-0 z-20 bg-[#F8FAFC] dark:bg-slate-900 px-4 py-4 text-[#6B7280] dark:text-slate-400 font-semibold uppercase text-[10px] tracking-wider min-w-[140px]">
+                Features Matrix
               </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-[#E5E7EB] dark:divide-slate-800">
-          {rowDefinitions.map((row) => (
-            <tr key={row.key} className="hover:bg-[#F8FAFC] dark:hover:bg-slate-800/50 transition-colors">
-              <td className="sticky left-0 z-10 bg-white dark:bg-[#1E293B] px-4 py-3.5 font-semibold text-[#1F2937] dark:text-slate-300 text-[11px] uppercase tracking-wide border-r border-[#E5E7EB] dark:border-slate-800">
-                {row.label}
-              </td>
               {normalizedCards.map((card, idx) => (
-                <td key={card.id || idx} className="px-4 py-3.5 text-center min-w-[200px] align-middle">
-                  <div className="flex justify-center">
-                    {row.render(card)}
+                <th key={card.id || idx} className="px-4 py-4 text-center min-w-[200px] max-w-[260px] align-top">
+                  <div className="flex justify-center mb-2 transform hover:scale-105 transition-transform duration-300">
+                    <DebitCardVisual mode="compare" card={card} />
                   </div>
-                </td>
+                  <div className="font-bold text-[#1F2937] dark:text-white text-xs">
+                    {card.cardName}
+                  </div>
+                  <div className="text-[10px] font-semibold text-[#2563EB] dark:text-[#60A5FA] mt-0.5">
+                    {card.bank}
+                  </div>
+                </th>
               ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="divide-y divide-[#E5E7EB] dark:divide-slate-800">
+            {rowDefinitions.map((row) => (
+              <tr key={row.key} className="hover:bg-[#F8FAFC] dark:hover:bg-slate-800/50 transition-colors">
+                <td className="sticky left-0 z-10 bg-white dark:bg-[#1E293B] px-4 py-3.5 font-semibold text-[#1F2937] dark:text-slate-300 text-[11px] uppercase tracking-wide border-r border-[#E5E7EB] dark:border-slate-800">
+                  {row.label}
+                </td>
+                {normalizedCards.map((card, idx) => (
+                  <td key={card.id || idx} className="px-4 py-3.5 text-center min-w-[200px] align-middle">
+                    <div className="flex justify-center">
+                      {row.render(card)}
+                    </div>
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

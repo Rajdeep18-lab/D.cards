@@ -29,17 +29,17 @@ const HeroVisual = memo(({ isMobile }) => {
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <div className="flex-1 relative w-full mt-10 lg:mt-0 select-none max-w-[560px] lg:max-w-none mx-auto flex items-center justify-center min-h-[440px] sm:min-h-[500px]">
+    <div className="flex-1 relative w-full mt-8 lg:mt-0 select-none max-w-[560px] lg:max-w-none mx-auto flex items-center justify-center min-h-[360px] sm:min-h-[500px] overflow-hidden">
       
       {/* Moving Blue Gradient Blobs & Glowing Rays */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[360px] h-[360px] sm:w-[500px] sm:h-[500px] rounded-full bg-gradient-to-tr from-[#0B3D91]/25 via-[#2563EB]/20 to-transparent blur-[90px] pointer-events-none z-0 animate-pulse-glow" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[280px] h-[280px] sm:w-[500px] sm:h-[500px] rounded-full bg-gradient-to-tr from-[#0B3D91]/25 via-[#2563EB]/20 to-transparent blur-[90px] pointer-events-none z-0 animate-pulse-glow" />
 
       {/* Grid Mesh Texture Pattern Overlay */}
       <div className="absolute inset-0 bg-grid-mesh opacity-60 pointer-events-none z-0" />
 
       {/* Geometric Decorative Rotating Rings */}
-      <div className="absolute w-[380px] h-[380px] sm:w-[480px] sm:h-[480px] rounded-full border border-dashed border-[#2563EB]/30 dark:border-[#60A5FA]/20 animate-[spin_45s_linear_infinite] pointer-events-none z-0" />
-      <div className="absolute w-[280px] h-[280px] sm:w-[360px] sm:h-[360px] rounded-full border border-[#60A5FA]/20 dark:border-[#2563EB]/20 pointer-events-none z-0" />
+      <div className="absolute w-[300px] h-[300px] sm:w-[480px] sm:h-[480px] rounded-full border border-dashed border-[#2563EB]/30 dark:border-[#60A5FA]/20 animate-[spin_45s_linear_infinite] pointer-events-none z-0" />
+      <div className="absolute w-[230px] h-[230px] sm:w-[360px] sm:h-[360px] rounded-full border border-[#60A5FA]/20 dark:border-[#2563EB]/20 pointer-events-none z-0" />
 
       {/* VISUAL 1 — DEBIT CARD CATEGORY ILLUSTRATION (TOP/LEFT) */}
       <motion.div
@@ -53,7 +53,7 @@ const HeroVisual = memo(({ isMobile }) => {
             ? {}
             : { repeat: Infinity, duration: 6.5, ease: 'easeInOut' }
         }
-        className="absolute top-2 right-2 sm:right-6 w-[290px] sm:w-[340px] h-[200px] sm:h-[220px] rounded-3xl p-5 sm:p-6 bg-gradient-to-br from-[#0B3D91] via-[#2563EB] to-[#3B82F6] text-white shadow-[0_25px_60px_rgba(37,99,235,0.35)] border border-white/20 z-20 overflow-hidden card-reflection flex flex-col justify-between"
+        className="absolute top-2 right-1 sm:right-6 w-[250px] min-[380px]:w-[285px] sm:w-[340px] max-w-[calc(100vw-2.5rem)] h-[185px] sm:h-[220px] rounded-3xl p-4 sm:p-6 bg-gradient-to-br from-[#0B3D91] via-[#2563EB] to-[#3B82F6] text-white shadow-[0_25px_60px_rgba(37,99,235,0.35)] border border-white/20 z-20 overflow-hidden card-reflection flex flex-col justify-between"
       >
         <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full blur-2xl pointer-events-none" />
 
@@ -61,31 +61,31 @@ const HeroVisual = memo(({ isMobile }) => {
           {/* Header */}
           <div className="flex justify-between items-start">
             <div>
-              <div className="flex items-center gap-2">
-                <CreditCard className="w-5 h-5 text-white" />
-                <span className="text-sm sm:text-base font-black tracking-wider uppercase text-white">DEBIT CARDS</span>
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <CreditCard className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                <span className="text-xs sm:text-base font-black tracking-wider uppercase text-white">DEBIT CARDS</span>
               </div>
-              <span className="text-[10px] text-white/80 tracking-wider uppercase font-semibold block mt-0.5">Category Matrix</span>
+              <span className="text-[9px] sm:text-[10px] text-white/80 tracking-wider uppercase font-semibold block mt-0.5">Category Matrix</span>
             </div>
-            <span className="text-[10px] font-bold tracking-widest text-white/90 bg-white/20 px-2.5 py-0.5 rounded-full border border-white/20 uppercase">
+            <span className="text-[9px] sm:text-[10px] font-bold tracking-widest text-white/90 bg-white/20 px-2 py-0.5 rounded-full border border-white/20 uppercase">
               100+ Cards
             </span>
           </div>
 
           {/* Micro-text description */}
-          <p className="text-xs text-white/90 leading-snug font-medium">
+          <p className="text-[11px] sm:text-xs text-white/90 leading-snug font-medium">
             Compare fees, limits, rewards & benefits
           </p>
 
           {/* Features pills */}
-          <div className="grid grid-cols-2 gap-1.5 text-[10px] text-white/95 font-semibold">
-            <div className="px-2 py-1 rounded-lg bg-white/15 backdrop-blur-xs flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-300" />
-              <span>ATM / POS Limits</span>
+          <div className="grid grid-cols-2 gap-1 sm:gap-1.5 text-[9px] sm:text-[10px] text-white/95 font-semibold">
+            <div className="px-1.5 sm:px-2 py-1 rounded-lg bg-white/15 backdrop-blur-xs flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-300 shrink-0" />
+              <span className="truncate">ATM / POS Limits</span>
             </div>
-            <div className="px-2 py-1 rounded-lg bg-white/15 backdrop-blur-xs flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-300" />
-              <span>Lounge Access</span>
+            <div className="px-1.5 sm:px-2 py-1 rounded-lg bg-white/15 backdrop-blur-xs flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 shrink-0" />
+              <span className="truncate">Lounge Access</span>
             </div>
           </div>
         </div>
@@ -103,37 +103,37 @@ const HeroVisual = memo(({ isMobile }) => {
             ? {}
             : { repeat: Infinity, duration: 7.5, ease: 'easeInOut', delay: 0.5 }
         }
-        className="absolute bottom-2 left-2 sm:left-6 w-[285px] sm:w-[335px] h-[200px] sm:h-[220px] rounded-3xl p-5 sm:p-6 bg-gradient-to-br from-[#0F172A] via-[#1E293B] to-[#334155] text-white shadow-[0_25px_50px_rgba(15,23,42,0.45)] border border-slate-700/80 z-10 overflow-hidden card-reflection flex flex-col justify-between"
+        className="absolute bottom-2 left-1 sm:left-6 w-[245px] min-[380px]:w-[280px] sm:w-[335px] max-w-[calc(100vw-2.5rem)] h-[185px] sm:h-[220px] rounded-3xl p-4 sm:p-6 bg-gradient-to-br from-[#0F172A] via-[#1E293B] to-[#334155] text-white shadow-[0_25px_50px_rgba(15,23,42,0.45)] border border-slate-700/80 z-10 overflow-hidden card-reflection flex flex-col justify-between"
       >
         <div className="flex flex-col justify-between h-full relative z-10">
           {/* Header */}
           <div className="flex justify-between items-start">
             <div>
-              <div className="flex items-center gap-2">
-                <Landmark className="w-5 h-5 text-emerald-400" />
-                <span className="text-sm sm:text-base font-black tracking-wider uppercase text-white">SAVINGS ACCOUNTS</span>
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <Landmark className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400" />
+                <span className="text-xs sm:text-base font-black tracking-wider uppercase text-white">SAVINGS ACCOUNTS</span>
               </div>
-              <span className="text-[10px] text-emerald-400 tracking-wider uppercase font-semibold block mt-0.5">Institutional Index</span>
+              <span className="text-[9px] sm:text-[10px] text-emerald-400 tracking-wider uppercase font-semibold block mt-0.5">Institutional Index</span>
             </div>
-            <span className="text-[10px] font-bold tracking-widest text-[#60A5FA] bg-[#2563EB]/20 px-2.5 py-0.5 rounded-full border border-[#2563EB]/40 uppercase">
+            <span className="text-[9px] sm:text-[10px] font-bold tracking-widest text-[#60A5FA] bg-[#2563EB]/20 px-2 py-0.5 rounded-full border border-[#2563EB]/40 uppercase">
               Multi-Bank
             </span>
           </div>
 
           {/* Micro-text description */}
-          <p className="text-xs text-slate-300 leading-snug font-medium">
-            Compare account types, requirements, benefits & eligibility
+          <p className="text-[11px] sm:text-xs text-slate-300 leading-snug font-medium">
+            Compare account types, requirements & perks
           </p>
 
           {/* Features pills */}
-          <div className="grid grid-cols-2 gap-1.5 text-[10px] text-slate-200 font-semibold">
-            <div className="px-2 py-1 rounded-lg bg-slate-800/80 border border-slate-700 flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-              <span>Balance Tiers</span>
+          <div className="grid grid-cols-2 gap-1 sm:gap-1.5 text-[9px] sm:text-[10px] text-slate-200 font-semibold">
+            <div className="px-1.5 sm:px-2 py-1 rounded-lg bg-slate-800/80 border border-slate-700 flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
+              <span className="truncate">Balance Tiers</span>
             </div>
-            <div className="px-2 py-1 rounded-lg bg-slate-800/80 border border-slate-700 flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#60A5FA]" />
-              <span>Interest Perks</span>
+            <div className="px-1.5 sm:px-2 py-1 rounded-lg bg-slate-800/80 border border-slate-700 flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#60A5FA] shrink-0" />
+              <span className="truncate">Interest Perks</span>
             </div>
           </div>
         </div>
@@ -143,24 +143,24 @@ const HeroVisual = memo(({ isMobile }) => {
       <motion.div
         animate={{ y: [0, -6, 0] }}
         transition={{ repeat: Infinity, duration: 4.5, ease: 'easeInOut' }}
-        className="absolute -top-3 left-4 sm:left-6 z-30 px-3.5 py-2 rounded-2xl bg-white/90 dark:bg-[#1E293B]/90 backdrop-blur-md border border-[#E5E7EB] dark:border-slate-700 shadow-lg flex items-center gap-2"
+        className="absolute -top-1 left-2 sm:left-6 z-30 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-2xl bg-white/90 dark:bg-[#1E293B]/90 backdrop-blur-md border border-[#E5E7EB] dark:border-slate-700 shadow-lg flex items-center gap-2"
       >
-        <ShieldCheck className="w-4 h-4 text-[#2563EB]" />
-        <div className="text-[11px]">
+        <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#2563EB]" />
+        <div className="text-[10px] sm:text-[11px]">
           <p className="font-bold text-[#1F2937] dark:text-white leading-none">100% Independent</p>
-          <p className="text-[9px] text-[#6B7280] dark:text-slate-400 font-medium">Comparison Platform</p>
+          <p className="text-[8px] sm:text-[9px] text-[#6B7280] dark:text-slate-400 font-medium">Comparison Platform</p>
         </div>
       </motion.div>
 
       <motion.div
         animate={{ y: [0, 6, 0] }}
         transition={{ repeat: Infinity, duration: 5.2, ease: 'easeInOut', delay: 1 }}
-        className="absolute bottom-2 right-4 sm:right-8 z-30 px-3.5 py-2 rounded-2xl bg-white/90 dark:bg-[#1E293B]/90 backdrop-blur-md border border-[#E5E7EB] dark:border-slate-700 shadow-lg flex items-center gap-2"
+        className="absolute bottom-1 right-2 sm:right-8 z-30 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-2xl bg-white/90 dark:bg-[#1E293B]/90 backdrop-blur-md border border-[#E5E7EB] dark:border-slate-700 shadow-lg flex items-center gap-2"
       >
-        <Percent className="w-4 h-4 text-emerald-500" />
-        <div className="text-[11px]">
+        <Percent className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-500" />
+        <div className="text-[10px] sm:text-[11px]">
           <p className="font-bold text-[#1F2937] dark:text-white leading-none">Side-by-Side</p>
-          <p className="text-[9px] text-[#6B7280] dark:text-slate-400 font-medium">Product Matrix</p>
+          <p className="text-[8px] sm:text-[9px] text-[#6B7280] dark:text-slate-400 font-medium">Product Matrix</p>
         </div>
       </motion.div>
     </div>
