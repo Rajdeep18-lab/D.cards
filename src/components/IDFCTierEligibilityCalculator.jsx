@@ -146,7 +146,7 @@ function IDFCTierEligibilityCalculator() {
       <div className="p-3.5 rounded-xl bg-blue-50/60 dark:bg-slate-900/40 border border-blue-100 dark:border-slate-800 flex items-start gap-2.5 text-[11px] text-slate-500 dark:text-slate-400 font-normal">
         <Info className="w-4 h-4 text-[#2563EB] shrink-0 mt-0.5" />
         <span>
-          * Estimated eligibility based on the provided criteria. Illustrative only, based on provided brochure data. Confirm current T&Cs with IDFC FIRST Bank before making decisions.
+          * Estimated eligibility based on provided criteria. Information shown is for comparison and informational purposes only. Savings Account and Debit Card features, fees, charges, eligibility, limits, and benefits may change. Please verify the latest details with IDFC FIRST Bank before making a decision.
         </span>
       </div>
 

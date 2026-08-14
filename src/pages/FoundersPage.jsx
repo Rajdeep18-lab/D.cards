@@ -111,7 +111,7 @@ function FoundersPage() {
           Meet the Team Behind <span className="text-gradient">D.CARD</span>
         </h1>
         <p className="text-base sm:text-lg text-[#6B7280] dark:text-slate-300 mt-2 max-w-3xl font-normal leading-relaxed">
-          The passionate founders, engineers, and strategists building India's next-generation AI debit card discovery platform.
+          The passionate founders, engineers, and strategists building India's next-generation AI savings account and debit card discovery platform.
         </p>
       </section>
 
@@ -193,7 +193,7 @@ function FoundersPage() {
           At D.CARD, our founders firmly believe that breakthrough innovation in financial technology begins with radical transparency and unyielding consumer trust.
         </p>
         <p className="text-xs sm:text-sm text-[#6B7280] dark:text-slate-300 leading-relaxed font-normal">
-          By eliminating corporate bias and prioritizing user needs above short-term profit models, our leadership team ensures that every feature, comparison matrix, and AI recommendation is designed to build India's best independent debit card discovery platform.
+          By eliminating corporate bias and prioritizing user needs above short-term profit models, our leadership team ensures that every feature, comparison matrix, and AI recommendation is designed to build India's best independent savings account and debit card discovery platform.
         </p>
       </section>
 
@@ -304,7 +304,7 @@ function FoundersPage() {
             Join Our Journey
           </h2>
           <p className="text-xs sm:text-sm text-slate-300 font-normal leading-relaxed">
-            Experience India's most transparent debit card discovery platform or get in touch with our team.
+            Experience India's most transparent savings account and debit card comparison platform or get in touch with our team.
           </p>
           <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
             <button

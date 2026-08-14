@@ -977,7 +977,7 @@ function ICICIBSavingsDetailView({ onSelectDebitCard }) {
           <span>Statutory Disclaimer</span>
         </div>
         <p className="leading-relaxed font-medium">
-          "Illustrative only, based on internal training material. Confirm current T&Cs with ICICI Bank before making decisions. For internal reference only."
+          Information shown is for comparison and informational purposes only. Savings Account and Debit Card features, fees, charges, eligibility, limits, and benefits may change. Please verify the latest details with ICICI Bank before making a decision.
         </p>
       </div>
 

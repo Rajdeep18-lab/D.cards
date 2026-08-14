@@ -143,7 +143,7 @@ function Footer({ onOpenLegal }) {
           </p>
         </div>
         <p className="leading-relaxed text-[10px] text-justify max-w-7xl mx-auto opacity-85">
-          <strong>Regulatory Disclaimer:</strong> D.CARD is an independent debit card comparison platform. All card specs, fee structures, lounge eligibility rules, and MAB terms are collected from public bank disclosures. Registered trademarks, logos, and bank names belong to their respective corporate owners. D.CARD does not provide banking or lending services directly.
+          <strong>Regulatory Disclaimer:</strong> D.CARD is an independent comparison and financial information platform covering Savings Accounts and Debit Cards. We are not a bank or financial institution. Product information may change; always verify current details with the respective bank.
         </p>
       </div>
     </footer>

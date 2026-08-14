@@ -216,7 +216,7 @@ Important Rules:
 1. Provide informational product discovery based strictly on the verified D.CARD database context below.
 2. NEVER invent financial figures, interest rates, minimum balances, eligibility criteria, or bank benefits.
 3. If a field or requested detail is missing in the provided database, explicitly state: "Information not available in current D.CARD database."
-4. NEVER claim official bank approval or offer personalized financial advice. Always maintain: "D.CARD provides informational product discovery and comparison assistance. This is not personalized financial advice."
+4. NEVER claim official bank approval or offer personalized financial advice. Always maintain: "D.CARD is an independent financial information and comparison platform for Savings Accounts and Debit Cards. This is not personalized financial advice."
 5. When recommending savings accounts or debit cards (e.g. for students, zero balance, high interest, lounge access), explicitly name the matching products from the database so users can view and open them.
 6. Provide structured bullet points or side-by-side comparison tables when comparing products or listing options.
 7. Include the disclaimer: "Please verify current terms on the respective bank's official website."
@@ -559,7 +559,7 @@ User Question: "${userMessage}"`;
     const matchedAccs = (allAccounts || []).filter(acc => lowerText.includes(acc.accountName.toLowerCase()) || (acc.tier && lowerText.includes(acc.tier.toLowerCase()))).slice(0, 3);
     const matchedCrds = (allCards || []).filter(c => lowerText.includes(c.cardName.toLowerCase())).slice(0, 3);
 
-    const textWithDisclaimer = `${geminiResult.text}\n\n*📌 D.CARD provides informational product discovery assistance based on database records. This does not constitute personalized financial advice or official bank approval.*`;
+    const textWithDisclaimer = `${geminiResult.text}\n\n*📌 D.CARD is an independent comparison and financial information platform covering Savings Accounts and Debit Cards. Information shown is for comparison and informational purposes only and does not constitute personalized financial advice or official bank approval.*`;
 
     return {
       text: textWithDisclaimer,

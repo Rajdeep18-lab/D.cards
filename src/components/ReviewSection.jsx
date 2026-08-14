@@ -77,7 +77,7 @@ function ReviewSection({ onOpenContact }) {
         <div className="text-center sm:text-left">
           <h2 className="text-3xl font-bold text-[#1F2937] dark:text-white tracking-tight">User Reviews & Experiences</h2>
           <p className="text-xs sm:text-sm font-normal text-[#6B7280] dark:text-slate-400 mt-1">
-            Trusted by thousands of debit card users across India
+            Trusted by thousands of account holders and debit card users across India
           </p>
         </div>
 
@@ -157,7 +157,7 @@ function ReviewSection({ onOpenContact }) {
             </h3>
 
             <p className="text-xs text-[#6B7280] dark:text-slate-400 mt-2 leading-relaxed font-normal">
-              Can't find a specific bank's debit card, or noticed an error in our charges sheet? Contact our research team.
+              Can't find a specific bank's savings account or debit card, or noticed an error in our charges sheet? Contact our research team.
             </p>
           </div>
 

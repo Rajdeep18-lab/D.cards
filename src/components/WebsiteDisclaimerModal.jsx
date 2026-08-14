@@ -105,20 +105,24 @@ function WebsiteDisclaimerModal() {
                 </p>
                 
                 <p>
-                  D.CARD is an independent debit card comparison and information platform designed to help users compare and understand debit cards offered by different banks.
+                  D.CARD is an independent financial information and comparison platform for Savings Accounts and Debit Cards. D.CARD is not a bank, NBFC, financial institution, payment system operator, or representative of any bank unless explicitly stated.
                 </p>
                 
                 <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-900 dark:text-amber-200 font-semibold text-xs leading-relaxed flex items-start gap-2">
                   <ShieldAlert className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
-                  <span>We are NOT a bank, financial institution, or officially affiliated or partnered with any listed bank.</span>
+                  <span>D.CARD is not a bank or financial institution, and is not officially affiliated or partnered with any bank unless explicitly stated.</span>
                 </div>
 
                 <p>
-                  All debit card information, fees, benefits, eligibility criteria, and features are collected from publicly available sources and official bank websites. While we strive to keep information accurate and up to date, users should always verify the latest details directly with the respective bank before making any financial decision.
+                  The information displayed on D.CARD is provided for general informational and comparison purposes only. Savings Account and Debit Card interest rates, fees, charges, eligibility requirements, limits, benefits, features, lounge access, and other product terms may change at any time.
                 </p>
 
                 <p>
-                  The content available on D.CARD is provided solely for informational and educational purposes and should not be considered financial, legal, investment, or professional advice.
+                  Users should verify all product details, eligibility requirements, fees, charges, benefits, and terms directly with the respective bank before opening an account, applying for a product, or making a financial decision.
+                </p>
+
+                <p>
+                  D.CARD does not guarantee product approval, eligibility, availability, pricing, benefits, or suitability for any individual, nor does it provide personalized financial, investment, legal, or tax advice.
                 </p>
 
                 <p className="font-semibold text-[#0F172A] dark:text-slate-200">

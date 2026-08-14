@@ -284,7 +284,7 @@ function AboutPage() {
               Our Mission
             </h2>
             <p className="text-sm sm:text-base text-[#6B7280] dark:text-slate-300 leading-relaxed font-normal">
-              To simplify banking decisions by providing transparent, accurate, and AI-powered debit card comparisons that help every user choose the right financial product with confidence.
+              To simplify banking decisions by providing transparent, accurate, and AI-powered savings account and debit card comparisons that help every user choose the right financial product with confidence.
             </p>
           </div>
           <div className="pt-4 border-t border-[#E5E7EB] dark:border-slate-700 text-xs font-semibold text-[#2563EB] dark:text-[#60A5FA] uppercase tracking-wider">
@@ -305,7 +305,7 @@ function AboutPage() {
               Our Vision
             </h2>
             <p className="text-sm sm:text-base text-[#6B7280] dark:text-slate-300 leading-relaxed font-normal">
-              To become India's most trusted independent debit card comparison platform by making financial information accessible, transparent, and easy to understand for everyone.
+              To become India's most trusted independent savings account and debit card comparison platform by making financial information accessible, transparent, and easy to understand for everyone.
             </p>
           </div>
           <div className="pt-4 border-t border-[#E5E7EB] dark:border-slate-700 text-xs font-semibold text-[#2563EB] dark:text-[#60A5FA] uppercase tracking-wider">
@@ -388,7 +388,7 @@ function AboutPage() {
             Meet the Founders & Team
           </h2>
           <p className="text-sm sm:text-base text-[#6B7280] dark:text-slate-300 mt-2 max-w-3xl font-normal leading-relaxed">
-            The passionate founders, engineers, and strategists building India's next-generation AI debit card discovery platform.
+            The passionate founders, engineers, and strategists building India's next-generation AI savings account and debit card discovery platform.
           </p>
         </div>
 
@@ -492,7 +492,7 @@ function AboutPage() {
             At D.CARD, our founders firmly believe that breakthrough innovation in financial technology begins with radical transparency and unyielding consumer trust.
           </p>
           <p className="text-xs sm:text-sm text-[#6B7280] dark:text-slate-300 leading-relaxed font-normal">
-            By eliminating corporate bias and prioritizing user needs above short-term profit models, our leadership team ensures that every feature, comparison matrix, and AI recommendation is designed to build India's best independent debit card discovery platform.
+            By eliminating corporate bias and prioritizing user needs above short-term profit models, our leadership team ensures that every feature, comparison matrix, and AI recommendation is designed to build India's best independent savings account and debit card discovery platform.
           </p>
         </div>
 
@@ -595,7 +595,7 @@ function AboutPage() {
           <h3 className="text-sm font-bold uppercase tracking-wider">Website Disclaimer</h3>
         </div>
         <p className="text-xs sm:text-sm text-[#1F2937] dark:text-slate-200 leading-relaxed font-normal italic">
-          "D.CARD is an independent debit card comparison and information platform. We are not a bank and are not officially affiliated or partnered with any listed bank. All information is collected from publicly available sources and official bank websites."
+          "D.CARD is an independent financial information and comparison platform for Savings Accounts and Debit Cards. D.CARD is not a bank, NBFC, financial institution, payment system operator, or representative of any bank unless explicitly stated. Information shown is for comparison and informational purposes only. Savings Account and Debit Card features, fees, charges, eligibility, limits, and benefits may change. Please verify the latest details with the respective bank before making a decision."
         </p>
       </section>
 

@@ -120,7 +120,7 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
                   <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
                     <h3 className="text-base sm:text-lg font-black text-[#0B3D91] dark:text-white mb-3">Privacy Policy</h3>
                     <p className="text-slate-700 dark:text-slate-300 mb-4 leading-relaxed font-medium">
-                      At <strong className="text-slate-900 dark:text-white font-extrabold">D.Card</strong>, we believe in radical transparency. D.Card operates as a debit card discovery and optimization platform, designed to help users evaluate and compare debit card charges, rates, and features prior to opening a bank account. This policy outlines exactly what data we collect, where it resides, and what sensitive information we strictly do not collect.
+                      At <strong className="text-slate-900 dark:text-white font-extrabold">D.Card</strong>, we believe in radical transparency. D.CARD is an independent financial information and comparison platform for Savings Accounts and Debit Cards, designed to help users evaluate and compare savings account interest rates, debit card charges, limits, and features prior to opening a bank account. This policy outlines exactly what data we collect, where it resides, and what sensitive information we strictly do not collect.
                     </p>
 
                     <h4 className="font-extrabold text-[#2563EB] dark:text-[#60A5FA] mt-5 mb-2 uppercase text-xs tracking-wider">
@@ -149,7 +149,7 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
                         ❌ Critical Security Pledge: What We Do NOT Collect
                       </h4>
                       <p className="text-xs text-rose-900 dark:text-rose-200 leading-relaxed font-semibold">
-                        D.Card is a discovery database, NOT a bank or card issuer. We will <strong className="font-extrabold underline">never</strong> ask for, collect, or store the following sensitive records:
+                        D.CARD is an independent comparison and financial information platform covering Savings Accounts and Debit Cards. We are not a bank, NBFC, or financial institution. We will <strong className="font-extrabold underline">never</strong> ask for, collect, or store the following sensitive records:
                       </p>
                       <ul className="list-disc pl-5 mt-2 space-y-1 text-xs text-rose-850 dark:text-rose-300 font-semibold">
                         <li>ATM PIN numbers</li>
@@ -182,7 +182,7 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
                       1. Scope of Service
                     </h4>
                     <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed font-medium">
-                      D.Card provides informational debit card matrices, fees, and feature comparisons. D.Card is not a bank, broker, or direct card distributor. We do not approve applications, nor do we issue cards.
+                      D.CARD is an independent financial information and comparison platform for Savings Accounts and Debit Cards. D.CARD is not a bank, NBFC, financial institution, payment system operator, or representative of any bank unless explicitly stated. We do not approve applications, nor do we issue cards.
                     </p>
 
                     <h4 className="font-extrabold text-[#2563EB] dark:text-[#60A5FA] mt-5 mb-2 uppercase text-xs tracking-wider">
@@ -219,32 +219,32 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
                         ⚠️ Critical Disclaimer: Verify Before Applying
                       </p>
                       <p className="text-xs leading-relaxed font-semibold text-amber-900 dark:text-amber-200">
-                        Debit card fees, benefits, interest rates, lounge visit criteria, cash-withdrawal limits, eligibility thresholds, and active promotional offers change frequently. Banks reserve the right to alter features without prior warnings. Users MUST verify all rates and terms directly from the official bank websites or bank branches before applying for or opening any account.
+                        Savings Account and Debit Card interest rates, fees, charges, eligibility requirements, limits, benefits, features, lounge access, and other product terms may change at any time. Users should verify all product details, eligibility requirements, fees, charges, benefits, and terms directly with the respective bank before opening an account, applying for a product, or making a financial decision.
                       </p>
                     </div>
 
                     <h4 className="font-extrabold text-[#2563EB] dark:text-[#60A5FA] mt-5 mb-2 uppercase text-xs tracking-wider">
-                      1. No Warranties
+                      1. Standard Platform Disclaimer
                     </h4>
                     <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed font-medium">
-                      The database parameters on D.Card are aggregated periodically from public bank schedules and user submissions. While we strive to maintain clean, audited directories, we do not warrant the timeliness, completeness, accuracy, or reliability of any information displayed.
+                      D.CARD is an independent financial information and comparison platform for Savings Accounts and Debit Cards. D.CARD is not a bank, NBFC, financial institution, payment system operator, or representative of any bank unless explicitly stated.
                     </p>
 
                     <h4 className="font-extrabold text-[#2563EB] dark:text-[#60A5FA] mt-5 mb-2 uppercase text-xs tracking-wider">
-                      2. Informational Purpose Only
+                      2. Informational Purpose & No Warranties
                     </h4>
                     <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed font-medium">
-                      The content provided on D.Card is for educational and comparison purposes only. It does not constitute financial, investment, legal, or banking advice. You should seek independent consultation or do direct bank diligence before finalizing financial relationship decisions.
+                      The information displayed on D.CARD is provided for general informational and comparison purposes only. D.CARD does not guarantee product approval, eligibility, availability, pricing, benefits, or suitability for any individual. D.CARD does not provide personalized financial, investment, legal, or tax advice.
                     </p>
 
                     <h4 className="font-extrabold text-[#2563EB] dark:text-[#60A5FA] mt-5 mb-2 uppercase text-xs tracking-wider">
                       3. Intellectual Property Disclaimer
                     </h4>
                     <p className="text-slate-700 dark:text-slate-300 mb-4 leading-relaxed font-medium">
-                      All bank brand logos, product tags, registered trademarks (Visa, Mastercard, RuPay, etc.) remain the exclusive property of their respective corporate owners. D.Card does not claim ownership, nor does listing them imply any form of official bank sponsorship or direct financial compensation from primary banks listed here.
+                      All bank brand logos, product tags, registered trademarks (Visa, Mastercard, RuPay, etc.) remain the exclusive property of their respective corporate owners. D.CARD does not claim ownership, nor does listing them imply any form of official bank sponsorship or direct financial compensation from primary banks listed here.
                     </p>
 
-                    <p className="text-xs text-slate-500 dark:text-slate-400 italic mt-6 font-medium">Last updated: June 2026</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 italic mt-6 font-medium">Last updated: August 2026</p>
                   </motion.div>
                 )}
               </div>

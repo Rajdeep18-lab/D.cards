@@ -80,7 +80,7 @@ function AboutModal({ isOpen, onClose }) {
                       About D.CARD
                     </h2>
                     <p className="text-xs text-[#2563EB] dark:text-[#60A5FA] font-semibold mt-0.5">
-                      India's Independent Debit Card Comparison & Information Platform
+                      India's Independent Savings Account & Debit Card Comparison Platform
                     </p>
                   </div>
                 </div>
@@ -101,7 +101,7 @@ function AboutModal({ isOpen, onClose }) {
                     Who We Are
                   </h3>
                   <p className="text-xs sm:text-sm text-[#1F2937] dark:text-slate-200 leading-relaxed font-normal">
-                    D.CARD is an independent fintech information platform built to help users compare, understand, and explore debit cards offered by various banks across India.
+                    D.CARD is an independent financial information and comparison platform for Savings Accounts and Debit Cards offered by various banks across India.
                   </p>
                   <p className="text-xs sm:text-sm text-[#6B7280] dark:text-slate-300 leading-relaxed font-normal">
                     Our goal is to simplify banking decisions by presenting verified information in an easy-to-understand format.
@@ -118,7 +118,7 @@ function AboutModal({ isOpen, onClose }) {
                       </h4>
                     </div>
                     <p className="text-xs text-[#6B7280] dark:text-slate-400 leading-relaxed font-normal">
-                      To simplify banking decisions by providing transparent, accurate, and AI-powered debit card comparisons that help every user choose the right financial product with confidence.
+                      To simplify banking decisions by providing transparent, accurate, and AI-powered savings account and debit card comparisons that help every user choose the right financial product with confidence.
                     </p>
                   </div>
 
@@ -130,7 +130,7 @@ function AboutModal({ isOpen, onClose }) {
                       </h4>
                     </div>
                     <p className="text-xs text-[#6B7280] dark:text-slate-400 leading-relaxed font-normal">
-                      To become India's most trusted debit card comparison platform by making financial information accessible, transparent, and easy to understand for everyone.
+                      To become India's most trusted independent savings account and debit card comparison platform by making financial information accessible, transparent, and easy to understand for everyone.
                     </p>
                   </div>
                 </div>
@@ -154,7 +154,7 @@ function AboutModal({ isOpen, onClose }) {
 
                 {/* Disclaimer */}
                 <div className="p-4 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-[#E5E7EB] dark:border-slate-700 text-xs text-[#6B7280] dark:text-slate-300 font-normal italic">
-                  "D.CARD is an independent debit card comparison and information platform. We are not a bank and are not officially affiliated or partnered with any listed bank. All information is collected from publicly available sources and official bank websites."
+                  "D.CARD is an independent financial information and comparison platform for Savings Accounts and Debit Cards. D.CARD is not a bank, NBFC, financial institution, payment system operator, or representative of any bank unless explicitly stated. Information shown is for comparison and informational purposes only. Please verify all details directly with the respective bank."
                 </div>
               </div>
 

@@ -572,7 +572,7 @@ function BanksPage({
                         </span>
                         {linkedCard && (
                           <span className="px-2 py-0.5 rounded-full text-[9.5px] font-extrabold bg-[#2563EB] text-white">
-                            Official Linked Card
+                            Linked Debit Card
                           </span>
                         )}
                       </div>
@@ -668,7 +668,7 @@ function BanksPage({
           <span>Statutory Bank Information & Verification Disclaimer</span>
         </div>
         <p className="leading-relaxed font-normal">
-          Information is displayed for comparison and informational purposes only. Interest rates, debit card charges, daily transaction limits, lounge access criteria, and account opening requirements are updated based on verified bank notifications and may change over time. Please verify current details directly on {canonicalName}'s official website.
+          Information shown is for comparison and informational purposes only. Savings Account and Debit Card features, interest rates, fees, charges, eligibility requirements, limits, and benefits may change over time. Please verify the latest details directly on {canonicalName}'s official website before making a decision.
         </p>
         <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-amber-200/60 dark:border-amber-900/40 text-xs font-semibold">
           <span>Source: Official {canonicalName} Portal</span>

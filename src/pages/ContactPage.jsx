@@ -85,7 +85,7 @@ function ContactPage() {
           Contact Support Desk
         </h1>
         <p className="text-xs sm:text-sm text-[#6B7280] dark:text-slate-400 mt-2 max-w-2xl font-normal leading-relaxed">
-          Have questions about debit card eligibility, bank fee disclosures, or feature comparisons? Submit your inquiry to our support team.
+          Have questions about savings accounts, debit card eligibility, bank fee disclosures, or feature comparisons? Submit your inquiry to our support team.
         </p>
       </div>
 
@@ -100,7 +100,7 @@ function ContactPage() {
               <h4 className="text-xs font-bold uppercase tracking-wider">Independent Support Platform</h4>
             </div>
             <p className="text-xs text-[#6B7280] dark:text-slate-300 leading-relaxed font-normal">
-              D.CARD is an independent debit card information database. We answer queries regarding public fee disclosures, lounge rules, and card specifications.
+              D.CARD is an independent comparison and financial information platform covering Savings Accounts and Debit Cards. We answer queries regarding public fee disclosures, interest rates, lounge rules, and product specifications.
             </p>
           </div>
 

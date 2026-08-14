@@ -271,7 +271,7 @@ function HomePage({
 
           <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
             <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-normal italic">
-              * Information is provided for comparison and educational purposes. Please verify current terms, conditions and charges with the respective bank before making financial decisions.
+              * Information shown is for comparison and informational purposes only. Savings Account and Debit Card features, fees, charges, eligibility, limits, and benefits may change. Please verify the latest details with the respective bank before making a decision.
             </p>
           </div>
         </section>
