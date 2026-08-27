@@ -55,11 +55,10 @@ function ComparisonDock({ compareQueue = [], onRemove, onCompareNow, onClear, on
         style={{ bottom: 'calc(1.25rem + env(safe-area-inset-bottom, 0px))' }}
         className="fixed left-1/2 -translate-x-1/2 z-40 w-[calc(100%-2rem)] max-w-3xl select-none box-border"
       >
-        <div
-          className="rounded-[2rem] p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border bg-white/90 dark:bg-black/90 backdrop-blur-2xl border-slate-200 dark:border-secondary/15 shadow-[0_20px_50px_rgba(122,15,82,0.2)] text-slate-800 dark:text-slate-100 box-border w-full overflow-hidden"
-        >
-          {/* Left: badges + card chips */}
-          <div className="flex flex-wrap items-center gap-2 min-w-0 flex-1">
+        <div className="rounded-[2rem] p-3.5 sm:p-4 border bg-white/90 dark:bg-black/90 backdrop-blur-2xl border-slate-200 dark:border-secondary/15 shadow-[0_20px_50px_rgba(122,15,82,0.2)] text-slate-800 dark:text-slate-100 w-full">
+
+          {/* Row 1: badges + card chips (wrap freely) */}
+          <div className="flex flex-wrap items-center gap-2">
             {/* Count Chip */}
             <div className="px-3 py-1 rounded-full text-xs font-black text-white bg-gradient-to-r from-primary to-secondary shadow-sm flex-shrink-0">
               {queueList.length} / 3 QUEUED
@@ -75,7 +74,7 @@ function ComparisonDock({ compareQueue = [], onRemove, onCompareNow, onClear, on
             {/* Card Chips */}
             {queueList.map((card, i) => (
               <div key={card.id || i} className="relative group flex-shrink-0">
-                <div className="rounded-xl px-2.5 py-1.5 text-xs font-bold flex items-center gap-1.5 bg-[#2563EB]/10 border border-[#2563EB]/20 text-[#2563EB] dark:text-[#60A5FA] shadow-sm max-w-[120px] sm:max-w-[180px]">
+                <div className="rounded-xl px-2.5 py-1.5 text-xs font-bold flex items-center gap-1.5 bg-[#2563EB]/10 border border-[#2563EB]/20 text-[#2563EB] dark:text-[#60A5FA] shadow-sm max-w-[150px] sm:max-w-[200px]">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#2563EB] flex-shrink-0" />
                   <span className="truncate">{card.cardName || "Debit Card"}</span>
                 </div>
@@ -90,8 +89,8 @@ function ComparisonDock({ compareQueue = [], onRemove, onCompareNow, onClear, on
             ))}
           </div>
 
-          {/* Right: Clear + Compare Now */}
-          <div className="flex items-center gap-3 flex-shrink-0 border-t sm:border-t-0 border-slate-100 dark:border-secondary/10 pt-2.5 sm:pt-0">
+          {/* Row 2: action buttons — always right-aligned */}
+          <div className="flex items-center justify-end gap-3 mt-3 pt-3 border-t border-slate-100 dark:border-secondary/10">
             <button
               onClick={onClear}
               className="text-xs font-black text-slate-400 dark:text-slate-500 hover:text-secondary dark:hover:text-roseGold transition-colors cursor-pointer uppercase tracking-wider px-2 py-1"
