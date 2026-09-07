@@ -2644,6 +2644,443 @@ export const savingsAccounts = [
         "verification_status": "verified"
       }
     ]
+  },
+  {
+    "id": 118,
+    "product_id": "pnb-women-power-solitaire",
+    "bank_id": "pnb",
+    "bank_name": "Punjab National Bank",
+    "bank": "Punjab National Bank",
+    "logo": "PNB",
+    "variant_name": "PNB Women Power Solitaire",
+    "accountName": "PNB Women Power Solitaire",
+    "account_type": "Women Power Savings – Solitaire",
+    "accountType": "Women's",
+    "target_segment": "Women",
+    "accountTypeBadges": [
+      "Women Power",
+      "Solitaire",
+      "Public Sector Bank"
+    ],
+    "interest_rate": "2.50% p.a.*",
+    "interestRate": "2.50% p.a.*",
+    "interestRateValue": 2.5,
+    "minimum_balance": "₹50,000",
+    "minimumBalance": "₹50,000",
+    "minimumBalanceValue": 50000,
+    "maximum_balance": "No Limit",
+    "salary_requirement": "Not applicable",
+    "salaryRequirement": "Not applicable",
+    "non_maintenance_penalty": "Scheme benefits/concessions depend on maintaining required MAB",
+    "nonMaintenanceCharges": "Scheme benefits/concessions depend on maintaining required MAB",
+    "cheque_book": "100 cheque leaves/year*",
+    "chequeBook": "100 cheque leaves/year*",
+    "atm_limits": "ATM ₹50,000/day; POS/e-commerce ₹1,50,000/day; Contactless ₹5,000/day",
+    "atmLimits": "ATM ₹50,000/day; POS/e-commerce ₹1,50,000/day; Contactless ₹5,000/day",
+    "debit_card": "RuPay Platinum Solitaire International",
+    "debitCard": "RuPay Platinum Solitaire International",
+    "associatedDebitCardName": "RuPay Platinum Solitaire International",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": false,
+    "isOnlineOpening": true,
+    "isStudent": false,
+    "isSalary": false,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": true,
+    "isDigital": true,
+    "isPremium": true,
+    "isNRI": false,
+    "rating": 4.5,
+    "isPopular": true,
+    "source": "https://www.pnbindia.in",
+    "officialSourceUrl": "https://www.pnbindia.in",
+    "sourceType": "Provided Dataset",
+    "sourceFile": "User Provided Banking Dataset",
+    "as_of_date": "Not specified",
+    "lastVerified": "Not specified",
+    "information_status": "Verified",
+    "description": "Exclusive women-oriented savings scheme with ₹50,000 minimum balance requirement and 100 free cheque leaves per year.",
+    "eligibility": [
+      "Women accounts (Individual / Joint operation)",
+      "Salary Requirement: Not applicable"
+    ],
+    "benefits": [
+      "100 cheque leaves/year*",
+      "RuPay Platinum Solitaire International Debit Card",
+      "Scheme benefits/concessions depend on maintaining required MAB"
+    ],
+    "keyBenefits": [
+      "100 cheque leaves/year*",
+      "RuPay Platinum Solitaire International Debit Card",
+      "Scheme benefits/concessions depend on maintaining required MAB"
+    ],
+    "features": [
+      "ATM ₹50,000/day; POS/e-commerce ₹1,50,000/day; Contactless ₹5,000/day",
+      "PNB ONE Mobile Banking & Internet Banking access",
+      "2.50% p.a.* interest rate"
+    ],
+    "bankingFeatures": [
+      "ATM ₹50,000/day; POS/e-commerce ₹1,50,000/day; Contactless ₹5,000/day",
+      "PNB ONE Mobile Banking & Internet Banking access",
+      "2.50% p.a.* interest rate"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "pnb-rupay-platinum-solitaire-international",
+        "relationship": "included",
+        "verification_status": "verified"
+      }
+    ]
+  },
+  {
+    "id": 119,
+    "product_id": "pnb-women-power-pearl",
+    "bank_id": "pnb",
+    "bank_name": "Punjab National Bank",
+    "bank": "Punjab National Bank",
+    "logo": "PNB",
+    "variant_name": "PNB Women Power Pearl",
+    "accountName": "PNB Women Power Pearl",
+    "account_type": "Women Power Savings – Pearl",
+    "accountType": "Women's",
+    "target_segment": "Women",
+    "accountTypeBadges": [
+      "Women Power",
+      "Pearl",
+      "Public Sector Bank"
+    ],
+    "interest_rate": "2.50% p.a.*",
+    "interestRate": "2.50% p.a.*",
+    "interestRateValue": 2.5,
+    "minimum_balance": "₹10,000",
+    "minimumBalance": "₹10,000",
+    "minimumBalanceValue": 10000,
+    "maximum_balance": "No Limit",
+    "salary_requirement": "Not applicable",
+    "salaryRequirement": "Not applicable",
+    "non_maintenance_penalty": "Scheme benefits/concessions depend on maintaining required MAB",
+    "nonMaintenanceCharges": "Scheme benefits/concessions depend on maintaining required MAB",
+    "cheque_book": "100 cheque leaves/year*",
+    "chequeBook": "100 cheque leaves/year*",
+    "atm_limits": "ATM ₹50,000/day; POS/e-commerce ₹1,50,000/day; Contactless ₹5,000/day",
+    "atmLimits": "ATM ₹50,000/day; POS/e-commerce ₹1,50,000/day; Contactless ₹5,000/day",
+    "debit_card": "RuPay Platinum Pearl International — ₹250 + GST issuance",
+    "debitCard": "RuPay Platinum Pearl International — ₹250 + GST issuance",
+    "associatedDebitCardName": "RuPay Platinum Pearl International",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": false,
+    "isOnlineOpening": true,
+    "isStudent": false,
+    "isSalary": false,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": true,
+    "isDigital": true,
+    "isPremium": false,
+    "isNRI": false,
+    "rating": 4.4,
+    "isPopular": true,
+    "source": "https://www.pnbindia.in",
+    "officialSourceUrl": "https://www.pnbindia.in",
+    "sourceType": "Provided Dataset",
+    "sourceFile": "User Provided Banking Dataset",
+    "as_of_date": "Not specified",
+    "lastVerified": "Not specified",
+    "information_status": "Verified",
+    "description": "Specialized women's savings account with ₹10,000 minimum balance, RuPay Platinum Pearl card, and 100 free cheque leaves per year.",
+    "eligibility": [
+      "Women accounts (Individual / Joint operation)",
+      "Salary Requirement: Not applicable"
+    ],
+    "benefits": [
+      "100 cheque leaves/year*",
+      "RuPay Platinum Pearl International Debit Card (₹250 + GST issuance)",
+      "Scheme benefits/concessions depend on maintaining required MAB"
+    ],
+    "keyBenefits": [
+      "100 cheque leaves/year*",
+      "RuPay Platinum Pearl International Debit Card (₹250 + GST issuance)",
+      "Scheme benefits/concessions depend on maintaining required MAB"
+    ],
+    "features": [
+      "ATM ₹50,000/day; POS/e-commerce ₹1,50,000/day; Contactless ₹5,000/day",
+      "PNB ONE Mobile Banking & Internet Banking access",
+      "2.50% p.a.* interest rate"
+    ],
+    "bankingFeatures": [
+      "ATM ₹50,000/day; POS/e-commerce ₹1,50,000/day; Contactless ₹5,000/day",
+      "PNB ONE Mobile Banking & Internet Banking access",
+      "2.50% p.a.* interest rate"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "pnb-rupay-platinum-pearl-international",
+        "relationship": "included",
+        "verification_status": "verified"
+      }
+    ]
+  },
+  {
+    "id": 120,
+    "product_id": "pnb-women-power-emerald",
+    "bank_id": "pnb",
+    "bank_name": "Punjab National Bank",
+    "bank": "Punjab National Bank",
+    "logo": "PNB",
+    "variant_name": "PNB Women Power Emerald",
+    "accountName": "PNB Women Power Emerald",
+    "account_type": "Women Power Savings – Emerald",
+    "accountType": "Women's",
+    "target_segment": "Women",
+    "accountTypeBadges": [
+      "Women Power",
+      "Emerald",
+      "Public Sector Bank"
+    ],
+    "interest_rate": "2.50% p.a.*",
+    "interestRate": "2.50% p.a.*",
+    "interestRateValue": 2.5,
+    "minimum_balance": "₹25,000",
+    "minimumBalance": "₹25,000",
+    "minimumBalanceValue": 25000,
+    "maximum_balance": "No Limit",
+    "salary_requirement": "Not applicable",
+    "salaryRequirement": "Not applicable",
+    "non_maintenance_penalty": "Scheme benefits/concessions depend on maintaining required MAB",
+    "nonMaintenanceCharges": "Scheme benefits/concessions depend on maintaining required MAB",
+    "cheque_book": "100 cheque leaves/year*",
+    "chequeBook": "100 cheque leaves/year*",
+    "atm_limits": "ATM ₹50,000/day; POS/e-commerce ₹1,50,000/day; Contactless ₹5,000/day",
+    "atmLimits": "ATM ₹50,000/day; POS/e-commerce ₹1,50,000/day; Contactless ₹5,000/day",
+    "debit_card": "RuPay Platinum Emerald International — ₹300 + GST issuance",
+    "debitCard": "RuPay Platinum Emerald International — ₹300 + GST issuance",
+    "associatedDebitCardName": "RuPay Platinum Emerald International",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": false,
+    "isOnlineOpening": true,
+    "isStudent": false,
+    "isSalary": false,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": true,
+    "isDigital": true,
+    "isPremium": false,
+    "isNRI": false,
+    "rating": 4.4,
+    "isPopular": true,
+    "source": "https://www.pnbindia.in",
+    "officialSourceUrl": "https://www.pnbindia.in",
+    "sourceType": "Provided Dataset",
+    "sourceFile": "User Provided Banking Dataset",
+    "as_of_date": "Not specified",
+    "lastVerified": "Not specified",
+    "information_status": "Verified",
+    "description": "Enhanced women's savings account with ₹25,000 minimum balance, RuPay Platinum Emerald card, and 100 free cheque leaves per year.",
+    "eligibility": [
+      "Women accounts (Individual / Joint operation)",
+      "Salary Requirement: Not applicable"
+    ],
+    "benefits": [
+      "100 cheque leaves/year*",
+      "RuPay Platinum Emerald International Debit Card (₹300 + GST issuance)",
+      "Scheme benefits/concessions depend on maintaining required MAB"
+    ],
+    "keyBenefits": [
+      "100 cheque leaves/year*",
+      "RuPay Platinum Emerald International Debit Card (₹300 + GST issuance)",
+      "Scheme benefits/concessions depend on maintaining required MAB"
+    ],
+    "features": [
+      "ATM ₹50,000/day; POS/e-commerce ₹1,50,000/day; Contactless ₹5,000/day",
+      "PNB ONE Mobile Banking & Internet Banking access",
+      "2.50% p.a.* interest rate"
+    ],
+    "bankingFeatures": [
+      "ATM ₹50,000/day; POS/e-commerce ₹1,50,000/day; Contactless ₹5,000/day",
+      "PNB ONE Mobile Banking & Internet Banking access",
+      "2.50% p.a.* interest rate"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "pnb-rupay-platinum-emerald-international",
+        "relationship": "included",
+        "verification_status": "verified"
+      }
+    ]
+  },
+  {
+    "id": 121,
+    "product_id": "pnb-rise",
+    "bank_id": "pnb",
+    "bank_name": "Punjab National Bank",
+    "bank": "Punjab National Bank",
+    "logo": "PNB",
+    "variant_name": "PNB Rise",
+    "accountName": "PNB Rise",
+    "account_type": "Youth Savings Account",
+    "accountType": "Student",
+    "target_segment": "Youth & Students",
+    "accountTypeBadges": [
+      "Youth Savings",
+      "Zero Balance",
+      "Public Sector Bank"
+    ],
+    "interest_rate": "2.50% p.a.*",
+    "interestRate": "2.50% p.a.*",
+    "interestRateValue": 2.5,
+    "minimum_balance": "Zero",
+    "minimumBalance": "Zero",
+    "minimumBalanceValue": 0,
+    "maximum_balance": "No Limit",
+    "salary_requirement": "Not applicable",
+    "salaryRequirement": "Not applicable",
+    "non_maintenance_penalty": "Applicable charges as per current PNB rules",
+    "nonMaintenanceCharges": "Applicable charges as per current PNB rules",
+    "cheque_book": "Unlimited*",
+    "chequeBook": "Unlimited*",
+    "atm_limits": "ATM ₹50,000/day; POS/e-commerce ₹3,00,000/day; Contactless ₹5,000/day",
+    "atmLimits": "ATM ₹50,000/day; POS/e-commerce ₹3,00,000/day; Contactless ₹5,000/day",
+    "debit_card": "Mastercard Platinum Rise — ₹375 + GST issuance; ₹375 + GST AMC",
+    "debitCard": "Mastercard Platinum Rise — ₹375 + GST issuance; ₹375 + GST AMC",
+    "associatedDebitCardName": "Mastercard Platinum Rise",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": true,
+    "isOnlineOpening": true,
+    "isStudent": true,
+    "isSalary": false,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": false,
+    "isDigital": true,
+    "isPremium": false,
+    "isNRI": false,
+    "rating": 4.5,
+    "isPopular": true,
+    "source": "https://www.pnbindia.in",
+    "officialSourceUrl": "https://www.pnbindia.in",
+    "sourceType": "Provided Dataset",
+    "sourceFile": "User Provided Banking Dataset",
+    "as_of_date": "Not specified",
+    "lastVerified": "Not specified",
+    "information_status": "Verified",
+    "description": "Youth-centric zero balance savings account featuring high POS limits and unlimited cheque book facility.",
+    "eligibility": [
+      "Youth and young individuals",
+      "Salary Requirement: Not applicable"
+    ],
+    "benefits": [
+      "Zero minimum balance maintenance requirement",
+      "Unlimited* cheque book facility",
+      "Mastercard Platinum Rise Debit Card (₹375 + GST issuance; ₹375 + GST AMC)"
+    ],
+    "keyBenefits": [
+      "Zero minimum balance maintenance requirement",
+      "Unlimited* cheque book facility",
+      "Mastercard Platinum Rise Debit Card (₹375 + GST issuance; ₹375 + GST AMC)"
+    ],
+    "features": [
+      "ATM ₹50,000/day; POS/e-commerce ₹3,00,000/day; Contactless ₹5,000/day",
+      "PNB ONE Mobile Banking & Internet Banking access",
+      "2.50% p.a.* interest rate"
+    ],
+    "bankingFeatures": [
+      "ATM ₹50,000/day; POS/e-commerce ₹3,00,000/day; Contactless ₹5,000/day",
+      "PNB ONE Mobile Banking & Internet Banking access",
+      "2.50% p.a.* interest rate"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "pnb-mastercard-platinum-rise",
+        "relationship": "included",
+        "verification_status": "verified"
+      }
+    ]
+  },
+  {
+    "id": 122,
+    "product_id": "pnb-grow",
+    "bank_id": "pnb",
+    "bank_name": "Punjab National Bank",
+    "bank": "Punjab National Bank",
+    "logo": "PNB",
+    "variant_name": "PNB Grow",
+    "accountName": "PNB Grow",
+    "account_type": "Savings Account for Minors",
+    "accountType": "Minor",
+    "target_segment": "Minors & Children",
+    "accountTypeBadges": [
+      "Minor Account",
+      "Zero Balance",
+      "Public Sector Bank"
+    ],
+    "interest_rate": "2.50% p.a.*",
+    "interestRate": "2.50% p.a.*",
+    "interestRateValue": 2.5,
+    "minimum_balance": "Zero",
+    "minimumBalance": "Zero",
+    "minimumBalanceValue": 0,
+    "maximum_balance": "No Limit",
+    "salary_requirement": "Not applicable",
+    "salaryRequirement": "Not applicable",
+    "non_maintenance_penalty": "AMC applicable under PNB rules; waiver linked to ₹5,000 yearly-average balance",
+    "nonMaintenanceCharges": "AMC applicable under PNB rules; waiver linked to ₹5,000 yearly-average balance",
+    "cheque_book": "25 cheque leaves/year*",
+    "chequeBook": "25 cheque leaves/year*",
+    "atm_limits": "ATM ₹10,000/day; POS/e-commerce ₹10,000/day; Contactless ₹5,000/day",
+    "atmLimits": "ATM ₹10,000/day; POS/e-commerce ₹10,000/day; Contactless ₹5,000/day",
+    "debit_card": "Mastercard Platinum Grow",
+    "debitCard": "Mastercard Platinum Grow",
+    "associatedDebitCardName": "Mastercard Platinum Grow",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": true,
+    "isOnlineOpening": true,
+    "isStudent": true,
+    "isSalary": false,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": false,
+    "isDigital": true,
+    "isPremium": false,
+    "isNRI": false,
+    "rating": 4.3,
+    "isPopular": true,
+    "source": "https://www.pnbindia.in",
+    "officialSourceUrl": "https://www.pnbindia.in",
+    "sourceType": "Provided Dataset",
+    "sourceFile": "User Provided Banking Dataset",
+    "as_of_date": "Not specified",
+    "lastVerified": "Not specified",
+    "information_status": "Verified",
+    "description": "Zero balance savings account designed for minors with safe transaction limits and 25 free cheque leaves per year.",
+    "eligibility": [
+      "Minors with parents / legal guardians",
+      "Salary Requirement: Not applicable"
+    ],
+    "benefits": [
+      "Zero minimum balance maintenance requirement",
+      "25 cheque leaves/year*",
+      "Mastercard Platinum Grow Debit Card",
+      "AMC waiver linked to ₹5,000 yearly-average balance"
+    ],
+    "keyBenefits": [
+      "Zero minimum balance maintenance requirement",
+      "25 cheque leaves/year*",
+      "Mastercard Platinum Grow Debit Card",
+      "AMC waiver linked to ₹5,000 yearly-average balance"
+    ],
+    "features": [
+      "ATM ₹10,000/day; POS/e-commerce ₹10,000/day; Contactless ₹5,000/day",
+      "PNB ONE Mobile Banking & Internet Banking access",
+      "2.50% p.a.* interest rate"
+    ],
+    "bankingFeatures": [
+      "ATM ₹10,000/day; POS/e-commerce ₹10,000/day; Contactless ₹5,000/day",
+      "PNB ONE Mobile Banking & Internet Banking access",
+      "2.50% p.a.* interest rate"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "pnb-mastercard-platinum-grow",
+        "relationship": "included",
+        "verification_status": "verified"
+      }
+    ]
   }
 ];
 

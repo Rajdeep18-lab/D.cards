@@ -22,6 +22,9 @@ import FoundersPage from "./pages/FoundersPage";
 import SavingsAccountsPage from "./pages/SavingsAccountsPage";
 import SavingsAccountsComparePage from "./pages/SavingsAccountsComparePage";
 import SavingsAccountDetailPage from "./pages/SavingsAccountDetailPage";
+import CurrentAccountsPage from "./pages/CurrentAccountsPage";
+import CurrentAccountsComparePage from "./pages/CurrentAccountsComparePage";
+import CurrentAccountDetailPage from "./pages/CurrentAccountDetailPage";
 
 import { normalizeCard, deduplicateCards, parseAnnualFeeVal, parseCashbackVal, safeLower, safeIncludes, safeStr, safeMap } from "./utils/compareUtils";
 
@@ -253,6 +256,7 @@ function AppContent() {
   const [legalTab, setLegalTab] = useState("privacy");
   const [compareQueue, setCompareQueue] = useState([]);
   const [savingsCompareQueue, setSavingsCompareQueue] = useState([]);
+  const [currentCompareQueue, setCurrentCompareQueue] = useState([]);
   const [compareDockHeight, setCompareDockHeight] = useState(0);
   const [selectedCard, setSelectedCard] = useState(null);
 
@@ -925,6 +929,40 @@ function AppContent() {
               <SavingsAccountsComparePage
                 compareQueue={savingsCompareQueue}
                 setCompareQueue={setSavingsCompareQueue}
+                onSelectDebitCard={(card) => setSelectedCard(card)}
+              />
+            } 
+          />
+          <Route 
+            path="/current-accounts" 
+            element={
+              <CurrentAccountsPage
+                onSelectDebitCard={(card) => setSelectedCard(card)}
+              />
+            } 
+          />
+          <Route 
+            path="/current-accounts/:id" 
+            element={
+              <CurrentAccountDetailPage
+                onSelectDebitCard={(card) => setSelectedCard(card)}
+                onToggleCompare={(acc) => {
+                  setCurrentCompareQueue(prev => {
+                    if (prev.some(a => String(a.id) === String(acc.id))) return prev;
+                    if (prev.length >= 3) return prev;
+                    return [...prev, acc];
+                  });
+                }}
+                isCompared={false}
+              />
+            } 
+          />
+          <Route 
+            path="/compare-current" 
+            element={
+              <CurrentAccountsComparePage
+                compareQueue={currentCompareQueue}
+                setCompareQueue={setCurrentCompareQueue}
                 onSelectDebitCard={(card) => setSelectedCard(card)}
               />
             } 

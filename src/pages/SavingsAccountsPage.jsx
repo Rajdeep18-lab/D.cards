@@ -42,6 +42,7 @@ const BANK_OPTIONS = [
   "IDFC FIRST Bank",
   "AU Small Finance Bank",
   "Bank of Baroda",
+  "Punjab National Bank",
   "IndusInd Bank",
   "Fi Money (Federal Bank)"
 ];

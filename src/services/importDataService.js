@@ -10,8 +10,17 @@ import {
   orderBy
 } from '../lib/firebase';
 import { aiChatService } from './aiChatService';
+import { 
+  validateDebitCard, 
+  validateSavingsAccount, 
+  validateCurrentAccount, 
+  normalizeDebitCardRelationship 
+} from '../utils/dataValidation';
 
 const DEBIT_CARDS_COLLECTION = 'debit_cards';
+const SAVINGS_ACCOUNTS_COLLECTION = 'savings_accounts';
+const CURRENT_ACCOUNTS_COLLECTION = 'current_accounts';
+const ACCOUNT_CARD_MAPPINGS_COLLECTION = 'account_card_mappings';
 const BANKS_COLLECTION = 'banks';
 const IMPORT_HISTORY_COLLECTION = 'import_history';
 
@@ -64,7 +73,6 @@ export const importDataService = {
     const records = [];
 
     for (let i = 1; i < lines.length; i++) {
-      // Basic CSV line splitter handling quoted commas
       const rawLine = lines[i];
       const cols = [];
       let inQuotes = false;
@@ -86,7 +94,6 @@ export const importDataService = {
       const record = {};
       headers.forEach((header, idx) => {
         let val = cols[idx] !== undefined ? cols[idx] : '';
-        // Type conversion helpers
         if (val === 'true') val = true;
         else if (val === 'false') val = false;
         else if (header.toLowerCase().includes('fee') || header.toLowerCase().includes('balance') || header.toLowerCase().includes('limit')) {
@@ -108,52 +115,68 @@ export const importDataService = {
   },
 
   /**
-   * Analyze records against existing Firestore database to detect new, updates, duplicates, and invalid records
+   * Detect category from record
+   */
+  detectCategory(rec) {
+    const cat = String(rec.productCategory || rec.category || rec.type || '').toLowerCase();
+    const name = String(rec.accountName || rec.cardName || rec.name || '').toLowerCase();
+    
+    if (rec.account_id && rec.card_id) return 'account_card_mapping';
+    if (cat === 'current' || cat === 'current_account' || name.includes('current account')) return 'current_account';
+    if (cat === 'savings' || cat === 'savings_account' || name.includes('savings account')) return 'savings_account';
+    return 'debit_card';
+  },
+
+  /**
+   * Analyze records against existing database
    */
   async analyzeImportRecords(records) {
     if (!Array.isArray(records)) {
       return { totalRecords: 0, newRecords: 0, existingRecords: 0, duplicateRecords: 0, invalidRecords: 0, items: [] };
     }
 
-    // Query existing Firestore cards & banks
     let existingCards = [];
-    let existingBanks = [];
-
     try {
       const cardsSnap = await getDocs(collection(db, DEBIT_CARDS_COLLECTION));
       existingCards = cardsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-
-      const banksSnap = await getDocs(collection(db, BANKS_COLLECTION));
-      existingBanks = banksSnap.docs.map(d => ({ id: d.id, ...d.data() }));
     } catch (err) {
       console.warn("Firestore query notice during import analysis:", err);
     }
 
     const existingCardIds = new Set(existingCards.map(c => String(c.id || '').toLowerCase()));
-    const existingCardNames = new Set(existingCards.map(c => `${String(c.cardName || '').toLowerCase()}_${String(c.bank || '').toLowerCase()}`));
+    const existingCardNames = new Set(existingCards.map(c => `${String(c.cardName || c.accountName || '').toLowerCase()}_${String(c.bank || c.bankName || '').toLowerCase()}`));
 
     const seenInFileKeys = new Set();
-
     let newCount = 0;
     let existingCount = 0;
     let duplicateCount = 0;
     let invalidCount = 0;
 
     const analyzedItems = records.map((rec, index) => {
-      const cardName = rec.cardName || rec.name || rec.title || '';
+      const detectedCat = this.detectCategory(rec);
+      const title = rec.cardName || rec.accountName || rec.name || rec.title || '';
       const bank = rec.bank || rec.bank_name || rec.bankName || '';
 
-      if (!cardName && !bank) {
-        invalidCount++;
-        return { index, record: rec, status: 'Invalid', reason: 'Missing Card Name or Bank' };
+      if (detectedCat === 'account_card_mapping') {
+        if (!rec.account_id || !rec.card_id) {
+          invalidCount++;
+          return { index, record: rec, category: detectedCat, status: 'Invalid', reason: 'Missing account_id or card_id' };
+        }
+        newCount++;
+        return { index, record: rec, category: detectedCat, cardId: `${rec.account_id}_${rec.card_id}`, status: 'New', reason: 'New Explicit Account-Card Mapping' };
       }
 
-      const cardId = rec.card_id || rec.id || `card_${String(bank || 'bank').toLowerCase().replace(/\s+/g, '_')}_${String(cardName || 'card').toLowerCase().replace(/\s+/g, '_')}`;
-      const uniqueFileKey = `${String(cardName || '').toLowerCase()}_${String(bank || '').toLowerCase()}`;
+      if (!title && !bank) {
+        invalidCount++;
+        return { index, record: rec, category: detectedCat, status: 'Invalid', reason: 'Missing Product/Card/Account Name or Bank' };
+      }
+
+      const cardId = rec.card_id || rec.product_id || rec.id || `${detectedCat}_${String(bank || 'bank').toLowerCase().replace(/\s+/g, '_')}_${String(title || 'prod').toLowerCase().replace(/\s+/g, '_')}`;
+      const uniqueFileKey = `${String(title || '').toLowerCase()}_${String(bank || '').toLowerCase()}`;
 
       if (seenInFileKeys.has(uniqueFileKey)) {
         duplicateCount++;
-        return { index, record: rec, cardId, status: 'Duplicate', reason: 'Duplicate in uploaded file' };
+        return { index, record: rec, category: detectedCat, cardId, status: 'Duplicate', reason: 'Duplicate in uploaded file' };
       }
       seenInFileKeys.add(uniqueFileKey);
 
@@ -161,10 +184,10 @@ export const importDataService = {
 
       if (existsInDb) {
         existingCount++;
-        return { index, record: rec, cardId, status: 'Update', reason: 'Matches existing Firestore record (Will Update Changed Fields)' };
+        return { index, record: rec, category: detectedCat, cardId, status: 'Update', reason: `Matches existing record in ${detectedCat} catalogue` };
       } else {
         newCount++;
-        return { index, record: rec, cardId, status: 'New', reason: 'New Debit Card record to create' };
+        return { index, record: rec, category: detectedCat, cardId, status: 'New', reason: `New record for ${detectedCat} catalogue` };
       }
     });
 
@@ -179,7 +202,7 @@ export const importDataService = {
   },
 
   /**
-   * Execute batched writes into Firestore (chunks of 500) and record import history
+   * Execute batched writes into Firestore
    */
   async executeBatchImport(analyzedData, fileName, uploadedByEmail = 'Admin') {
     const startTime = Date.now();
@@ -194,7 +217,6 @@ export const importDataService = {
     let totalSkipped = analyzedData.duplicateRecords + analyzedData.invalidRecords;
     let totalFailed = 0;
 
-    // Batched Firestore Writes (Max 500 per batch)
     const BATCH_SIZE = 450;
     let currentBatch = writeBatch(db);
     let operationCount = 0;
@@ -204,14 +226,14 @@ export const importDataService = {
     for (const item of itemsToImport) {
       try {
         const rec = item.record;
+        const category = item.category || this.detectCategory(rec);
         const bankName = rec.bank || rec.bank_name || rec.bankName || 'Listed Bank';
-        const cardName = rec.cardName || rec.name || rec.title || 'Debit Card';
+        const title = rec.cardName || rec.accountName || rec.name || 'Financial Product';
 
         const bankId = rec.bank_id || `bank_${String(bankName).toLowerCase().replace(/\s+/g, '_')}`;
-        const cardId = item.cardId || rec.card_id || rec.id || `card_${String(bankName).toLowerCase().replace(/\s+/g, '_')}_${String(cardName).toLowerCase().replace(/\s+/g, '_')}`;
+        const docId = String(item.cardId || rec.id || `${category}_${Date.now()}`);
 
-        // Ensure Bank document is prepared in batch if not seen
-        if (!uniqueBanksToEnsure.has(bankId)) {
+        if (!uniqueBanksToEnsure.has(bankId) && category !== 'account_card_mapping') {
           uniqueBanksToEnsure.add(bankId);
           const bankRef = doc(db, BANKS_COLLECTION, String(bankId));
           currentBatch.set(bankRef, {
@@ -222,29 +244,36 @@ export const importDataService = {
           operationCount++;
         }
 
-        // Card payload
-        const cardPayload = {
-          ...rec,
-          id: String(cardId),
-          cardName,
-          bank: bankName,
-          bank_id: String(bankId),
-          network: rec.network || 'Visa',
-          category: rec.category || 'Rewards',
-          annualFee: Number(rec.annualFee) || 0,
-          minBalance: Number(rec.minBalance) || 0,
-          rating: Number(rec.rating) || 4.5,
-          updated_at: new Date().toISOString()
-        };
+        let targetCollection = DEBIT_CARDS_COLLECTION;
+        let payload = null;
 
-        const cardRef = doc(db, DEBIT_CARDS_COLLECTION, String(cardId));
-        currentBatch.set(cardRef, cardPayload, { merge: true });
+        if (category === 'savings_account') {
+          targetCollection = SAVINGS_ACCOUNTS_COLLECTION;
+          payload = validateSavingsAccount({ ...rec, id: docId, bank_id: bankId, bankName, updated_at: new Date().toISOString() });
+        } else if (category === 'current_account') {
+          targetCollection = CURRENT_ACCOUNTS_COLLECTION;
+          payload = validateCurrentAccount({ ...rec, id: docId, bank_id: bankId, bankName, updated_at: new Date().toISOString() });
+        } else if (category === 'account_card_mapping') {
+          targetCollection = ACCOUNT_CARD_MAPPINGS_COLLECTION;
+          payload = {
+            account_id: String(rec.account_id),
+            card_id: String(rec.card_id),
+            relationship: normalizeDebitCardRelationship(rec.relationship),
+            verification_status: rec.verification_status || 'verified',
+            updated_at: new Date().toISOString()
+          };
+        } else {
+          targetCollection = DEBIT_CARDS_COLLECTION;
+          payload = validateDebitCard({ ...rec, id: docId, bank_id: bankId, bankName, updated_at: new Date().toISOString() });
+        }
+
+        const docRef = doc(db, targetCollection, docId);
+        currentBatch.set(docRef, payload, { merge: true });
         operationCount++;
 
         if (item.status === 'New') totalImported++;
         if (item.status === 'Update') totalUpdated++;
 
-        // Commit batch if limit reached
         if (operationCount >= BATCH_SIZE) {
           await currentBatch.commit();
           currentBatch = writeBatch(db);
@@ -263,7 +292,6 @@ export const importDataService = {
     const importTimeMs = Date.now() - startTime;
     const dateTimeIso = new Date().toISOString();
 
-    // Record entry into Firestore `import_history`
     const historyPayload = {
       file_name: fileName,
       uploaded_by: uploadedByEmail,
@@ -284,7 +312,6 @@ export const importDataService = {
       console.warn("Failed to write to import_history collection:", err.message);
     }
 
-    // Force flush cache across card & AI chatbot services
     try {
       await aiChatService.getFirestoreData(true);
     } catch (e) {}
@@ -302,87 +329,111 @@ export const importDataService = {
   },
 
   /**
-   * Retrieve past import history logs from Firestore `import_history` collection
+   * Sample Generators
    */
-  async fetchImportHistory() {
-    try {
-      const snap = await getDocs(query(collection(db, IMPORT_HISTORY_COLLECTION), orderBy('date_time', 'desc')));
-      if (!snap.empty) {
-        return snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      }
-    } catch (err) {
-      console.warn("Firestore import_history fetch notice:", err.message);
+  downloadSampleJSON(type = 'debit_cards') {
+    let sample = [];
+    if (type === 'savings_accounts') {
+      sample = [
+        {
+          "productCategory": "savings_account",
+          "bankName": "HDFC Bank",
+          "accountName": "HDFC SavingsMax Account",
+          "accountType": "Premium Savings",
+          "targetCustomer": "Affluent Individuals & Professionals",
+          "interestRate": "3.00% - 3.50% p.a.",
+          "minimumBalance": "₹25,000",
+          "nonMaintenanceCharge": "₹600 + GST",
+          "eligibility": ["Resident Indian", "Age 18+"],
+          "atmLimit": "₹1,00,000/day",
+          "posLimit": "₹5,00,000/day",
+          "keyBenefits": ["Complimentary EasyShop Platinum Card", "Free demand drafts", "Accidental hospital cash cover"],
+          "officialSource": "https://www.hdfcbank.com",
+          "sourceType": "Official Bank Source"
+        }
+      ];
+    } else if (type === 'current_accounts') {
+      sample = [
+        {
+          "productCategory": "current_account",
+          "bankName": "ICICI Bank",
+          "accountName": "ICICI Classic Current Account",
+          "accountType": "Regular Current",
+          "suitableFor": "SMEs, Traders & Retailers",
+          "businessConstitution": ["Sole Proprietorship", "Partnership", "Private Limited", "LLP"],
+          "minimumBalance": "₹10,000",
+          "averageBalanceRequirement": "₹10,000 MAB",
+          "nonMaintenanceCharge": "₹1,000 + GST",
+          "freeChequeLeaves": "100 leaves/mo",
+          "cashDepositLimit": "Up to ₹2,50,000/month free",
+          "keyBenefits": ["InstaBIZ app access", "Instant overdraft evaluation", "Free digital NEFT/RTGS"],
+          "officialSource": "https://www.icicibank.com",
+          "sourceType": "Official Bank Source"
+        }
+      ];
+    } else if (type === 'account_card_mappings') {
+      sample = [
+        {
+          "account_id": "hdfc-savingsmax",
+          "card_id": "hdfc-bank-hdfc-easyshop-platinum-debit-card",
+          "relationship": "included",
+          "verification_status": "verified"
+        }
+      ];
+    } else {
+      sample = [
+        {
+          "productCategory": "debit_card",
+          "cardName": "EasyShop Platinum Debit Card",
+          "bankName": "HDFC Bank",
+          "network": "Visa",
+          "annualFee": 850,
+          "atmLimit": "₹1,00,000/day",
+          "posLimit": "₹5,00,000/day",
+          "loungeAccess": "2 Domestic visits/quarter",
+          "officialSource": "https://www.hdfcbank.com",
+          "sourceType": "Official Bank Source"
+        }
+      ];
     }
-    return [];
-  },
-
-  /**
-   * Sample JSON Generator
-   */
-  downloadSampleJSON() {
-    const sample = [
-      {
-        "card_id": "card_hdfc_easyshop_platinum",
-        "cardName": "EasyShop Platinum Debit Card",
-        "bank_id": "bank_hdfc",
-        "bank": "HDFC Bank",
-        "network": "Visa",
-        "category": "Premium",
-        "annualFee": 850,
-        "minBalance": 10000,
-        "rating": 4.5,
-        "cashback": "Cashback points on retail spends",
-        "cashbackPct": 1.0,
-        "benefits": "Airport lounge access, EasyEMI, Golf perks",
-        "loungeAccess": "Yes, 2 visits/quarter",
-        "contactless": true,
-        "studentFriendly": false
-      },
-      {
-        "card_id": "card_kotak_811_rupay",
-        "cardName": "Kotak 811 RuPay Platinum",
-        "bank_id": "bank_kotak",
-        "bank": "Kotak Mahindra Bank",
-        "network": "RuPay",
-        "category": "Zero Balance",
-        "annualFee": 0,
-        "minBalance": 0,
-        "rating": 4.6,
-        "cashback": "Digital cashback on online merchants",
-        "cashbackPct": 1.5,
-        "benefits": "Zero annual fee, instant digital activation",
-        "loungeAccess": "No",
-        "contactless": true,
-        "studentFriendly": true
-      }
-    ];
 
     const jsonStr = JSON.stringify(sample, null, 2);
     const blob = new Blob([jsonStr], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'sample_debit_cards.json';
+    a.download = `sample_${type}.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   },
 
-  /**
-   * Sample CSV Generator
-   */
-  downloadSampleCSV() {
-    const csvContent = `card_id,cardName,bank_id,bank,network,category,annualFee,minBalance,rating,loungeAccess,contactless,benefits
-card_hdfc_easyshop_platinum,EasyShop Platinum Debit Card,bank_hdfc,HDFC Bank,Visa,Premium,850,10000,4.5,Yes,true,Airport lounge access & EasyEMI
-card_icici_coral_visa,Coral Debit Card,bank_icici,ICICI Bank,Visa,Rewards,699,10000,4.4,Yes,true,BOGO movie tickets & dining rewards
-card_kotak_811_rupay,Kotak 811 RuPay Platinum,bank_kotak,Kotak Mahindra Bank,RuPay,Zero Balance,0,0,4.6,No,true,Zero annual fee & digital cashback`;
+  downloadSampleCSV(type = 'debit_cards') {
+    let csvContent = '';
+    if (type === 'savings_accounts') {
+      csvContent = `productCategory,bankName,accountName,accountType,targetCustomer,interestRate,minimumBalance,nonMaintenanceCharge,officialSource
+savings_account,HDFC Bank,HDFC SavingsMax Account,Premium Savings,Professionals,3.00% p.a.,25000,600,https://www.hdfcbank.com
+savings_account,State Bank of India,SBI Regular Savings,Regular Savings,General Public,2.70% p.a.,0,Nil,https://sbi.co.in`;
+    } else if (type === 'current_accounts') {
+      csvContent = `productCategory,bankName,accountName,accountType,suitableFor,minimumBalance,averageBalanceRequirement,freeChequeLeaves,officialSource
+current_account,ICICI Bank,ICICI Classic Current,Regular Current,SMEs & Traders,10000,10000 MAB,100 leaves/mo,https://www.icicibank.com
+current_account,HDFC Bank,HDFC Regular Current,Regular Current,Retailers & Startups,10000,10000 QAB,100 leaves/mo,https://www.hdfcbank.com`;
+    } else if (type === 'account_card_mappings') {
+      csvContent = `account_id,card_id,relationship,verification_status
+hdfc-savingsmax,hdfc-bank-hdfc-easyshop-platinum-debit-card,included,verified
+sbi-regular-savings,sbi-classic-debit-card,included,verified`;
+    } else {
+      csvContent = `productCategory,cardName,bankName,network,annualFee,atmLimit,posLimit,loungeAccess,officialSource
+debit_card,EasyShop Platinum Debit Card,HDFC Bank,Visa,850,100000,500000,2 Domestic/quarter,https://www.hdfcbank.com
+debit_card,SBI Global Debit Card,State Bank of India,Visa,175,40000,100000,No,https://sbi.co.in`;
+    }
 
     const blob = new Blob(["\ufeff" + csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'sample_debit_cards.csv';
+    a.download = `sample_${type}.csv`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

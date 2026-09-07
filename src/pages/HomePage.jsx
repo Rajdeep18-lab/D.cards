@@ -51,7 +51,7 @@ function HomePage({
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
             {/* CARD 1: SAVINGS ACCOUNTS */}
             <motion.div
               whileHover={{ y: -6, scale: 1.01 }}
@@ -75,39 +75,86 @@ function HomePage({
                   Compare account types, balance requirements, benefits, eligibility and more.
                 </p>
 
-                <ul className="grid grid-cols-2 gap-2 pt-2 text-xs text-slate-700 dark:text-slate-300 font-medium">
+                <ul className="grid grid-cols-1 gap-2 pt-2 text-xs text-slate-700 dark:text-slate-300 font-medium">
                   <li className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" />
-                    <span>Account types & tiers</span>
+                    <span>Account types & interest rates</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" />
-                    <span>Balance requirements</span>
+                    <span>Balance & waiver rules</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" />
-                    <span>Interest rates & perks</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" />
-                    <span>Eligibility criteria</span>
+                    <span>Linked debit card perks</span>
                   </li>
                 </ul>
               </div>
 
               <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-400">Verified Banks Indexed</span>
+                <span className="text-xs font-bold text-slate-400">Verified Banks</span>
                 <button
                   onClick={(e) => { e.stopPropagation(); navigate('/savings-accounts'); }}
-                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:from-[#1D4ED8] hover:to-[#2563EB] text-white font-extrabold text-xs transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
+                  className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:from-[#1D4ED8] hover:to-[#2563EB] text-white font-extrabold text-xs transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
                 >
-                  <span>Explore Savings Accounts</span>
+                  <span>Explore Savings</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
             </motion.div>
 
-            {/* CARD 2: DEBIT CARDS */}
+            {/* CARD 2: CURRENT ACCOUNTS */}
+            <motion.div
+              whileHover={{ y: -6, scale: 1.01 }}
+              transition={{ type: "spring", stiffness: 350, damping: 25 }}
+              onClick={() => navigate('/current-accounts')}
+              className="p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 hover:border-[#2563EB]/50 shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-between space-y-6"
+            >
+              <div className="space-y-4">
+                <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-2xl font-bold shadow-sm border border-emerald-500/20">
+                  💼
+                </div>
+                <div>
+                  <span className="text-[11px] font-extrabold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider block">
+                    BUSINESS CATEGORY
+                  </span>
+                  <h3 className="text-2xl font-black text-slate-800 dark:text-white mt-0.5">
+                    Current Accounts
+                  </h3>
+                </div>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
+                  Compare commercial MAB, cash deposit limits, corporate banking and cheque rules.
+                </p>
+
+                <ul className="grid grid-cols-1 gap-2 pt-2 text-xs text-slate-700 dark:text-slate-300 font-medium">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                    <span>Proprietorships, LLPs & Pvt Ltd</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                    <span>Cash deposit & withdrawal slabs</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                    <span>Free monthly cheque leaves</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                <span className="text-xs font-bold text-slate-400">Commercial Tiers</span>
+                <button
+                  onClick={(e) => { e.stopPropagation(); navigate('/current-accounts'); }}
+                  className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-700 hover:to-emerald-600 text-white font-extrabold text-xs transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
+                >
+                  <span>Explore Current</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </motion.div>
+
+            {/* CARD 3: DEBIT CARDS */}
             <motion.div
               whileHover={{ y: -6, scale: 1.01 }}
               transition={{ type: "spring", stiffness: 350, damping: 25 }}
@@ -120,7 +167,7 @@ function HomePage({
                 </div>
                 <div>
                   <span className="text-[11px] font-extrabold text-[#2563EB] dark:text-[#60A5FA] uppercase tracking-wider block">
-                    PRIMARY CATEGORY
+                    CARD CATEGORY
                   </span>
                   <h3 className="text-2xl font-black text-slate-800 dark:text-white mt-0.5">
                     Debit Cards
@@ -130,10 +177,10 @@ function HomePage({
                   Compare fees, limits, rewards, lounge access and other card benefits.
                 </p>
 
-                <ul className="grid grid-cols-2 gap-2 pt-2 text-xs text-slate-700 dark:text-slate-300 font-medium">
+                <ul className="grid grid-cols-1 gap-2 pt-2 text-xs text-slate-700 dark:text-slate-300 font-medium">
                   <li className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" />
-                    <span>Annual fees & waivers</span>
+                    <span>Annual fees & spend waivers</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" />
@@ -143,10 +190,6 @@ function HomePage({
                     <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" />
                     <span>Airport lounge access</span>
                   </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" />
-                    <span>Rewards & cashback</span>
-                  </li>
                 </ul>
               </div>
 
@@ -154,9 +197,9 @@ function HomePage({
                 <span className="text-xs font-bold text-slate-400">100+ Cards Lineup</span>
                 <button
                   onClick={(e) => { e.stopPropagation(); navigate('/cards'); }}
-                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:from-[#1D4ED8] hover:to-[#2563EB] text-white font-extrabold text-xs transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
+                  className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:from-[#1D4ED8] hover:to-[#2563EB] text-white font-extrabold text-xs transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
                 >
-                  <span>Explore Debit Cards</span>
+                  <span>Explore Cards</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>

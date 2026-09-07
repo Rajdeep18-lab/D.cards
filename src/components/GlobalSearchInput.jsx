@@ -14,10 +14,12 @@ import {
   Sparkles, 
   ShieldCheck, 
   CheckCircle2, 
-  ArrowRight 
+  ArrowRight,
+  Briefcase
 } from 'lucide-react';
 import { debitCards } from '../data/mockData';
 import { savingsAccounts, getAssociatedDebitCards } from '../data/mockSavingsAccounts';
+import { currentAccounts, getAssociatedDebitCardForCurrentAccount } from '../data/currentAccounts/index.js';
 import { getCoveredBanksDirectory, canonicalBankName } from '../utils/bankDirectoryUtils';
 
 const RECENT_SEARCHES_KEY = 'dcard_recent_searches_v1';
@@ -180,14 +182,38 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
       return { item: s, score };
     }).filter(x => x.score > 0).sort((a, b) => b.score - a.score).map(x => x.item).slice(0, 5);
 
+    // 4. Filter Current Accounts
+    const matchedCurrentAccounts = (currentAccounts || []).map(c => {
+      const name = String(c.accountName || '').toLowerCase();
+      const bank = String(c.bankName || c.bank || '').toLowerCase();
+      const type = String(c.accountType || '').toLowerCase();
+      const suitable = String(c.suitableFor || '').toLowerCase();
+      const benefits = Array.isArray(c.keyBenefits) ? c.keyBenefits.join(' ').toLowerCase() : '';
+      const constitution = Array.isArray(c.businessConstitution) ? c.businessConstitution.join(' ').toLowerCase() : '';
+
+      let score = 0;
+      if (name === q) score += 100;
+      else if (name.startsWith(q)) score += 80;
+      else if (name.includes(q) || bank.includes(q)) score += 60;
+
+      if (q.includes("current") || q.includes("business") || q.includes("commercial")) score += 50;
+      if (q.includes("startup") && (type.includes("startup") || suitable.includes("startup"))) score += 50;
+      if (q.includes("proprietor") && constitution.includes("proprietor")) score += 50;
+      if (q.includes("pvt ltd") && constitution.includes("private limited")) score += 50;
+      if (type.includes(q) || suitable.includes(q) || benefits.includes(q)) score += 30;
+
+      return { item: c, score };
+    }).filter(x => x.score > 0).sort((a, b) => b.score - a.score).map(x => x.item).slice(0, 5);
+
     return {
       banks: matchedBanks,
       cards: matchedCards,
-      accounts: matchedAccounts
+      accounts: matchedAccounts,
+      currentAccounts: matchedCurrentAccounts
     };
   }, [debouncedTerm, coveredBanks]);
 
-  const totalResultsCount = searchResults.banks.length + searchResults.cards.length + searchResults.accounts.length;
+  const totalResultsCount = searchResults.banks.length + searchResults.cards.length + searchResults.accounts.length + (searchResults.currentAccounts ? searchResults.currentAccounts.length : 0);
   const isQueryActive = debouncedTerm.trim().length > 0;
 
   const handleItemSelect = (action) => {
@@ -452,6 +478,55 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
                             </div>
 
                             <span className="text-[11px] font-extrabold text-emerald-600 dark:text-emerald-400 group-hover:underline flex items-center gap-0.5 shrink-0">
+                              View <ChevronRight className="w-3.5 h-3.5" />
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* 💼 CURRENT ACCOUNTS CATEGORY */}
+                {searchResults.currentAccounts && searchResults.currentAccounts.length > 0 && (
+                  <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+                    <div className="flex items-center justify-between pb-1 border-b border-slate-100 dark:border-slate-800">
+                      <span className="text-[10.5px] font-black uppercase tracking-wider text-blue-600 dark:text-blue-400 flex items-center gap-1.5">
+                        <Briefcase className="w-4 h-4 text-blue-500" /> Current Accounts ({searchResults.currentAccounts.length})
+                      </span>
+                    </div>
+
+                    <div className="space-y-2">
+                      {searchResults.currentAccounts.map(c => {
+                        const linkedCard = getAssociatedDebitCardForCurrentAccount(c);
+                        const cardName = linkedCard ? (linkedCard.name || linkedCard.card_name || linkedCard.cardName) : 'Debit card association not specified';
+
+                        return (
+                          <div
+                            key={c.id}
+                            onClick={() => handleItemSelect(() => navigate(`/current-accounts/${c.id}`))}
+                            className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-blue-500 transition-all cursor-pointer flex items-center justify-between gap-3 group"
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-xs shrink-0">
+                                <Briefcase className="w-4 h-4" />
+                              </div>
+                              <div>
+                                <div className="flex items-center gap-2">
+                                  <h4 className="font-extrabold text-slate-800 dark:text-white group-hover:text-blue-600 transition-colors leading-tight">
+                                    {c.accountName}
+                                  </h4>
+                                  <span className="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-blue-500/10 text-blue-600 border border-blue-500/20">
+                                    Current Account
+                                  </span>
+                                </div>
+                                <span className="text-[10px] text-slate-400 font-medium block mt-0.5">
+                                  {c.bankName || c.bank} • MAB: {c.minimumBalance} • Cheques: {c.freeChequeLeaves || 'Included'} • Linked: {cardName}
+                                </span>
+                              </div>
+                            </div>
+
+                            <span className="text-[11px] font-extrabold text-blue-600 dark:text-blue-400 group-hover:underline flex items-center gap-0.5 shrink-0">
                               View <ChevronRight className="w-3.5 h-3.5" />
                             </span>
                           </div>

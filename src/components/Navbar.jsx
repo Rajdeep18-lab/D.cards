@@ -24,6 +24,7 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
     { name: "Home", path: "/", end: true },
     { name: "Debit Cards", path: "/cards" },
     { name: "Savings Accounts", path: "/savings-accounts" },
+    { name: "Current Accounts", path: "/current-accounts" },
     { name: "Compare", path: "/compare" },
     { name: "Favourites", path: "/saved-cards" },
     { name: "AI Advisor", path: "/ai-advisor" },
