@@ -569,6 +569,101 @@ export const accountDebitCardMappings = [
     relationship: "included",
     verification_status: "verified",
     source: "User Provided Banking Dataset"
+  },
+
+  // =========================================================================
+  // BANK OF BARODA (BOB) - SAVINGS ACCOUNTS
+  // Source: User Provided Banking Dataset
+  // =========================================================================
+  {
+    account_id: "bob-super-savings",
+    account_numeric_id: 123,
+    bank_id: "bank-of-baroda",
+    card_id: "bank-of-baroda-bob-rupay-platinum-debit-card",
+    relationship: "included",
+    verification_status: "verified",
+    source: "User Provided Banking Dataset"
+  },
+  {
+    account_id: "bob-platinum-savings",
+    account_numeric_id: 124,
+    bank_id: "bank-of-baroda",
+    card_id: "bank-of-baroda-bob-premium-debit-card",
+    relationship: "included",
+    verification_status: "verified",
+    source: "User Provided Banking Dataset"
+  },
+  {
+    account_id: "bob-masterstroke",
+    account_numeric_id: 125,
+    bank_id: "bank-of-baroda",
+    card_id: "bank-of-baroda-bob-premium-debit-card",
+    relationship: "included",
+    verification_status: "verified",
+    source: "User Provided Banking Dataset"
+  },
+  {
+    account_id: "bob-masterstroke-lite",
+    account_numeric_id: 126,
+    bank_id: "bank-of-baroda",
+    card_id: "bank-of-baroda-bob-rupay-platinum-debit-card",
+    relationship: "included",
+    verification_status: "verified",
+    source: "User Provided Banking Dataset"
+  },
+  {
+    account_id: "bob-mahila-shakti",
+    account_numeric_id: 127,
+    bank_id: "bank-of-baroda",
+    card_id: "bank-of-baroda-bob-rupay-platinum-debit-card",
+    relationship: "included",
+    verification_status: "verified",
+    source: "User Provided Banking Dataset"
+  },
+  {
+    account_id: "bob-lite-savings",
+    account_numeric_id: 128,
+    bank_id: "bank-of-baroda",
+    card_id: "bank-of-baroda-bob-rupay-classic-debit-card",
+    relationship: "included",
+    verification_status: "verified",
+    source: "User Provided Banking Dataset"
+  },
+  {
+    account_id: "bob-salary-classic",
+    account_numeric_id: 129,
+    bank_id: "bank-of-baroda",
+    card_id: "bank-of-baroda-bob-rupay-platinum-debit-card",
+    relationship: "included",
+    verification_status: "verified",
+    source: "User Provided Banking Dataset"
+  },
+  {
+    account_id: "bob-salary-super",
+    account_numeric_id: 130,
+    bank_id: "bank-of-baroda",
+    card_id: "bank-of-baroda-bob-rupay-platinum-debit-card",
+    relationship: "included",
+    verification_status: "verified",
+    source: "User Provided Banking Dataset"
+  },
+  {
+    account_id: "bob-salary-premium",
+    account_numeric_id: 131,
+    bank_id: "bank-of-baroda",
+    card_id: "bank-of-baroda-bob-premium-debit-card",
+    relationship: "included",
+    verification_status: "verified",
+    source: "User Provided Banking Dataset"
+  },
+  {
+    account_id: "bob-salary-privilege",
+    account_numeric_id: 132,
+    bank_id: "bank-of-baroda",
+    card_id: "bank-of-baroda-bob-premium-debit-card",
+    relationship: "included",
+    verification_status: "verified",
+    source: "User Provided Banking Dataset"
   }
 ];
 

@@ -2267,15 +2267,22 @@ export const savingsAccounts = [
       "Government Bank",
       "bob World App"
     ],
-    "interest_rate": "2.75% - 3.20% p.a.",
-    "interestRate": "2.75% - 3.20% p.a.",
-    "interestRateValue": 3.2,
-    "minimum_balance": "₹1,000",
-    "minimumBalance": "₹1,000",
-    "minimumBalanceValue": 1000,
+    "interest_rate": "2.50% below ₹50 crore",
+    "interestRate": "2.50% below ₹50 crore",
+    "interestRateValue": 2.5,
+    "interestSlabs": [
+      "Below ₹50 crore: 2.50% p.a.",
+      "₹50 crore to ₹500 crore: 2.75% p.a.",
+      "₹500 crore to ₹1,000 crore: 3.50% p.a.",
+      "₹1,000 crore to ₹2,000 crore: 4.50% p.a.",
+      "₹2,000 crore and above: 4.75% p.a."
+    ],
+    "minimum_balance": "₹500 rural / ₹1,000 semi-urban / ₹2,000 urban/metro",
+    "minimumBalance": "₹500 rural / ₹1,000 semi-urban / ₹2,000 urban/metro",
+    "minimumBalanceValue": 500,
     "maximum_balance": "No Limit",
-    "non_maintenance_penalty": "₹100/quarter",
-    "nonMaintenanceCharges": "₹100/quarter",
+    "non_maintenance_penalty": "₹0 from 01-07-2025, but premium savings accounts are excluded",
+    "nonMaintenanceCharges": "₹0 from 01-07-2025, but premium savings accounts are excluded",
     "interest_credit_frequency": "Quarterly",
     "isZeroBalance": false,
     "isOnlineOpening": true,
@@ -2293,17 +2300,17 @@ export const savingsAccounts = [
     "as_of_date": "August 2026",
     "lastVerified": "August 2026",
     "information_status": "Verified",
-    "description": "Public sector banking stability backed by bob World mobile app and RuPay Platinum debit card rewards.",
+    "description": "Public sector banking stability backed by bob World mobile app, ₹0 non-maintenance fee from 01-07-2025, and tiered interest rates.",
     "eligibility": [
       "Resident Individuals aged 18+"
     ],
     "benefits": [
-      "Low minimum balance requirement",
+      "₹0 non-maintenance from 01-07-2025 (standard branches)",
       "bob World App for digital payments",
       "Free 30 cheque leaves per year"
     ],
     "keyBenefits": [
-      "Low minimum balance requirement",
+      "₹0 non-maintenance from 01-07-2025 (standard branches)",
       "bob World App for digital payments",
       "Free 30 cheque leaves per year"
     ],
@@ -2318,6 +2325,744 @@ export const savingsAccounts = [
     "debit_card_relationships": [
       {
         "card_id": "bank-of-baroda-bob-rupay-platinum-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      }
+    ]
+  },
+  {
+    "id": 123,
+    "product_id": "bob-super-savings",
+    "bank_id": "bank-of-baroda",
+    "bank_name": "Bank of Baroda",
+    "bank": "Bank of Baroda",
+    "logo": "BO",
+    "variant_name": "Baroda Super Savings Account",
+    "accountName": "Baroda Super Savings Account",
+    "account_type": "Super Savings",
+    "accountType": "Premium Savings",
+    "target_segment": "Affluent Savers",
+    "accountTypeBadges": [
+      "Super Savings",
+      "Premium Tier",
+      "Public Sector Bank"
+    ],
+    "interest_rate": "2.50% below ₹50 crore",
+    "interestRate": "2.50% below ₹50 crore",
+    "interestRateValue": 2.5,
+    "minimum_balance": "₹20,000",
+    "minimumBalance": "₹20,000",
+    "minimumBalanceValue": 20000,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "₹50–₹400",
+    "nonMaintenanceCharges": "₹50–₹400",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": false,
+    "isOnlineOpening": true,
+    "isStudent": false,
+    "isSalary": false,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": false,
+    "isDigital": true,
+    "isPremium": true,
+    "isNRI": false,
+    "rating": 4.6,
+    "isPopular": true,
+    "source": "https://www.bankofbaroda.in",
+    "officialSourceUrl": "https://www.bankofbaroda.in",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "Super savings account designed for affluent individuals maintaining ₹20,000 MAB with priority processing and premium debit card options.",
+    "eligibility": [
+      "Resident Individuals maintaining ₹20,000 MAB"
+    ],
+    "benefits": [
+      "Enhanced daily ATM and transaction limits",
+      "Priority customer assistance and concessions",
+      "Free multicity cheques"
+    ],
+    "keyBenefits": [
+      "Enhanced daily ATM and transaction limits",
+      "Priority customer assistance and concessions",
+      "Free multicity cheques"
+    ],
+    "features": [
+      "bob World digital app banking",
+      "Convenient auto-sweep facility"
+    ],
+    "bankingFeatures": [
+      "bob World digital app banking",
+      "Convenient auto-sweep facility"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "bank-of-baroda-bob-rupay-platinum-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      }
+    ]
+  },
+  {
+    "id": 124,
+    "product_id": "bob-platinum-savings",
+    "bank_id": "bank-of-baroda",
+    "bank_name": "Bank of Baroda",
+    "bank": "Bank of Baroda",
+    "logo": "BO",
+    "variant_name": "Baroda Platinum Savings Account",
+    "accountName": "Baroda Platinum Savings Account",
+    "account_type": "Platinum Savings",
+    "accountType": "Premium Savings",
+    "target_segment": "High Net-Worth Savers",
+    "accountTypeBadges": [
+      "Platinum Savings",
+      "HNI Tier",
+      "Public Sector Bank"
+    ],
+    "interest_rate": "2.50% below ₹50 crore",
+    "interestRate": "2.50% below ₹50 crore",
+    "interestRateValue": 2.5,
+    "minimum_balance": "₹1,00,000",
+    "minimumBalance": "₹1,00,000",
+    "minimumBalanceValue": 100000,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "₹50–₹334",
+    "nonMaintenanceCharges": "₹50–₹334",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": false,
+    "isOnlineOpening": true,
+    "isStudent": false,
+    "isSalary": false,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": false,
+    "isDigital": true,
+    "isPremium": true,
+    "isNRI": false,
+    "rating": 4.7,
+    "isPopular": true,
+    "source": "https://www.bankofbaroda.in",
+    "officialSourceUrl": "https://www.bankofbaroda.in",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "High-tier savings proposition with ₹1,00,000 MAB, complimentary BoB Premium Debit Card, and dedicated relationship support.",
+    "eligibility": [
+      "Resident Individuals maintaining ₹1,00,000 MAB"
+    ],
+    "benefits": [
+      "Complimentary BoB Premium Debit Card",
+      "Unlimited free multicity cheque leaves",
+      "Fee waivers on locker rent and demand drafts"
+    ],
+    "keyBenefits": [
+      "Complimentary BoB Premium Debit Card",
+      "Unlimited free multicity cheque leaves",
+      "Fee waivers on locker rent and demand drafts"
+    ],
+    "features": [
+      "bob World digital banking & priority desks",
+      "Airport lounge perks on linked premium card"
+    ],
+    "bankingFeatures": [
+      "bob World digital banking & priority desks",
+      "Airport lounge perks on linked premium card"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "bank-of-baroda-bob-premium-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      }
+    ]
+  },
+  {
+    "id": 125,
+    "product_id": "bob-masterstroke",
+    "bank_id": "bank-of-baroda",
+    "bank_name": "Bank of Baroda",
+    "bank": "Bank of Baroda",
+    "logo": "BO",
+    "variant_name": "Baroda Masterstroke Savings Account",
+    "accountName": "Baroda Masterstroke Savings Account",
+    "account_type": "Ultra HNI Savings",
+    "accountType": "Premium Savings",
+    "target_segment": "Ultra HNI & Wealth Clients",
+    "accountTypeBadges": [
+      "Masterstroke",
+      "Wealth",
+      "Ultra HNI"
+    ],
+    "interest_rate": "2.50% below ₹50 crore",
+    "interestRate": "2.50% below ₹50 crore",
+    "interestRateValue": 2.5,
+    "minimum_balance": "₹10 lakh OR ₹5 lakh + ₹10 lakh TD",
+    "minimumBalance": "₹10 lakh OR ₹5 lakh + ₹10 lakh TD",
+    "minimumBalanceValue": 1000000,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "₹200–₹1,000",
+    "nonMaintenanceCharges": "₹200–₹1,000",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": false,
+    "isOnlineOpening": true,
+    "isStudent": false,
+    "isSalary": false,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": false,
+    "isDigital": true,
+    "isPremium": true,
+    "isNRI": false,
+    "rating": 4.8,
+    "isPopular": true,
+    "source": "https://www.bankofbaroda.in",
+    "officialSourceUrl": "https://www.bankofbaroda.in",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "Ultra-affluent proposition requiring ₹10 lakh AQB or ₹5 lakh AQB + ₹10 lakh Term Deposit, with customized wealth management privileges.",
+    "eligibility": [
+      "High Net-worth Individuals maintaining ₹10L balance or ₹5L + ₹10L Term Deposit"
+    ],
+    "benefits": [
+      "Concierge lifestyle and wealth relationship services",
+      "Maximum transaction limits and premium card allocations",
+      "Preferential rates across deposits and foreign remittances"
+    ],
+    "keyBenefits": [
+      "Concierge lifestyle and wealth relationship services",
+      "Maximum transaction limits and premium card allocations",
+      "Preferential rates across deposits and foreign remittances"
+    ],
+    "features": [
+      "Dedicated wealth desk & priority lounges",
+      "Highest daily POS and ATM withdrawal thresholds"
+    ],
+    "bankingFeatures": [
+      "Dedicated wealth desk & priority lounges",
+      "Highest daily POS and ATM withdrawal thresholds"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "bank-of-baroda-bob-premium-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      }
+    ]
+  },
+  {
+    "id": 126,
+    "product_id": "bob-masterstroke-lite",
+    "bank_id": "bank-of-baroda",
+    "bank_name": "Bank of Baroda",
+    "bank": "Bank of Baroda",
+    "logo": "BO",
+    "variant_name": "Baroda Masterstroke LITE",
+    "accountName": "Baroda Masterstroke LITE",
+    "account_type": "Affluent Savings",
+    "accountType": "Premium Savings",
+    "target_segment": "Affluent Clients",
+    "accountTypeBadges": [
+      "Masterstroke LITE",
+      "Priority",
+      "Affluent"
+    ],
+    "interest_rate": "2.50% below ₹50 crore",
+    "interestRate": "2.50% below ₹50 crore",
+    "interestRateValue": 2.5,
+    "minimum_balance": "₹5 lakh OR ₹2.5 lakh + ₹5 lakh TD",
+    "minimumBalance": "₹5 lakh OR ₹2.5 lakh + ₹5 lakh TD",
+    "minimumBalanceValue": 500000,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "₹200–₹1,000",
+    "nonMaintenanceCharges": "₹200–₹1,000",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": false,
+    "isOnlineOpening": true,
+    "isStudent": false,
+    "isSalary": false,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": false,
+    "isDigital": true,
+    "isPremium": true,
+    "isNRI": false,
+    "rating": 4.6,
+    "isPopular": false,
+    "source": "https://www.bankofbaroda.in",
+    "officialSourceUrl": "https://www.bankofbaroda.in",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "Mid-tier wealth proposition requiring ₹5 lakh balance or ₹2.5 lakh balance + ₹5 lakh Term Deposit, offering elite perks at accessible thresholds.",
+    "eligibility": [
+      "Affluent individuals maintaining ₹5L balance or ₹2.5L + ₹5L Term Deposit"
+    ],
+    "benefits": [
+      "Priority banking desks & reduced fee structure",
+      "Free electronic funds transfer across NEFT / RTGS / IMPS",
+      "Access to premium debit cards"
+    ],
+    "keyBenefits": [
+      "Priority banking desks & reduced fee structure",
+      "Free electronic funds transfer across NEFT / RTGS / IMPS",
+      "Access to premium debit cards"
+    ],
+    "features": [
+      "bob World App priority digital interface",
+      "Complimentary annual financial checkup"
+    ],
+    "bankingFeatures": [
+      "bob World App priority digital interface",
+      "Complimentary annual financial checkup"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "bank-of-baroda-bob-rupay-platinum-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      }
+    ]
+  },
+  {
+    "id": 127,
+    "product_id": "bob-mahila-shakti",
+    "bank_id": "bank-of-baroda",
+    "bank_name": "Bank of Baroda",
+    "bank": "Bank of Baroda",
+    "logo": "BO",
+    "variant_name": "Baroda Mahila Shakti Savings Account",
+    "accountName": "Baroda Mahila Shakti Savings Account",
+    "account_type": "Women's Savings Account",
+    "accountType": "Women's",
+    "target_segment": "Women",
+    "accountTypeBadges": [
+      "Women's",
+      "Mahila Shakti",
+      "Public Sector Bank"
+    ],
+    "interest_rate": "2.50% below ₹50 crore",
+    "interestRate": "2.50% below ₹50 crore",
+    "interestRateValue": 2.5,
+    "minimum_balance": "₹3,000 Metro/Urban / ₹2,000 Semi-Urban / ₹1,000 Rural",
+    "minimumBalance": "₹3,000 Metro/Urban / ₹2,000 Semi-Urban / ₹1,000 Rural",
+    "minimumBalanceValue": 1000,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "BoB page has conflicting figures; verify before publication.",
+    "nonMaintenanceCharges": "BoB page has conflicting figures; verify before publication.",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": false,
+    "isOnlineOpening": true,
+    "isStudent": false,
+    "isSalary": false,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": true,
+    "isDigital": true,
+    "isPremium": false,
+    "isNRI": false,
+    "rating": 4.4,
+    "isPopular": true,
+    "source": "https://www.bankofbaroda.in",
+    "officialSourceUrl": "https://www.bankofbaroda.in",
+    "as_of_date": "Not specified",
+    "lastVerified": "Not specified",
+    "information_status": "Not verified",
+    "description": "Tailored savings account empowering women with accessible tiered MAB requirements and customized debit perks.",
+    "eligibility": [
+      "Women resident accounts (Single or Joint operation)"
+    ],
+    "benefits": [
+      "Concession on retail loan interest rates",
+      "Free SMS alerts and e-statements",
+      "Dedicated RuPay Platinum debit card privileges"
+    ],
+    "keyBenefits": [
+      "Concession on retail loan interest rates",
+      "Free SMS alerts and e-statements",
+      "Dedicated RuPay Platinum debit card privileges"
+    ],
+    "features": [
+      "bob World App instant access",
+      "Convenient recurring deposit tie-in"
+    ],
+    "bankingFeatures": [
+      "bob World App instant access",
+      "Convenient recurring deposit tie-in"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "bank-of-baroda-bob-rupay-platinum-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      }
+    ]
+  },
+  {
+    "id": 128,
+    "product_id": "bob-lite-savings",
+    "bank_id": "bank-of-baroda",
+    "bank_name": "Bank of Baroda",
+    "bank": "Bank of Baroda",
+    "logo": "BO",
+    "variant_name": "Baroda LITE Savings Account",
+    "accountName": "Baroda LITE Savings Account",
+    "account_type": "Zero Balance Savings",
+    "accountType": "Zero Balance",
+    "target_segment": "General Public & Beginners",
+    "accountTypeBadges": [
+      "LITE Savings",
+      "Zero Balance",
+      "Digital"
+    ],
+    "interest_rate": "2.50% below ₹50 crore",
+    "interestRate": "2.50% below ₹50 crore",
+    "interestRateValue": 2.5,
+    "minimum_balance": "Zero",
+    "minimumBalance": "Zero",
+    "minimumBalanceValue": 0,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "₹0 from 01-07-2025",
+    "nonMaintenanceCharges": "₹0 from 01-07-2025",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": true,
+    "isOnlineOpening": true,
+    "isStudent": true,
+    "isSalary": false,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": false,
+    "isDigital": true,
+    "isPremium": false,
+    "isNRI": false,
+    "rating": 4.5,
+    "isPopular": true,
+    "source": "https://www.bankofbaroda.in",
+    "officialSourceUrl": "https://www.bankofbaroda.in",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "Zero balance savings account designed for everyday digital banking without minimum balance maintenance charges.",
+    "eligibility": [
+      "Resident Individual aged 18+"
+    ],
+    "benefits": [
+      "Zero balance requirement with no non-maintenance fees",
+      "Full digital banking via bob World app",
+      "Complimentary RuPay Classic debit card"
+    ],
+    "keyBenefits": [
+      "Zero balance requirement with no non-maintenance fees",
+      "Full digital banking via bob World app",
+      "Complimentary RuPay Classic debit card"
+    ],
+    "features": [
+      "Instant Video KYC onboarding",
+      "Free digital passbook & SMS alerts"
+    ],
+    "bankingFeatures": [
+      "Instant Video KYC onboarding",
+      "Free digital passbook & SMS alerts"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "bank-of-baroda-bob-rupay-classic-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      }
+    ]
+  },
+  {
+    "id": 129,
+    "product_id": "bob-salary-classic",
+    "bank_id": "bank-of-baroda",
+    "bank_name": "Bank of Baroda",
+    "bank": "Bank of Baroda",
+    "logo": "BO",
+    "variant_name": "Baroda Salary Classic Account",
+    "accountName": "Baroda Salary Classic Account",
+    "account_type": "Salary Account – Classic Tier",
+    "accountType": "Salary",
+    "target_segment": "Salaried Employees (₹10k–₹50k)",
+    "accountTypeBadges": [
+      "Salary Classic",
+      "Zero Balance",
+      "Salary Band ₹10k–₹50k"
+    ],
+    "salary_requirement": "₹10,000–₹50,000/month",
+    "salaryRequirement": "₹10,000–₹50,000/month",
+    "interest_rate": "2.50% below ₹50 crore",
+    "interestRate": "2.50% below ₹50 crore",
+    "interestRateValue": 2.5,
+    "minimum_balance": "Zero",
+    "minimumBalance": "Zero",
+    "minimumBalanceValue": 0,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "Nil (Salary Account)",
+    "nonMaintenanceCharges": "Nil (Salary Account)",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": true,
+    "isOnlineOpening": true,
+    "isStudent": false,
+    "isSalary": true,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": false,
+    "isDigital": true,
+    "isPremium": false,
+    "isNRI": false,
+    "rating": 4.5,
+    "isPopular": false,
+    "source": "https://www.bankofbaroda.in",
+    "officialSourceUrl": "https://www.bankofbaroda.in",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "Zero balance salary account package for monthly salaries between ₹10,000 and ₹50,000 with overdraft and RuPay card perks.",
+    "eligibility": [
+      "Salaried employees with net salary ₹10,000 to ₹50,000/month"
+    ],
+    "benefits": [
+      "Zero minimum balance requirement",
+      "Overdraft facility up to ₹50,000",
+      "Free accidental insurance on linked RuPay card"
+    ],
+    "keyBenefits": [
+      "Zero minimum balance requirement",
+      "Overdraft facility up to ₹50,000",
+      "Free accidental insurance on linked RuPay card"
+    ],
+    "features": [
+      "Corporate payroll integration",
+      "bob World App instant salary credit alerts"
+    ],
+    "bankingFeatures": [
+      "Corporate payroll integration",
+      "bob World App instant salary credit alerts"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "bank-of-baroda-bob-rupay-platinum-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      }
+    ]
+  },
+  {
+    "id": 130,
+    "product_id": "bob-salary-super",
+    "bank_id": "bank-of-baroda",
+    "bank_name": "Bank of Baroda",
+    "bank": "Bank of Baroda",
+    "logo": "BO",
+    "variant_name": "Baroda Salary Super Account",
+    "accountName": "Baroda Salary Super Account",
+    "account_type": "Salary Account – Super Tier",
+    "accountType": "Salary",
+    "target_segment": "Salaried Employees (>₹50k–₹1L)",
+    "accountTypeBadges": [
+      "Salary Super",
+      "Zero Balance",
+      "Salary Band >₹50k–₹1L"
+    ],
+    "salary_requirement": ">₹50,000–₹1,00,000/month",
+    "salaryRequirement": ">₹50,000–₹1,00,000/month",
+    "interest_rate": "2.50% below ₹50 crore",
+    "interestRate": "2.50% below ₹50 crore",
+    "interestRateValue": 2.5,
+    "minimum_balance": "Zero",
+    "minimumBalance": "Zero",
+    "minimumBalanceValue": 0,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "Nil (Salary Account)",
+    "nonMaintenanceCharges": "Nil (Salary Account)",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": true,
+    "isOnlineOpening": true,
+    "isStudent": false,
+    "isSalary": true,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": false,
+    "isDigital": true,
+    "isPremium": false,
+    "isNRI": false,
+    "rating": 4.6,
+    "isPopular": true,
+    "source": "https://www.bankofbaroda.in",
+    "officialSourceUrl": "https://www.bankofbaroda.in",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "Executive salary account for monthly salaries between ₹50,000 and ₹1,00,000 featuring higher overdraft limits and Platinum debit card perks.",
+    "eligibility": [
+      "Salaried employees with net salary >₹50,000 to ₹1,00,000/month"
+    ],
+    "benefits": [
+      "Zero minimum balance requirement",
+      "Higher overdraft facility up to ₹1,50,000",
+      "Free multicity cheques & demand drafts"
+    ],
+    "keyBenefits": [
+      "Zero minimum balance requirement",
+      "Higher overdraft facility up to ₹1,50,000",
+      "Free multicity cheques & demand drafts"
+    ],
+    "features": [
+      "Priority customer service",
+      "Auto-sweep into term deposits"
+    ],
+    "bankingFeatures": [
+      "Priority customer service",
+      "Auto-sweep into term deposits"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "bank-of-baroda-bob-rupay-platinum-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      }
+    ]
+  },
+  {
+    "id": 131,
+    "product_id": "bob-salary-premium",
+    "bank_id": "bank-of-baroda",
+    "bank_name": "Bank of Baroda",
+    "bank": "Bank of Baroda",
+    "logo": "BO",
+    "variant_name": "Baroda Salary Premium Account",
+    "accountName": "Baroda Salary Premium Account",
+    "account_type": "Salary Account – Premium Tier",
+    "accountType": "Salary",
+    "target_segment": "Senior Executives (>₹1L–₹2L)",
+    "accountTypeBadges": [
+      "Salary Premium",
+      "Zero Balance",
+      "Salary Band >₹1L–₹2L"
+    ],
+    "salary_requirement": ">₹1,00,000–₹2,00,000/month",
+    "salaryRequirement": ">₹1,00,000–₹2,00,000/month",
+    "interest_rate": "2.50% below ₹50 crore",
+    "interestRate": "2.50% below ₹50 crore",
+    "interestRateValue": 2.5,
+    "minimum_balance": "Zero",
+    "minimumBalance": "Zero",
+    "minimumBalanceValue": 0,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "Nil (Salary Account)",
+    "nonMaintenanceCharges": "Nil (Salary Account)",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": true,
+    "isOnlineOpening": true,
+    "isStudent": false,
+    "isSalary": true,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": false,
+    "isDigital": true,
+    "isPremium": true,
+    "isNRI": false,
+    "rating": 4.7,
+    "isPopular": true,
+    "source": "https://www.bankofbaroda.in",
+    "officialSourceUrl": "https://www.bankofbaroda.in",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "Premium salary package for corporate leaders earning >₹1,00,000 to ₹2,00,000/month with zero balance rules, complimentary BoB Premium card, and loan discounts.",
+    "eligibility": [
+      "Corporate executives with net monthly salary >₹1,00,000 to ₹2,00,000"
+    ],
+    "benefits": [
+      "Zero balance requirement",
+      "Complimentary BoB Premium Debit Card with lounge access",
+      "Concession on home & car loan processing charges"
+    ],
+    "keyBenefits": [
+      "Zero balance requirement",
+      "Complimentary BoB Premium Debit Card with lounge access",
+      "Concession on home & car loan processing charges"
+    ],
+    "features": [
+      "Dedicated relationship manager desk",
+      "Unlimited transactions at all domestic ATMs"
+    ],
+    "bankingFeatures": [
+      "Dedicated relationship manager desk",
+      "Unlimited transactions at all domestic ATMs"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "bank-of-baroda-bob-premium-debit-card",
+        "relationship": "provided",
+        "verification_status": "verified"
+      }
+    ]
+  },
+  {
+    "id": 132,
+    "product_id": "bob-salary-privilege",
+    "bank_id": "bank-of-baroda",
+    "bank_name": "Bank of Baroda",
+    "bank": "Bank of Baroda",
+    "logo": "BO",
+    "variant_name": "Baroda Salary Privilege Account",
+    "accountName": "Baroda Salary Privilege Account",
+    "account_type": "Salary Account – Privilege Tier",
+    "accountType": "Salary",
+    "target_segment": "Top Management (>₹2L)",
+    "accountTypeBadges": [
+      "Salary Privilege",
+      "Zero Balance",
+      "Salary Band >₹2L"
+    ],
+    "salary_requirement": ">₹2,00,000/month",
+    "salaryRequirement": ">₹2,00,000/month",
+    "interest_rate": "2.50% below ₹50 crore",
+    "interestRate": "2.50% below ₹50 crore",
+    "interestRateValue": 2.5,
+    "minimum_balance": "Zero",
+    "minimumBalance": "Zero",
+    "minimumBalanceValue": 0,
+    "maximum_balance": "No Limit",
+    "non_maintenance_penalty": "Nil (Salary Account)",
+    "nonMaintenanceCharges": "Nil (Salary Account)",
+    "interest_credit_frequency": "Quarterly",
+    "isZeroBalance": true,
+    "isOnlineOpening": true,
+    "isStudent": false,
+    "isSalary": true,
+    "isSeniorCitizen": false,
+    "isWomenSpecial": false,
+    "isDigital": true,
+    "isPremium": true,
+    "isNRI": false,
+    "rating": 4.8,
+    "isPopular": true,
+    "source": "https://www.bankofbaroda.in",
+    "officialSourceUrl": "https://www.bankofbaroda.in",
+    "as_of_date": "August 2026",
+    "lastVerified": "August 2026",
+    "information_status": "Verified",
+    "description": "Pinnacle salary proposition for CXOs and business heads with monthly salary >₹2,00,000 offering supreme zero-balance lifestyle privileges.",
+    "eligibility": [
+      "Corporate leaders and CXOs with net monthly salary >₹2,00,000"
+    ],
+    "benefits": [
+      "Zero balance requirement",
+      "Overdraft up to ₹3,00,000",
+      "Complimentary BoB Premium Debit Card with lounge access & highest limits"
+    ],
+    "keyBenefits": [
+      "Zero balance requirement",
+      "Overdraft up to ₹3,00,000",
+      "Complimentary BoB Premium Debit Card with lounge access & highest limits"
+    ],
+    "features": [
+      "Private banking concierge assistance",
+      "Zero charges across domestic & international banking transactions"
+    ],
+    "bankingFeatures": [
+      "Private banking concierge assistance",
+      "Zero charges across domestic & international banking transactions"
+    ],
+    "debit_card_relationships": [
+      {
+        "card_id": "bank-of-baroda-bob-premium-debit-card",
         "relationship": "provided",
         "verification_status": "verified"
       }
