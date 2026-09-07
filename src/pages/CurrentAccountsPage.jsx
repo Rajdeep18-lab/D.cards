@@ -229,10 +229,6 @@ function CurrentAccountsPage({ onSelectDebitCard }) {
               <Building2 className="w-4 h-4 text-blue-300" />
               <span>{accounts.length} Commercial Accounts Indexed</span>
             </div>
-            <div className="flex items-center gap-2 bg-black/20 px-3.5 py-2 rounded-xl border border-white/10">
-              <ShieldCheck className="w-4 h-4 text-emerald-300" />
-              <span>100% Official Bank Verified Data</span>
-            </div>
           </div>
         </div>
       </div>

@@ -258,3 +258,25 @@
 .animate-shine-sweep {
   animation: shine-sweep 3s ease-in-out infinite;
 }
+
+/* Continuous Marquee Ticker */
+@keyframes marquee-scroll {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.animate-marquee-continuous {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: marquee-scroll 42s linear infinite;
+}
+
+.animate-marquee-continuous:hover {
+  animation-play-state: paused;
+}
+

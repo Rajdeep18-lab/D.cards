@@ -3,6 +3,7 @@ import { Link, NavLink } from "react-router-dom";
 import { Sun, Moon, LogIn, Scale, Heart, Menu, X, User, LogOut, ChevronDown } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { useWishlist } from "../context/WishlistContext";
+import TopDisclaimerTicker from "./TopDisclaimerTicker";
 
 function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOpenLegal }) {
   const { user, profile, logout } = useAuth();
@@ -34,14 +35,16 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
   ];
 
   return (
-    <header
-      className={`sticky top-0 z-50 w-full transition-all duration-300 h-[88px] min-h-[88px] flex items-center ${
-        scrolled
-          ? "backdrop-blur-xl border-b border-[#E5E7EB] dark:border-slate-800 shadow-sm bg-white/95 dark:bg-[#0F172A]/95"
-          : "border-b border-[#E5E7EB]/60 dark:border-slate-800/60 bg-white/90 dark:bg-[#0F172A]/90 backdrop-blur-md"
-      }`}
-    >
-      <div className="w-full max-w-[1536px] mx-auto px-3 sm:px-5 lg:px-6 h-full flex items-center justify-between gap-2 sm:gap-4">
+    <header className="sticky top-0 z-50 w-full transition-all duration-300 flex flex-col select-none">
+      <TopDisclaimerTicker />
+      <div
+        className={`w-full transition-all duration-300 h-[76px] sm:h-[88px] flex items-center ${
+          scrolled
+            ? "backdrop-blur-xl border-b border-[#E5E7EB] dark:border-slate-800 shadow-sm bg-white/95 dark:bg-[#0F172A]/95"
+            : "border-b border-[#E5E7EB]/60 dark:border-slate-800/60 bg-white/90 dark:bg-[#0F172A]/90 backdrop-blur-md"
+        }`}
+      >
+        <div className="w-full max-w-[1536px] mx-auto px-3 sm:px-5 lg:px-6 h-full flex items-center justify-between gap-2 sm:gap-4">
         
         {/* ==================================================
             1. LEFT BRAND SECTION
@@ -215,6 +218,7 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
           </button>
         </div>
 
+      </div>
       </div>
 
       {/* Backdrop overlay when mobile menu is open */}
