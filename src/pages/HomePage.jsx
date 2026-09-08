@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import HeroSection from '../components/HeroSection';
-import CardOfTheMonthPopup from '../components/CardOfTheMonthPopup';
+import KotakContinuousBanner from '../components/KotakContinuousBanner';
 import { 
   Sparkles, 
   Bot, 
@@ -28,13 +28,11 @@ function HomePage({
   };
 
   return (
-    <div className="space-y-12 overflow-hidden select-none">
-      {/* ── CARD OF THE MONTH PROMOTIONAL POPUP ── */}
-      <CardOfTheMonthPopup 
+    <div className="space-y-8 overflow-hidden select-none">
+      {/* ── CONTINUOUS KOTAK 811 ADVERTISEMENT BANNER ── */}
+      <KotakContinuousBanner 
         activeCardsList={activeCardsList}
         onViewDetails={onViewDetails}
-        toggleCompareQueue={toggleCompareQueue}
-        compareQueue={compareQueue}
       />
 
       
