@@ -184,7 +184,7 @@ function AboutPage() {
           About <span className="text-gradient">D.CARD</span>
         </h1>
         <p className="text-base sm:text-lg text-[#6B7280] dark:text-slate-300 mt-2 max-w-3xl font-normal leading-relaxed">
-          D.CARD is a banking-product discovery and comparison platform designed to simplify the way users explore savings accounts and debit cards.
+          D.CARD is a banking-product discovery and comparison platform designed to simplify the way users explore savings accounts, current accounts, and debit cards.
         </p>
       </section>
 
@@ -201,7 +201,7 @@ function AboutPage() {
               </h2>
             </div>
             <p className="text-sm sm:text-base text-[#1F2937] dark:text-slate-200 leading-relaxed font-normal">
-              D.CARD is an independent fintech information platform built to help users compare, understand, and explore debit cards and savings accounts offered by leading banks across India.
+              D.CARD is an independent fintech information platform built to help users compare, understand, and explore debit cards, savings accounts, and current accounts offered by leading banks across India.
             </p>
             <p className="text-xs sm:text-sm text-[#6B7280] dark:text-slate-300 leading-relaxed font-normal">
               Our goal is to simplify banking decisions by presenting verified, audited information in an intuitive, transparent, and easy-to-understand format.
@@ -595,7 +595,7 @@ function AboutPage() {
           <h3 className="text-sm font-bold uppercase tracking-wider">Website Disclaimer</h3>
         </div>
         <p className="text-xs sm:text-sm text-[#1F2937] dark:text-slate-200 leading-relaxed font-normal italic">
-          "D.CARD is an independent financial information and comparison platform for Savings Accounts and Debit Cards. D.CARD is not a bank, NBFC, financial institution, payment system operator, or representative of any bank unless explicitly stated. Information shown is for comparison and informational purposes only. Savings Account and Debit Card features, fees, charges, eligibility, limits, and benefits may change. Please verify the latest details with the respective bank before making a decision."
+          "D.CARD is an independent financial information and comparison platform for Savings Accounts, Current Accounts, and Debit Cards. D.CARD is not a bank, NBFC, financial institution, payment system operator, or representative of any bank unless explicitly stated. Information shown is for comparison and informational purposes only. Savings Account, Current Account, and Debit Card features, fees, charges, eligibility, limits, and benefits may change. Please verify the latest details with the respective bank before making a decision."
         </p>
       </section>
 

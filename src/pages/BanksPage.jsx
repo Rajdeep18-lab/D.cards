@@ -26,15 +26,19 @@ import {
   Zap,
   ArrowRight,
   Filter,
-  Check
+  Check,
+  Briefcase
 } from 'lucide-react';
 import { debitCards as defaultDebitCards } from '../data/mockData';
 import { savingsAccounts as defaultSavingsAccounts, getAssociatedDebitCards, getAssociatedDebitCard } from '../data/mockSavingsAccounts';
 import { savingsAccountService } from '../services/savingsAccountService';
+import { currentAccounts as defaultCurrentAccounts } from '../data/currentAccounts/index.js';
+import { currentAccountService } from '../services/currentAccountService';
 import { getCoveredBanksDirectory, getInstitutionalProfileForBank, canonicalBankName, getBankBrandTheme } from '../utils/bankDirectoryUtils';
 import { useWishlist } from '../context/WishlistContext';
 import DebitCardCard from '../components/DebitCardCard';
 import SavingsAccountCard from '../components/SavingsAccountCard';
+import CurrentAccountCard from '../components/CurrentAccountCard';
 import BankBrandLogo from '../components/BankBrandLogo';
 import IDFCTierEligibilityCalculator from '../components/IDFCTierEligibilityCalculator';
 import IDFCTierBenefitsComparison from '../components/IDFCTierBenefitsComparison';
@@ -46,7 +50,9 @@ function BanksPage({
   compareQueue = [], 
   onSelectDebitCard, 
   savingsCompareQueue = [], 
-  setSavingsCompareQueue 
+  setSavingsCompareQueue,
+  currentCompareQueue = [],
+  setCurrentCompareQueue
 }) {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -95,6 +101,7 @@ function BanksPage({
   const overviewRef = useRef(null);
   const debitCardsRef = useRef(null);
   const savingsAccountsRef = useRef(null);
+  const currentAccountsRef = useRef(null);
   const [activeTab, setActiveTab] = useState('overview');
 
   const scrollToSection = (sectionId, tabName) => {
@@ -107,9 +114,10 @@ function BanksPage({
 
   // In-Bank Search & Filter State
   const [bankSearchQuery, setBankSearchQuery] = useState('');
-  const [productCategoryFilter, setProductCategoryFilter] = useState('All'); // 'All' | 'Debit Cards' | 'Savings Accounts'
+  const [productCategoryFilter, setProductCategoryFilter] = useState('All'); // 'All' | 'Debit Cards' | 'Savings Accounts' | 'Current Accounts'
 
   const [allSavingsAccounts, setAllSavingsAccounts] = useState(defaultSavingsAccounts);
+  const [allCurrentAccounts, setAllCurrentAccounts] = useState(defaultCurrentAccounts);
 
   useEffect(() => {
     savingsAccountService.getSavingsAccounts()
@@ -117,9 +125,15 @@ function BanksPage({
         if (res && res.length > 0) setAllSavingsAccounts(res);
       })
       .catch(err => console.warn('Notice loading savings accounts in BanksPage:', err));
+
+    currentAccountService.getCurrentAccounts()
+      .then(res => {
+        if (res && res.length > 0) setAllCurrentAccounts(res);
+      })
+      .catch(err => console.warn('Notice loading current accounts in BanksPage:', err));
   }, []);
 
-  // Get active bank details, debit cards, and savings accounts
+  // Get active bank details, debit cards, savings accounts, and current accounts
   const bankProfileData = useMemo(() => {
     const canonicalName = canonicalBankName(selectedBankName);
     const currentBankObj = coveredBanks.find(b => canonicalBankName(b.name) === canonicalName) || coveredBanks[0];
@@ -137,6 +151,16 @@ function BanksPage({
       return sBank.toLowerCase() === canonicalName.toLowerCase() || String(s.bankId || '').toLowerCase() === canonicalName.toLowerCase();
     });
 
+    // Filter Current Accounts for this bank
+    const bankCurrentAccounts = allCurrentAccounts.filter(c => {
+      const cBank = canonicalBankName(c.bankName || c.bank || c.bank_id || "");
+      return (
+        cBank.toLowerCase() === canonicalName.toLowerCase() ||
+        String(c.bank_id || '').toLowerCase() === canonicalName.toLowerCase() ||
+        canonicalBankName(String(c.bank_id || '')).toLowerCase() === canonicalName.toLowerCase()
+      );
+    });
+
     const profile = getInstitutionalProfileForBank(canonicalName, bankCards);
 
     return {
@@ -144,16 +168,17 @@ function BanksPage({
       currentBankObj,
       profile,
       bankCards,
-      bankAccounts
+      bankAccounts,
+      bankCurrentAccounts
     };
-  }, [coveredBanks, selectedBankName, activeCardsList, allSavingsAccounts]);
+  }, [coveredBanks, selectedBankName, activeCardsList, allSavingsAccounts, allCurrentAccounts]);
 
-  const { canonicalName, currentBankObj, profile, bankCards, bankAccounts } = bankProfileData;
+  const { canonicalName, currentBankObj, profile, bankCards, bankAccounts, bankCurrentAccounts } = bankProfileData;
   const brandTheme = getBankBrandTheme(canonicalName);
 
   // Apply In-Bank Search & Category Filter
   const filteredDebitCards = useMemo(() => {
-    if (productCategoryFilter === 'Savings Accounts') return [];
+    if (productCategoryFilter !== 'All' && productCategoryFilter !== 'Debit Cards') return [];
     const q = bankSearchQuery.trim().toLowerCase();
     if (!q) return bankCards;
     return bankCards.filter(c => {
@@ -167,7 +192,7 @@ function BanksPage({
   }, [bankCards, bankSearchQuery, productCategoryFilter]);
 
   const filteredSavingsAccounts = useMemo(() => {
-    if (productCategoryFilter === 'Debit Cards') return [];
+    if (productCategoryFilter !== 'All' && productCategoryFilter !== 'Savings Accounts') return [];
     const q = bankSearchQuery.trim().toLowerCase();
     if (!q) return bankAccounts;
     return bankAccounts.filter(a => {
@@ -180,9 +205,34 @@ function BanksPage({
     });
   }, [bankAccounts, bankSearchQuery, productCategoryFilter]);
 
+  const filteredCurrentAccounts = useMemo(() => {
+    if (productCategoryFilter !== 'All' && productCategoryFilter !== 'Current Accounts') return [];
+    const q = bankSearchQuery.trim().toLowerCase();
+    if (!q) return bankCurrentAccounts;
+    return bankCurrentAccounts.filter(a => {
+      const matchName = String(a.accountName || a.variant_name || '').toLowerCase().includes(q);
+      const matchType = String(a.accountType || a.account_type || '').toLowerCase().includes(q);
+      const matchSuitable = String(a.suitableFor || '').toLowerCase().includes(q);
+      const matchCardName = String(a.debitCardName || '').toLowerCase().includes(q);
+      const matchBenefits = Array.isArray(a.keyBenefits) ? a.keyBenefits.some(b => String(b).toLowerCase().includes(q)) : false;
+      return matchName || matchType || matchSuitable || matchCardName || matchBenefits;
+    });
+  }, [bankCurrentAccounts, bankSearchQuery, productCategoryFilter]);
+
   const handleToggleSavingsCompare = (acc) => {
     if (!setSavingsCompareQueue) return;
     setSavingsCompareQueue(prev => {
+      if (prev.some(a => String(a.id) === String(acc.id))) {
+        return prev.filter(a => String(a.id) !== String(acc.id));
+      }
+      if (prev.length >= 3) return prev;
+      return [...prev, acc];
+    });
+  };
+
+  const handleToggleCurrentCompare = (acc) => {
+    if (!setCurrentCompareQueue) return;
+    setCurrentCompareQueue(prev => {
       if (prev.some(a => String(a.id) === String(acc.id))) {
         return prev.filter(a => String(a.id) !== String(acc.id));
       }
@@ -252,7 +302,7 @@ function BanksPage({
                 {canonicalName} Banking Products
               </h1>
               <p className="text-xs sm:text-sm text-white/80 font-medium max-w-2xl leading-relaxed">
-                Explore savings accounts and debit cards offered by {canonicalName} and compare their key features.
+                Explore savings accounts, current accounts, and debit cards offered by {canonicalName} and compare their key features.
               </p>
             </div>
           </div>
@@ -271,7 +321,7 @@ function BanksPage({
         </div>
 
         {/* ── 6. BANK PRODUCT SUMMARY (Dynamic Numbers) ── */}
-        <div className="pt-4 border-t border-white/20 grid grid-cols-2 sm:grid-cols-4 gap-3 relative z-10 text-xs">
+        <div className="pt-4 border-t border-white/20 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 relative z-10 text-xs">
           <div className="p-3.5 rounded-2xl bg-black/25 backdrop-blur-xl border border-white/15">
             <span className="text-[10px] font-bold text-white/70 uppercase tracking-wider block">Debit Cards</span>
             <span className="text-xl sm:text-2xl font-black text-white mt-0.5 block">{bankCards.length} Available</span>
@@ -283,11 +333,16 @@ function BanksPage({
           </div>
 
           <div className="p-3.5 rounded-2xl bg-black/25 backdrop-blur-xl border border-white/15">
-            <span className="text-[10px] font-bold text-white/70 uppercase tracking-wider block">Trust Score</span>
-            <span className="text-xl sm:text-2xl font-black text-amber-300 mt-0.5 block">{profile.trustScore}</span>
+            <span className="text-[10px] font-bold text-white/70 uppercase tracking-wider block">Current Accounts</span>
+            <span className="text-xl sm:text-2xl font-black text-amber-300 mt-0.5 block">{bankCurrentAccounts.length} Available</span>
           </div>
 
           <div className="p-3.5 rounded-2xl bg-black/25 backdrop-blur-xl border border-white/15">
+            <span className="text-[10px] font-bold text-white/70 uppercase tracking-wider block">Trust Score</span>
+            <span className="text-xl sm:text-2xl font-black text-white mt-0.5 block">{profile.trustScore}</span>
+          </div>
+
+          <div className="p-3.5 rounded-2xl bg-black/25 backdrop-blur-xl border border-white/15 col-span-2 sm:col-span-1">
             <span className="text-[10px] font-bold text-white/70 uppercase tracking-wider block">Max Savings Yield</span>
             <span className="text-xl sm:text-2xl font-black text-cyan-300 mt-0.5 block">{profile.stats.interestRate}</span>
           </div>
@@ -300,7 +355,8 @@ function BanksPage({
           {[
             { id: 'bank-overview', tab: 'overview', label: 'Overview', icon: Building2 },
             { id: 'debit-cards-section', tab: 'debitCards', label: `Debit Cards (${bankCards.length})`, icon: CreditCard },
-            { id: 'savings-accounts-section', tab: 'savingsAccounts', label: `Savings Accounts (${bankAccounts.length})`, icon: Percent }
+            { id: 'savings-accounts-section', tab: 'savingsAccounts', label: `Savings Accounts (${bankAccounts.length})`, icon: Percent },
+            { id: 'current-accounts-section', tab: 'currentAccounts', label: `Current Accounts (${bankCurrentAccounts.length})`, icon: Briefcase }
           ].map(t => {
             const Icon = t.icon;
             return (
@@ -386,7 +442,7 @@ function BanksPage({
       {/* ── 7. SEARCH & FILTER WITHIN BANK PRODUCTS ── */}
       <div className="p-5 rounded-3xl glass-card-premium border border-slate-200 dark:border-slate-800 shadow-soft flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-2 w-full md:w-auto">
-          {['All', 'Debit Cards', 'Savings Accounts'].map(cat => (
+          {['All', 'Debit Cards', 'Savings Accounts', 'Current Accounts'].map(cat => (
             <button
               key={cat}
               onClick={() => setProductCategoryFilter(cat)}
@@ -661,6 +717,47 @@ function BanksPage({
         </div>
       )}
 
+      {/* ── 6. CURRENT ACCOUNTS SECTION ── */}
+      {(productCategoryFilter === 'All' || productCategoryFilter === 'Current Accounts') && (
+        <div id="current-accounts-section" ref={currentAccountsRef} className="space-y-6 pt-6">
+          <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-widest text-amber-600 dark:text-amber-400">
+                COMMERCIAL & BUSINESS BANKING
+              </span>
+              <h2 className="text-2xl font-black text-slate-800 dark:text-white flex items-center gap-2">
+                <Briefcase className="w-6 h-6 text-amber-500" />
+                <span>Current Accounts ({filteredCurrentAccounts.length})</span>
+              </h2>
+            </div>
+
+            <p className="text-xs text-slate-400 font-bold">
+              Commercial accounts, MAB tiers & cash deposit limits for {canonicalName}
+            </p>
+          </div>
+
+          {filteredCurrentAccounts.length === 0 ? (
+            <div className="py-12 text-center rounded-3xl glass-card-premium border border-slate-200 dark:border-slate-800 text-xs text-slate-500 space-y-2">
+              <Briefcase className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto" />
+              <p className="font-bold">No current accounts match your search criteria for {canonicalName}.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {filteredCurrentAccounts.map(account => (
+                <CurrentAccountCard
+                  key={account.id || account.product_id}
+                  account={account}
+                  onViewDetails={() => navigate(`/current-accounts/${account.id || account.product_id}`)}
+                  onToggleCompare={handleToggleCurrentCompare}
+                  isCompared={currentCompareQueue.some(item => String(item.id) === String(account.id))}
+                  onSelectDebitCard={onSelectDebitCard}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* ── 13 & 15. STATUTORY DISCLAIMER & INFORMATION NOTICE ── */}
       <div className="p-5 sm:p-6 rounded-3xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/60 space-y-3 text-amber-900 dark:text-amber-200 text-xs sm:text-sm">
         <div className="flex items-center gap-2 font-black uppercase tracking-wider text-amber-800 dark:text-amber-300">
@@ -668,7 +765,7 @@ function BanksPage({
           <span>Statutory Bank Information & Verification Disclaimer</span>
         </div>
         <p className="leading-relaxed font-normal">
-          Information shown is for comparison and informational purposes only. Savings Account and Debit Card features, interest rates, fees, charges, eligibility requirements, limits, and benefits may change over time. Please verify the latest details directly on {canonicalName}'s official website before making a decision.
+          Information shown is for comparison and informational purposes only. Savings Account, Current Account, and Debit Card features, interest rates, fees, charges, eligibility requirements, limits, and benefits may change over time. Please verify the latest details directly on {canonicalName}'s official website before making a decision.
         </p>
         <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-amber-200/60 dark:border-amber-900/40 text-xs font-semibold">
           <span>Source: Official {canonicalName} Portal</span>

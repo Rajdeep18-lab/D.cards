@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import HeroSection from '../components/HeroSection';
-import KotakContinuousBanner from '../components/KotakContinuousBanner';
+import KotakRightSideAd from '../components/KotakRightSideAd';
 import { 
   Sparkles, 
   Bot, 
@@ -29,13 +29,6 @@ function HomePage({
 
   return (
     <div className="space-y-8 overflow-hidden select-none">
-      {/* ── CONTINUOUS KOTAK 811 ADVERTISEMENT BANNER ── */}
-      <KotakContinuousBanner 
-        activeCardsList={activeCardsList}
-        onViewDetails={onViewDetails}
-      />
-
-      
       {/* ── 1. HERO SECTION ── */}
       <HeroSection 
         query={query} 
@@ -44,10 +37,14 @@ function HomePage({
         onViewDetails={onViewDetails} 
       />
 
-      <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-16 space-y-20">
-        
-        {/* ── 2. PRODUCT DISCOVERY SECTION (Explore Banking Products) ── */}
-        <section id="product-categories" className="select-none scroll-mt-24">
+      <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-16">
+        <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-10 xl:gap-12">
+          
+          {/* ── Left Column: Main Homepage Content ── */}
+          <div className="flex-1 w-full min-w-0 space-y-16 lg:space-y-20 order-1">
+            
+            {/* ── 2. PRODUCT DISCOVERY SECTION (Explore Banking Products) ── */}
+            <section id="product-categories" className="select-none scroll-mt-24">
           <div className="text-center max-w-2xl mx-auto space-y-2.5 mb-10">
             <span className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] text-xs font-bold tracking-widest uppercase rounded-full border border-[#2563EB]/20">
               <Sparkles className="w-3.5 h-3.5 text-[#2563EB]" />
@@ -61,7 +58,7 @@ function HomePage({
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 text-left">
             {/* CARD 1: SAVINGS ACCOUNTS */}
             <motion.div
               whileHover={{ y: -6, scale: 1.01 }}
@@ -329,6 +326,20 @@ function HomePage({
           </div>
         </section>
 
+          </div>
+
+          {/* ── Right Column: Dedicated Right-Side Advertisement Area ── */}
+          <aside 
+            aria-label="Card of the Month Advertisement"
+            className="w-full lg:w-[380px] xl:w-[420px] shrink-0 order-2 lg:sticky lg:top-24 z-20 pt-8 lg:pt-0"
+          >
+            <KotakRightSideAd 
+              activeCardsList={activeCardsList}
+              onViewDetails={onViewDetails}
+            />
+          </aside>
+
+        </div>
       </main>
     </div>
   );

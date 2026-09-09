@@ -1,9 +1,11 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Scale, ArrowLeft, Building2 } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Scale, ArrowLeft, Building2, CreditCard, Briefcase } from 'lucide-react';
 import { getAssociatedDebitCard, getAssociatedDebitCards } from '../data/mockSavingsAccounts';
 
 function SavingsAccountsComparePage({ compareQueue = [], setCompareQueue, onSelectDebitCard }) {
+  const navigate = useNavigate();
+
   return (
     <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 relative z-20 space-y-8 text-left select-none">
       <div className="flex items-center justify-between border-b border-[#E5E7EB] dark:border-slate-800 pb-6">
@@ -27,6 +29,31 @@ function SavingsAccountsComparePage({ compareQueue = [], setCompareQueue, onSele
             Clear All
           </button>
         )}
+      </div>
+
+      {/* Comparison Category Switcher */}
+      <div className="flex flex-wrap items-center gap-2 p-1.5 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 w-fit">
+        <button
+          onClick={() => navigate('/compare')}
+          className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer flex items-center gap-1.5"
+        >
+          <CreditCard className="w-3.5 h-3.5" />
+          <span>Debit Cards</span>
+        </button>
+        <button
+          onClick={() => navigate('/compare-savings')}
+          className="px-4 py-2 rounded-xl text-xs font-bold bg-[#2563EB] text-white shadow-xs cursor-pointer flex items-center gap-1.5"
+        >
+          <Building2 className="w-3.5 h-3.5" />
+          <span>Savings Accounts</span>
+        </button>
+        <button
+          onClick={() => navigate('/compare-current')}
+          className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer flex items-center gap-1.5"
+        >
+          <Briefcase className="w-3.5 h-3.5" />
+          <span>Current Accounts</span>
+        </button>
       </div>
 
       {compareQueue.length === 0 ? (

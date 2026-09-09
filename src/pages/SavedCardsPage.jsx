@@ -14,11 +14,37 @@ import {
   Plane, 
   Gift, 
   Star,
-  CheckCircle2
+  CheckCircle2,
+  Briefcase
 } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
 import DebitCardCard from '../components/DebitCardCard';
 import SavingsAccountCard from '../components/SavingsAccountCard';
+import CurrentAccountCard from '../components/CurrentAccountCard';
+
+function isCurrentAccountItem(item) {
+  if (!item) return false;
+  return (
+    item.productType === 'currentAccount' ||
+    item.category === 'current_account' ||
+    Boolean(item.businessConstitution) ||
+    Boolean(item.cashDepositLimit) ||
+    (item.product_id && String(item.product_id).toLowerCase().includes('current')) ||
+    (item.accountName && String(item.accountName).toLowerCase().includes('current account')) ||
+    (item.accountType && String(item.accountType).toLowerCase().includes('current'))
+  );
+}
+
+function isSavingsAccountItem(item) {
+  if (!item) return false;
+  if (isCurrentAccountItem(item)) return false;
+  return item.productType === 'savingsAccount' || Boolean(item.accountName);
+}
+
+function isDebitCardItem(item) {
+  if (!item) return false;
+  return !isCurrentAccountItem(item) && !isSavingsAccountItem(item);
+}
 
 function SavedCardsPage({ setSelectedCard, toggleCompareQueue, compareQueue, userProfile, STATIC_RANKINGS }) {
   const { wishlist, removeFromWishlist, clearWishlist } = useWishlist();
@@ -31,24 +57,24 @@ function SavedCardsPage({ setSelectedCard, toggleCompareQueue, compareQueue, use
   // Compute Top Summary Statistics for Saved Portfolio
   const stats = useMemo(() => {
     const totalItems = wishlist.length;
-    const debitCardsCount = wishlist.filter(c => c.productType === 'debitCard' || (!c.productType && c.cardName && !c.accountName)).length;
-    const savingsAccountsCount = wishlist.filter(c => c.productType === 'savingsAccount' || c.accountName).length;
-    const uniqueBanks = new Set(wishlist.map(c => String(c.bank || '').toLowerCase().trim())).size;
+    const debitCardsCount = wishlist.filter(isDebitCardItem).length;
+    const savingsAccountsCount = wishlist.filter(isSavingsAccountItem).length;
+    const currentAccountsCount = wishlist.filter(isCurrentAccountItem).length;
+    const uniqueBanks = new Set(wishlist.map(c => String(c.bank || c.bankName || '').toLowerCase().trim())).size;
 
-    return { totalItems, debitCardsCount, savingsAccountsCount, uniqueBanks };
+    return { totalItems, debitCardsCount, savingsAccountsCount, currentAccountsCount, uniqueBanks };
   }, [wishlist]);
 
   // Filtered Items based on search, product type, and network chips
   const filteredWishlist = useMemo(() => {
     return wishlist.filter(item => {
-      const isSavings = item.productType === 'savingsAccount' || Boolean(item.accountName);
-      
-      if (selectedProductType === 'Debit Cards' && isSavings) return false;
-      if (selectedProductType === 'Savings Accounts' && !isSavings) return false;
+      if (selectedProductType === 'Debit Cards' && !isDebitCardItem(item)) return false;
+      if (selectedProductType === 'Savings Accounts' && !isSavingsAccountItem(item)) return false;
+      if (selectedProductType === 'Current Accounts' && !isCurrentAccountItem(item)) return false;
 
       const q = searchTerm.toLowerCase().trim();
       const matchSearch = !q || (
-        String(item.bank || '').toLowerCase().includes(q) ||
+        String(item.bank || item.bankName || '').toLowerCase().includes(q) ||
         String(item.cardName || '').toLowerCase().includes(q) ||
         String(item.accountName || '').toLowerCase().includes(q) ||
         String(item.category || '').toLowerCase().includes(q) ||
@@ -102,7 +128,7 @@ function SavedCardsPage({ setSelectedCard, toggleCompareQueue, compareQueue, use
       </div>
 
       {/* ── 2. Top Summary Statistics Bar ── */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
         <div className="p-4 rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-800 shadow-xs flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-500 flex items-center justify-center flex-shrink-0">
             <Heart className="w-5 h-5 fill-rose-500" />
@@ -146,6 +172,20 @@ function SavedCardsPage({ setSelectedCard, toggleCompareQueue, compareQueue, use
         </div>
 
         <div className="p-4 rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-800 shadow-xs flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center flex-shrink-0">
+            <Briefcase className="w-5 h-5" />
+          </div>
+          <div>
+            <span className="text-lg font-black text-[#1F2937] dark:text-white leading-none block">
+              {stats.currentAccountsCount}
+            </span>
+            <span className="text-[10.5px] font-bold text-[#6B7280] dark:text-slate-400 uppercase tracking-wider">
+              Current Accounts
+            </span>
+          </div>
+        </div>
+
+        <div className="p-4 rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-800 shadow-xs flex items-center gap-3 col-span-2 sm:col-span-1">
           <div className="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center flex-shrink-0">
             <ShieldCheck className="w-5 h-5" />
           </div>
@@ -175,7 +215,7 @@ function SavedCardsPage({ setSelectedCard, toggleCompareQueue, compareQueue, use
           </div>
 
           <div className="flex flex-wrap items-center gap-2 text-xs font-bold w-full md:w-auto">
-            {['All', 'Debit Cards', 'Savings Accounts'].map(pt => (
+            {['All', 'Debit Cards', 'Savings Accounts', 'Current Accounts'].map(pt => (
               <button
                 key={pt}
                 onClick={() => setSelectedProductType(pt)}
@@ -212,7 +252,7 @@ function SavedCardsPage({ setSelectedCard, toggleCompareQueue, compareQueue, use
             </p>
           </div>
 
-          <div className="flex items-center justify-center gap-3">
+          <div className="flex flex-wrap items-center justify-center gap-3">
             <button
               onClick={() => navigate('/cards')}
               className="px-5 py-3 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white font-bold text-xs uppercase shadow-md transition-all cursor-pointer"
@@ -225,6 +265,12 @@ function SavedCardsPage({ setSelectedCard, toggleCompareQueue, compareQueue, use
             >
               Savings Accounts
             </button>
+            <button
+              onClick={() => navigate('/current-accounts')}
+              className="px-5 py-3 rounded-xl bg-amber-600 text-white font-bold text-xs uppercase shadow-md transition-all cursor-pointer"
+            >
+              Current Accounts
+            </button>
           </div>
         </motion.div>
       ) : filteredWishlist.length === 0 ? (
@@ -235,21 +281,30 @@ function SavedCardsPage({ setSelectedCard, toggleCompareQueue, compareQueue, use
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
           <AnimatePresence>
             {filteredWishlist.map((item) => {
-              const isSavingsAcc = item.productType === 'savingsAccount' || Boolean(item.accountName);
+              const isCurrent = isCurrentAccountItem(item);
+              const isSavings = isSavingsAccountItem(item);
 
               return (
                 <motion.div
-                  key={item.id}
+                  key={item.id || item.product_id}
                   layout
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.25 }}
                 >
-                  {isSavingsAcc ? (
+                  {isCurrent ? (
+                    <CurrentAccountCard
+                      account={item}
+                      onViewDetails={() => navigate(`/current-accounts/${item.id || item.product_id}`)}
+                      onToggleCompare={() => {}}
+                      isCompared={false}
+                      onSelectDebitCard={setSelectedCard}
+                    />
+                  ) : isSavings ? (
                     <SavingsAccountCard
                       account={item}
-                      onViewDetails={() => navigate(`/savings-accounts/${item.id}`)}
+                      onViewDetails={() => navigate(`/savings-accounts/${item.id || item.product_id}`)}
                       onToggleCompare={() => {}}
                       isCompared={false}
                       onSelectDebitCard={setSelectedCard}

@@ -280,3 +280,24 @@
   animation-play-state: paused;
 }
 
+/* Continuous Right-Side Advertisement Marquee Slide */
+@keyframes ad-marquee-scroll {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.animate-ad-slide {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: ad-marquee-scroll 16s linear infinite;
+}
+
+.animate-ad-slide:hover {
+  animation-play-state: paused;
+}
+

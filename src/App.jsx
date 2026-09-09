@@ -1025,6 +1025,8 @@ function AppContent() {
                 onSelectDebitCard={(card) => setSelectedCard(card)}
                 savingsCompareQueue={savingsCompareQueue}
                 setSavingsCompareQueue={setSavingsCompareQueue}
+                currentCompareQueue={currentCompareQueue}
+                setCurrentCompareQueue={setCurrentCompareQueue}
               />
             } 
           />
@@ -1041,6 +1043,8 @@ function AppContent() {
                 onSelectDebitCard={(card) => setSelectedCard(card)}
                 savingsCompareQueue={savingsCompareQueue}
                 setSavingsCompareQueue={setSavingsCompareQueue}
+                currentCompareQueue={currentCompareQueue}
+                setCurrentCompareQueue={setCurrentCompareQueue}
               />
             } 
           />

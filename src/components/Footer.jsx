@@ -6,6 +6,8 @@ function Footer({ onOpenLegal }) {
     'Quick Links': [
       { name: 'Home', path: '/' },
       { name: 'Debit Cards', path: '/cards' },
+      { name: 'Savings Accounts', path: '/savings-accounts' },
+      { name: 'Current Accounts', path: '/current-accounts' },
       { name: 'Compare Cards', path: '/compare' },
       { name: 'AI Advisor', path: '/ai-advisor' },
       { name: 'Top Banks', path: '/banks' },
@@ -47,7 +49,7 @@ function Footer({ onOpenLegal }) {
           </Link>
           
           <p className="text-xs leading-relaxed text-[#6B7280] dark:text-slate-400 max-w-[280px] font-normal">
-            Explore and compare savings accounts and debit cards from leading banks in one place. Structured product specs, fee breakdowns, and lounge access rules.
+            Explore and compare savings accounts, current accounts, and debit cards from leading banks in one place. Structured product specs, fee breakdowns, and lounge access rules.
           </p>
 
           {/* Social Links */}
@@ -143,7 +145,7 @@ function Footer({ onOpenLegal }) {
           </p>
         </div>
         <p className="leading-relaxed text-[10px] text-justify max-w-7xl mx-auto opacity-85">
-          <strong>Regulatory Disclaimer:</strong> D.CARD is an independent comparison and financial information platform covering Savings Accounts and Debit Cards. We are not a bank or financial institution. Product information may change; always verify current details with the respective bank.
+          <strong>Regulatory Disclaimer:</strong> D.CARD is an independent comparison and financial information platform covering Savings Accounts, Current Accounts, and Debit Cards. We are not a bank or financial institution. Product information may change; always verify current details with the respective bank.
         </p>
       </div>
     </footer>

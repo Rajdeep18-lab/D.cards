@@ -166,6 +166,8 @@ export function validateCurrentAccount(account) {
     bankName,
     bank: bankName,
     bank_name: bankName,
+    productType: "currentAccount",
+    category: "current_account",
     accountName,
     variant_name: accountName,
     accountType,
