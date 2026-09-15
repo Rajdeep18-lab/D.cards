@@ -43,6 +43,7 @@ import BankBrandLogo from '../components/BankBrandLogo';
 import IDFCTierEligibilityCalculator from '../components/IDFCTierEligibilityCalculator';
 import IDFCTierBenefitsComparison from '../components/IDFCTierBenefitsComparison';
 import ICICIBSavingsDetailView from '../components/ICICIBSavingsDetailView';
+import { useSEO } from '../hooks/useSEO';
 
 function BanksPage({ 
   activeCardsList = null, 
@@ -78,6 +79,35 @@ function BanksPage({
     }
     return coveredBanks[0];
   }, [coveredBanks, id]);
+
+  const seoTitle = id && activeBankObj
+    ? `${activeBankObj.name} – Bank Profile, Debit Cards & Savings Accounts | D.Card`
+    : "Top Banks in India – Directory, Ratings & Products | D.Card";
+
+  const seoDescription = id && activeBankObj
+    ? `Explore ${activeBankObj.name} banking products. Discover ${activeBankObj.cardCount || ''} debit cards, ${activeBankObj.accountCount || ''} savings accounts, interest rates, and key benefits on D.Card.`
+    : "Explore profiles of leading public, private, and small finance banks in India. Compare savings accounts and debit card offerings on D.Card.";
+
+  const seoCanonical = id && activeBankObj
+    ? `https://www.dcard.website/banks/${id}`
+    : "https://www.dcard.website/banks";
+
+  const seoSchema = id && activeBankObj
+    ? {
+        "@context": "https://schema.org",
+        "@type": "BankOrCreditUnion",
+        "name": activeBankObj.name,
+        "url": seoCanonical,
+        "description": seoDescription
+      }
+    : null;
+
+  useSEO({
+    title: seoTitle,
+    description: seoDescription,
+    canonicalUrl: seoCanonical,
+    schema: seoSchema
+  });
 
   const [selectedBankName, setSelectedBankName] = useState(() => {
     return activeBankObj ? activeBankObj.name : "State Bank of India";

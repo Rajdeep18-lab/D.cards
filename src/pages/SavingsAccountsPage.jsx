@@ -32,6 +32,7 @@ import SavingsAccountComparisonModal from '../components/SavingsAccountCompariso
 import { savingsAccountService } from '../services/savingsAccountService';
 import { getAssociatedDebitCard } from '../data/mockSavingsAccounts';
 import { safeString, safeLower, safeArray, parseNumericValue } from '../utils/safeUtils';
+import { useSEO } from '../hooks/useSEO';
 
 const BANK_OPTIONS = [
   "HDFC Bank",
@@ -296,6 +297,12 @@ function matchesDebitCardFilter(acc, cardFilter) {
 }
 
 function SavingsAccountsPage({ onSelectDebitCard }) {
+  useSEO({
+    title: "Savings Accounts in India – Compare Interest Rates & Min Balance | D.Card",
+    description: "Explore and compare savings accounts from leading banks in India. Check interest rates, minimum balance requirements, and features on D.Card.",
+    canonicalUrl: "https://www.dcard.website/savings-accounts"
+  });
+
   const [accounts, setAccounts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 

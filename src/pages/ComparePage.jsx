@@ -4,8 +4,15 @@ import { useNavigate } from 'react-router-dom';
 import { Scale, ArrowRight, Trash2, CheckCircle2, CreditCard, Building2, Briefcase } from 'lucide-react';
 import ComparisonTable from '../components/ComparisonTable';
 import SavingsCalculator from '../components/SavingsCalculator';
+import { useSEO } from '../hooks/useSEO';
 
 function ComparePage({ compareQueue, setCompareQueue, setSelectedCard }) {
+  useSEO({
+    title: "Compare Debit Cards Side by Side | D.Card",
+    description: "Compare features, annual charges, daily ATM limits, and rewards across debit cards side by side on D.Card.",
+    canonicalUrl: "https://www.dcard.website/compare"
+  });
+
   const navigate = useNavigate();
 
   return (

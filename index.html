@@ -31,6 +31,33 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="alternate icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" href="/logo-mark.png" />
+
+    <!-- Theme initialization: Light mode by default; manual preference only; prevent flash -->
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('dcard-theme');
+          var isDark = false;
+          if (saved === 'dark') {
+            isDark = true;
+          } else if (saved === 'light') {
+            isDark = false;
+          } else {
+            var legacy = localStorage.getItem('isDarkMode');
+            if (legacy !== null) {
+              isDark = JSON.parse(legacy) === true;
+            }
+          }
+          if (isDark) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (e) {
+          document.documentElement.classList.remove('dark');
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

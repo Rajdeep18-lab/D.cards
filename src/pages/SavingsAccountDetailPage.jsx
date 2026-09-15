@@ -28,6 +28,7 @@ import { savingsAccountService } from '../services/savingsAccountService';
 import { getAssociatedDebitCards, getDebitCardRelationshipStatus } from '../data/mockSavingsAccounts';
 import { useWishlist } from '../context/WishlistContext';
 import LoadingSkeleton from '../components/LoadingSkeleton';
+import { useSEO } from '../hooks/useSEO';
 
 import ICICIBSavingsDetailView from '../components/ICICIBSavingsDetailView';
 
@@ -40,6 +41,41 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeCardIndex, setActiveCardIndex] = useState(0);
+
+  const seoBankName = account?.bank_name || account?.bank || "Bank";
+  const seoAccountName = account?.variant_name || account?.account_name || account?.accountName || "Savings Account";
+
+  const seoTitle = account
+    ? `${seoBankName} ${seoAccountName} Savings Account | D.Card`
+    : error
+      ? "Savings Account Not Found | D.Card"
+      : "Savings Account Details | D.Card";
+
+  const seoDescription = account
+    ? `Explore ${bankName} ${accountName} Savings Account. Features: ${interestRate ? `${interestRate} interest, ` : ''}${minimumBalance ? `₹${minimumBalance} min balance, ` : ''}benefits, and eligibility on D.Card.`
+    : "Explore features, interest rates, and minimum balance requirements for savings accounts on D.Card.";
+
+  const seoSchema = account
+    ? {
+        "@context": "https://schema.org",
+        "@type": "FinancialProduct",
+        "name": `${bankName} ${accountName} Savings Account`,
+        "description": seoDescription,
+        "provider": {
+          "@type": "BankOrCreditUnion",
+          "name": bankName
+        },
+        "url": `https://www.dcard.website/savings-accounts/${id}`
+      }
+    : null;
+
+  useSEO({
+    title: seoTitle,
+    description: seoDescription,
+    canonicalUrl: `https://www.dcard.website/savings-accounts/${id}`,
+    robots: error ? "noindex, follow" : "index, follow",
+    schema: seoSchema
+  });
 
   useEffect(() => {
     setLoading(true);

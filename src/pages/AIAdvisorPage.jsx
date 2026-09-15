@@ -63,8 +63,15 @@ const SUGGESTED_PROMPTS = [
 ];
 
 import { useLocation } from 'react-router-dom';
+import { useSEO } from '../hooks/useSEO';
 
 function AIAdvisorPage({ onOpenContact, onSelectDebitCard, toggleCompareQueue, setSavingsCompareQueue }) {
+  useSEO({
+    title: "AI Banking Advisor – Personalized Recommendations | D.Card",
+    description: "Get tailored savings account and debit card recommendations based on your spending habits and financial goals with D.Card AI Advisor.",
+    canonicalUrl: "https://www.dcard.website/ai-advisor"
+  });
+
   const location = useLocation();
   const [activeExternalQuery, setActiveExternalQuery] = useState(location.state?.query || null);
 

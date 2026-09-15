@@ -5,6 +5,7 @@ import { debitCards } from '../data/mockData';
 import DebitCardVisual from './DebitCardVisual';
 import { useAuth } from '../hooks/useAuth';
 import { referralService } from '../services/referralService';
+import { useSEO } from '../hooks/useSEO';
 
 /* Local Bank Profiles structured data for Trust Shield */
 const BANK_PROFILES = {
@@ -162,6 +163,35 @@ function CardDetailsModal({ isOpen, onClose, card, compareQueue, toggleCompareQu
   const fuelWaiver = card?.fuelWaiver || "No";
   const internationalUsage = card?.internationalUsage || "No";
   const cashbackPct = typeof card?.cashbackPct === 'number' ? card.cashbackPct : parseFloat(String(card?.cashbackPct || '').replace(/[^0-9.]/g, '')) || 0;
+
+  const cardSeoTitle = (isOpen && card)
+    ? `${bankName} ${cardName} | D.Card`
+    : null;
+
+  const cardSeoDesc = (isOpen && card)
+    ? `Explore ${bankName} ${cardName}. Annual fee: ${card?.annualFee ? card.annualFee : (annualFee ? '₹' + annualFee : 'Free')}, daily ATM limit: ₹${card?.atmLimit ? card.atmLimit.toLocaleString('en-IN') : '50,000'}. Features and benefits on D.Card.`
+    : null;
+
+  const cardSchema = (isOpen && card)
+    ? {
+        "@context": "https://schema.org",
+        "@type": "FinancialProduct",
+        "name": `${bankName} ${cardName}`,
+        "description": cardSeoDesc,
+        "provider": {
+          "@type": "BankOrCreditUnion",
+          "name": bankName
+        },
+        "url": "https://www.dcard.website/cards"
+      }
+    : null;
+
+  useSEO({
+    title: cardSeoTitle,
+    description: cardSeoDesc,
+    canonicalUrl: "https://www.dcard.website/cards",
+    schema: cardSchema
+  });
 
   const { gradient: brandGradient, accent, shadow } = getBankCardSkin(bankName);
   const isCardWishlisted = isWishlisted(cardId);

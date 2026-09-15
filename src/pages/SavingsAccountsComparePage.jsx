@@ -2,8 +2,15 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Scale, ArrowLeft, Building2, CreditCard, Briefcase } from 'lucide-react';
 import { getAssociatedDebitCard, getAssociatedDebitCards } from '../data/mockSavingsAccounts';
+import { useSEO } from '../hooks/useSEO';
 
 function SavingsAccountsComparePage({ compareQueue = [], setCompareQueue, onSelectDebitCard }) {
+  useSEO({
+    title: "Compare Savings Accounts Side by Side | D.Card",
+    description: "Compare interest rates, minimum balance requirements, and perks across savings accounts side by side on D.Card.",
+    canonicalUrl: "https://www.dcard.website/compare-savings"
+  });
+
   const navigate = useNavigate();
 
   return (

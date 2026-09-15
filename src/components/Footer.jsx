@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { CreditCard, Mail, Send, ShieldCheck, ArrowRight, Bot, Sparkles, Heart } from 'lucide-react';
+import FooterUserReviews from './FooterUserReviews';
 
 function Footer({ onOpenLegal }) {
   const footerLinks = {
@@ -28,7 +29,7 @@ function Footer({ onOpenLegal }) {
       {/* Background Soft Blue Ambient Glow */}
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-gradient-to-t from-[#2563EB]/10 via-[#3B82F6]/5 to-transparent blur-[100px] pointer-events-none z-0" />
 
-      <div className="mx-auto max-w-7xl grid grid-cols-1 md:grid-cols-4 gap-10 mb-12 text-left relative z-10">
+      <div className="mx-auto max-w-7xl grid grid-cols-1 md:grid-cols-4 gap-10 mb-12 text-left relative z-10 items-start">
  
         {/* Logo & Description & Social Links */}
         <div className="space-y-4">
@@ -103,22 +104,9 @@ function Footer({ onOpenLegal }) {
           </div>
         ))}
 
-        {/* Newsletter & Ask AI Advisor Column */}
+        {/* User Reviews & Ask AI Advisor Column */}
         <div className="space-y-4">
-          <h4 className="font-extrabold text-[#1F2937] dark:text-white text-sm tracking-tight">Stay Updated</h4>
-          <div className="p-4 rounded-2xl bg-white dark:bg-slate-800/80 border border-[#E5E7EB] dark:border-slate-700 space-y-3 shadow-xs">
-            <p className="font-bold text-xs text-[#1F2937] dark:text-white">Fintech Insights Newsletter</p>
-            <div className="flex gap-2">
-              <input
-                type="email"
-                placeholder="Enter email address..."
-                className="flex-1 text-xs px-3 py-2 rounded-xl border border-[#E5E7EB] dark:border-slate-700 bg-[#F8FAFC] dark:bg-slate-900 outline-none text-[#1F2937] dark:text-white focus:border-[#2563EB]"
-              />
-              <button className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white text-xs font-semibold hover:opacity-95 transition-all cursor-pointer shadow-xs active:scale-95">
-                <Send className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </div>
+          <FooterUserReviews />
 
           {/* Ask AI Advisor Button */}
           <Link
@@ -145,7 +133,7 @@ function Footer({ onOpenLegal }) {
           </p>
         </div>
         <p className="leading-relaxed text-[10px] text-justify max-w-7xl mx-auto opacity-85">
-          <strong>Regulatory Disclaimer:</strong> D.CARD is an independent comparison and financial information platform covering Savings Accounts, Current Accounts, and Debit Cards. We are not a bank or financial institution. Product information may change; always verify current details with the respective bank.
+          <strong>Regulatory Disclaimer:</strong> D.CARD is an independent comparison and financial information platform covering Savings Accounts and Debit Cards. We are not a bank or financial institution. Product information may change; always verify current details with the respective bank.
         </p>
       </div>
     </footer>

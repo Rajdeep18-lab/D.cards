@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useSEO } from '../hooks/useSEO';
 import { 
   ShieldCheck, 
   Target, 
@@ -104,6 +105,12 @@ const LEADERSHIP_MATTERS = [
 ];
 
 function AboutPage() {
+  useSEO({
+    title: "About D.Card – Independent Financial Information Platform",
+    description: "Learn about D.Card, India's independent platform comparing debit cards, savings accounts, and current accounts.",
+    canonicalUrl: "https://www.dcard.website/about"
+  });
+
   const navigate = useNavigate();
 
   const whatWeOffer = [

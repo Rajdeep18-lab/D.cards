@@ -3,8 +3,15 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Scale, ArrowLeft, Building2, Briefcase, CreditCard } from 'lucide-react';
 import { getAssociatedDebitCardForCurrentAccount } from '../data/currentAccounts/index.js';
 import { safeArray } from '../utils/safeUtils';
+import { useSEO } from '../hooks/useSEO';
 
 function CurrentAccountsComparePage({ compareQueue = [], setCompareQueue, onSelectDebitCard }) {
+  useSEO({
+    title: "Compare Current Accounts Side by Side | D.Card",
+    description: "Compare cash deposit limits, minimum balance, and charges across current accounts side by side on D.Card.",
+    canonicalUrl: "https://www.dcard.website/compare-current"
+  });
+
   const navigate = useNavigate();
   const location = useLocation();
   const queue = (compareQueue && compareQueue.length > 0) 

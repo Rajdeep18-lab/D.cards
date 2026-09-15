@@ -5,6 +5,7 @@ import FilterSidebar from '../components/FilterSidebar';
 import QuickFilterChips from '../components/QuickFilterChips';
 import VirtualizedCardGrid from '../components/VirtualizedCardGrid';
 import LoadingSkeleton from '../components/LoadingSkeleton';
+import { useSEO } from '../hooks/useSEO';
 
 function CardsPage({
   filteredCards,
@@ -60,6 +61,12 @@ function CardsPage({
   query,
   setQuery
 }) {
+  useSEO({
+    title: "Debit Cards in India – Compare Fees, ATM Limits & Benefits | D.Card",
+    description: "Compare debit cards across top Indian banks. Filter by annual fee, daily ATM withdrawal limits, airport lounge access, and rewards on D.Card.",
+    canonicalUrl: "https://www.dcard.website/cards"
+  });
+
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
   useEffect(() => {

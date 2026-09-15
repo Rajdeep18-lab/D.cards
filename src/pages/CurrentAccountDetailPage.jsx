@@ -27,6 +27,7 @@ import { getAssociatedDebitCardsForCurrentAccount, getDebitCardRelationshipStatu
 import { useWishlist } from '../context/WishlistContext';
 import LoadingSkeleton from '../components/LoadingSkeleton';
 import { safeArray, safeString } from '../utils/safeUtils';
+import { useSEO } from '../hooks/useSEO';
 
 function CurrentAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompared }) {
   const { id } = useParams();
@@ -37,6 +38,42 @@ function CurrentAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeCardIndex, setActiveCardIndex] = useState(0);
+
+  const bankName = account?.bankName || account?.bank_name || account?.bank || "Bank";
+  const accountName = account?.accountName || account?.variant_name || "Current Account";
+  const minimumBalance = account?.minimumBalance || account?.minimum_balance || "";
+
+  const seoTitle = account
+    ? `${bankName} ${accountName} Current Account | D.Card`
+    : error
+      ? "Current Account Not Found | D.Card"
+      : "Current Account Details | D.Card";
+
+  const seoDescription = account
+    ? `Explore ${bankName} ${accountName} Current Account. Features: ${minimumBalance ? `minimum balance requirement ₹${minimumBalance}, ` : ''}cash deposit limits, and business banking perks on D.Card.`
+    : "Explore features, limits, and minimum balance requirements for commercial and business current accounts on D.Card.";
+
+  const seoSchema = account
+    ? {
+        "@context": "https://schema.org",
+        "@type": "FinancialProduct",
+        "name": `${bankName} ${accountName} Current Account`,
+        "description": seoDescription,
+        "provider": {
+          "@type": "BankOrCreditUnion",
+          "name": bankName
+        },
+        "url": `https://www.dcard.website/current-accounts/${id}`
+      }
+    : null;
+
+  useSEO({
+    title: seoTitle,
+    description: seoDescription,
+    canonicalUrl: `https://www.dcard.website/current-accounts/${id}`,
+    robots: error ? "noindex, follow" : "index, follow",
+    schema: seoSchema
+  });
 
   useEffect(() => {
     setLoading(true);
@@ -79,8 +116,6 @@ function CurrentAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
     );
   }
 
-  const bankName = account.bankName || account.bank_name || account.bank || "Partner Bank";
-  const accountName = account.accountName || account.variant_name || "Current Account";
   const wishlisted = isWishlisted(account.id || account.product_id);
   const associatedCards = getAssociatedDebitCardsForCurrentAccount(account);
 

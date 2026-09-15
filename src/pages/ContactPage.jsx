@@ -3,8 +3,15 @@ import { motion } from 'framer-motion';
 import { Mail, Send, CheckCircle2, Phone, Clock, ShieldCheck, HelpCircle } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { contactService } from '../services/contactService';
+import { useSEO } from '../hooks/useSEO';
 
 function ContactPage() {
+  useSEO({
+    title: "Contact Support – D.Card",
+    description: "Get in touch with the D.Card team for queries, feedback, or assistance regarding our banking comparison platform.",
+    canonicalUrl: "https://www.dcard.website/contact"
+  });
+
   const toast = useToast();
 
   const [form, setForm] = useState({

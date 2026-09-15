@@ -27,6 +27,7 @@ import CurrentAccountsComparePage from "./pages/CurrentAccountsComparePage";
 import CurrentAccountDetailPage from "./pages/CurrentAccountDetailPage";
 
 import { normalizeCard, deduplicateCards, parseAnnualFeeVal, parseCashbackVal, safeLower, safeIncludes, safeStr, safeMap } from "./utils/compareUtils";
+import { logRecentlyViewed } from "./utils/recentlyViewedUtils";
 
 // Lazy Loaded Heavy Components & Modals for Code Splitting
 const UserProfilePage = lazy(() => import("./components/UserProfilePage"));
@@ -37,6 +38,9 @@ const AdminLoginPage = lazy(() => import("./components/AdminLoginPage"));
 const CardDetailsModal = lazy(() => import("./components/CardDetailsModal"));
 const FirstLoginModal = lazy(() => import("./components/FirstLoginModal"));
 const AccessDeniedModal = lazy(() => import("./components/AccessDeniedModal"));
+const LoginPage = lazy(() => import("./pages/LoginPage"));
+const SignupPage = lazy(() => import("./pages/SignupPage"));
+const ForgotPasswordPage = lazy(() => import("./components/auth/ForgotPasswordPage"));
 
 import { cardService } from "./services/cardService";
 import { ToastProvider, useToast } from "./context/ToastContext";
@@ -237,16 +241,20 @@ function AppContent() {
 
   const [isDarkMode, setIsDarkMode] = useState(() => {
     try {
-      const saved = localStorage.getItem('isDarkMode');
-      if (saved !== null) return JSON.parse(saved);
+      const savedTheme = localStorage.getItem('dcard-theme');
+      if (savedTheme === 'dark') return true;
+      if (savedTheme === 'light') return false;
+
+      // Legacy fallback check
+      const savedLegacy = localStorage.getItem('isDarkMode');
+      if (savedLegacy !== null) {
+        return JSON.parse(savedLegacy) === true;
+      }
     } catch (e) {
-      console.warn("localStorage loading failed: ", e);
+      console.warn("localStorage theme loading failed: ", e);
     }
-    try {
-      return window.matchMedia('(prefers-color-scheme: dark)').matches;
-    } catch (e) {
-      return false;
-    }
+    // Default is always Light theme; do NOT automatically apply dark mode based on system preference
+    return false;
   });
 
   const [isAdminOpen, setIsAdminOpen] = useState(false);
@@ -258,7 +266,12 @@ function AppContent() {
   const [savingsCompareQueue, setSavingsCompareQueue] = useState([]);
   const [currentCompareQueue, setCurrentCompareQueue] = useState([]);
   const [compareDockHeight, setCompareDockHeight] = useState(0);
-  const [selectedCard, setSelectedCard] = useState(null);
+  const [selectedCard, setSelectedCardRaw] = useState(null);
+  // Thin wrapper: logs product to recently-viewed localStorage before showing detail modal
+  const setSelectedCard = useCallback((card) => {
+    if (card) logRecentlyViewed(card);
+    setSelectedCardRaw(card);
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 800);
@@ -317,7 +330,12 @@ function AppContent() {
   const toggleDarkMode = useCallback(() => {
     setIsDarkMode(prev => {
       const next = !prev;
-      localStorage.setItem('isDarkMode', JSON.stringify(next));
+      try {
+        localStorage.setItem('dcard-theme', next ? 'dark' : 'light');
+        localStorage.setItem('isDarkMode', JSON.stringify(next));
+      } catch (e) {
+        console.warn("localStorage theme saving failed: ", e);
+      }
       return next;
     });
   }, []);
@@ -1089,6 +1107,30 @@ function AppContent() {
                   </button>
                 </div>
               )
+            } 
+          />
+          <Route 
+            path="/login" 
+            element={
+              <Suspense fallback={<LoadingSkeleton />}>
+                <LoginPage />
+              </Suspense>
+            } 
+          />
+          <Route 
+            path="/signup" 
+            element={
+              <Suspense fallback={<LoadingSkeleton />}>
+                <SignupPage />
+              </Suspense>
+            } 
+          />
+          <Route 
+            path="/forgot-password" 
+            element={
+              <Suspense fallback={<LoadingSkeleton />}>
+                <ForgotPasswordPage />
+              </Suspense>
             } 
           />
         </Routes>

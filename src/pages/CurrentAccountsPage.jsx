@@ -24,6 +24,7 @@ import CurrentAccountDetailsModal from '../components/CurrentAccountDetailsModal
 import { currentAccountService } from '../services/currentAccountService';
 import { safeString, safeLower, safeArray, parseNumericValue } from '../utils/safeUtils';
 import { useNavigate } from 'react-router-dom';
+import { useSEO } from '../hooks/useSEO';
 
 const BANK_OPTIONS = [
   "State Bank of India",
@@ -70,6 +71,12 @@ const SORT_OPTIONS = [
 ];
 
 function CurrentAccountsPage({ onSelectDebitCard }) {
+  useSEO({
+    title: "Current Accounts in India – Compare Limits & Charges | D.Card",
+    description: "Compare business and commercial current accounts from top banks in India. Check average monthly balance and cash transaction limits on D.Card.",
+    canonicalUrl: "https://www.dcard.website/current-accounts"
+  });
+
   const navigate = useNavigate();
   const [accounts, setAccounts] = useState([]);
   const [loading, setLoading] = useState(true);

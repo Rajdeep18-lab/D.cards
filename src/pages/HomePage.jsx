@@ -11,6 +11,7 @@ import {
   CheckCircle2,
   Scale
 } from 'lucide-react';
+import { useSEO } from '../hooks/useSEO';
 
 function HomePage({
   query,
@@ -20,6 +21,12 @@ function HomePage({
   toggleCompareQueue,
   compareQueue = []
 }) {
+  useSEO({
+    title: "D.Card – Compare Debit Cards, Savings & Current Accounts in India",
+    description: "Compare debit cards, savings accounts and current accounts in India. Explore fees, benefits, eligibility and features with D.Card.",
+    canonicalUrl: "https://www.dcard.website/"
+  });
+
   const navigate = useNavigate();
 
   const handleHeroSearchSubmit = (searchVal) => {
