@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import HeroSection from '../components/HeroSection';
-import KotakRightSideAd from '../components/KotakRightSideAd';
+import CardOfTheMonthBanner from '../components/CardOfTheMonthBanner';
 import { 
   Sparkles, 
   Bot, 
@@ -44,11 +44,17 @@ function HomePage({
         onViewDetails={onViewDetails} 
       />
 
-      <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-16">
-        <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-10 xl:gap-12">
-          
-          {/* ── Left Column: Main Homepage Content ── */}
-          <div className="flex-1 w-full min-w-0 space-y-16 lg:space-y-20 order-1">
+      <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-16 space-y-12 sm:space-y-16">
+        {/* ── CARD OF THE MONTH PROMOTIONAL BANNER ── */}
+        <section aria-label="Card of the Month">
+          <CardOfTheMonthBanner 
+            activeCardsList={activeCardsList}
+            onViewDetails={onViewDetails}
+          />
+        </section>
+
+        {/* ── Main Homepage Content ── */}
+        <div className="w-full min-w-0 space-y-16 lg:space-y-20">
             
             {/* ── 2. PRODUCT DISCOVERY SECTION (Explore Banking Products) ── */}
             <section id="product-categories" className="select-none scroll-mt-24">
@@ -332,19 +338,6 @@ function HomePage({
             </p>
           </div>
         </section>
-
-          </div>
-
-          {/* ── Right Column: Dedicated Right-Side Advertisement Area ── */}
-          <aside 
-            aria-label="Card of the Month Advertisement"
-            className="w-full lg:w-[380px] xl:w-[420px] shrink-0 order-2 lg:sticky lg:top-24 z-20 pt-8 lg:pt-0"
-          >
-            <KotakRightSideAd 
-              activeCardsList={activeCardsList}
-              onViewDetails={onViewDetails}
-            />
-          </aside>
 
         </div>
       </main>
