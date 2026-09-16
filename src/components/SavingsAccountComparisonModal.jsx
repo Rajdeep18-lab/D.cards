@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Check, CheckCircle2, XCircle, CreditCard, Scale, Info, ExternalLink } from 'lucide-react';
 import { getAssociatedDebitCard, getAssociatedDebitCards } from '../data/mockSavingsAccounts';
+import BankLogo from './BankLogo';
 
 function SavingsAccountComparisonModal({ isOpen, onClose, compareQueue = [], onRemove, onSelectDebitCard }) {
   useEffect(() => {
@@ -94,9 +95,7 @@ function SavingsAccountComparisonModal({ isOpen, onClose, compareQueue = [], onR
                           </button>
                           
                           <div className="flex items-center gap-3 pr-8">
-                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0B3D91] to-[#2563EB] text-white flex items-center justify-center font-extrabold text-xs shrink-0">
-                              {acc.logo || acc.bank.substring(0, 2).toUpperCase()}
-                            </div>
+                            <BankLogo bankName={acc.bank} size="sm" />
                             <div>
                               <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block">{acc.bank}</span>
                               <h4 className="font-extrabold text-sm text-[#1F2937] dark:text-white leading-tight">{acc.accountName}</h4>
@@ -162,8 +161,8 @@ function SavingsAccountComparisonModal({ isOpen, onClose, compareQueue = [], onR
                               >
                                 ×
                               </button>
-                              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#0B3D91] to-[#2563EB] text-white flex items-center justify-center font-extrabold text-xs mx-auto shadow-xs">
-                                {acc.logo || acc.bank.substring(0, 2).toUpperCase()}
+                              <div className="flex justify-center">
+                                <BankLogo bankName={acc.bank} size="sm" />
                               </div>
                               <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block">{acc.bank}</span>
                               <h4 className="font-extrabold text-xs text-[#1F2937] dark:text-white leading-tight">{acc.accountName}</h4>

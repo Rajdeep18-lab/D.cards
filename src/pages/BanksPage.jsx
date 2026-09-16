@@ -40,6 +40,7 @@ import DebitCardCard from '../components/DebitCardCard';
 import SavingsAccountCard from '../components/SavingsAccountCard';
 import CurrentAccountCard from '../components/CurrentAccountCard';
 import BankBrandLogo from '../components/BankBrandLogo';
+import BankLogo from '../components/BankLogo';
 import IDFCTierEligibilityCalculator from '../components/IDFCTierEligibilityCalculator';
 import IDFCTierBenefitsComparison from '../components/IDFCTierBenefitsComparison';
 import ICICIBSavingsDetailView from '../components/ICICIBSavingsDetailView';
@@ -296,9 +297,7 @@ function BanksPage({
                   : 'bg-slate-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800'
               }`}
             >
-              <div className="w-5 h-5 rounded-md bg-white/20 flex items-center justify-center font-black text-[10px]">
-                {b.logoText}
-              </div>
+              <BankLogo bankName={b.name} size="xs" />
               <span>{b.name}</span>
             </button>
           ))}
@@ -315,8 +314,8 @@ function BanksPage({
 
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
           <div className="flex items-center gap-5">
-            <div className="w-20 h-20 rounded-3xl bg-white/15 backdrop-blur-xl border border-white/30 flex items-center justify-center font-black text-2xl shadow-xl shrink-0">
-              <BankBrandLogo bankName={canonicalName} className="w-12 h-12" />
+            <div className="w-20 h-20 rounded-3xl bg-white/95 dark:bg-slate-900/95 border border-white/40 flex items-center justify-center shadow-xl shrink-0 p-2">
+              <BankLogo bankName={canonicalName} size="lg" className="w-full h-full border-0 shadow-none bg-transparent" />
             </div>
 
             <div className="space-y-1">
@@ -578,9 +577,7 @@ function BanksPage({
                     <div className="space-y-3">
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#0B3D91] to-[#2563EB] text-white flex items-center justify-center font-black text-base shadow-md shrink-0">
-                            {account.logo || account.bank.substring(0, 2).toUpperCase()}
-                          </div>
+                          <BankLogo bankName={account.bank} size="md" />
                           <div>
                             <span className="text-[10.5px] font-bold uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA] block">
                               {account.bank}

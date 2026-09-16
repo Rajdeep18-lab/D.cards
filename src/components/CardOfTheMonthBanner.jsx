@@ -15,6 +15,7 @@ import {
   CreditCard
 } from 'lucide-react';
 import DebitCardVisual from './DebitCardVisual';
+import BankLogo from './BankLogo';
 import { debitCards } from '../data/mockData';
 
 /**
@@ -226,8 +227,8 @@ export default function CardOfTheMonthBanner({ activeCardsList = [], onViewDetai
               </span>
 
               {/* Bank Chip */}
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[11px] font-bold border border-slate-200 dark:border-slate-700">
-                <Building2 className="w-3 h-3 text-[#2563EB] dark:text-[#60A5FA]" />
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[11px] font-bold border border-slate-200 dark:border-slate-700">
+                <BankLogo bankName={activeSlide.bankKey} size="xs" />
                 <span>{activeSlide.bankKey}</span>
               </span>
 

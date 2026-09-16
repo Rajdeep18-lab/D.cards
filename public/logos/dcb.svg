@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">
+  <rect width="100" height="100" rx="16" fill="#00529B"/>
+  <rect x="25" y="25" width="50" height="50" rx="8" fill="#00A3E0" transform="rotate(45 50 50)"/>
+  <text x="50" y="58" text-anchor="middle" fill="#FFFFFF" font-size="20" font-weight="900" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">DCB</text>
+</svg>

@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useWishlist } from '../context/WishlistContext';
 import { debitCards } from '../data/mockData';
 import DebitCardVisual from './DebitCardVisual';
+import BankLogo from './BankLogo';
 import { useAuth } from '../hooks/useAuth';
 import { referralService } from '../services/referralService';
 import { useSEO } from '../hooks/useSEO';
@@ -378,12 +379,15 @@ function CardDetailsModal({ isOpen, onClose, card, compareQueue, toggleCompareQu
           <div className="sticky top-0 z-50 backdrop-blur-xl bg-[#04020c]/90 border-b border-blue-900/20 px-6 py-4 md:px-10 flex items-center justify-between gap-4">
             <div className="min-w-0">
 
-              <span className="text-[10px] font-black tracking-widest text-blue-400 uppercase flex items-center gap-1.5 flex-wrap">
-                <span>🏦</span> {bankName}
-                <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[8.5px] font-black border border-emerald-500/20 select-none tracking-widest ml-2 leading-none">
+              <div className="flex items-center gap-2 flex-wrap mb-1">
+                <BankLogo bankName={bankName} size="xs" />
+                <span className="text-[10.5px] font-black tracking-widest text-blue-400 uppercase">
+                  {bankName}
+                </span>
+                <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[8.5px] font-black border border-emerald-500/20 select-none tracking-widest leading-none">
                   <span>✓ VERIFIED OFFICIAL DATA</span>
                 </span>
-              </span>
+              </div>
               <h2 className="text-base md:text-lg font-extrabold text-slate-100 truncate leading-tight mt-0.5">{cardName}</h2>
             </div>
             

@@ -21,6 +21,7 @@ import { debitCards } from '../data/mockData';
 import { savingsAccounts, getAssociatedDebitCards } from '../data/mockSavingsAccounts';
 import { currentAccounts, getAssociatedDebitCardForCurrentAccount } from '../data/currentAccounts/index.js';
 import { getCoveredBanksDirectory, canonicalBankName } from '../utils/bankDirectoryUtils';
+import BankLogo from './BankLogo';
 
 const RECENT_SEARCHES_KEY = 'dcard_recent_searches_v1';
 const MAX_RECENT_SEARCHES = 6;
@@ -370,9 +371,7 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
                           className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-[#2563EB] transition-all cursor-pointer flex items-center justify-between gap-3 group"
                         >
                           <div className="flex items-center gap-2.5">
-                            <div className="w-8 h-8 rounded-xl bg-[#2563EB] text-white flex items-center justify-center font-black text-xs shrink-0">
-                              {b.logoText}
-                            </div>
+                            <BankLogo bankName={b.name} size="sm" />
                             <div>
                               <h4 className="font-extrabold text-slate-800 dark:text-white group-hover:text-[#2563EB] transition-colors leading-tight">
                                 {b.name}

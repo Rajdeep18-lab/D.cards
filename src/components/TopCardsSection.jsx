@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Trophy, Star, Heart, ArrowLeft, ArrowRight, ShieldCheck } from 'lucide-react';
 import { debitCards } from '../data/mockData';
 import { useWishlist } from '../context/WishlistContext';
+import BankLogo from './BankLogo';
 import { useAuth } from '../hooks/useAuth';
 
 const RANK_STYLES = [
@@ -93,9 +94,12 @@ function TopCardItem({ card, index, onViewDetails }) {
 
       {/* Bank name & Card title */}
       <div>
-        <span className="text-[10px] font-semibold tracking-wider uppercase text-[#6B7280] dark:text-slate-400 block">
-          {bankName}
-        </span>
+        <div className="flex items-center gap-1.5 mb-1">
+          <BankLogo bankName={bankName} size="xs" />
+          <span className="text-[10px] font-semibold tracking-wider uppercase text-[#6B7280] dark:text-slate-400 block truncate">
+            {bankName}
+          </span>
+        </div>
         <h3 className="text-sm sm:text-base font-bold text-[#1F2937] dark:text-white leading-tight mt-0.5">
           {cardName}
         </h3>

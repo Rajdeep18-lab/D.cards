@@ -21,7 +21,7 @@ import {
   Layers,
   ArrowUpRight
 } from 'lucide-react';
-import BankBrandLogo from './BankBrandLogo';
+import BankLogo from './BankLogo';
 import { getCoveredBanksDirectory, getInstitutionalProfileForBank } from '../utils/bankDirectoryUtils';
 
 function InstitutionalBankExplorer({ onSelectBank, onCompareCard, compareQueue = [], customCardsList = null }) {
@@ -93,9 +93,9 @@ function InstitutionalBankExplorer({ onSelectBank, onCompareCard, compareQueue =
                     : 'bg-white dark:bg-[#1E293B] text-[#1F2937] dark:text-slate-200 border-[#E5E7EB] dark:border-slate-700 hover:border-[#2563EB]/50'
                 }`}
               >
-                <BankBrandLogo 
+                <BankLogo 
                   bankName={b.name} 
-                  logoText={b.logoText} 
+                  size="sm" 
                   className="w-7 h-7 shadow-xs" 
                 />
                 <div className="text-left">
@@ -132,9 +132,9 @@ function InstitutionalBankExplorer({ onSelectBank, onCompareCard, compareQueue =
             {/* Left Side: Logo, Name, Meta & Official Link */}
             <div className="lg:col-span-6 space-y-4">
               <div className="flex items-center gap-4">
-                <BankBrandLogo 
+                <BankLogo 
                   bankName={profile.bankName} 
-                  logoText={bankObj.logoText} 
+                  size="xl" 
                   className="w-16 h-16 shadow-lg rounded-2xl" 
                 />
                 <div>

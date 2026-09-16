@@ -1,6 +1,7 @@
 import { useMemo, memo } from "react";
 import { Scale, CheckCircle2, XCircle, Star, Trophy, Bot, Plane, Globe } from "lucide-react";
 import DebitCardVisual from "./DebitCardVisual";
+import BankLogo from "./BankLogo";
 import {
   normalizeCard,
   deduplicateCards,
@@ -70,9 +71,12 @@ function ComparisonTable({ cards = [] }) {
       key: "bank",
       label: "Bank",
       render: (card) => (
-        <span className="font-bold text-[#1F2937] dark:text-white">
-          {card.bank || "N/A"}
-        </span>
+        <div className="flex items-center justify-center gap-2">
+          <BankLogo bankName={card.bank} size="xs" />
+          <span className="font-bold text-[#1F2937] dark:text-white">
+            {card.bank || "N/A"}
+          </span>
+        </div>
       )
     },
     {
@@ -322,9 +326,12 @@ function ComparisonTable({ cards = [] }) {
                   <DebitCardVisual mode="mini" card={card} />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <span className="text-[10px] font-bold text-[#2563EB] dark:text-[#60A5FA] uppercase block truncate">
-                    {card.bank || "Bank"}
-                  </span>
+                  <div className="flex items-center gap-1.5 mb-0.5">
+                    <BankLogo bankName={card.bank} size="xs" />
+                    <span className="text-[10px] font-bold text-[#2563EB] dark:text-[#60A5FA] uppercase block truncate">
+                      {card.bank || "Bank"}
+                    </span>
+                  </div>
                   <h4 className="text-sm font-extrabold text-[#1F2937] dark:text-white leading-tight truncate">
                     {card.cardName}
                   </h4>
@@ -371,8 +378,9 @@ function ComparisonTable({ cards = [] }) {
                   <div className="font-bold text-[#1F2937] dark:text-white text-xs">
                     {card.cardName}
                   </div>
-                  <div className="text-[10px] font-semibold text-[#2563EB] dark:text-[#60A5FA] mt-0.5">
-                    {card.bank}
+                  <div className="text-[10px] font-semibold text-[#2563EB] dark:text-[#60A5FA] mt-0.5 flex items-center justify-center gap-1.5">
+                    <BankLogo bankName={card.bank} size="xs" />
+                    <span>{card.bank}</span>
                   </div>
                 </th>
               ))}

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">
+  <rect width="100" height="100" rx="16" fill="#9E1B32"/>
+  <text x="50" y="46" text-anchor="middle" fill="#FFFFFF" font-size="28" font-weight="900" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">IDFC</text>
+  <text x="50" y="74" text-anchor="middle" fill="#FFC72C" font-size="20" font-weight="800" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">FIRST</text>
+</svg>

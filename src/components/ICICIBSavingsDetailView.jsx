@@ -28,7 +28,7 @@ import {
   Users
 } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
-import BankBrandLogo from './BankBrandLogo';
+import BankLogo from './BankLogo';
 
 /* ── ICICI SAVINGS ACCOUNT CHARGES EXPLORER DATA (One Savings Account Dataset ONLY) ── */
 const ICICI_SAVINGS_CHARGES_DATA = [
@@ -360,7 +360,7 @@ function ICICIBSavingsDetailView({ onSelectDebitCard }) {
           <div className="flex items-center gap-5">
             {/* ICICI Bank Logo */}
             <div className="w-20 h-20 rounded-3xl bg-white p-2.5 shadow-xl flex items-center justify-center shrink-0 border border-slate-200">
-              <BankBrandLogo bankName="ICICI Bank" className="w-14 h-14" />
+              <BankLogo bankName="ICICI Bank" size="lg" className="w-full h-full border-0 shadow-none bg-transparent" />
             </div>
 
             <div className="space-y-1">

@@ -26,6 +26,7 @@ import { currentAccountService } from '../services/currentAccountService';
 import { getAssociatedDebitCardsForCurrentAccount, getDebitCardRelationshipStatusForCurrentAccount } from '../data/currentAccounts/index.js';
 import { useWishlist } from '../context/WishlistContext';
 import LoadingSkeleton from '../components/LoadingSkeleton';
+import BankLogo from '../components/BankLogo';
 import { safeArray, safeString } from '../utils/safeUtils';
 import { useSEO } from '../hooks/useSEO';
 
@@ -176,9 +177,7 @@ function CurrentAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
       <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#0B3D91] to-[#2563EB] text-white font-black text-2xl flex items-center justify-center shadow-lg shadow-[#2563EB]/25 shrink-0">
-              {account.logo || bankName.substring(0, 2).toUpperCase()}
-            </div>
+            <BankLogo bankName={bankName} size="xl" />
             <div>
               <span className="text-xs font-black uppercase tracking-widest text-[#2563EB] dark:text-[#60A5FA] block">
                 🏦 {bankName} • CURRENT ACCOUNT

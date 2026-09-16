@@ -14,6 +14,7 @@ import {
 import { getAssociatedDebitCards } from '../data/mockSavingsAccounts';
 import { useWishlist } from '../context/WishlistContext';
 import { safeString, safeArray } from '../utils/safeUtils';
+import BankLogo from './BankLogo';
 
 function SavingsAccountDetailsModal({ isOpen, onClose, account, onSelectDebitCard, onToggleCompare, isCompared }) {
   const { isWishlisted, toggleWishlist } = useWishlist();
@@ -73,9 +74,7 @@ function SavingsAccountDetailsModal({ isOpen, onClose, account, onSelectDebitCar
           {/* Header */}
           <div className="p-5 sm:p-6 pb-4 border-b border-slate-100 dark:border-slate-800/80 flex items-center justify-between flex-shrink-0 bg-slate-50/60 dark:bg-slate-900/50">
             <div className="flex items-center gap-3.5 min-w-0">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#0B3D91] to-[#2563EB] text-white font-black text-lg flex items-center justify-center shadow-md shadow-[#2563EB]/25 flex-shrink-0">
-                {account.logo || bankName.substring(0, 2).toUpperCase()}
-              </div>
+              <BankLogo bankName={bankName} size="md" />
               <div className="min-w-0">
                 <span className="text-xs font-black uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA] block">
                   🏦 {bankName}

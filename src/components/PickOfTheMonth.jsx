@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Trophy, CheckCircle2, ArrowRight, ExternalLink } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { referralService } from '../services/referralService';
+import BankLogo from './BankLogo';
 
 function PickOfTheMonth({ card, onViewDetails }) {
   const [rotateX, setRotateX] = useState(0);
@@ -58,9 +59,12 @@ function PickOfTheMonth({ card, onViewDetails }) {
             <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight leading-tight">
               {card.cardName}
             </h2>
-            <p className="text-xs font-semibold text-[#60A5FA] uppercase tracking-widest mt-1">
-              {card.bank}
-            </p>
+            <div className="flex items-center gap-2 mt-1">
+              <BankLogo bankName={card.bank} size="xs" />
+              <p className="text-xs font-semibold text-[#60A5FA] uppercase tracking-widest">
+                {card.bank}
+              </p>
+            </div>
           </div>
 
           <p className="text-xs sm:text-sm text-slate-300 max-w-xl leading-relaxed font-normal">

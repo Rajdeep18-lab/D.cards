@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { motion } from "framer-motion";
 import { ShieldCheck, CheckCircle2, ArrowRight, Percent, CreditCard, Landmark } from "lucide-react";
-import BankBrandLogo from "./BankBrandLogo";
+import BankLogo from "./BankLogo";
 import { getBankBrandTheme } from "../utils/bankDirectoryUtils";
 
 function BankCard({ bank, onSelect }) {
@@ -35,9 +35,9 @@ function BankCard({ bank, onSelect }) {
         {/* Top Header: Official Bank Logo + Bank Name */}
         <div className="mb-4 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <BankBrandLogo 
+            <BankLogo 
               bankName={bankName} 
-              logoText={logoText} 
+              size="md" 
               className="w-12 h-12 shadow-md group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 shrink-0" 
             />
             <div>

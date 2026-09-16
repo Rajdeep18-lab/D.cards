@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useWishlist } from "../context/WishlistContext";
 import DebitCardVisual from "./DebitCardVisual";
+import BankLogo from "./BankLogo";
 
 function WishlistCardItem({ card, onViewDetails, onClose }) {
   const { removeFromWishlist } = useWishlist();
@@ -35,7 +36,10 @@ function WishlistCardItem({ card, onViewDetails, onClose }) {
         <p style={{ fontWeight: "700", fontSize: "13px", color: "#1F2937", margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
           {card.cardName}
         </p>
-        <p style={{ fontSize: "11px", color: "#2563EB", margin: "1px 0 0" }}>{card.bank}</p>
+        <div style={{ display: "flex", alignItems: "center", gap: "6px", margin: "2px 0 0" }}>
+          <BankLogo bankName={card.bank} size="xs" />
+          <p style={{ fontSize: "11px", color: "#2563EB", margin: 0, fontWeight: 600 }}>{card.bank}</p>
+        </div>
         <div style={{ display: "flex", gap: "8px", marginTop: "4px" }}>
           <span style={{ fontSize: "10px", color: "#555", background: "rgba(37,99,235,0.08)", padding: "1px 6px", borderRadius: "99px" }}>
             ₹{card.annualFee}/yr

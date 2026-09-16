@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Scale, ArrowLeft, Building2, CreditCard, Briefcase } from 'lucide-react';
 import { getAssociatedDebitCard, getAssociatedDebitCards } from '../data/mockSavingsAccounts';
+import BankLogo from '../components/BankLogo';
 import { useSEO } from '../hooks/useSEO';
 
 function SavingsAccountsComparePage({ compareQueue = [], setCompareQueue, onSelectDebitCard }) {
@@ -92,8 +93,8 @@ function SavingsAccountsComparePage({ compareQueue = [], setCompareQueue, onSele
                       >
                         ×
                       </button>
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0B3D91] to-[#2563EB] text-white flex items-center justify-center font-black text-xs mx-auto">
-                        {acc.logo || acc.bank.substring(0, 2).toUpperCase()}
+                      <div className="flex justify-center">
+                        <BankLogo bankName={acc.bank} size="md" />
                       </div>
                       <span className="text-[10px] font-bold text-slate-400 uppercase block">{acc.bank}</span>
                       <h3 className="font-extrabold text-sm text-[#1F2937] dark:text-white leading-tight">{acc.accountName}</h3>

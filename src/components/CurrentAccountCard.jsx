@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Heart, Scale, CheckCircle2, CreditCard, ChevronRight, Building2, Briefcase } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
+import BankLogo from './BankLogo';
 import { getAssociatedDebitCardsForCurrentAccount, getDebitCardRelationshipStatusForCurrentAccount } from '../data/currentAccounts/index.js';
 import { safeArray, safeString } from '../utils/safeUtils';
 
@@ -35,10 +36,8 @@ function CurrentAccountCard({ account, onViewDetails, onToggleCompare, isCompare
       <div className="p-5 sm:p-6 pb-4 border-b border-slate-100 dark:border-slate-800/80">
         <div className="flex items-start justify-between gap-3 mb-3">
           <div className="flex items-center gap-3">
-            {/* Bank Logo Avatar */}
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#0B3D91] to-[#2563EB] text-white flex items-center justify-center font-extrabold text-sm shadow-md shadow-[#2563EB]/20 flex-shrink-0">
-              {account.logo || bankName.substring(0, 2).toUpperCase()}
-            </div>
+            {/* Official Bank Logo */}
+            <BankLogo bankName={bankName} size="md" />
             <div>
               <span className="text-[11px] font-bold uppercase tracking-wider text-[#6B7280] dark:text-slate-400 block">
                 {bankName}
