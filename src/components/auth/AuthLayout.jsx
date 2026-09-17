@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { CreditCard, ArrowLeft } from 'lucide-react';
 import AuthBrandPanel from './AuthBrandPanel';
 
@@ -10,6 +10,8 @@ import AuthBrandPanel from './AuthBrandPanel';
  * Right: Clean, centered, accessible auth form container
  */
 export default function AuthLayout({ children, mode = 'login' }) {
+  const location = useLocation();
+
   return (
     <div className="min-h-screen w-full flex bg-[#070b14] text-slate-100 selection:bg-blue-600 selection:text-white font-sans relative overflow-hidden">
       {/* Background ambient lighting effects */}
@@ -53,6 +55,32 @@ export default function AuthLayout({ children, mode = 'login' }) {
 
         {/* Center Main Form */}
         <div className="my-auto py-6 w-full max-w-md mx-auto">
+          {/* Top Switcher Tabs: Sign In | Create Account */}
+          <div className="flex bg-slate-900/90 rounded-2xl p-1 mb-6 border border-slate-800 select-none">
+            <Link
+              to="/login"
+              state={location.state}
+              className={`flex-1 py-2.5 text-center text-xs font-extrabold rounded-xl transition-all cursor-pointer ${
+                mode === 'login'
+                  ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              Sign In
+            </Link>
+            <Link
+              to="/signup"
+              state={location.state}
+              className={`flex-1 py-2.5 text-center text-xs font-extrabold rounded-xl transition-all cursor-pointer ${
+                mode === 'signup'
+                  ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              Create Account
+            </Link>
+          </div>
+
           <motion.div
             key={mode}
             initial={{ opacity: 0, y: 16 }}

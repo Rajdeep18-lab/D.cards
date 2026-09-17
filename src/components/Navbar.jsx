@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { Sun, Moon, LogIn, Scale, Heart, Menu, X, User, LogOut, ChevronDown } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { useWishlist } from "../context/WishlistContext";
@@ -8,6 +8,7 @@ import TopDisclaimerTicker from "./TopDisclaimerTicker";
 function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOpenLegal }) {
   const { user, profile, logout } = useAuth();
   const { wishlist } = useWishlist();
+  const location = useLocation();
 
   const [scrolled, setScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

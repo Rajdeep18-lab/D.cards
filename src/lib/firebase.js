@@ -5,8 +5,6 @@ import {
   signInWithEmailAndPassword,
   signOut as firebaseSignOut,
   onAuthStateChanged,
-  GoogleAuthProvider,
-  signInWithPopup,
   sendPasswordResetEmail,
   sendEmailVerification,
   updateProfile as firebaseUpdateProfile,
@@ -66,16 +64,11 @@ export const db = getFirestore(app);
 // Initialize Firebase Storage instance
 export const storage = getStorage(app);
 
-// Initialize Google Auth Provider
-export const googleProvider = new GoogleAuthProvider();
-googleProvider.setCustomParameters({ prompt: 'select_account' });
-
 export {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   firebaseSignOut,
   onAuthStateChanged,
-  signInWithPopup,
   sendPasswordResetEmail,
   sendEmailVerification,
   firebaseUpdateProfile,

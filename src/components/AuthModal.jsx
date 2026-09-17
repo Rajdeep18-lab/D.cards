@@ -217,7 +217,7 @@ function AuthModal({ isOpen, onClose, onSuccessAction }) {
             </div>
             <div className="flex items-center gap-1.5">
               <Globe className="w-3.5 h-3.5 text-[#60A5FA]" />
-              <span>Google Secure</span>
+              <span>SSL Secured</span>
             </div>
             <div className="flex items-center gap-1.5">
               <Award className="w-3.5 h-3.5 text-emerald-400" />

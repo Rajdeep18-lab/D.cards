@@ -41,6 +41,7 @@ const AccessDeniedModal = lazy(() => import("./components/AccessDeniedModal"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 const SignupPage = lazy(() => import("./pages/SignupPage"));
 const ForgotPasswordPage = lazy(() => import("./components/auth/ForgotPasswordPage"));
+import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 import { cardService } from "./services/cardService";
 import { ToastProvider, useToast } from "./context/ToastContext";
@@ -372,10 +373,33 @@ function AppContent() {
     }
   }, [user, redirectTarget, setRedirectTarget, toggleWishlist, navigate]);
 
+  // Auto-open card details modal when card query param is present (e.g. redirected after login: /cards?card=4)
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const cardIdParam = params.get('card');
+    if (cardIdParam) {
+      const fullCard = debitCards.find(c => String(c.id) === String(cardIdParam));
+      if (fullCard) {
+        setSelectedCard(fullCard);
+      }
+    }
+  }, [location.search]);
+
   const handleSelectCardFromItem = useCallback((item) => {
+    if (!user) {
+      const cardId = item?.id;
+      const target = cardId ? `/cards?card=${cardId}` : '/cards';
+      try {
+        sessionStorage.setItem('dcard_auth_redirect', target);
+      } catch (e) {
+        console.warn('sessionStorage write error:', e);
+      }
+      navigate('/login', { state: { from: target } });
+      return;
+    }
     const fullCard = debitCards.find(c => c.id === item.id);
     if (fullCard) setSelectedCard(fullCard);
-  }, []);
+  }, [user, navigate]);
 
   const toggleFilter = useCallback((filter) => {
     setActiveFilters((previous) =>
@@ -824,6 +848,63 @@ function AppContent() {
     atmRange, posRange, sortBy, activeCardsList
   ]);
 
+  const cardsPageContent = (
+    <CardsPage
+      filteredCards={filteredCards}
+      activeFilters={activeFilters}
+      toggleFilter={toggleFilter}
+      clearFilters={clearFilters}
+      handleResetFilters={handleResetFilters}
+      sortBy={sortBy}
+      setSortBy={setSortBy}
+      feeRange={feeRange}
+      setFeeRange={setFeeRange}
+      balanceRange={balanceRange}
+      setBalanceRange={setBalanceRange}
+      atmRange={atmRange}
+      setAtmRange={setAtmRange}
+      posRange={posRange}
+      setPosRange={setPosRange}
+      minRating={minRating}
+      setMinRating={setMinRating}
+      minCashback={minCashback}
+      setMinCashback={setMinCashback}
+      selectedBanks={selectedBanks}
+      toggleBank={toggleBank}
+      selectedNetworks={selectedNetworks}
+      toggleNetwork={toggleNetwork}
+      selectedCategories={selectedCategories}
+      toggleCategory={toggleCategory}
+      selectedUserTypes={selectedUserTypes}
+      toggleUserType={toggleUserType}
+      selectedBankTypes={selectedBankTypes}
+      toggleBankType={toggleBankType}
+      selectedFeeTier={selectedFeeTier}
+      setSelectedFeeTier={setSelectedFeeTier}
+      selectedAtmLimitTier={selectedAtmLimitTier}
+      setSelectedAtmLimitTier={setSelectedAtmLimitTier}
+      selectedPosLimitTier={selectedPosLimitTier}
+      setSelectedPosLimitTier={setSelectedPosLimitTier}
+      selectedFeatures={selectedFeatures}
+      toggleFeature={toggleFeature}
+      handleLoadPreset={handleLoadPreset}
+      userProfile={userProfile}
+      handleApplyProfilePreset={handleApplyProfilePreset}
+      totalActiveFiltersCount={totalActiveFiltersCount}
+      isLoading={isLoading}
+      toggleCompareQueue={toggleCompareQueue}
+      compareQueue={compareQueue}
+      setSelectedCard={setSelectedCard}
+      STATIC_RANKINGS={STATIC_RANKINGS}
+      TOTAL_CARDS_COUNT={TOTAL_CARDS_COUNT}
+      VERIFIED_CARDS_COUNT={VERIFIED_CARDS_COUNT}
+      PENDING_VERIFY_COUNT={PENDING_VERIFY_COUNT}
+      RECENTLY_UPDATED_COUNT={RECENTLY_UPDATED_COUNT}
+      query={query}
+      setQuery={setQuery}
+    />
+  );
+
   return (
     <div className="min-h-screen text-textDark dark:text-secondary transition-colors duration-300 flex flex-col justify-between">
       <ScrollToTop />
@@ -831,13 +912,14 @@ function AppContent() {
       <Navbar
         isDarkMode={isDarkMode}
         toggleDarkMode={toggleDarkMode}
-        onOpenAuth={() => openAuthModal('required')}
+        onOpenAuth={() => navigate('/login')}
         compareCount={compareQueue.length}
         onOpenLegal={(tab) => { setLegalTab(tab || 'terms'); setIsLegalOpen(true); }}
       />
 
       <div className="flex-1">
         <Routes>
+          {/* 1. PUBLIC ROUTES (Accessible without authentication) */}
           <Route 
             path="/" 
             element={
@@ -856,257 +938,6 @@ function AppContent() {
                 savingsCompareQueue={savingsCompareQueue}
                 setSavingsCompareQueue={setSavingsCompareQueue}
               />
-            } 
-          />
-          <Route 
-            path="/cards" 
-            element={
-              <CardsPage
-                filteredCards={filteredCards}
-                activeFilters={activeFilters}
-                toggleFilter={toggleFilter}
-                clearFilters={clearFilters}
-                handleResetFilters={handleResetFilters}
-                sortBy={sortBy}
-                setSortBy={setSortBy}
-                feeRange={feeRange}
-                setFeeRange={setFeeRange}
-                balanceRange={balanceRange}
-                setBalanceRange={setBalanceRange}
-                atmRange={atmRange}
-                setAtmRange={setAtmRange}
-                posRange={posRange}
-                setPosRange={setPosRange}
-                minRating={minRating}
-                setMinRating={setMinRating}
-                minCashback={minCashback}
-                setMinCashback={setMinCashback}
-                selectedBanks={selectedBanks}
-                toggleBank={toggleBank}
-                selectedNetworks={selectedNetworks}
-                toggleNetwork={toggleNetwork}
-                selectedCategories={selectedCategories}
-                toggleCategory={toggleCategory}
-                selectedUserTypes={selectedUserTypes}
-                toggleUserType={toggleUserType}
-                selectedBankTypes={selectedBankTypes}
-                toggleBankType={toggleBankType}
-                selectedFeeTier={selectedFeeTier}
-                setSelectedFeeTier={setSelectedFeeTier}
-                selectedAtmLimitTier={selectedAtmLimitTier}
-                setSelectedAtmLimitTier={setSelectedAtmLimitTier}
-                selectedPosLimitTier={selectedPosLimitTier}
-                setSelectedPosLimitTier={setSelectedPosLimitTier}
-                selectedFeatures={selectedFeatures}
-                toggleFeature={toggleFeature}
-                handleLoadPreset={handleLoadPreset}
-                userProfile={userProfile}
-                handleApplyProfilePreset={handleApplyProfilePreset}
-                totalActiveFiltersCount={totalActiveFiltersCount}
-                isLoading={isLoading}
-                toggleCompareQueue={toggleCompareQueue}
-                compareQueue={compareQueue}
-                setSelectedCard={setSelectedCard}
-                STATIC_RANKINGS={STATIC_RANKINGS}
-                TOTAL_CARDS_COUNT={TOTAL_CARDS_COUNT}
-                VERIFIED_CARDS_COUNT={VERIFIED_CARDS_COUNT}
-                PENDING_VERIFY_COUNT={PENDING_VERIFY_COUNT}
-                RECENTLY_UPDATED_COUNT={RECENTLY_UPDATED_COUNT}
-                query={query}
-                setQuery={setQuery}
-              />
-            } 
-          />
-          <Route 
-            path="/savings-accounts" 
-            element={
-              <SavingsAccountsPage
-                onSelectDebitCard={(card) => setSelectedCard(card)}
-              />
-            } 
-          />
-          <Route 
-            path="/savings-accounts/:id" 
-            element={
-              <SavingsAccountDetailPage
-                onSelectDebitCard={(card) => setSelectedCard(card)}
-                onToggleCompare={(acc) => {
-                  setSavingsCompareQueue(prev => {
-                    if (prev.some(a => String(a.id) === String(acc.id))) return prev;
-                    if (prev.length >= 3) return prev;
-                    return [...prev, acc];
-                  });
-                }}
-                isCompared={false}
-              />
-            } 
-          />
-          <Route 
-            path="/compare-savings" 
-            element={
-              <SavingsAccountsComparePage
-                compareQueue={savingsCompareQueue}
-                setCompareQueue={setSavingsCompareQueue}
-                onSelectDebitCard={(card) => setSelectedCard(card)}
-              />
-            } 
-          />
-          <Route 
-            path="/current-accounts" 
-            element={
-              <CurrentAccountsPage
-                onSelectDebitCard={(card) => setSelectedCard(card)}
-              />
-            } 
-          />
-          <Route 
-            path="/current-accounts/:id" 
-            element={
-              <CurrentAccountDetailPage
-                onSelectDebitCard={(card) => setSelectedCard(card)}
-                onToggleCompare={(acc) => {
-                  setCurrentCompareQueue(prev => {
-                    if (prev.some(a => String(a.id) === String(acc.id))) return prev;
-                    if (prev.length >= 3) return prev;
-                    return [...prev, acc];
-                  });
-                }}
-                isCompared={false}
-              />
-            } 
-          />
-          <Route 
-            path="/compare-current" 
-            element={
-              <CurrentAccountsComparePage
-                compareQueue={currentCompareQueue}
-                setCompareQueue={setCurrentCompareQueue}
-                onSelectDebitCard={(card) => setSelectedCard(card)}
-              />
-            } 
-          />
-          <Route 
-            path="/compare" 
-            element={
-              <ComparePage
-                compareQueue={compareQueue}
-                setCompareQueue={setCompareQueue}
-                setSelectedCard={setSelectedCard}
-              />
-            } 
-          />
-          <Route 
-            path="/ai-advisor" 
-            element={
-              <AIAdvisorPage
-                onOpenContact={() => navigate('/contact')}
-                onSelectDebitCard={(card) => setSelectedCard(card)}
-                toggleCompareQueue={toggleCompareQueue}
-                setSavingsCompareQueue={setSavingsCompareQueue}
-              />
-            } 
-          />
-          <Route 
-            path="/saved-cards" 
-            element={
-              <SavedCardsPage
-                setSelectedCard={setSelectedCard}
-                toggleCompareQueue={toggleCompareQueue}
-                compareQueue={compareQueue}
-                userProfile={userProfile}
-                STATIC_RANKINGS={STATIC_RANKINGS}
-              />
-            } 
-          />
-          <Route 
-            path="/favorites" 
-            element={
-              <SavedCardsPage
-                setSelectedCard={setSelectedCard}
-                toggleCompareQueue={toggleCompareQueue}
-                compareQueue={compareQueue}
-                userProfile={userProfile}
-                STATIC_RANKINGS={STATIC_RANKINGS}
-              />
-            } 
-          />
-          <Route 
-            path="/banks" 
-            element={
-              <BanksPage
-                BANK_PROFILES={BANK_PROFILES}
-                toggleBank={toggleBank}
-                selectSingleBank={selectSingleBank}
-                activeCardsList={activeCardsList}
-                toggleCompareQueue={toggleCompareQueue}
-                compareQueue={compareQueue}
-                onSelectDebitCard={(card) => setSelectedCard(card)}
-                savingsCompareQueue={savingsCompareQueue}
-                setSavingsCompareQueue={setSavingsCompareQueue}
-                currentCompareQueue={currentCompareQueue}
-                setCurrentCompareQueue={setCurrentCompareQueue}
-              />
-            } 
-          />
-          <Route 
-            path="/banks/:id" 
-            element={
-              <BanksPage
-                BANK_PROFILES={BANK_PROFILES}
-                toggleBank={toggleBank}
-                selectSingleBank={selectSingleBank}
-                activeCardsList={activeCardsList}
-                toggleCompareQueue={toggleCompareQueue}
-                compareQueue={compareQueue}
-                onSelectDebitCard={(card) => setSelectedCard(card)}
-                savingsCompareQueue={savingsCompareQueue}
-                setSavingsCompareQueue={setSavingsCompareQueue}
-                currentCompareQueue={currentCompareQueue}
-                setCurrentCompareQueue={setCurrentCompareQueue}
-              />
-            } 
-          />
-          <Route 
-            path="/about" 
-            element={<AboutPage />} 
-          />
-          <Route 
-            path="/founders" 
-            element={<Navigate to="/about" replace />} 
-          />
-          <Route 
-            path="/team" 
-            element={<Navigate to="/about" replace />} 
-          />
-          <Route 
-            path="/contact" 
-            element={<ContactPage />} 
-          />
-          <Route 
-            path="/profile" 
-            element={
-              user ? (
-                <Suspense fallback={<LoadingSkeleton />}>
-                  <UserProfilePage
-                    activeTab={profileActiveTab}
-                    onSelectCard={(card) => setSelectedCard(card)}
-                    onCompareCards={(card) => toggleCompareQueue(card)}
-                    isDarkMode={isDarkMode}
-                    toggleDarkMode={toggleDarkMode}
-                  />
-                </Suspense>
-              ) : (
-                <div className="py-20 text-center space-y-4">
-                  <h2 className="text-2xl font-bold">Authentication Required</h2>
-                  <p className="text-sm text-gray-500">Please sign in to view your profile dashboard.</p>
-                  <button
-                    onClick={() => openAuthModal('login')}
-                    className="px-6 py-2.5 rounded-full bg-secondary text-white font-bold text-xs shadow-md"
-                  >
-                    Sign In Now
-                  </button>
-                </div>
-              )
             } 
           />
           <Route 
@@ -1133,6 +964,238 @@ function AppContent() {
               </Suspense>
             } 
           />
+
+          {/* 2. PROTECTED ROUTES (Centralized guard — authentication required) */}
+          <Route element={<ProtectedRoute />}>
+            {/* Debit Cards routes */}
+            <Route path="/cards" element={cardsPageContent} />
+            <Route path="/debit-cards" element={cardsPageContent} />
+            <Route path="/debit-cards/:id" element={cardsPageContent} />
+            <Route path="/debit-card/:id" element={cardsPageContent} />
+            <Route path="/product/:id" element={cardsPageContent} />
+
+            {/* Savings Accounts routes */}
+            <Route 
+              path="/savings-accounts" 
+              element={
+                <SavingsAccountsPage
+                  onSelectDebitCard={(card) => setSelectedCard(card)}
+                />
+              } 
+            />
+            <Route 
+              path="/savings" 
+              element={
+                <SavingsAccountsPage
+                  onSelectDebitCard={(card) => setSelectedCard(card)}
+                />
+              } 
+            />
+            <Route 
+              path="/savings-accounts/:id" 
+              element={
+                <SavingsAccountDetailPage
+                  onSelectDebitCard={(card) => setSelectedCard(card)}
+                  onToggleCompare={(acc) => {
+                    setSavingsCompareQueue(prev => {
+                      if (prev.some(a => String(a.id) === String(acc.id))) return prev;
+                      if (prev.length >= 3) return prev;
+                      return [...prev, acc];
+                    });
+                  }}
+                  isCompared={false}
+                />
+              } 
+            />
+            <Route 
+              path="/savings/:id" 
+              element={
+                <SavingsAccountDetailPage
+                  onSelectDebitCard={(card) => setSelectedCard(card)}
+                  onToggleCompare={(acc) => {
+                    setSavingsCompareQueue(prev => {
+                      if (prev.some(a => String(a.id) === String(acc.id))) return prev;
+                      if (prev.length >= 3) return prev;
+                      return [...prev, acc];
+                    });
+                  }}
+                  isCompared={false}
+                />
+              } 
+            />
+            <Route 
+              path="/compare-savings" 
+              element={
+                <SavingsAccountsComparePage
+                  compareQueue={savingsCompareQueue}
+                  setCompareQueue={setSavingsCompareQueue}
+                  onSelectDebitCard={(card) => setSelectedCard(card)}
+                />
+              } 
+            />
+
+            {/* Current Accounts routes */}
+            <Route 
+              path="/current-accounts" 
+              element={
+                <CurrentAccountsPage
+                  onSelectDebitCard={(card) => setSelectedCard(card)}
+                />
+              } 
+            />
+            <Route 
+              path="/current-accounts/:id" 
+              element={
+                <CurrentAccountDetailPage
+                  onSelectDebitCard={(card) => setSelectedCard(card)}
+                  onToggleCompare={(acc) => {
+                    setCurrentCompareQueue(prev => {
+                      if (prev.some(a => String(a.id) === String(acc.id))) return prev;
+                      if (prev.length >= 3) return prev;
+                      return [...prev, acc];
+                    });
+                  }}
+                  isCompared={false}
+                />
+              } 
+            />
+            <Route 
+              path="/compare-current" 
+              element={
+                <CurrentAccountsComparePage
+                  compareQueue={currentCompareQueue}
+                  setCompareQueue={setCurrentCompareQueue}
+                  onSelectDebitCard={(card) => setSelectedCard(card)}
+                />
+              } 
+            />
+
+            {/* Comparison route */}
+            <Route 
+              path="/compare" 
+              element={
+                <ComparePage
+                  compareQueue={compareQueue}
+                  setCompareQueue={setCompareQueue}
+                  setSelectedCard={setSelectedCard}
+                />
+              } 
+            />
+
+            {/* AI Advisor route */}
+            <Route 
+              path="/ai-advisor" 
+              element={
+                <AIAdvisorPage
+                  onOpenContact={() => navigate('/contact')}
+                  onSelectDebitCard={(card) => setSelectedCard(card)}
+                  toggleCompareQueue={toggleCompareQueue}
+                  setSavingsCompareQueue={setSavingsCompareQueue}
+                />
+              } 
+            />
+
+            {/* Saved & Favorites routes */}
+            <Route 
+              path="/saved-cards" 
+              element={
+                <SavedCardsPage
+                  setSelectedCard={setSelectedCard}
+                  toggleCompareQueue={toggleCompareQueue}
+                  compareQueue={compareQueue}
+                  userProfile={userProfile}
+                  STATIC_RANKINGS={STATIC_RANKINGS}
+                />
+              } 
+            />
+            <Route 
+              path="/favorites" 
+              element={
+                <SavedCardsPage
+                  setSelectedCard={setSelectedCard}
+                  toggleCompareQueue={toggleCompareQueue}
+                  compareQueue={compareQueue}
+                  userProfile={userProfile}
+                  STATIC_RANKINGS={STATIC_RANKINGS}
+                />
+              } 
+            />
+
+            {/* Bank profiles routes */}
+            <Route 
+              path="/banks" 
+              element={
+                <BanksPage
+                  BANK_PROFILES={BANK_PROFILES}
+                  toggleBank={toggleBank}
+                  selectSingleBank={selectSingleBank}
+                  activeCardsList={activeCardsList}
+                  toggleCompareQueue={toggleCompareQueue}
+                  compareQueue={compareQueue}
+                  onSelectDebitCard={(card) => setSelectedCard(card)}
+                  savingsCompareQueue={savingsCompareQueue}
+                  setSavingsCompareQueue={setSavingsCompareQueue}
+                  currentCompareQueue={currentCompareQueue}
+                  setCurrentCompareQueue={setCurrentCompareQueue}
+                />
+              } 
+            />
+            <Route 
+              path="/banks/:id" 
+              element={
+                <BanksPage
+                  BANK_PROFILES={BANK_PROFILES}
+                  toggleBank={toggleBank}
+                  selectSingleBank={selectSingleBank}
+                  activeCardsList={activeCardsList}
+                  toggleCompareQueue={toggleCompareQueue}
+                  compareQueue={compareQueue}
+                  onSelectDebitCard={(card) => setSelectedCard(card)}
+                  savingsCompareQueue={savingsCompareQueue}
+                  setSavingsCompareQueue={setSavingsCompareQueue}
+                  currentCompareQueue={currentCompareQueue}
+                  setCurrentCompareQueue={setCurrentCompareQueue}
+                />
+              } 
+            />
+
+            {/* Informational internal pages */}
+            <Route 
+              path="/about" 
+              element={<AboutPage />} 
+            />
+            <Route 
+              path="/founders" 
+              element={<Navigate to="/about" replace />} 
+            />
+            <Route 
+              path="/team" 
+              element={<Navigate to="/about" replace />} 
+            />
+            <Route 
+              path="/contact" 
+              element={<ContactPage />} 
+            />
+
+            {/* User Profile */}
+            <Route 
+              path="/profile" 
+              element={
+                <Suspense fallback={<LoadingSkeleton />}>
+                  <UserProfilePage
+                    activeTab={profileActiveTab}
+                    onSelectCard={(card) => setSelectedCard(card)}
+                    onCompareCards={(card) => toggleCompareQueue(card)}
+                    isDarkMode={isDarkMode}
+                    toggleDarkMode={toggleDarkMode}
+                  />
+                </Suspense>
+              } 
+            />
+
+            {/* Catch-all unknown routes inside protected scope */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Route>
         </Routes>
       </div>
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { AlertCircle, CheckCircle2, User, Mail, ShieldCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../hooks/useAuth';
@@ -11,8 +11,29 @@ import AuthButton from './AuthButton';
  * SignupForm — Modern, accessible registration form component for D.CARD.
  */
 export default function SignupForm() {
-  const { signUp, loginWithGoogle } = useAuth();
+  const { signUp } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Helper to determine the target route to redirect to after successful signup
+  const getTargetRedirect = () => {
+    const fromState = location.state?.from;
+    if (fromState?.pathname && fromState.pathname !== '/login' && fromState.pathname !== '/signup') {
+      return fromState.pathname + (fromState.search || '') + (fromState.hash || '');
+    }
+    if (typeof fromState === 'string' && fromState !== '/login' && fromState !== '/signup') {
+      return fromState;
+    }
+    try {
+      const saved = sessionStorage.getItem('dcard_auth_redirect');
+      if (saved && saved !== '/login' && saved !== '/signup') {
+        return saved;
+      }
+    } catch (e) {
+      // ignore
+    }
+    return '/';
+  };
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -24,7 +45,6 @@ export default function SignupForm() {
   const [fieldErrors, setFieldErrors] = useState({});
   const [generalError, setGeneralError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
   const [signupSuccess, setSignupSuccess] = useState(false);
 
   const validateForm = () => {
@@ -63,18 +83,9 @@ export default function SignupForm() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-
     if (fieldErrors[name]) {
       setFieldErrors((prev) => ({ ...prev, [name]: '' }));
     }
-
-    // Live confirm password validation
-    if (name === 'confirmPassword' && formData.password && value !== formData.password) {
-      setFieldErrors((prev) => ({ ...prev, confirmPassword: 'Passwords do not match' }));
-    } else if (name === 'confirmPassword' && value === formData.password) {
-      setFieldErrors((prev) => ({ ...prev, confirmPassword: '' }));
-    }
-
     if (generalError) {
       setGeneralError('');
     }
@@ -84,14 +95,17 @@ export default function SignupForm() {
     const code = err?.code || '';
     const message = err?.message || '';
 
-    if (code === 'auth/email-already-in-use' || message.includes('email-already-in-use')) {
-      return 'An account with this email address already exists. Please sign in instead.';
+    if (code === 'auth/email-already-in-use') {
+      return 'An account with this email already exists. Please sign in instead.';
     }
     if (code === 'auth/weak-password') {
-      return 'The password is too weak. Please use at least 6 characters including numbers and symbols.';
+      return 'Password is too weak. Please choose a stronger password.';
+    }
+    if (code === 'auth/invalid-email') {
+      return 'Invalid email address provided.';
     }
     if (code === 'auth/network-request-failed') {
-      return 'Network connection issue. Please check your internet and retry.';
+      return 'Network connection error. Please check your internet and try again.';
     }
     return message || 'Account registration failed. Please try again.';
   };
@@ -110,29 +124,18 @@ export default function SignupForm() {
         fullName: formData.fullName.trim(),
       });
       setSignupSuccess(true);
+      const target = getTargetRedirect();
+      try {
+        sessionStorage.removeItem('dcard_auth_redirect');
+      } catch (err) {
+        // ignore
+      }
       setTimeout(() => {
-        navigate('/', { replace: true });
-      }, 1500);
+        navigate(target, { replace: true });
+      }, 1200);
     } catch (err) {
       setGeneralError(humanizeError(err));
       setIsSubmitting(false);
-    }
-  };
-
-  const handleGoogleSignUp = async () => {
-    setGeneralError('');
-    setIsGoogleSubmitting(true);
-    try {
-      await loginWithGoogle();
-      setSignupSuccess(true);
-      setTimeout(() => {
-        navigate('/', { replace: true });
-      }, 1000);
-    } catch (err) {
-      if (err?.code !== 'auth/popup-closed-by-user') {
-        setGeneralError(humanizeError(err));
-      }
-      setIsGoogleSubmitting(false);
     }
   };
 
@@ -181,29 +184,6 @@ export default function SignupForm() {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Google Single Sign-On Button */}
-      <div className="mb-5">
-        <AuthButton
-          type="button"
-          variant="google"
-          disabled={isSubmitting || signupSuccess}
-          loading={isGoogleSubmitting}
-          loadingText="Connecting to Google..."
-          onClick={handleGoogleSignUp}
-        >
-          Sign up with Google
-        </AuthButton>
-      </div>
-
-      {/* Divider */}
-      <div className="relative flex items-center justify-center my-6">
-        <div className="border-t border-slate-800 w-full" />
-        <span className="bg-[#070b14] px-4 text-xs font-semibold uppercase tracking-wider text-slate-500 shrink-0">
-          Or register with email
-        </span>
-        <div className="border-t border-slate-800 w-full" />
-      </div>
 
       {/* Sign Up Form */}
       <form onSubmit={handleSubmit} noValidate className="space-y-4">
@@ -281,7 +261,7 @@ export default function SignupForm() {
             type="submit"
             loading={isSubmitting}
             loadingText="Creating account..."
-            disabled={signupSuccess || isGoogleSubmitting}
+            disabled={signupSuccess || isSubmitting}
           >
             Create Account
           </AuthButton>
@@ -294,6 +274,7 @@ export default function SignupForm() {
           Already have an account?{' '}
           <Link
             to="/login"
+            state={location.state}
             className="font-bold text-blue-400 hover:text-blue-300 transition-colors ml-1 focus:outline-none focus:underline"
           >
             Sign in

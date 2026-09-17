@@ -39,13 +39,6 @@ export const authService = {
   },
 
   /**
-   * Logs in with Google Sign-In
-   */
-  async loginWithGoogle() {
-    return await firebaseAuthService.loginWithGoogle();
-  },
-
-  /**
    * Terminates active user session
    */
   async logout() {

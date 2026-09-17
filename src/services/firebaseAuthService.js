@@ -3,10 +3,8 @@ import {
   db,
   doc,
   setDoc,
-  googleProvider,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  signInWithPopup,
   firebaseSignOut,
   sendPasswordResetEmail,
   sendEmailVerification,
@@ -110,67 +108,6 @@ export const firebaseAuthService = {
   },
 
   /**
-   * Log in user with Google Auth Popup
-   */
-  async loginWithGoogle() {
-    try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const user = result.user;
-      const createdAtTimestamp = new Date().toISOString();
-
-      const userData = {
-        uid: user.uid,
-        name: user.displayName || 'Google User',
-        email: user.email,
-        city: '',
-        state: '',
-        profileImage: user.photoURL || '',
-        createdAt: createdAtTimestamp
-      };
-
-      try {
-        await setDoc(doc(db, 'users', user.uid), userData, { merge: true });
-        await setDoc(doc(db, 'profiles', user.uid), {
-          ...userData,
-          id: user.uid,
-          full_name: user.displayName || 'Google User',
-          email_verified: true,
-          auth_provider: 'google',
-          user_type: 'Working Professional',
-          created_at: createdAtTimestamp
-        }, { merge: true });
-      } catch (err) {
-        console.warn('[Firestore users collection Google auth warning]:', err.message);
-      }
-
-      // Store/Update profile metadata for Google users
-      let profile = this.getStoredProfile(user);
-      if (!profile) {
-        profile = {
-          id: user.uid,
-          uid: user.uid,
-          email: user.email,
-          full_name: user.displayName || 'Google User',
-          name: user.displayName || 'Google User',
-          avatar_url: user.photoURL || '',
-          profileImage: user.photoURL || '',
-          email_verified: true,
-          auth_provider: 'google',
-          user_type: 'Working Professional',
-          created_at: createdAtTimestamp,
-          createdAt: createdAtTimestamp
-        };
-        localStorage.setItem(`dcard_firebase_profile_${user.uid}`, JSON.stringify(profile));
-      }
-
-      return { user, profile };
-    } catch (error) {
-      console.error('Firebase Google Auth Error:', error);
-      throw new Error(this.formatErrorMessage(error));
-    }
-  },
-
-  /**
    * Sign out active Firebase user
    */
   async logout() {
@@ -260,8 +197,6 @@ export const firebaseAuthService = {
         return 'Password should be at least 6 characters long.';
       case 'auth/invalid-email':
         return 'Please enter a valid email address.';
-      case 'auth/popup-closed-by-user':
-        return 'Google Sign-In was cancelled.';
       case 'auth/network-request-failed':
         return 'Network connection error. Please check your internet connection.';
       default:

@@ -109,27 +109,6 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const loginWithGoogle = async () => {
-    try {
-      const res = await firebaseAuthService.loginWithGoogle();
-      setUser({
-        ...res.user,
-        id: res.user.uid,
-        uid: res.user.uid,
-        email: res.user.email,
-        displayName: res.user.displayName,
-        photoURL: res.user.photoURL
-      });
-      setProfile(res.profile);
-      setIsAuthModalOpen(false);
-      toast(`Signed in as ${res.user.displayName || res.user.email} via Google! 🚀`, "success");
-      return res;
-    } catch (err) {
-      toast(err.message || "Google Sign-In failed.", "error");
-      throw err;
-    }
-  };
-
   const logout = async () => {
     try {
       await firebaseAuthService.logout();
@@ -203,7 +182,6 @@ export function AuthProvider({ children }) {
         openAuthModal,
         signUp,
         login,
-        loginWithGoogle,
         logout,
         forgotPassword,
         updateProfile,

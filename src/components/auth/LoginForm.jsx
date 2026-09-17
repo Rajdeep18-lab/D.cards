@@ -11,12 +11,29 @@ import AuthButton from './AuthButton';
  * LoginForm — Modern, secure, accessible login form component for D.CARD.
  */
 export default function LoginForm() {
-  const { login, loginWithGoogle } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Target to redirect after successful login
-  const from = location.state?.from?.pathname || '/';
+  // Helper to determine the target route to redirect to after successful login
+  const getTargetRedirect = () => {
+    const fromState = location.state?.from;
+    if (fromState?.pathname && fromState.pathname !== '/login' && fromState.pathname !== '/signup') {
+      return fromState.pathname + (fromState.search || '') + (fromState.hash || '');
+    }
+    if (typeof fromState === 'string' && fromState !== '/login' && fromState !== '/signup') {
+      return fromState;
+    }
+    try {
+      const saved = sessionStorage.getItem('dcard_auth_redirect');
+      if (saved && saved !== '/login' && saved !== '/signup') {
+        return saved;
+      }
+    } catch (e) {
+      // ignore
+    }
+    return '/';
+  };
 
   const [formData, setFormData] = useState({
     email: '',
@@ -27,7 +44,6 @@ export default function LoginForm() {
   const [fieldErrors, setFieldErrors] = useState({});
   const [generalError, setGeneralError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
   const [loginSuccess, setLoginSuccess] = useState(false);
 
   const validateForm = () => {
@@ -92,29 +108,18 @@ export default function LoginForm() {
     try {
       await login(formData.email.trim(), formData.password);
       setLoginSuccess(true);
+      const target = getTargetRedirect();
+      try {
+        sessionStorage.removeItem('dcard_auth_redirect');
+      } catch (err) {
+        // ignore
+      }
       setTimeout(() => {
-        navigate(from, { replace: true });
+        navigate(target, { replace: true });
       }, 750);
     } catch (err) {
       setGeneralError(humanizeError(err));
       setIsSubmitting(false);
-    }
-  };
-
-  const handleGoogleSignIn = async () => {
-    setGeneralError('');
-    setIsGoogleSubmitting(true);
-    try {
-      await loginWithGoogle();
-      setLoginSuccess(true);
-      setTimeout(() => {
-        navigate(from, { replace: true });
-      }, 750);
-    } catch (err) {
-      if (err?.code !== 'auth/popup-closed-by-user') {
-        setGeneralError(humanizeError(err));
-      }
-      setIsGoogleSubmitting(false);
     }
   };
 
@@ -160,29 +165,6 @@ export default function LoginForm() {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Google Single Sign-On Button */}
-      <div className="mb-5">
-        <AuthButton
-          type="button"
-          variant="google"
-          disabled={isSubmitting || loginSuccess}
-          loading={isGoogleSubmitting}
-          loadingText="Connecting to Google..."
-          onClick={handleGoogleSignIn}
-        >
-          Continue with Google
-        </AuthButton>
-      </div>
-
-      {/* Divider */}
-      <div className="relative flex items-center justify-center my-6">
-        <div className="border-t border-slate-800 w-full" />
-        <span className="bg-[#070b14] px-4 text-xs font-semibold uppercase tracking-wider text-slate-500 shrink-0">
-          Or sign in with email
-        </span>
-        <div className="border-t border-slate-800 w-full" />
-      </div>
 
       {/* Sign In Form */}
       <form onSubmit={handleSubmit} noValidate className="space-y-4">
@@ -248,7 +230,7 @@ export default function LoginForm() {
             type="submit"
             loading={isSubmitting}
             loadingText="Signing in..."
-            disabled={loginSuccess || isGoogleSubmitting}
+            disabled={loginSuccess || isSubmitting}
           >
             Sign In
           </AuthButton>
@@ -261,6 +243,7 @@ export default function LoginForm() {
           Don't have an account?{' '}
           <Link
             to="/signup"
+            state={location.state}
             className="font-bold text-blue-400 hover:text-blue-300 transition-colors ml-1 focus:outline-none focus:underline"
           >
             Create an account
