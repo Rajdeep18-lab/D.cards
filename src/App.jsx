@@ -37,11 +37,17 @@ const AdminDashboardModal = lazy(() => import("./components/AdminDashboardModal"
 const AdminLoginPage = lazy(() => import("./components/AdminLoginPage"));
 const CardDetailsModal = lazy(() => import("./components/CardDetailsModal"));
 const FirstLoginModal = lazy(() => import("./components/FirstLoginModal"));
-const AccessDeniedModal = lazy(() => import("./components/AccessDeniedModal"));
-const LoginPage = lazy(() => import("./pages/LoginPage"));
-const SignupPage = lazy(() => import("./pages/SignupPage"));
-const ForgotPasswordPage = lazy(() => import("./components/auth/ForgotPasswordPage"));
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+
+function AuthRedirectHandler({ defaultTab = "login" }) {
+  const { openAuthModal } = useAuth();
+  useEffect(() => {
+    if (openAuthModal) {
+      openAuthModal(defaultTab);
+    }
+  }, [defaultTab, openAuthModal]);
+  return <Navigate to="/" replace />;
+}
 
 import { cardService } from "./services/cardService";
 import { ToastProvider, useToast } from "./context/ToastContext";
@@ -343,35 +349,58 @@ function AppContent() {
 
   // Post-Login Intent Routing Handler
   const handleAuthSuccessResume = useCallback(async () => {
-    if (!user) return;
+    let target = redirectTarget;
+    if (!target) {
+      try {
+        target = sessionStorage.getItem('dcard_auth_redirect');
+      } catch (e) {
+        // ignore
+      }
+    }
 
-    if (redirectTarget) {
-      if (redirectTarget.startsWith('profile-')) {
-        const tab = redirectTarget.replace('profile-', '');
+    if (target) {
+      try {
+        sessionStorage.removeItem('dcard_auth_redirect');
+      } catch (e) {}
+      setRedirectTarget(null);
+
+      if (target.startsWith('profile-')) {
+        const tab = target.replace('profile-', '');
         navigate('/profile');
         setProfileActiveTab(tab);
-      } else if (redirectTarget === 'profile' || redirectTarget === 'saved') {
-        navigate(redirectTarget === 'saved' ? '/favorites' : '/profile');
+      } else if (target === 'profile' || target === 'saved') {
+        navigate(target === 'saved' ? '/favorites' : '/profile');
         setProfileActiveTab('profile');
-      } else if (redirectTarget.startsWith('apply-')) {
-        const cardId = parseInt(redirectTarget.replace('apply-', ''), 10);
+      } else if (target.startsWith('apply-')) {
+        const cardId = parseInt(target.replace('apply-', ''), 10);
         const card = debitCards.find(c => c.id === cardId);
         if (card && card.applyUrl) {
           window.open(card.applyUrl, '_blank', 'noopener,noreferrer');
         }
-      } else if (redirectTarget.startsWith('save-card-')) {
-        const cardId = parseInt(redirectTarget.replace('save-card-', ''), 10);
+      } else if (target.startsWith('save-card-')) {
+        const cardId = parseInt(target.replace('save-card-', ''), 10);
         const card = debitCards.find(c => c.id === cardId);
         if (card && toggleWishlist) {
           toggleWishlist(card);
         }
+      } else if (target.startsWith('/')) {
+        navigate(target);
+      } else {
+        navigate(`/${target}`);
       }
-      setRedirectTarget(null);
-    } else {
-      navigate('/profile');
-      setProfileActiveTab('profile');
     }
-  }, [user, redirectTarget, setRedirectTarget, toggleWishlist, navigate]);
+  }, [redirectTarget, setRedirectTarget, toggleWishlist, navigate]);
+
+  const handleCloseAuthModal = useCallback(() => {
+    setIsAuthModalOpen(false);
+    const protectedPrefixes = [
+      '/cards', '/debit-card', '/product', '/savings', '/current', '/compare', '/saved-cards', '/favorites', '/profile', '/banks'
+    ];
+    const isProtected = protectedPrefixes.some(p => location.pathname.startsWith(p));
+    if (!user && isProtected) {
+      navigate('/', { replace: true });
+    }
+  }, [setIsAuthModalOpen, user, location.pathname, navigate]);
 
   // Auto-open card details modal when card query param is present (e.g. redirected after login: /cards?card=4)
   useEffect(() => {
@@ -389,17 +418,12 @@ function AppContent() {
     if (!user) {
       const cardId = item?.id;
       const target = cardId ? `/cards?card=${cardId}` : '/cards';
-      try {
-        sessionStorage.setItem('dcard_auth_redirect', target);
-      } catch (e) {
-        console.warn('sessionStorage write error:', e);
-      }
-      navigate('/login', { state: { from: target } });
+      openAuthModal('login', target);
       return;
     }
     const fullCard = debitCards.find(c => c.id === item.id);
     if (fullCard) setSelectedCard(fullCard);
-  }, [user, navigate]);
+  }, [user, openAuthModal]);
 
   const toggleFilter = useCallback((filter) => {
     setActiveFilters((previous) =>
@@ -912,7 +936,7 @@ function AppContent() {
       <Navbar
         isDarkMode={isDarkMode}
         toggleDarkMode={toggleDarkMode}
-        onOpenAuth={() => navigate('/login')}
+        onOpenAuth={() => openAuthModal('login')}
         compareCount={compareQueue.length}
         onOpenLegal={(tab) => { setLegalTab(tab || 'terms'); setIsLegalOpen(true); }}
       />
@@ -942,27 +966,15 @@ function AppContent() {
           />
           <Route 
             path="/login" 
-            element={
-              <Suspense fallback={<LoadingSkeleton />}>
-                <LoginPage />
-              </Suspense>
-            } 
+            element={<AuthRedirectHandler defaultTab="login" />} 
           />
           <Route 
             path="/signup" 
-            element={
-              <Suspense fallback={<LoadingSkeleton />}>
-                <SignupPage />
-              </Suspense>
-            } 
+            element={<AuthRedirectHandler defaultTab="signup" />} 
           />
           <Route 
             path="/forgot-password" 
-            element={
-              <Suspense fallback={<LoadingSkeleton />}>
-                <ForgotPasswordPage />
-              </Suspense>
-            } 
+            element={<AuthRedirectHandler defaultTab="forgot" />} 
           />
 
           {/* 2. PROTECTED ROUTES (Centralized guard — authentication required) */}
@@ -1207,7 +1219,7 @@ function AppContent() {
       {/* Global Modals */}
       <AuthModal 
         isOpen={isAuthModalOpen} 
-        onClose={() => setIsAuthModalOpen(false)} 
+        onClose={handleCloseAuthModal} 
         onSuccessAction={handleAuthSuccessResume}
       />
 
@@ -1249,7 +1261,13 @@ function AppContent() {
       <ComparisonDock
         compareQueue={compareQueue}
         onRemove={(cardId) => setCompareQueue(prev => prev.filter(c => String(c.id) !== String(cardId)))}
-        onCompareNow={() => navigate('/compare')}
+        onCompareNow={() => {
+          if (!user) {
+            openAuthModal('login', '/compare');
+          } else {
+            navigate('/compare');
+          }
+        }}
         onClear={() => setCompareQueue([])}
         onHeightChange={setCompareDockHeight}
       />

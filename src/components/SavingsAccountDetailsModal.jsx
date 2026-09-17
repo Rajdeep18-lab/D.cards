@@ -259,9 +259,9 @@ function SavingsAccountDetailsModal({ isOpen, onClose, account, onSelectDebitCar
 
           {/* Footer Action Buttons */}
           <div className="p-4 sm:p-5 border-t border-slate-100 dark:border-slate-800/80 bg-slate-50/80 dark:bg-slate-900/50 flex flex-col sm:flex-row items-center justify-between gap-3 flex-shrink-0">
-            {(account.officialSourceUrl || account.source) ? (
+            {(account.officialSourceUrl || account.source || account.applyUrl || account.officialUrl || account.websiteUrl || account.bankUrl) ? (
               <a
-                href={account.officialSourceUrl || account.source}
+                href={account.officialSourceUrl || account.source || account.applyUrl || account.officialUrl || account.websiteUrl || account.bankUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white font-extrabold text-xs transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-95"

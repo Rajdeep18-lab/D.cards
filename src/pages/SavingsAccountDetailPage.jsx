@@ -202,9 +202,9 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
             </div>
           </div>
 
-          {(account.officialSourceUrl || account.source) && (
+          {(account.officialSourceUrl || account.source || account.applyUrl || account.officialUrl || account.websiteUrl || account.bankUrl) && (
             <a
-              href={account.officialSourceUrl || account.source}
+              href={account.officialSourceUrl || account.source || account.applyUrl || account.officialUrl || account.websiteUrl || account.bankUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="px-6 py-3 rounded-2xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:shadow-lg hover:shadow-[#2563EB]/25 text-white font-extrabold text-xs transition-all shadow cursor-pointer active:scale-95 flex items-center gap-2"

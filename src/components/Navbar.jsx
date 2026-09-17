@@ -6,7 +6,7 @@ import { useWishlist } from "../context/WishlistContext";
 import TopDisclaimerTicker from "./TopDisclaimerTicker";
 
 function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOpenLegal }) {
-  const { user, profile, logout } = useAuth();
+  const { user, profile, logout, openAuthModal } = useAuth();
   const { wishlist } = useWishlist();
   const location = useLocation();
 
@@ -23,17 +23,37 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
   }, []);
 
   const navLinks = [
-    { name: "Home", path: "/", end: true },
-    { name: "Debit Cards", path: "/cards" },
-    { name: "Savings Accounts", path: "/savings-accounts" },
-    { name: "Current Accounts", path: "/current-accounts" },
-    { name: "Compare", path: "/compare" },
-    { name: "Favourites", path: "/saved-cards" },
-    { name: "AI Advisor", path: "/ai-advisor" },
-    { name: "Banks", path: "/banks" },
-    { name: "About", path: "/about" },
-    { name: "Contact", path: "/contact" },
+    { name: "Home", path: "/", end: true, isProtected: false },
+    { name: "Debit Cards", path: "/cards", isProtected: true },
+    { name: "Savings Accounts", path: "/savings-accounts", isProtected: true },
+    { name: "Current Accounts", path: "/current-accounts", isProtected: true },
+    { name: "Compare", path: "/compare", isProtected: true },
+    { name: "Favourites", path: "/saved-cards", isProtected: true },
+    { name: "AI Advisor", path: "/ai-advisor", isProtected: true },
+    { name: "Banks", path: "/banks", isProtected: true },
+    { name: "About", path: "/about", isProtected: false },
+    { name: "Contact", path: "/contact", isProtected: false },
   ];
+
+  const handleProtectedClick = (e, path, isProtected) => {
+    if (isProtected && !user) {
+      e.preventDefault();
+      if (isMobileMenuOpen) setIsMobileMenuOpen(false);
+      if (openAuthModal) {
+        openAuthModal('login', path);
+      } else if (onOpenAuth) {
+        onOpenAuth();
+      }
+    }
+  };
+
+  const handleAuthButtonClick = () => {
+    if (openAuthModal) {
+      openAuthModal('login');
+    } else if (onOpenAuth) {
+      onOpenAuth();
+    }
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full transition-all duration-300 flex flex-col select-none">
@@ -80,6 +100,7 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
               key={link.name}
               to={link.path}
               end={link.end}
+              onClick={(e) => handleProtectedClick(e, link.path, link.isProtected)}
               className={({ isActive }) =>
                 `px-1.5 2xl:px-2.5 py-1.5 rounded-xl text-[11.5px] 2xl:text-[13px] font-semibold transition-all whitespace-nowrap flex items-center gap-1 shrink-0 ${
                   isActive
@@ -102,11 +123,10 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
             3. RIGHT USER ACTIONS SECTION
            ================================================== */}
         <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 justify-end">
-          {/* Order: My Profile -> ❤️ Favourite -> ⚖️ Legal -> 🌙 Theme -> [ User Avatar / Login ] */}
-
           {/* 1. My Profile text link */}
           <NavLink
             to="/profile"
+            onClick={(e) => handleProtectedClick(e, '/profile', true)}
             className={({ isActive }) =>
               `hidden xl:flex items-center gap-1.5 px-2 2xl:px-2.5 py-1.5 rounded-xl text-[11.5px] 2xl:text-[13px] font-semibold transition-all whitespace-nowrap shrink-0 ${
                 isActive
@@ -121,6 +141,7 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
           {/* 2. ❤️ Favourite button with attached counter badge */}
           <Link
             to="/saved-cards"
+            onClick={(e) => handleProtectedClick(e, '/saved-cards', true)}
             className="flex items-center gap-1 px-2 2xl:px-2.5 py-1.5 rounded-xl text-[11.5px] 2xl:text-[13px] font-semibold text-[#4B5563] dark:text-slate-300 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-slate-800/60 transition-all group shrink-0"
             title="Saved Favourites"
           >
@@ -201,7 +222,7 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
             </div>
           ) : (
             <button
-              onClick={onOpenAuth}
+              onClick={handleAuthButtonClick}
               className="px-3 sm:px-4 py-2 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:opacity-95 text-white text-xs font-semibold shadow-md flex items-center gap-1.5 cursor-pointer transition-all active:scale-95 shrink-0"
             >
               <LogIn className="w-3.5 h-3.5" />
@@ -244,7 +265,13 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
               key={link.name}
               to={link.path}
               end={link.end}
-              onClick={() => setIsMobileMenuOpen(false)}
+              onClick={(e) => {
+                if (link.isProtected && !user) {
+                  handleProtectedClick(e, link.path, true);
+                } else {
+                  setIsMobileMenuOpen(false);
+                }
+              }}
               className={({ isActive }) =>
                 `flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all min-h-[44px] ${
                   isActive
@@ -269,7 +296,13 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
 
             <NavLink
               to="/profile"
-              onClick={() => setIsMobileMenuOpen(false)}
+              onClick={(e) => {
+                if (!user) {
+                  handleProtectedClick(e, '/profile', true);
+                } else {
+                  setIsMobileMenuOpen(false);
+                }
+              }}
               className={({ isActive }) =>
                 `flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold min-h-[44px] ${
                   isActive ? 'bg-[#2563EB] text-white font-bold' : 'text-[#1F2937] dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800'
@@ -306,7 +339,7 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
               <button
                 onClick={() => {
                   setIsMobileMenuOpen(false);
-                  onOpenAuth();
+                  handleAuthButtonClick();
                 }}
                 className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#2563EB] text-white font-semibold text-xs shadow-md mt-2 cursor-pointer min-h-[44px]"
               >

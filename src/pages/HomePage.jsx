@@ -12,6 +12,7 @@ import {
   Scale
 } from 'lucide-react';
 import { useSEO } from '../hooks/useSEO';
+import { useAuth } from '../hooks/useAuth';
 
 function HomePage({
   query,
@@ -28,10 +29,19 @@ function HomePage({
   });
 
   const navigate = useNavigate();
+  const { user, openAuthModal } = useAuth();
+
+  const handleNavigateProtected = (path) => {
+    if (!user) {
+      if (openAuthModal) openAuthModal('login', path);
+    } else {
+      navigate(path);
+    }
+  };
 
   const handleHeroSearchSubmit = (searchVal) => {
     setQuery(searchVal);
-    navigate('/cards');
+    handleNavigateProtected('/cards');
   };
 
   return (
@@ -76,7 +86,7 @@ function HomePage({
             <motion.div
               whileHover={{ y: -6, scale: 1.01 }}
               transition={{ type: "spring", stiffness: 350, damping: 25 }}
-              onClick={() => navigate('/savings-accounts')}
+              onClick={() => handleNavigateProtected('/savings-accounts')}
               className="p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 hover:border-[#2563EB]/50 shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-between space-y-6"
             >
               <div className="space-y-4">
@@ -114,7 +124,7 @@ function HomePage({
               <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
                 <span className="text-xs font-bold text-slate-400">Verified Banks</span>
                 <button
-                  onClick={(e) => { e.stopPropagation(); navigate('/savings-accounts'); }}
+                  onClick={(e) => { e.stopPropagation(); handleNavigateProtected('/savings-accounts'); }}
                   className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:from-[#1D4ED8] hover:to-[#2563EB] text-white font-extrabold text-xs transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
                 >
                   <span>Explore Savings</span>
@@ -127,7 +137,7 @@ function HomePage({
             <motion.div
               whileHover={{ y: -6, scale: 1.01 }}
               transition={{ type: "spring", stiffness: 350, damping: 25 }}
-              onClick={() => navigate('/current-accounts')}
+              onClick={() => handleNavigateProtected('/current-accounts')}
               className="p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 hover:border-[#2563EB]/50 shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-between space-y-6"
             >
               <div className="space-y-4">
@@ -165,7 +175,7 @@ function HomePage({
               <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
                 <span className="text-xs font-bold text-slate-400">Commercial Tiers</span>
                 <button
-                  onClick={(e) => { e.stopPropagation(); navigate('/current-accounts'); }}
+                  onClick={(e) => { e.stopPropagation(); handleNavigateProtected('/current-accounts'); }}
                   className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-700 hover:to-emerald-600 text-white font-extrabold text-xs transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
                 >
                   <span>Explore Current</span>
@@ -178,7 +188,7 @@ function HomePage({
             <motion.div
               whileHover={{ y: -6, scale: 1.01 }}
               transition={{ type: "spring", stiffness: 350, damping: 25 }}
-              onClick={() => navigate('/cards')}
+              onClick={() => handleNavigateProtected('/cards')}
               className="p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 hover:border-[#2563EB]/50 shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-between space-y-6"
             >
               <div className="space-y-4">
@@ -216,7 +226,7 @@ function HomePage({
               <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
                 <span className="text-xs font-bold text-slate-400">100+ Cards Lineup</span>
                 <button
-                  onClick={(e) => { e.stopPropagation(); navigate('/cards'); }}
+                  onClick={(e) => { e.stopPropagation(); handleNavigateProtected('/cards'); }}
                   className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:from-[#1D4ED8] hover:to-[#2563EB] text-white font-extrabold text-xs transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
                 >
                   <span>Explore Cards</span>
@@ -246,7 +256,7 @@ function HomePage({
 
               <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                 <button
-                  onClick={() => navigate('/compare')}
+                  onClick={() => handleNavigateProtected('/compare')}
                   className="px-6 py-3.5 rounded-xl bg-white text-[#2563EB] hover:bg-slate-100 font-bold text-xs tracking-wide uppercase shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95 min-h-[44px]"
                 >
                   <Scale className="w-4 h-4" />
@@ -254,7 +264,7 @@ function HomePage({
                 </button>
 
                 <button
-                  onClick={() => navigate('/ai-advisor')}
+                  onClick={() => handleNavigateProtected('/ai-advisor')}
                   className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] text-white font-bold text-xs tracking-wide uppercase shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95 min-h-[44px]"
                 >
                   <Bot className="w-4 h-4" />

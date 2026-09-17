@@ -32,6 +32,7 @@ function evaluateStrength(pass) {
  */
 export default function PasswordInput({
   id,
+  name,
   label,
   value,
   onChange,
@@ -42,6 +43,7 @@ export default function PasswordInput({
   showStrength = false,
   disabled = false,
   hint,
+  ...rest
 }) {
   const [showText, setShowText] = useState(false);
   const [capsLock, setCapsLock] = useState(false);
@@ -85,14 +87,16 @@ export default function PasswordInput({
         <input
           ref={inputRef}
           id={id}
+          name={name || id}
           type={showText ? 'text' : 'password'}
-          value={value}
+          value={value ?? ''}
           onChange={onChange}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           autoComplete={autoComplete}
           required={required}
           disabled={disabled}
+          {...rest}
           aria-invalid={hasError}
           aria-describedby={[
             hasError ? `${id}-error` : null,

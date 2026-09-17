@@ -24,6 +24,7 @@ import GlobalSearchInput from './GlobalSearchInput';
 import { debitCards } from '../data/mockData';
 import { savingsAccounts } from '../data/mockSavingsAccounts';
 import { getCoveredBanksDirectory } from '../utils/bankDirectoryUtils';
+import { useAuth } from '../hooks/useAuth';
 
 const HeroVisual = memo(({ isMobile }) => {
   const shouldReduceMotion = useReducedMotion();
@@ -175,6 +176,7 @@ const HeroVisual = memo(({ isMobile }) => {
 
 function HeroSection({ query = '', setQuery = () => {}, onSearchSubmit = null, onViewDetails = null }) {
   const navigate = useNavigate();
+  const { user, openAuthModal } = useAuth();
   const [searchVal, setSearchVal] = useState(query);
   const [isMobile, setIsMobile] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -188,7 +190,7 @@ function HeroSection({ query = '', setQuery = () => {}, onSearchSubmit = null, o
       setIsMobile(window.innerWidth < 1024);
     };
     checkMobile();
-    window.addEventListener('resize', checkMobile, { passive: true });
+    window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
@@ -223,7 +225,27 @@ function HeroSection({ query = '', setQuery = () => {}, onSearchSubmit = null, o
 
   const handleSearchSubmit = () => {
     setQuery(searchVal);
-    navigate('/cards');
+    if (!user) {
+      if (openAuthModal) openAuthModal('login', '/cards');
+    } else {
+      navigate('/cards');
+    }
+  };
+
+  const handleSavingsClick = () => {
+    if (!user) {
+      if (openAuthModal) openAuthModal('login', '/savings-accounts');
+    } else {
+      navigate('/savings-accounts');
+    }
+  };
+
+  const handleCardsClick = () => {
+    if (!user) {
+      if (openAuthModal) openAuthModal('login', '/cards');
+    } else {
+      navigate('/cards');
+    }
   };
 
   const scrollToCategories = () => {
@@ -231,7 +253,7 @@ function HeroSection({ query = '', setQuery = () => {}, onSearchSubmit = null, o
     if (elem) {
       elem.scrollIntoView({ behavior: 'smooth' });
     } else {
-      navigate('/savings-accounts');
+      handleSavingsClick();
     }
   };
 
@@ -263,7 +285,7 @@ function HeroSection({ query = '', setQuery = () => {}, onSearchSubmit = null, o
           {/* Primary & Secondary CTAs */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-1 w-full max-w-lg">
             <button
-              onClick={() => navigate('/savings-accounts')}
+              onClick={handleSavingsClick}
               className="flex-1 px-5 py-3.5 rounded-xl bg-gradient-to-r from-[#2563EB] via-[#3B82F6] to-[#2563EB] hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] text-white text-xs font-bold tracking-wide uppercase shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 min-h-[44px]"
             >
               <Landmark className="w-4 h-4" />
@@ -272,7 +294,7 @@ function HeroSection({ query = '', setQuery = () => {}, onSearchSubmit = null, o
             </button>
 
             <button
-              onClick={() => navigate('/cards')}
+              onClick={handleCardsClick}
               className="flex-1 px-5 py-3.5 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-[#2563EB] dark:text-[#60A5FA] border border-[#2563EB]/30 text-xs font-bold tracking-wide uppercase shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 min-h-[44px]"
             >
               <CreditCard className="w-4 h-4" />
