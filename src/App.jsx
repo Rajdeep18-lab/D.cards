@@ -8,7 +8,6 @@ import LoadingSkeleton from "./components/LoadingSkeleton";
 import Footer from "./components/Footer";
 import AuthModal from "./components/AuthModal";
 import WebsiteDisclaimerModal from "./components/WebsiteDisclaimerModal";
-import TopDisclaimerTicker from "./components/TopDisclaimerTicker";
 
 // Pages
 import HomePage from "./pages/HomePage";
@@ -1243,9 +1242,6 @@ function AppContent() {
           </Route>
         </Routes>
       </div>
-
-      {/* Running Statutory Bank Data Disclaimer Ticker */}
-      <TopDisclaimerTicker />
 
       <Footer onOpenLegal={(tab) => { setLegalTab(tab); setIsLegalOpen(true); }} />
 

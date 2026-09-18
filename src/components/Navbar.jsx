@@ -1,8 +1,24 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { Sun, Moon, LogIn, Scale, Heart, Menu, X, User, LogOut, ChevronDown } from "lucide-react";
+import { 
+  Sun, 
+  Moon, 
+  LogIn, 
+  Scale, 
+  Heart, 
+  Menu, 
+  X, 
+  User, 
+  LogOut, 
+  ChevronDown, 
+  MoreHorizontal,
+  Info,
+  Mail,
+  ShieldAlert
+} from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { useWishlist } from "../context/WishlistContext";
+import TopDisclaimerTicker from "./TopDisclaimerTicker";
 
 function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOpenLegal }) {
   const { user, profile, logout, openAuthModal } = useAuth();
@@ -12,6 +28,10 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
   const [scrolled, setScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const [isMoreDropdownOpen, setIsMoreDropdownOpen] = useState(false);
+
+  const moreDropdownRef = useRef(null);
+  const profileDropdownRef = useRef(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -21,15 +41,48 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const navLinks = [
+  // Close menus on route change
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+    setIsProfileDropdownOpen(false);
+    setIsMoreDropdownOpen(false);
+  }, [location.pathname]);
+
+  // Click outside listener for dropdowns
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (moreDropdownRef.current && !moreDropdownRef.current.contains(event.target)) {
+        setIsMoreDropdownOpen(false);
+      }
+      if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target)) {
+        setIsProfileDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Primary core banking product links (always visible on desktop >= 1024px)
+  const primaryNavLinks = [
     { name: "Home", path: "/", end: true, isProtected: false },
     { name: "Debit Cards", path: "/cards", isProtected: true },
     { name: "Savings Accounts", path: "/savings-accounts", isProtected: true },
     { name: "Current Accounts", path: "/current-accounts", isProtected: true },
     { name: "Compare", path: "/compare", isProtected: true },
-    { name: "Favourites", path: "/saved-cards", isProtected: true },
     { name: "AI Advisor", path: "/ai-advisor", isProtected: true },
     { name: "Banks", path: "/banks", isProtected: true },
+  ];
+
+  // Secondary links (visible on wide screens >= 1400px; neatly tucked inside "More ▾" on 1024px-1399px)
+  const secondaryNavLinks = [
+    { name: "About", path: "/about", isProtected: false, icon: Info },
+    { name: "Contact", path: "/contact", isProtected: false, icon: Mail },
+    { name: "My Profile", path: "/profile", isProtected: true, icon: User },
+  ];
+
+  // Full list for mobile drawer
+  const allNavLinks = [
+    ...primaryNavLinks,
     { name: "About", path: "/about", isProtected: false },
     { name: "Contact", path: "/contact", isProtected: false },
   ];
@@ -38,6 +91,7 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
     if (isProtected && !user) {
       e.preventDefault();
       if (isMobileMenuOpen) setIsMobileMenuOpen(false);
+      setIsMoreDropdownOpen(false);
       if (openAuthModal) {
         openAuthModal('login', path);
       } else if (onOpenAuth) {
@@ -55,208 +109,278 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
   };
 
   return (
-    <header
-      className={`sticky top-0 z-50 w-full transition-all duration-300 h-[76px] sm:h-[88px] flex items-center select-none ${
-        scrolled
-          ? "backdrop-blur-xl border-b border-[#E5E7EB] dark:border-slate-800 shadow-sm bg-white/95 dark:bg-[#0F172A]/95"
-          : "border-b border-[#E5E7EB]/60 dark:border-slate-800/60 bg-white/90 dark:bg-[#0F172A]/90 backdrop-blur-md"
-      }`}
-    >
-      <div className="w-full max-w-[1536px] mx-auto px-3 sm:px-5 lg:px-6 h-full flex items-center justify-between gap-2 sm:gap-4">
-        
-        {/* ==================================================
-            1. LEFT BRAND SECTION
-           ================================================== */}
-        <div className="min-w-0 shrink-0 flex items-center select-none">
-          <Link
-            to="/"
-            className="flex items-center gap-2 group text-left bg-transparent border-0 cursor-pointer focus:outline-none"
-          >
-            <img 
-              src="/logo-mark.png" 
-              alt="D.CARD Logo" 
-              className="h-9 sm:h-11 w-auto object-contain group-hover:scale-105 transition-transform duration-300 shrink-0"
-            />
-            <div className="flex flex-col justify-center">
-              <span className="text-base sm:text-xl font-extrabold tracking-tight leading-none text-[#0F172A] dark:text-white font-sans">
-                D.<span className="text-[#2563EB]">CARD</span>
-              </span>
-              <span className="hidden min-[380px]:block text-[8.5px] sm:text-[9px] font-bold text-[#6B7280] dark:text-slate-400 tracking-wider uppercase mt-0.5 sm:mt-1 leading-tight whitespace-nowrap">
-                COMPARE. CHOOSE. BENEFIT.
-              </span>
-            </div>
-          </Link>
-        </div>
+    <header className="sticky top-0 z-50 w-full select-none shadow-xs">
+      {/* ==================================================
+          1. TOP: RUNNING DISCLAIMER / STATUTORY BAR
+         ================================================== */}
+      <TopDisclaimerTicker />
 
-        {/* ==================================================
-            2. CENTER NAVIGATION SECTION (Desktop >=1280px)
-           ================================================== */}
-        <nav className="hidden xl:flex items-center justify-center gap-0.5 2xl:gap-1.5 flex-1 min-w-0 px-1">
-          {navLinks.map((link) => (
-            <NavLink
-              key={link.name}
-              to={link.path}
-              end={link.end}
-              onClick={(e) => handleProtectedClick(e, link.path, link.isProtected)}
-              className={({ isActive }) =>
-                `px-1.5 2xl:px-2.5 py-1.5 rounded-xl text-[11.5px] 2xl:text-[13px] font-semibold transition-all whitespace-nowrap flex items-center gap-1 shrink-0 ${
-                  isActive
-                    ? 'text-[#2563EB] dark:text-[#60A5FA] font-bold bg-[#EFF6FF] dark:bg-slate-800/80 shadow-xs border border-[#2563EB]/15 dark:border-[#60A5FA]/20'
-                    : 'text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] dark:hover:text-[#60A5FA] hover:bg-gray-100/60 dark:hover:bg-slate-800/40'
-                }`
-              }
+      {/* ==================================================
+          2. MAIN HEADER / NAVIGATION BAR
+         ================================================== */}
+      <div
+        className={`w-full transition-all duration-300 h-[68px] sm:h-[76px] flex items-center ${
+          scrolled
+            ? "backdrop-blur-xl border-b border-[#E5E7EB] dark:border-slate-800 shadow-sm bg-white/95 dark:bg-[#0F172A]/95"
+            : "border-b border-[#E5E7EB]/60 dark:border-slate-800/60 bg-white/90 dark:bg-[#0F172A]/90 backdrop-blur-md"
+        }`}
+      >
+        <div className="w-full max-w-[1536px] mx-auto px-3 sm:px-5 lg:px-6 h-full flex items-center justify-between gap-2 sm:gap-4">
+          
+          {/* ── LEFT: D.CARD LOGO ── */}
+          <div className="shrink-0 flex items-center">
+            <Link
+              to="/"
+              className="flex items-center gap-2 group text-left bg-transparent border-0 cursor-pointer focus:outline-none"
             >
-              <span>{link.name}</span>
-              {link.name === "Compare" && compareCount > 0 && (
-                <span className="inline-flex items-center justify-center px-1.5 py-0.2 text-[10px] font-extrabold rounded-full bg-emerald-500 text-white leading-none shadow-xs">
-                  {compareCount}
+              <img 
+                src="/logo-mark.png" 
+                alt="D.CARD Logo" 
+                className="h-9 sm:h-10 w-auto object-contain group-hover:scale-105 transition-transform duration-300 shrink-0"
+              />
+              <div className="flex flex-col justify-center">
+                <span className="text-base sm:text-xl font-extrabold tracking-tight leading-none text-[#0F172A] dark:text-white font-sans">
+                  D.<span className="text-[#2563EB]">CARD</span>
                 </span>
-              )}
-            </NavLink>
-          ))}
-        </nav>
+                <span className="hidden min-[380px]:block text-[8.5px] sm:text-[9px] font-bold text-[#6B7280] dark:text-slate-400 tracking-wider uppercase mt-0.5 sm:mt-1 leading-tight whitespace-nowrap">
+                  COMPARE. CHOOSE. BENEFIT.
+                </span>
+              </div>
+            </Link>
+          </div>
 
-        {/* ==================================================
-            3. RIGHT USER ACTIONS SECTION
-           ================================================== */}
-        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 justify-end">
-          {/* 1. My Profile text link */}
-          <NavLink
-            to="/profile"
-            onClick={(e) => handleProtectedClick(e, '/profile', true)}
-            className={({ isActive }) =>
-              `hidden xl:flex items-center gap-1.5 px-2 2xl:px-2.5 py-1.5 rounded-xl text-[11.5px] 2xl:text-[13px] font-semibold transition-all whitespace-nowrap shrink-0 ${
-                isActive
-                  ? 'text-[#2563EB] dark:text-[#60A5FA] font-bold bg-[#EFF6FF] dark:bg-slate-800/80 shadow-xs border border-[#2563EB]/15 dark:border-[#60A5FA]/20'
-                  : 'text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] dark:hover:text-[#60A5FA] hover:bg-gray-100/60 dark:hover:bg-slate-800/40'
-              }`
-            }
-          >
-            <span>My Profile</span>
-          </NavLink>
-
-          {/* 2. ❤️ Favourite button with attached counter badge */}
-          <Link
-            to="/saved-cards"
-            onClick={(e) => handleProtectedClick(e, '/saved-cards', true)}
-            className="flex items-center gap-1 px-2 2xl:px-2.5 py-1.5 rounded-xl text-[11.5px] 2xl:text-[13px] font-semibold text-[#4B5563] dark:text-slate-300 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-slate-800/60 transition-all group shrink-0"
-            title="Saved Favourites"
-          >
-            <Heart className="w-4 h-4 text-rose-500 fill-rose-500/20 group-hover:fill-rose-500 transition-all shrink-0" />
-            {wishlist && wishlist.length > 0 && (
-              <span className="inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-extrabold rounded-full bg-rose-500 text-white leading-none shadow-xs">
-                {wishlist.length}
-              </span>
-            )}
-          </Link>
-
-          {/* 3. ⚖️ Legal / Terms Button */}
-          <button
-            onClick={() => onOpenLegal ? onOpenLegal('terms') : null}
-            className="hidden sm:flex items-center gap-1.5 px-2 2xl:px-2.5 py-1.5 rounded-xl text-[11.5px] 2xl:text-[13px] font-semibold text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] dark:hover:text-[#60A5FA] hover:bg-[#EFF6FF] dark:hover:bg-slate-800/60 transition-all cursor-pointer shrink-0"
-            title="Legal & Terms"
-          >
-            <Scale className="w-4 h-4 text-[#2563EB] dark:text-[#60A5FA] shrink-0" />
-            <span>Legal</span>
-          </button>
-
-          {/* 4. 🌙 Theme Toggle Button */}
-          <button
-            onClick={toggleDarkMode}
-            className="p-2 rounded-xl text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] hover:bg-[#EFF6FF] dark:hover:bg-slate-800/60 transition-all cursor-pointer shrink-0"
-            title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-            aria-label="Toggle Dark Mode"
-          >
-            {isDarkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-[#2563EB]" />}
-          </button>
-
-          {/* 5. User Profile / Login Dropdown Button */}
-          {user ? (
-            <div className="relative shrink-0">
-              <button
-                onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                className="flex items-center gap-1.5 sm:gap-2 p-1 pr-2 rounded-full border border-[#E5E7EB] dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-[#2563EB] dark:hover:border-[#60A5FA] transition-all cursor-pointer shadow-xs"
+          {/* ── CENTER: DESKTOP NAVIGATION (>= 1024px) ── */}
+          <nav className="hidden lg:flex items-center justify-center gap-1 xl:gap-1.5 flex-1 min-w-0 px-2">
+            {/* Primary Core Product Links */}
+            {primaryNavLinks.map((link) => (
+              <NavLink
+                key={link.name}
+                to={link.path}
+                end={link.end}
+                onClick={(e) => handleProtectedClick(e, link.path, link.isProtected)}
+                className={({ isActive }) =>
+                  `px-2 py-1.5 rounded-xl text-[12px] xl:text-[12.5px] 2xl:text-[13px] font-semibold transition-all whitespace-nowrap flex items-center gap-1 shrink-0 ${
+                    isActive
+                      ? 'text-[#2563EB] dark:text-[#60A5FA] font-bold bg-[#EFF6FF] dark:bg-slate-800/80 shadow-xs border border-[#2563EB]/15 dark:border-[#60A5FA]/20'
+                      : 'text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] dark:hover:text-[#60A5FA] hover:bg-gray-100/60 dark:hover:bg-slate-800/40'
+                  }`
+                }
               >
-                <div className="w-7 h-7 rounded-full bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white flex items-center justify-center font-bold text-xs shadow-xs shrink-0">
-                  {user.email ? user.email.charAt(0).toUpperCase() : 'U'}
-                </div>
-                <span className="hidden sm:inline text-xs font-bold text-[#1F2937] dark:text-white max-w-[90px] truncate">
-                  {profile?.full_name || user.displayName || 'Account'}
-                </span>
-                <ChevronDown className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                <span>{link.name}</span>
+                {link.name === "Compare" && compareCount > 0 && (
+                  <span className="inline-flex items-center justify-center px-1.5 py-0.2 text-[10px] font-extrabold rounded-full bg-emerald-500 text-white leading-none shadow-xs">
+                    {compareCount}
+                  </span>
+                )}
+              </NavLink>
+            ))}
+
+            {/* Secondary Links: Directly in row on wide screens (>= 1400px) */}
+            <div className="hidden min-[1400px]:flex items-center gap-1 xl:gap-1.5 shrink-0">
+              {secondaryNavLinks.map((link) => (
+                <NavLink
+                  key={link.name}
+                  to={link.path}
+                  onClick={(e) => handleProtectedClick(e, link.path, link.isProtected)}
+                  className={({ isActive }) =>
+                    `px-2 py-1.5 rounded-xl text-[12px] xl:text-[12.5px] 2xl:text-[13px] font-semibold transition-all whitespace-nowrap flex items-center gap-1 shrink-0 ${
+                      isActive
+                        ? 'text-[#2563EB] dark:text-[#60A5FA] font-bold bg-[#EFF6FF] dark:bg-slate-800/80 shadow-xs border border-[#2563EB]/15 dark:border-[#60A5FA]/20'
+                        : 'text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] dark:hover:text-[#60A5FA] hover:bg-gray-100/60 dark:hover:bg-slate-800/40'
+                    }`
+                  }
+                >
+                  <span>{link.name}</span>
+                </NavLink>
+              ))}
+            </div>
+
+            {/* "More ▾" Dropdown: Visible on 1024px-1399px to prevent horizontal collision */}
+            <div className="relative min-[1400px]:hidden shrink-0" ref={moreDropdownRef}>
+              <button
+                onClick={() => setIsMoreDropdownOpen(!isMoreDropdownOpen)}
+                className={`flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[12px] font-semibold transition-all whitespace-nowrap cursor-pointer ${
+                  isMoreDropdownOpen || location.pathname === '/about' || location.pathname === '/contact' || location.pathname === '/profile'
+                    ? 'text-[#2563EB] dark:text-[#60A5FA] font-bold bg-[#EFF6FF] dark:bg-slate-800/80 border border-[#2563EB]/15'
+                    : 'text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] dark:hover:text-[#60A5FA] hover:bg-gray-100/60 dark:hover:bg-slate-800/40'
+                }`}
+                aria-expanded={isMoreDropdownOpen}
+                aria-label="More navigation options"
+              >
+                <span>More</span>
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isMoreDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
 
-              {isProfileDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-52 rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-700 shadow-xl py-2 z-[60] text-left">
-                  <div className="px-4 py-2 border-b border-gray-100 dark:border-slate-800">
-                    <p className="text-xs font-bold text-[#1F2937] dark:text-white truncate">
-                      {profile?.full_name || user.displayName || 'Account'}
-                    </p>
-                    <p className="text-[11px] text-gray-500 dark:text-slate-400 truncate">
-                      {user.email}
-                    </p>
-                  </div>
-                  <Link
-                    to="/profile"
-                    onClick={() => setIsProfileDropdownOpen(false)}
-                    className="flex items-center gap-2 px-4 py-2 text-xs font-semibold text-[#1F2937] dark:text-white hover:bg-[#EFF6FF] dark:hover:bg-slate-700/60 transition-colors"
-                  >
-                    <User className="w-3.5 h-3.5 text-[#2563EB]" />
-                    <span>Profile Dashboard</span>
-                  </Link>
+              {isMoreDropdownOpen && (
+                <div className="absolute left-0 mt-2 w-48 rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-700 shadow-xl py-2 z-[60] text-left">
+                  {secondaryNavLinks.map((link) => {
+                    const IconComponent = link.icon;
+                    return (
+                      <NavLink
+                        key={link.name}
+                        to={link.path}
+                        onClick={(e) => {
+                          setIsMoreDropdownOpen(false);
+                          handleProtectedClick(e, link.path, link.isProtected);
+                        }}
+                        className={({ isActive }) =>
+                          `flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold transition-colors ${
+                            isActive
+                              ? 'text-[#2563EB] dark:text-[#60A5FA] bg-[#EFF6FF] dark:bg-slate-800/60 font-bold'
+                              : 'text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] hover:bg-gray-50 dark:hover:bg-slate-800/40'
+                          }`
+                        }
+                      >
+                        {IconComponent && <IconComponent className="w-3.5 h-3.5 text-[#2563EB] shrink-0" />}
+                        <span>{link.name}</span>
+                      </NavLink>
+                    );
+                  })}
+                  <div className="my-1 border-t border-gray-100 dark:border-slate-800" />
                   <button
                     onClick={() => {
-                      setIsProfileDropdownOpen(false);
-                      logout();
+                      setIsMoreDropdownOpen(false);
+                      if (onOpenLegal) onOpenLegal('terms');
                     }}
-                    className="w-full text-left flex items-center gap-2 px-4 py-2 text-xs font-semibold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors cursor-pointer"
+                    className="w-full flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] hover:bg-gray-50 dark:hover:bg-slate-800/40 transition-colors cursor-pointer text-left"
                   >
-                    <LogOut className="w-3.5 h-3.5 text-rose-500" />
-                    <span>Sign Out</span>
+                    <Scale className="w-3.5 h-3.5 text-[#2563EB] shrink-0" />
+                    <span>Legal & Terms</span>
                   </button>
                 </div>
               )}
             </div>
-          ) : (
-            <button
-              onClick={handleAuthButtonClick}
-              className="px-3 sm:px-4 py-2 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:opacity-95 text-white text-xs font-semibold shadow-md flex items-center gap-1.5 cursor-pointer transition-all active:scale-95 shrink-0"
+          </nav>
+
+          {/* ── RIGHT: USER ACTIONS (Favourites, Legal, Theme, Profile/Login) ── */}
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 justify-end">
+            
+            {/* 1. ❤️ Favourite button with counter badge */}
+            <Link
+              to="/saved-cards"
+              onClick={(e) => handleProtectedClick(e, '/saved-cards', true)}
+              className="flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-xl text-xs font-semibold text-[#4B5563] dark:text-slate-300 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-slate-800/60 transition-all group shrink-0"
+              title="Saved Favourites"
             >
-              <LogIn className="w-3.5 h-3.5" />
-              <span>Login</span>
+              <Heart className="w-4 h-4 text-rose-500 fill-rose-500/20 group-hover:fill-rose-500 transition-all shrink-0" />
+              {wishlist && wishlist.length > 0 && (
+                <span className="inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-extrabold rounded-full bg-rose-500 text-white leading-none shadow-xs">
+                  {wishlist.length}
+                </span>
+              )}
+            </Link>
+
+            {/* 2. ⚖️ Legal / Terms Button */}
+            <button
+              onClick={() => onOpenLegal ? onOpenLegal('terms') : null}
+              className="hidden sm:flex items-center gap-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl text-xs font-semibold text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] dark:hover:text-[#60A5FA] hover:bg-[#EFF6FF] dark:hover:bg-slate-800/60 transition-all cursor-pointer shrink-0"
+              title="Legal & Terms"
+            >
+              <Scale className="w-4 h-4 text-[#2563EB] dark:text-[#60A5FA] shrink-0" />
+              <span>Legal</span>
             </button>
-          )}
 
-          {/* Hamburger Menu Trigger for Tablet & Mobile (<1280px) */}
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="p-2 rounded-xl text-[#4B5563] dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800 xl:hidden cursor-pointer shrink-0"
-            aria-label="Toggle Navigation Menu"
-          >
-            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+            {/* 3. 🌙 Theme Toggle Button */}
+            <button
+              onClick={toggleDarkMode}
+              className="p-2 rounded-xl text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] hover:bg-[#EFF6FF] dark:hover:bg-slate-800/60 transition-all cursor-pointer shrink-0"
+              title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+              aria-label="Toggle Dark Mode"
+            >
+              {isDarkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-[#2563EB]" />}
+            </button>
+
+            {/* 4. User Profile / Login Dropdown Button */}
+            {user ? (
+              <div className="relative shrink-0" ref={profileDropdownRef}>
+                <button
+                  onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+                  className="flex items-center gap-1.5 sm:gap-2 p-1 pr-2 rounded-full border border-[#E5E7EB] dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-[#2563EB] dark:hover:border-[#60A5FA] transition-all cursor-pointer shadow-xs"
+                  aria-expanded={isProfileDropdownOpen}
+                  aria-label="User Account Menu"
+                >
+                  <div className="w-7 h-7 rounded-full bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white flex items-center justify-center font-bold text-xs shadow-xs shrink-0">
+                    {user.email ? user.email.charAt(0).toUpperCase() : 'U'}
+                  </div>
+                  <span className="hidden sm:inline text-xs font-bold text-[#1F2937] dark:text-white max-w-[85px] truncate">
+                    {profile?.full_name || user.displayName || 'Account'}
+                  </span>
+                  <ChevronDown className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                </button>
+
+                {isProfileDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-52 rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-700 shadow-xl py-2 z-[60] text-left">
+                    <div className="px-4 py-2 border-b border-gray-100 dark:border-slate-800">
+                      <p className="text-xs font-bold text-[#1F2937] dark:text-white truncate">
+                        {profile?.full_name || user.displayName || 'Account'}
+                      </p>
+                      <p className="text-[11px] text-gray-500 dark:text-slate-400 truncate">
+                        {user.email}
+                      </p>
+                    </div>
+                    <Link
+                      to="/profile"
+                      onClick={() => setIsProfileDropdownOpen(false)}
+                      className="flex items-center gap-2 px-4 py-2 text-xs font-semibold text-[#1F2937] dark:text-white hover:bg-[#EFF6FF] dark:hover:bg-slate-700/60 transition-colors"
+                    >
+                      <User className="w-3.5 h-3.5 text-[#2563EB]" />
+                      <span>Profile Dashboard</span>
+                    </Link>
+                    <button
+                      onClick={() => {
+                        setIsProfileDropdownOpen(false);
+                        logout();
+                      }}
+                      className="w-full text-left flex items-center gap-2 px-4 py-2 text-xs font-semibold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors cursor-pointer"
+                    >
+                      <LogOut className="w-3.5 h-3.5 text-rose-500" />
+                      <span>Sign Out</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <button
+                onClick={handleAuthButtonClick}
+                className="px-3 sm:px-4 py-2 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:opacity-95 text-white text-xs font-semibold shadow-md flex items-center gap-1.5 cursor-pointer transition-all active:scale-95 shrink-0"
+              >
+                <LogIn className="w-3.5 h-3.5" />
+                <span>Login</span>
+              </button>
+            )}
+
+            {/* 5. Hamburger Menu Trigger for Mobile & Tablet (< 1024px) */}
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="p-2 rounded-xl text-[#4B5563] dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800 lg:hidden cursor-pointer shrink-0"
+              aria-label="Toggle Navigation Menu"
+            >
+              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
+
         </div>
-
       </div>
 
       {/* Backdrop overlay when mobile menu is open */}
       {isMobileMenuOpen && (
         <div
           onClick={() => setIsMobileMenuOpen(false)}
-          className="fixed inset-0 top-[76px] sm:top-[88px] bg-black/60 backdrop-blur-xs xl:hidden z-[54]"
+          className="fixed inset-0 bg-black/60 backdrop-blur-xs lg:hidden z-[54]"
+          style={{ top: "100%" }}
         />
       )}
 
       {/* ==================================================
-          MOBILE & TABLET DRAWER NAVIGATION (<1280px)
+          3. MOBILE & TABLET DRAWER NAVIGATION (< 1024px)
          ================================================== */}
       {isMobileMenuOpen && (
-        <div className="absolute top-[76px] sm:top-[88px] left-0 right-0 xl:hidden border-b border-[#E5E7EB] dark:border-slate-800 bg-white/95 dark:bg-[#0F172A]/95 backdrop-blur-xl px-4 py-4 space-y-1 text-left shadow-2xl z-[55] max-h-[calc(100vh-76px)] sm:max-h-[calc(100vh-88px)] overflow-y-auto">
+        <div className="absolute top-full left-0 right-0 lg:hidden border-b border-[#E5E7EB] dark:border-slate-800 bg-white/98 dark:bg-[#0F172A]/98 backdrop-blur-xl px-4 py-4 space-y-1 text-left shadow-2xl z-[55] max-h-[calc(100vh-120px)] overflow-y-auto">
           <div className="text-[11px] font-extrabold uppercase tracking-wider text-gray-400 dark:text-slate-500 px-3 py-1">
             Navigation Menu
           </div>
 
-          {navLinks.map((link) => (
+          {allNavLinks.map((link) => (
             <NavLink
               key={link.name}
               to={link.path}
@@ -308,6 +432,28 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
               <User className="w-4 h-4 text-[#2563EB]" />
               <span>My Profile</span>
             </NavLink>
+
+            <Link
+              to="/saved-cards"
+              onClick={(e) => {
+                if (!user) {
+                  handleProtectedClick(e, '/saved-cards', true);
+                } else {
+                  setIsMobileMenuOpen(false);
+                }
+              }}
+              className="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold text-[#1F2937] dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800 min-h-[44px]"
+            >
+              <div className="flex items-center gap-2.5">
+                <Heart className="w-4 h-4 text-rose-500" />
+                <span>Saved Favourites</span>
+              </div>
+              {wishlist && wishlist.length > 0 && (
+                <span className="px-2 py-0.5 text-[10px] font-extrabold rounded-full bg-rose-500 text-white">
+                  {wishlist.length}
+                </span>
+              )}
+            </Link>
 
             <button
               onClick={() => {
