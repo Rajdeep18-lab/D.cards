@@ -3,7 +3,6 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 import { Sun, Moon, LogIn, Scale, Heart, Menu, X, User, LogOut, ChevronDown } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { useWishlist } from "../context/WishlistContext";
-import TopDisclaimerTicker from "./TopDisclaimerTicker";
 
 function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOpenLegal }) {
   const { user, profile, logout, openAuthModal } = useAuth();
@@ -56,16 +55,14 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full transition-all duration-300 flex flex-col select-none">
-      <TopDisclaimerTicker />
-      <div
-        className={`w-full transition-all duration-300 h-[76px] sm:h-[88px] flex items-center ${
-          scrolled
-            ? "backdrop-blur-xl border-b border-[#E5E7EB] dark:border-slate-800 shadow-sm bg-white/95 dark:bg-[#0F172A]/95"
-            : "border-b border-[#E5E7EB]/60 dark:border-slate-800/60 bg-white/90 dark:bg-[#0F172A]/90 backdrop-blur-md"
-        }`}
-      >
-        <div className="w-full max-w-[1536px] mx-auto px-3 sm:px-5 lg:px-6 h-full flex items-center justify-between gap-2 sm:gap-4">
+    <header
+      className={`sticky top-0 z-50 w-full transition-all duration-300 h-[76px] sm:h-[88px] flex items-center select-none ${
+        scrolled
+          ? "backdrop-blur-xl border-b border-[#E5E7EB] dark:border-slate-800 shadow-sm bg-white/95 dark:bg-[#0F172A]/95"
+          : "border-b border-[#E5E7EB]/60 dark:border-slate-800/60 bg-white/90 dark:bg-[#0F172A]/90 backdrop-blur-md"
+      }`}
+    >
+      <div className="w-full max-w-[1536px] mx-auto px-3 sm:px-5 lg:px-6 h-full flex items-center justify-between gap-2 sm:gap-4">
         
         {/* ==================================================
             1. LEFT BRAND SECTION
@@ -241,13 +238,12 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
         </div>
 
       </div>
-      </div>
 
       {/* Backdrop overlay when mobile menu is open */}
       {isMobileMenuOpen && (
         <div
           onClick={() => setIsMobileMenuOpen(false)}
-          className="fixed inset-0 top-[88px] bg-black/60 backdrop-blur-xs xl:hidden z-[54]"
+          className="fixed inset-0 top-[76px] sm:top-[88px] bg-black/60 backdrop-blur-xs xl:hidden z-[54]"
         />
       )}
 
@@ -255,7 +251,7 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
           MOBILE & TABLET DRAWER NAVIGATION (<1280px)
          ================================================== */}
       {isMobileMenuOpen && (
-        <div className="absolute top-[88px] left-0 right-0 xl:hidden border-b border-[#E5E7EB] dark:border-slate-800 bg-white/95 dark:bg-[#0F172A]/95 backdrop-blur-xl px-4 py-4 space-y-1 text-left shadow-2xl z-[55] max-h-[calc(100vh-88px)] overflow-y-auto">
+        <div className="absolute top-[76px] sm:top-[88px] left-0 right-0 xl:hidden border-b border-[#E5E7EB] dark:border-slate-800 bg-white/95 dark:bg-[#0F172A]/95 backdrop-blur-xl px-4 py-4 space-y-1 text-left shadow-2xl z-[55] max-h-[calc(100vh-76px)] sm:max-h-[calc(100vh-88px)] overflow-y-auto">
           <div className="text-[11px] font-extrabold uppercase tracking-wider text-gray-400 dark:text-slate-500 px-3 py-1">
             Navigation Menu
           </div>

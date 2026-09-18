@@ -43,11 +43,14 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
   const [error, setError] = useState(null);
   const [activeCardIndex, setActiveCardIndex] = useState(0);
 
-  const seoBankName = account?.bank_name || account?.bank || "Bank";
-  const seoAccountName = account?.variant_name || account?.account_name || account?.accountName || "Savings Account";
+  const bankName = account?.bank_name || account?.bank || "Partner Bank";
+  const accountName = account?.variant_name || account?.account_name || account?.accountName || "Savings Account";
+  const interestRate = account?.interest_rate || account?.interestRate || "Information not available";
+  const minimumBalance = account?.minimum_balance || account?.minimumBalance || "Information not available";
+  const penalty = account?.non_maintenance_penalty || account?.nonMaintenanceCharges || "Information not available";
 
   const seoTitle = account
-    ? `${seoBankName} ${seoAccountName} Savings Account | D.Card`
+    ? `${bankName} ${accountName} Savings Account | D.Card`
     : error
       ? "Savings Account Not Found | D.Card"
       : "Savings Account Details | D.Card";
@@ -119,8 +122,6 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
     );
   }
 
-  const bankName = account.bank_name || account.bank || "Partner Bank";
-
   // ICICI Bank Dedicated Detail View
   if (account.bank_id === 'icici' || bankName.toLowerCase().includes('icici')) {
     return <ICICIBSavingsDetailView onSelectDebitCard={onSelectDebitCard} />;
@@ -128,10 +129,6 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
 
   const wishlisted = isWishlisted(account.id || account.product_id);
   const associatedCards = getAssociatedDebitCards(account);
-  const accountName = account.variant_name || account.accountName || "Savings Account";
-  const interestRate = account.interest_rate || account.interestRate || "Information not available";
-  const minimumBalance = account.minimum_balance || account.minimumBalance || "Information not available";
-  const penalty = account.non_maintenance_penalty || account.nonMaintenanceCharges || "Information not available";
 
   const getRelationshipBadge = (rel) => {
     switch (rel) {

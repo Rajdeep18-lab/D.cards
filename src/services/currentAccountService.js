@@ -48,9 +48,14 @@ export const currentAccountService = {
    * Fetch a single current account by ID or product slug
    */
   async getCurrentAccountById(accountId) {
+    if (!accountId) return null;
     const all = await this.getCurrentAccounts();
-    const strId = String(accountId).toLowerCase();
-    return all.find(acc => String(acc.id).toLowerCase() === strId || String(acc.product_id).toLowerCase() === strId) || null;
+    const strId = String(accountId).toLowerCase().trim();
+    return all.find(acc => 
+      (acc.id != null && String(acc.id).toLowerCase().trim() === strId) || 
+      (acc.product_id != null && String(acc.product_id).toLowerCase().trim() === strId) ||
+      (acc.slug != null && String(acc.slug).toLowerCase().trim() === strId)
+    ) || null;
   },
 
   /**

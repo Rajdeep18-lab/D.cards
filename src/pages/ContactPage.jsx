@@ -119,15 +119,20 @@ function ContactPage() {
             </h3>
 
             <div className="space-y-4 pt-1">
-              <div className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-[#F8FAFC] dark:bg-slate-900 border border-[#E5E7EB] dark:border-slate-800">
-                <div className="w-10 h-10 rounded-xl bg-[#EFF6FF] dark:bg-slate-800 border border-[#2563EB]/20 flex items-center justify-center text-[#2563EB] dark:text-[#60A5FA] flex-shrink-0">
+              <a 
+                href="mailto:dcard.website@gmail.com"
+                className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-[#F8FAFC] dark:bg-slate-900 border border-[#E5E7EB] dark:border-slate-800 hover:border-[#2563EB]/50 transition-colors group cursor-pointer"
+              >
+                <div className="w-10 h-10 rounded-xl bg-[#EFF6FF] dark:bg-slate-800 border border-[#2563EB]/20 flex items-center justify-center text-[#2563EB] dark:text-[#60A5FA] flex-shrink-0 group-hover:scale-105 transition-transform">
                   <Mail className="w-5 h-5" />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <p className="text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider">Official Email Support</p>
-                  <p className="text-xs font-bold text-[#1F2937] dark:text-white">support@dcard.in</p>
+                  <p className="text-xs font-bold text-[#1F2937] dark:text-white group-hover:text-[#2563EB] dark:group-hover:text-[#60A5FA] transition-colors break-all">
+                    dcard.website@gmail.com
+                  </p>
                 </div>
-              </div>
+              </a>
 
               <div className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-[#F8FAFC] dark:bg-slate-900 border border-[#E5E7EB] dark:border-slate-800">
                 <div className="w-10 h-10 rounded-xl bg-[#EFF6FF] dark:bg-slate-800 border border-[#2563EB]/20 flex items-center justify-center text-[#2563EB] dark:text-[#60A5FA] flex-shrink-0">

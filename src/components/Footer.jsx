@@ -53,6 +53,20 @@ function Footer({ onOpenLegal }) {
             Explore and compare savings accounts, current accounts, and debit cards from leading banks in one place. Structured product specs, fee breakdowns, and lounge access rules.
           </p>
 
+          {/* Support Email */}
+          <div className="pt-1">
+            <span className="text-[10px] font-semibold text-[#6B7280] dark:text-slate-400 uppercase tracking-wider block">
+              Support Email
+            </span>
+            <a 
+              href="mailto:dcard.website@gmail.com" 
+              className="text-xs font-bold text-[#1F2937] dark:text-white hover:text-[#2563EB] dark:hover:text-[#60A5FA] transition-colors break-all flex items-center gap-1.5 mt-0.5"
+            >
+              <Mail className="w-3.5 h-3.5 text-[#2563EB] shrink-0" />
+              <span>dcard.website@gmail.com</span>
+            </a>
+          </div>
+
           {/* Social Links */}
           <div className="flex items-center gap-2 pt-2">
             <a 

@@ -162,10 +162,13 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
                     </div>
 
                     <h4 className="font-extrabold text-[#2563EB] dark:text-[#60A5FA] mt-5 mb-2 uppercase text-xs tracking-wider">
-                      3. Contacting Us
+                      3. Contacting Us & Privacy Inquiries
                     </h4>
                     <p className="text-slate-700 dark:text-slate-300 mb-2 font-medium">
-                      For privacy clarifications, please reach out to our privacy compliance desk using the contact drawer.
+                      For privacy clarifications, data deletion requests, or compliance inquiries, please contact our team at{' '}
+                      <a href="mailto:dcard.website@gmail.com" className="text-[#2563EB] dark:text-[#60A5FA] font-bold hover:underline break-all">
+                        dcard.website@gmail.com
+                      </a>.
                     </p>
                     <p className="text-xs text-slate-500 dark:text-slate-400 italic mt-6 font-medium">Last updated: June 2026</p>
                   </motion.div>
@@ -206,6 +209,16 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
                       In no event shall D.Card, its founders, or affiliates be liable for any direct, indirect, incidental, or consequential damages resulting from choices, deposits, or applications completed based on parameters shown on D.Card.
                     </p>
 
+                    <h4 className="font-extrabold text-[#2563EB] dark:text-[#60A5FA] mt-5 mb-2 uppercase text-xs tracking-wider">
+                      5. Contact & Legal Inquiries
+                    </h4>
+                    <p className="text-slate-700 dark:text-slate-300 mb-2 font-medium">
+                      For legal questions or notices regarding these terms, reach us at{' '}
+                      <a href="mailto:dcard.website@gmail.com" className="text-[#2563EB] dark:text-[#60A5FA] font-bold hover:underline break-all">
+                        dcard.website@gmail.com
+                      </a>.
+                    </p>
+
                     <p className="text-xs text-slate-500 dark:text-slate-400 italic mt-6 font-medium">Last updated: June 2026</p>
                   </motion.div>
                 )}
@@ -240,8 +253,18 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
                     <h4 className="font-extrabold text-[#2563EB] dark:text-[#60A5FA] mt-5 mb-2 uppercase text-xs tracking-wider">
                       3. Intellectual Property Disclaimer
                     </h4>
-                    <p className="text-slate-700 dark:text-slate-300 mb-4 leading-relaxed font-medium">
+                    <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed font-medium">
                       All bank brand logos, product tags, registered trademarks (Visa, Mastercard, RuPay, etc.) remain the exclusive property of their respective corporate owners. D.CARD does not claim ownership, nor does listing them imply any form of official bank sponsorship or direct financial compensation from primary banks listed here.
+                    </p>
+
+                    <h4 className="font-extrabold text-[#2563EB] dark:text-[#60A5FA] mt-5 mb-2 uppercase text-xs tracking-wider">
+                      4. Inquiries & Corrections Contact
+                    </h4>
+                    <p className="text-slate-700 dark:text-slate-300 mb-4 leading-relaxed font-medium">
+                      If you notice any outdated or inaccurate banking information, please report it to our team at{' '}
+                      <a href="mailto:dcard.website@gmail.com" className="text-[#2563EB] dark:text-[#60A5FA] font-bold hover:underline break-all">
+                        dcard.website@gmail.com
+                      </a>.
                     </p>
 
                     <p className="text-xs text-slate-500 dark:text-slate-400 italic mt-6 font-medium">Last updated: August 2026</p>

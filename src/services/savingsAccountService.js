@@ -42,9 +42,14 @@ export const savingsAccountService = {
   },
 
   async getSavingsAccountById(accountId) {
+    if (!accountId) return null;
     const all = await this.getSavingsAccounts();
-    const strId = String(accountId);
-    return all.find(acc => String(acc.id) === strId || String(acc.product_id) === strId) || null;
+    const strId = String(accountId).toLowerCase().trim();
+    return all.find(acc => 
+      (acc.id != null && String(acc.id).toLowerCase().trim() === strId) || 
+      (acc.product_id != null && String(acc.product_id).toLowerCase().trim() === strId) ||
+      (acc.slug != null && String(acc.slug).toLowerCase().trim() === strId)
+    ) || null;
   },
 
   clearCache() {

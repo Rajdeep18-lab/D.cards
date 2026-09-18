@@ -45,7 +45,7 @@ function HomePage({
   };
 
   return (
-    <div className="space-y-8 overflow-hidden select-none">
+    <div className="space-y-8 select-none">
       {/* ── 1. HERO SECTION ── */}
       <HeroSection 
         query={query} 

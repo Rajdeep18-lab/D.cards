@@ -8,6 +8,7 @@ import LoadingSkeleton from "./components/LoadingSkeleton";
 import Footer from "./components/Footer";
 import AuthModal from "./components/AuthModal";
 import WebsiteDisclaimerModal from "./components/WebsiteDisclaimerModal";
+import TopDisclaimerTicker from "./components/TopDisclaimerTicker";
 
 // Pages
 import HomePage from "./pages/HomePage";
@@ -1056,7 +1057,39 @@ function AppContent() {
               } 
             />
             <Route 
+              path="/current-account" 
+              element={
+                <CurrentAccountsPage
+                  onSelectDebitCard={(card) => setSelectedCard(card)}
+                />
+              } 
+            />
+            <Route 
+              path="/current" 
+              element={
+                <CurrentAccountsPage
+                  onSelectDebitCard={(card) => setSelectedCard(card)}
+                />
+              } 
+            />
+            <Route 
               path="/current-accounts/:id" 
+              element={
+                <CurrentAccountDetailPage
+                  onSelectDebitCard={(card) => setSelectedCard(card)}
+                  onToggleCompare={(acc) => {
+                    setCurrentCompareQueue(prev => {
+                      if (prev.some(a => String(a.id) === String(acc.id))) return prev;
+                      if (prev.length >= 3) return prev;
+                      return [...prev, acc];
+                    });
+                  }}
+                  isCompared={false}
+                />
+              } 
+            />
+            <Route 
+              path="/current-account/:id" 
               element={
                 <CurrentAccountDetailPage
                   onSelectDebitCard={(card) => setSelectedCard(card)}
@@ -1210,6 +1243,9 @@ function AppContent() {
           </Route>
         </Routes>
       </div>
+
+      {/* Running Statutory Bank Data Disclaimer Ticker */}
+      <TopDisclaimerTicker />
 
       <Footer onOpenLegal={(tab) => { setLegalTab(tab); setIsLegalOpen(true); }} />
 

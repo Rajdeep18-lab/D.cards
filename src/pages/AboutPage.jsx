@@ -604,6 +604,12 @@ function AboutPage() {
         <p className="text-xs sm:text-sm text-[#1F2937] dark:text-slate-200 leading-relaxed font-normal italic">
           "D.CARD is an independent financial information and comparison platform for Savings Accounts, Current Accounts, and Debit Cards. D.CARD is not a bank, NBFC, financial institution, payment system operator, or representative of any bank unless explicitly stated. Information shown is for comparison and informational purposes only. Savings Account, Current Account, and Debit Card features, fees, charges, eligibility, limits, and benefits may change. Please verify the latest details with the respective bank before making a decision."
         </p>
+        <p className="text-xs text-[#6B7280] dark:text-slate-400 font-medium pt-1">
+          Have questions or feedback? Contact us at{' '}
+          <a href="mailto:dcard.website@gmail.com" className="font-bold text-[#2563EB] dark:text-[#60A5FA] hover:underline break-all">
+            dcard.website@gmail.com
+          </a>
+        </p>
       </section>
 
       {/* ── 11. CTA ── */}

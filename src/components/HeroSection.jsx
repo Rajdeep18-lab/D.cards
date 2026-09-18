@@ -21,9 +21,6 @@ import {
   ChevronRight
 } from 'lucide-react';
 import GlobalSearchInput from './GlobalSearchInput';
-import { debitCards } from '../data/mockData';
-import { savingsAccounts } from '../data/mockSavingsAccounts';
-import { getCoveredBanksDirectory } from '../utils/bankDirectoryUtils';
 import { useAuth } from '../hooks/useAuth';
 
 const HeroVisual = memo(({ isMobile }) => {
@@ -32,15 +29,18 @@ const HeroVisual = memo(({ isMobile }) => {
   return (
     <div className="flex-1 relative w-full mt-8 lg:mt-0 select-none max-w-[620px] lg:max-w-[580px] xl:max-w-[640px] mx-auto flex flex-col items-center justify-center p-2 sm:p-4">
       
-      {/* Moving Blue Gradient Blobs & Glowing Rays */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[280px] h-[280px] sm:w-[460px] sm:h-[460px] rounded-full bg-gradient-to-tr from-[#0B3D91]/20 via-[#2563EB]/15 to-transparent blur-[80px] pointer-events-none z-0 animate-pulse-glow" />
+      {/* Background Decorative Visual Effects bounded to HeroVisual */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 rounded-3xl">
+        {/* Moving Blue Gradient Blobs & Glowing Rays */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[280px] h-[280px] sm:w-[460px] sm:h-[460px] rounded-full bg-gradient-to-tr from-[#0B3D91]/20 via-[#2563EB]/15 to-transparent blur-[80px] pointer-events-none animate-pulse-glow" />
 
-      {/* Grid Mesh Texture Pattern Overlay */}
-      <div className="absolute inset-0 bg-grid-mesh opacity-50 pointer-events-none z-0 rounded-3xl" />
+        {/* Grid Mesh Texture Pattern Overlay */}
+        <div className="absolute inset-0 bg-grid-mesh opacity-50 pointer-events-none rounded-3xl" />
 
-      {/* Geometric Decorative Rotating Rings */}
-      <div className="absolute w-[260px] h-[260px] sm:w-[420px] sm:h-[420px] rounded-full border border-dashed border-[#2563EB]/25 dark:border-[#60A5FA]/20 animate-[spin_45s_linear_infinite] pointer-events-none z-0" />
-      <div className="absolute w-[200px] h-[200px] sm:w-[320px] sm:h-[320px] rounded-full border border-[#60A5FA]/20 dark:border-[#2563EB]/20 pointer-events-none z-0" />
+        {/* Geometric Decorative Rotating Rings */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[260px] h-[260px] sm:w-[420px] sm:h-[420px] rounded-full border border-dashed border-[#2563EB]/25 dark:border-[#60A5FA]/20 animate-[spin_45s_linear_infinite] pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200px] h-[200px] sm:w-[320px] sm:h-[320px] rounded-full border border-[#60A5FA]/20 dark:border-[#2563EB]/20 pointer-events-none" />
+      </div>
 
       {/* FLOATING TOP BADGE */}
       <motion.div
@@ -194,35 +194,6 @@ function HeroSection({ query = '', setQuery = () => {}, onSearchSubmit = null, o
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const coveredBanks = useMemo(() => getCoveredBanksDirectory(), []);
-
-  // Categorized Live Search Results
-  const searchResults = useMemo(() => {
-    const q = searchVal.trim().toLowerCase();
-    if (!q) return { banks: [], cards: [], accounts: [] };
-
-    const matchedBanks = coveredBanks.filter(b => b.name.toLowerCase().includes(q)).slice(0, 3);
-    const matchedCards = debitCards.filter(c => 
-      c.cardName.toLowerCase().includes(q) || 
-      c.bank.toLowerCase().includes(q) || 
-      (c.network && c.network.toLowerCase().includes(q))
-    ).slice(0, 3);
-
-    const matchedAccounts = savingsAccounts.filter(s => 
-      s.accountName.toLowerCase().includes(q) || 
-      s.bank.toLowerCase().includes(q) || 
-      s.accountType.toLowerCase().includes(q)
-    ).slice(0, 3);
-
-    return {
-      banks: matchedBanks,
-      cards: matchedCards,
-      accounts: matchedAccounts
-    };
-  }, [searchVal, coveredBanks]);
-
-  const hasResults = searchResults.banks.length > 0 || searchResults.cards.length > 0 || searchResults.accounts.length > 0;
-
   const handleSearchSubmit = () => {
     setQuery(searchVal);
     if (!user) {
@@ -258,7 +229,7 @@ function HeroSection({ query = '', setQuery = () => {}, onSearchSubmit = null, o
   };
 
   return (
-    <section id="home" className="relative z-10 overflow-hidden px-4 sm:px-6 lg:px-8 pt-10 pb-16 md:pt-16 md:pb-24 bg-gradient-to-b from-[#EFF6FF] via-[#F8FAFC] to-[#F8FAFC] dark:from-[#0F172A] dark:via-[#0F172A] dark:to-[#0F172A] border-b border-[#E5E7EB] dark:border-slate-800">
+    <section id="home" className="relative z-30 px-4 sm:px-6 lg:px-8 pt-10 pb-16 md:pt-16 md:pb-24 bg-gradient-to-b from-[#EFF6FF] via-[#F8FAFC] to-[#F8FAFC] dark:from-[#0F172A] dark:via-[#0F172A] dark:to-[#0F172A] border-b border-[#E5E7EB] dark:border-slate-800">
       <div className="mx-auto max-w-7xl relative z-20 flex flex-col lg:flex-row items-center gap-10 lg:gap-12 text-left">
 
         {/* ── Left Column: Text Content & Input ── */}
@@ -303,7 +274,7 @@ function HeroSection({ query = '', setQuery = () => {}, onSearchSubmit = null, o
           </div>
 
           {/* Global Search Input Component */}
-          <div className="w-full max-w-lg select-none relative z-30 pt-2">
+          <div className="w-full max-w-lg select-none relative z-50 pt-2">
             <GlobalSearchInput 
               query={query} 
               setQuery={setQuery} 

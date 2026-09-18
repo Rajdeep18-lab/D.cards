@@ -122,7 +122,7 @@ function AIChatAssistant({
     setIsSearching(true);
 
     try {
-      const chatContext = { conversationState };
+      const chatContext = { conversationState, conversationHistory: newMessages };
       const response = await aiChatService.sendMessage(query, user, chatContext);
 
       if (response.conversationState) {
@@ -134,8 +134,9 @@ function AIChatAssistant({
         sender: "bot",
         text: response.text,
         type: response.type,
-        matchedAccounts: response.matchedAccounts || [],
+        matchedAccounts: [...(response.matchedAccounts || []), ...(response.matchedCurrentAccounts || [])],
         matchedCards: response.matchedCards || [],
+        disclaimer: response.disclaimer,
         timestamp: response.timestamp || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
 
@@ -467,7 +468,7 @@ function AIChatAssistant({
                           <span className="w-2 h-2 rounded-full bg-[#2563EB] animate-bounce" style={{ animationDelay: '300ms' }} />
                         </div>
                         <span className="text-xs font-semibold text-[#1F2937] dark:text-slate-200">
-                          Searching Firestore & Analyzing Banking Context...
+                          D.CARD AI Advisor is analyzing verified banking data...
                         </span>
                       </div>
                     </motion.div>
@@ -482,7 +483,8 @@ function AIChatAssistant({
                     <button
                       key={act.label}
                       onClick={() => handleSendMessage(act.query)}
-                      className="px-3 py-1.5 rounded-xl text-[11px] font-semibold whitespace-nowrap bg-white dark:bg-slate-800 text-[#2563EB] dark:text-[#60A5FA] border border-[#2563EB]/20 hover:bg-[#2563EB] hover:text-white dark:hover:bg-[#2563EB] transition-all cursor-pointer shadow-xs active:scale-95"
+                      disabled={isSearching}
+                      className="px-3 py-1.5 rounded-xl text-[11px] font-semibold whitespace-nowrap bg-white dark:bg-slate-800 text-[#2563EB] dark:text-[#60A5FA] border border-[#2563EB]/20 hover:bg-[#2563EB] hover:text-white dark:hover:bg-[#2563EB] transition-all cursor-pointer shadow-xs active:scale-95 disabled:opacity-50"
                     >
                       {act.label}
                     </button>
@@ -498,13 +500,21 @@ function AIChatAssistant({
                     type="text"
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSendMessage();
+                      }
+                    }}
                     placeholder="Ask about savings accounts, debit cards, lounge access, zero balance..."
-                    className="flex-1 rounded-full bg-[#F8FAFC] dark:bg-slate-900 border border-[#E5E7EB] dark:border-slate-800 px-5 py-3.5 text-xs text-[#1F2937] dark:text-white font-normal outline-none focus:border-[#2563EB] transition-all shadow-xs"
+                    disabled={isSearching}
+                    className="flex-1 rounded-full bg-[#F8FAFC] dark:bg-slate-900 border border-[#E5E7EB] dark:border-slate-800 px-5 py-3.5 text-xs text-[#1F2937] dark:text-white font-normal outline-none focus:border-[#2563EB] transition-all shadow-xs disabled:opacity-60"
                   />
                   <button
                     type="submit"
                     disabled={!inputValue.trim() || isSearching}
                     className="w-10 h-10 rounded-full bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:shadow-[0_0_18px_rgba(37,99,235,0.5)] text-white font-bold flex items-center justify-center text-xs shadow-md disabled:opacity-40 cursor-pointer active:scale-95 transition-all flex-shrink-0"
+                    title={isSearching ? "Thinking..." : "Send Message"}
                   >
                     <Send className="w-4 h-4" />
                   </button>

@@ -12,7 +12,7 @@ export default function TopDisclaimerTicker() {
   return (
     <aside
       aria-label="Important Bank Data Disclaimer"
-      className="w-full bg-[#B8860B] dark:bg-[#A87900] text-white border-b border-[#926B08] dark:border-[#855F00] text-[11px] sm:text-xs py-1.5 sm:py-2 overflow-hidden select-none relative z-50 shrink-0 shadow-xs"
+      className="w-full bg-[#B8860B] dark:bg-[#A87900] text-white border-y border-[#926B08] dark:border-[#855F00] text-[11px] sm:text-xs py-2 overflow-hidden select-none relative z-10 shrink-0 shadow-xs"
     >
       <div className="flex w-max animate-marquee-continuous whitespace-nowrap items-center">
         {tickerItems.map((idx) => (

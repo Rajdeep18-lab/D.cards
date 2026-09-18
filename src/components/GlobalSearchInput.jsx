@@ -124,11 +124,11 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
   // Relevance Scoring & Categorized Filtering Algorithm
   const searchResults = useMemo(() => {
     const q = debouncedTerm.trim().toLowerCase();
-    if (!q) return { banks: [], cards: [], accounts: [] };
+    if (!q) return { banks: [], cards: [], accounts: [], currentAccounts: [] };
 
     // 1. Filter Banks
     const matchedBanks = coveredBanks.map(b => {
-      const bName = b.name.toLowerCase();
+      const bName = String(b?.name || '').toLowerCase();
       let score = 0;
       if (bName === q) score += 100;
       else if (bName.startsWith(q)) score += 80;
@@ -138,12 +138,12 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
 
     // 2. Filter Debit Cards
     const matchedCards = debitCards.map(c => {
-      const name = String(c.cardName || '').toLowerCase();
-      const bank = String(c.bank || '').toLowerCase();
-      const network = String(c.network || '').toLowerCase();
-      const cat = String(c.category || '').toLowerCase();
-      const lounge = String(c.loungeAccess || '').toLowerCase();
-      const benefits = String(c.benefits || '').toLowerCase();
+      const name = String(c?.cardName || c?.name || '').toLowerCase();
+      const bank = String(c?.bank || c?.bankName || '').toLowerCase();
+      const network = String(c?.network || '').toLowerCase();
+      const cat = String(c?.category || '').toLowerCase();
+      const lounge = String(c?.loungeAccess || '').toLowerCase();
+      const benefits = String(c?.benefits || '').toLowerCase();
 
       let score = 0;
       if (name === q) score += 100;
@@ -153,8 +153,8 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
       if (q.includes("rupay") && (network.includes("rupay") || name.includes("rupay"))) score += 50;
       if (q.includes("visa") && (network.includes("visa") || name.includes("visa"))) score += 50;
       if (q.includes("lounge") && (lounge.includes("lounge") || lounge.includes("yes"))) score += 50;
-      if (q.includes("international") && c.international) score += 50;
-      if (q.includes("zero fee") && (c.annualFee === 0 || String(c.annualFee).toLowerCase().includes("free"))) score += 50;
+      if (q.includes("international") && c?.international) score += 50;
+      if (q.includes("zero fee") && (c?.annualFee === 0 || String(c?.annualFee || '').toLowerCase().includes("free"))) score += 50;
       if (benefits.includes(q) || cat.includes(q)) score += 30;
 
       return { item: c, score };
@@ -162,22 +162,22 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
 
     // 3. Filter Savings Accounts
     const matchedAccounts = savingsAccounts.map(s => {
-      const name = String(s.accountName || '').toLowerCase();
-      const bank = String(s.bank || '').toLowerCase();
-      const type = String(s.accountType || '').toLowerCase();
-      const cardName = String(s.associatedDebitCardName || '').toLowerCase();
-      const benefits = Array.isArray(s.keyBenefits) ? s.keyBenefits.join(' ').toLowerCase() : '';
+      const name = String(s?.accountName || s?.variant_name || s?.account_name || '').toLowerCase();
+      const bank = String(s?.bank || s?.bank_name || '').toLowerCase();
+      const type = String(s?.accountType || s?.account_type || '').toLowerCase();
+      const cardName = String(s?.associatedDebitCardName || '').toLowerCase();
+      const benefits = Array.isArray(s?.keyBenefits) ? s.keyBenefits.join(' ').toLowerCase() : (Array.isArray(s?.benefits) ? s.benefits.join(' ').toLowerCase() : '');
 
       let score = 0;
       if (name === q) score += 100;
       else if (name.startsWith(q)) score += 80;
       else if (name.includes(q) || bank.includes(q)) score += 60;
 
-      if ((q.includes("zero balance") || q.includes("zero min")) && (s.isZeroBalance || s.minimumBalanceValue === 0)) score += 50;
-      if (q.includes("student") && (s.isStudent || type.includes("student"))) score += 50;
-      if (q.includes("salary") && (s.isSalary || type.includes("salary"))) score += 50;
-      if (q.includes("senior") && (s.isSeniorCitizen || type.includes("senior"))) score += 50;
-      if ((q.includes("online") || q.includes("video kyc") || q.includes("digital")) && (s.isOnlineOpening || s.isDigital)) score += 50;
+      if ((q.includes("zero balance") || q.includes("zero min")) && (s?.isZeroBalance || s?.minimumBalanceValue === 0)) score += 50;
+      if (q.includes("student") && (s?.isStudent || type.includes("student"))) score += 50;
+      if (q.includes("salary") && (s?.isSalary || type.includes("salary"))) score += 50;
+      if (q.includes("senior") && (s?.isSeniorCitizen || type.includes("senior"))) score += 50;
+      if ((q.includes("online") || q.includes("video kyc") || q.includes("digital")) && (s?.isOnlineOpening || s?.isDigital)) score += 50;
       if (type.includes(q) || cardName.includes(q) || benefits.includes(q)) score += 30;
 
       return { item: s, score };
@@ -185,12 +185,12 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
 
     // 4. Filter Current Accounts
     const matchedCurrentAccounts = (currentAccounts || []).map(c => {
-      const name = String(c.accountName || '').toLowerCase();
-      const bank = String(c.bankName || c.bank || '').toLowerCase();
-      const type = String(c.accountType || '').toLowerCase();
-      const suitable = String(c.suitableFor || '').toLowerCase();
-      const benefits = Array.isArray(c.keyBenefits) ? c.keyBenefits.join(' ').toLowerCase() : '';
-      const constitution = Array.isArray(c.businessConstitution) ? c.businessConstitution.join(' ').toLowerCase() : '';
+      const name = String(c?.accountName || c?.variant_name || '').toLowerCase();
+      const bank = String(c?.bankName || c?.bank || '').toLowerCase();
+      const type = String(c?.accountType || '').toLowerCase();
+      const suitable = String(c?.suitableFor || '').toLowerCase();
+      const benefits = Array.isArray(c?.keyBenefits) ? c.keyBenefits.join(' ').toLowerCase() : (Array.isArray(c?.benefits) ? c.benefits.join(' ').toLowerCase() : '');
+      const constitution = Array.isArray(c?.businessConstitution) ? c.businessConstitution.join(' ').toLowerCase() : '';
 
       let score = 0;
       if (name === q) score += 100;
@@ -352,7 +352,7 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
 
             {/* Case 2: Active Query with Results -> Show Grouped Categorized Cards */}
             {isQueryActive && totalResultsCount > 0 && (
-              <div className="p-4 space-y-4 text-xs max-h-[480px] overflow-y-auto custom-scrollbar">
+              <div className="p-4 space-y-4 text-xs max-h-[min(580px,75vh)] overflow-y-auto custom-scrollbar">
                 
                 {/* 🏦 BANKS CATEGORY */}
                 {searchResults.banks.length > 0 && (
@@ -446,13 +446,18 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
 
                     <div className="space-y-2">
                       {searchResults.accounts.map(s => {
+                        const targetId = s?.id || s?.product_id;
                         const associatedCards = getAssociatedDebitCards(s);
                         const cardName = associatedCards.length > 0 ? (associatedCards[0].card_name || associatedCards[0].cardName) : 'Debit card information not available';
 
                         return (
                           <div
-                            key={s.id}
-                            onClick={() => handleItemSelect(() => navigate(`/savings-accounts/${s.id}`))}
+                            key={s.id || s.product_id}
+                            onClick={() => {
+                              if (targetId) {
+                                handleItemSelect(() => navigate(`/savings-accounts/${targetId}`));
+                              }
+                            }}
                             className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 transition-all cursor-pointer flex items-center justify-between gap-3 group"
                           >
                             <div className="flex items-center gap-3">
@@ -497,13 +502,18 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
 
                     <div className="space-y-2">
                       {searchResults.currentAccounts.map(c => {
+                        const targetId = c?.id || c?.product_id;
                         const linkedCard = getAssociatedDebitCardForCurrentAccount(c);
                         const cardName = linkedCard ? (linkedCard.name || linkedCard.card_name || linkedCard.cardName) : 'Debit card association not specified';
 
                         return (
                           <div
-                            key={c.id}
-                            onClick={() => handleItemSelect(() => navigate(`/current-accounts/${c.id}`))}
+                            key={c.id || c.product_id}
+                            onClick={() => {
+                              if (targetId) {
+                                handleItemSelect(() => navigate(`/current-accounts/${targetId}`));
+                              }
+                            }}
                             className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-blue-500 transition-all cursor-pointer flex items-center justify-between gap-3 group"
                           >
                             <div className="flex items-center gap-3">
