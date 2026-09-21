@@ -142,7 +142,21 @@ export const accountDebitCardMappings = [
   { account_id: "112", card_id: "indusind-bank-indusind-platinum-debit-card", relationship: "provided", verification_status: "verified" },
 
   { account_id: "fi-money-smart-digital", card_id: "fi-money-fi-debit-card", relationship: "provided", verification_status: "verified" },
-  { account_id: "113", card_id: "fi-money-fi-debit-card", relationship: "provided", verification_status: "verified" }
+  { account_id: "113", card_id: "fi-money-fi-debit-card", relationship: "provided", verification_status: "verified" },
+
+  // CANARA BANK
+  { account_id: "canara-sb-select", card_id: "canara-bank-rupay-platinum", relationship: "included", verification_status: "verified" },
+  { account_id: "canara-aspire", card_id: "canara-bank-rupay-millennial-platinum", relationship: "included", verification_status: "verified" },
+  { account_id: "canara-angel-lavender", card_id: "canara-bank-rupay-platinum", relationship: "included", verification_status: "verified" },
+  { account_id: "canara-angel-rose", card_id: "canara-bank-rupay-platinum", relationship: "included", verification_status: "verified" },
+  { account_id: "canara-angel-orchid", card_id: "canara-bank-rupay-women-platinum", relationship: "included", verification_status: "verified" },
+  { account_id: "canara-payroll-silver", card_id: "canara-bank-rupay-platinum", relationship: "included", verification_status: "verified" },
+  { account_id: "canara-payroll-gold", card_id: "canara-bank-rupay-platinum", relationship: "included", verification_status: "verified" },
+  { account_id: "canara-payroll-diamond", card_id: "canara-bank-rupay-select", relationship: "included", verification_status: "verified" },
+  { account_id: "canara-payroll-platinum", card_id: "canara-bank-rupay-select", relationship: "included", verification_status: "verified" },
+  { account_id: "canara-central-govt-salary", card_id: "canara-bank-rupay-platinum", relationship: "included", verification_status: "verified" },
+  { account_id: "canara-elite-current", card_id: "canara-bank-rupay-platinum", relationship: "included", verification_status: "verified" },
+  { account_id: "canara-bsbda", card_id: "canara-bank-rupay-pmjdy", relationship: "included", verification_status: "verified" }
 ];
 
 /**

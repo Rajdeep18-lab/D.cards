@@ -1,4 +1,4 @@
-import { masterDebitCards } from "./debitCardsData.js";
+import { masterDebitCards, allMasterDebitCards } from "./debitCardsData.js";
 import { normalizeCard, deduplicateCards } from "../utils/compareUtils.js";
 
 export const bankCards = [
@@ -1068,9 +1068,10 @@ export const debitCards = [
   },
   {
     "id": 23,
+    "card_id": "canara-bank-visa-classic",
     "image": "/images/cards/card-23.png",
     "bank": "Canara Bank",
-    "cardName": "Canara Visa Classic Debit Card",
+    "cardName": "VISA Classic",
     "network": "Visa",
     "category": "Classic",
     "annualFee": 200,
@@ -1133,9 +1134,10 @@ export const debitCards = [
   },
   {
     "id": 24,
+    "card_id": "canara-bank-visa-platinum",
     "image": "/images/cards/card-24.png",
     "bank": "Canara Bank",
-    "cardName": "Canara Visa Platinum Debit Card",
+    "cardName": "VISA Platinum",
     "network": "Visa",
     "category": "Classic",
     "annualFee": 500,
@@ -1190,9 +1192,10 @@ export const debitCards = [
   },
   {
     "id": 25,
+    "card_id": "canara-bank-rupay-select",
     "image": "/images/cards/card-25.png",
     "bank": "Canara Bank",
-    "cardName": "Canara RuPay Select Debit Card",
+    "cardName": "RuPay Select",
     "network": "RuPay",
     "category": "Premium",
     "annualFee": 1000,
@@ -6326,7 +6329,7 @@ export const filterOptions = [
   "Zero Fee",
 ];
 
-export const jsonDebitCards = (masterDebitCards || []).map(c => normalizeCard({
+export const jsonDebitCards = (allMasterDebitCards || masterDebitCards || []).map(c => normalizeCard({
   ...c,
   id: c.card_id,
   dataset: 'json'

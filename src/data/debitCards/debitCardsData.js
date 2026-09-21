@@ -1,4 +1,4 @@
-import { masterDebitCards as rawMasterCards, masterDebitCardsMap as rawMasterCardsMap } from "../debitCardsData.js";
+import { allMasterDebitCards as rawMasterCards, masterDebitCardsMap as rawMasterCardsMap } from "../debitCardsData.js";
 import { validateDebitCard } from "../../utils/dataValidation.js";
 
 /**

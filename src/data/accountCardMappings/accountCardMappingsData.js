@@ -664,6 +664,119 @@ export const accountDebitCardMappings = [
     relationship: "included",
     verification_status: "verified",
     source: "User Provided Banking Dataset"
+  },
+
+  // =========================================================================
+  // CANARA BANK - SAVINGS & CURRENT ACCOUNTS → DEBIT CARDS
+  // Source: Canara Bank Product Dataset
+  // =========================================================================
+  {
+    "account_id": "canara-sb-select",
+    "account_numeric_id": 3002,
+    "bank_id": "canara-bank",
+    "card_id": "canara-bank-rupay-platinum",
+    "relationship": "included",
+    "verification_status": "verified",
+    "source": "Canara Bank Product Dataset"
+  },
+  {
+    "account_id": "canara-aspire",
+    "account_numeric_id": 3004,
+    "bank_id": "canara-bank",
+    "card_id": "canara-bank-rupay-millennial-platinum",
+    "relationship": "included",
+    "verification_status": "verified",
+    "source": "Canara Bank Product Dataset"
+  },
+  {
+    "account_id": "canara-angel-lavender",
+    "account_numeric_id": 3005,
+    "bank_id": "canara-bank",
+    "card_id": "canara-bank-rupay-platinum",
+    "relationship": "included",
+    "verification_status": "verified",
+    "source": "Canara Bank Product Dataset"
+  },
+  {
+    "account_id": "canara-angel-rose",
+    "account_numeric_id": 3006,
+    "bank_id": "canara-bank",
+    "card_id": "canara-bank-rupay-platinum",
+    "relationship": "included",
+    "verification_status": "verified",
+    "source": "Canara Bank Product Dataset"
+  },
+  {
+    "account_id": "canara-angel-orchid",
+    "account_numeric_id": 3007,
+    "bank_id": "canara-bank",
+    "card_id": "canara-bank-rupay-women-platinum",
+    "relationship": "included",
+    "verification_status": "verified",
+    "source": "Canara Bank Product Dataset"
+  },
+  {
+    "account_id": "canara-payroll-silver",
+    "account_numeric_id": 3020,
+    "bank_id": "canara-bank",
+    "card_id": "canara-bank-rupay-platinum",
+    "relationship": "included",
+    "verification_status": "verified",
+    "source": "Canara Bank Product Dataset"
+  },
+  {
+    "account_id": "canara-payroll-gold",
+    "account_numeric_id": 3021,
+    "bank_id": "canara-bank",
+    "card_id": "canara-bank-rupay-platinum",
+    "relationship": "included",
+    "verification_status": "verified",
+    "source": "Canara Bank Product Dataset"
+  },
+  {
+    "account_id": "canara-payroll-diamond",
+    "account_numeric_id": 3022,
+    "bank_id": "canara-bank",
+    "card_id": "canara-bank-rupay-select",
+    "relationship": "included",
+    "verification_status": "verified",
+    "source": "Canara Bank Product Dataset"
+  },
+  {
+    "account_id": "canara-payroll-platinum",
+    "account_numeric_id": 3023,
+    "bank_id": "canara-bank",
+    "card_id": "canara-bank-rupay-select",
+    "relationship": "included",
+    "verification_status": "verified",
+    "source": "Canara Bank Product Dataset"
+  },
+  {
+    "account_id": "canara-central-govt-salary",
+    "account_numeric_id": 3024,
+    "bank_id": "canara-bank",
+    "card_id": "canara-bank-rupay-platinum",
+    "relationship": "included",
+    "verification_status": "verified",
+    "source": "Canara Bank Product Dataset"
+  },
+  {
+    "account_id": "canara-elite-current",
+    "account_numeric_id": 2085,
+    "bank_id": "canara-bank",
+    "card_id": "canara-bank-rupay-platinum",
+    "relationship": "included",
+    "verification_status": "verified",
+    "source": "Canara Bank Product Dataset"
+  },
+  {
+    "account_id": "canara-bsbda",
+    "account_numeric_id": 3016,
+    "bank_id": "canara-bank",
+    "card_id": "canara-bank-rupay-pmjdy",
+    "relationship": "included",
+    "verification_status": "verified",
+    "source": "Canara Bank Product Dataset"
   }
 ];
 
