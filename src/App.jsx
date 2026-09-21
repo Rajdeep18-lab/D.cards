@@ -25,6 +25,7 @@ import SavingsAccountDetailPage from "./pages/SavingsAccountDetailPage";
 import CurrentAccountsPage from "./pages/CurrentAccountsPage";
 import CurrentAccountsComparePage from "./pages/CurrentAccountsComparePage";
 import CurrentAccountDetailPage from "./pages/CurrentAccountDetailPage";
+import DebitCardDetailPage from "./pages/DebitCardDetailPage";
 
 import { normalizeCard, deduplicateCards, parseAnnualFeeVal, parseCashbackVal, safeLower, safeIncludes, safeStr, safeMap } from "./utils/compareUtils";
 import { logRecentlyViewed } from "./utils/recentlyViewedUtils";
@@ -199,7 +200,7 @@ const RECENTLY_UPDATED_COUNT = DEBIT_CARDS_WITH_LIMITS.filter(c => c?.verificati
 function ScrollToTop() {
   const { pathname } = useLocation();
   useEffect(() => {
-    window.scrollTo(0, 0);
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   }, [pathname]);
   return null;
 }
@@ -982,9 +983,25 @@ function AppContent() {
             {/* Debit Cards routes */}
             <Route path="/cards" element={cardsPageContent} />
             <Route path="/debit-cards" element={cardsPageContent} />
-            <Route path="/debit-cards/:id" element={cardsPageContent} />
-            <Route path="/debit-card/:id" element={cardsPageContent} />
-            <Route path="/product/:id" element={cardsPageContent} />
+            {/* Debit Card Product Detail Pages — premium full-page redesign */}
+            <Route path="/debit-cards/:id" element={
+              <DebitCardDetailPage
+                toggleCompareQueue={toggleCompareQueue}
+                compareQueue={compareQueue}
+              />
+            } />
+            <Route path="/debit-card/:id" element={
+              <DebitCardDetailPage
+                toggleCompareQueue={toggleCompareQueue}
+                compareQueue={compareQueue}
+              />
+            } />
+            <Route path="/product/:id" element={
+              <DebitCardDetailPage
+                toggleCompareQueue={toggleCompareQueue}
+                compareQueue={compareQueue}
+              />
+            } />
 
             {/* Savings Accounts routes */}
             <Route 

@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth';
+import { useScrollLock } from '../hooks/useScrollLock';
 
 function ForgotPasswordModal({ isOpen, onClose, onSwitchToLogin }) {
   const { forgotPassword, updatePassword, isPasswordRecoveryActive } = useAuth();
+
+  useScrollLock(isOpen);
 
   const [email, setEmail] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -17,11 +20,8 @@ function ForgotPasswordModal({ isOpen, onClose, onSwitchToLogin }) {
     const handleKeyDown = (e) => {
       if (e.key === "Escape") onClose();
     };
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
     window.addEventListener("keydown", handleKeyDown);
     return () => {
-      document.body.style.overflow = prevOverflow;
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [isOpen, onClose]);

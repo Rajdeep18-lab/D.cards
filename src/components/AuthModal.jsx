@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Mail, 
@@ -13,6 +13,7 @@ import {
   ArrowLeft
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import { useScrollLock } from '../hooks/useScrollLock';
 
 export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
   const { 
@@ -24,6 +25,12 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
   } = useAuth();
 
   const [activeTab, setActiveTab] = useState('login'); // 'login' | 'signup' | 'forgot'
+
+  const overlayRef = useRef(null);
+  const modalContentRef = useRef(null);
+
+  // Robust body scroll lock across mobile and desktop
+  useScrollLock(isOpen);
 
   // Form states
   const [signInEmail, setSignInEmail] = useState('');
@@ -73,25 +80,72 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
     }
   }, []);
 
-  // Keyboard navigation (ESC to close) and body scroll locking
+  // Keyboard navigation: ESC to close, and prevent background page scrolling
   useEffect(() => {
     if (!isOpen) return;
 
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
         onClose();
+        return;
+      }
+
+      // Prevent background keys from scrolling page, while preserving normal input typing
+      const scrollKeys = ['Space', ' ', 'PageUp', 'PageDown', 'ArrowUp', 'ArrowDown', 'Home', 'End'];
+      if (scrollKeys.includes(e.key)) {
+        const target = e.target;
+        const isInteractive = 
+          target instanceof HTMLInputElement ||
+          target instanceof HTMLTextAreaElement ||
+          target instanceof HTMLSelectElement ||
+          target instanceof HTMLButtonElement ||
+          target?.isContentEditable;
+
+        // Never interfere with typing inside form inputs or pressing buttons
+        if (isInteractive) {
+          return;
+        }
+
+        // If focus is inside scrollable modal container
+        const modalContainer = modalContentRef.current;
+        if (modalContainer && modalContainer.contains(target)) {
+          if (e.key === ' ' || e.key === 'Space') {
+            e.preventDefault();
+          }
+          return;
+        }
+
+        // Key pressed outside inputs or modal container -> prevent window scrolling
+        e.preventDefault();
       }
     };
 
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
     window.addEventListener('keydown', handleKeyDown);
-
     return () => {
-      document.body.style.overflow = prevOverflow;
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [isOpen, onClose]);
+
+  // Direct non-passive touchmove and wheel prevention on the backdrop overlay
+  useEffect(() => {
+    if (!isOpen) return;
+    const overlay = overlayRef.current;
+    if (!overlay) return;
+
+    const preventBackdropScroll = (e) => {
+      if (e.target === overlay) {
+        e.preventDefault();
+      }
+    };
+
+    overlay.addEventListener('wheel', preventBackdropScroll, { passive: false });
+    overlay.addEventListener('touchmove', preventBackdropScroll, { passive: false });
+
+    return () => {
+      overlay.removeEventListener('wheel', preventBackdropScroll);
+      overlay.removeEventListener('touchmove', preventBackdropScroll);
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -194,18 +248,29 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
 
   return (
     <div
+      ref={overlayRef}
       onClick={handleBackdropClick}
-      className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-4 transition-all duration-200"
-      style={{ backgroundColor: 'rgba(0, 0, 0, 0.45)' }}
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-4 transition-all duration-200 overscroll-contain"
+      style={{ 
+        backgroundColor: 'rgba(0, 0, 0, 0.45)',
+        overscrollBehavior: 'contain',
+        touchAction: 'none'
+      }}
       aria-modal="true"
       role="dialog"
     >
       <motion.div
+        ref={modalContentRef}
         initial={{ opacity: 0, scale: 0.95, y: 15 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 15 }}
         transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-        className="relative w-full max-w-[460px] max-h-[90vh] overflow-y-auto rounded-[24px] bg-white dark:bg-[#0F172A] p-6 sm:p-8 shadow-[0_20px_60px_rgba(0,0,0,0.18)] border border-slate-200/80 dark:border-slate-800 text-left select-none custom-scrollbar"
+        className="relative w-full max-w-[460px] max-h-[90vh] overflow-y-auto rounded-[24px] bg-white dark:bg-[#0F172A] p-6 sm:p-8 shadow-[0_20px_60px_rgba(0,0,0,0.18)] border border-slate-200/80 dark:border-slate-800 text-left select-none custom-scrollbar overscroll-contain"
+        style={{
+          overscrollBehavior: 'contain',
+          WebkitOverflowScrolling: 'touch',
+          touchAction: 'pan-y'
+        }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top-Right Close 'X' Button */}

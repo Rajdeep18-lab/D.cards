@@ -7,6 +7,7 @@ import BankLogo from './BankLogo';
 import { useAuth } from '../hooks/useAuth';
 import { referralService } from '../services/referralService';
 import { useSEO } from '../hooks/useSEO';
+import { useScrollLock } from '../hooks/useScrollLock';
 
 /* Local Bank Profiles structured data for Trust Shield */
 const BANK_PROFILES = {
@@ -134,16 +135,15 @@ function CardDetailsModal({ isOpen, onClose, card, compareQueue, toggleCompareQu
     }
   }, [card?.id]);
 
+  useScrollLock(isOpen);
+
   useEffect(() => {
     if (!isOpen) return;
     const handleKeyDown = (e) => {
       if (e.key === "Escape") onClose();
     };
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
     window.addEventListener("keydown", handleKeyDown);
     return () => {
-      document.body.style.overflow = prevOverflow;
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [isOpen, onClose]);
