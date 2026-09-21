@@ -14,6 +14,7 @@ const SITE_URL = (process.env.VITE_SITE_URL || process.env.SITE_URL || DEFAULT_S
 // Import existing datasets dynamically
 import { savingsAccountsData } from '../src/data/savingsAccounts/savingsAccountsData.js';
 import { currentAccountsData } from '../src/data/currentAccounts/currentAccountsData.js';
+import { allMasterDebitCards } from '../src/data/debitCardsData.js';
 import { getCoveredBanksDirectory } from '../src/utils/bankDirectoryUtils.js';
 
 export function generateSitemapAndRobots() {
@@ -84,6 +85,10 @@ export function generateSitemapAndRobots() {
         addUrl(`/savings-accounts/${id}`, '0.7', 'weekly');
         savingsCount++;
       }
+      if (account.product_id && String(account.product_id) !== String(account.id)) {
+        addUrl(`/savings-accounts/${account.product_id}`, '0.7', 'weekly');
+        savingsCount++;
+      }
     });
   }
 
@@ -94,6 +99,10 @@ export function generateSitemapAndRobots() {
       const id = account.id || account.product_id;
       if (id) {
         addUrl(`/current-accounts/${id}`, '0.7', 'weekly');
+        currentCount++;
+      }
+      if (account.product_id && String(account.product_id) !== String(account.id)) {
+        addUrl(`/current-accounts/${account.product_id}`, '0.7', 'weekly');
         currentCount++;
       }
     });
@@ -113,6 +122,25 @@ export function generateSitemapAndRobots() {
     }
   } catch (err) {
     console.warn('[Sitemap Generator] Warning loading covered banks:', err.message);
+  }
+
+  // 8. Dynamic Debit Card Pages
+  let cardsCount = 0;
+  try {
+    if (Array.isArray(allMasterDebitCards)) {
+      allMasterDebitCards.forEach(card => {
+        if (card.card_id) {
+          addUrl(`/debit-cards/${card.card_id}`, '0.7', 'weekly');
+          cardsCount++;
+        }
+        if (card.id && String(card.id) !== String(card.card_id)) {
+          addUrl(`/debit-cards/${card.id}`, '0.7', 'weekly');
+          cardsCount++;
+        }
+      });
+    }
+  } catch (err) {
+    console.warn('[Sitemap Generator] Warning loading debit cards:', err.message);
   }
 
   // Construct valid XML string
