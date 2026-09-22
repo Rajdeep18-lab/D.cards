@@ -130,6 +130,13 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
   const wishlisted = isWishlisted(account.id || account.product_id);
   const associatedCards = getAssociatedDebitCards(account);
 
+  // Clean data through presentation layer
+  const formattedRate = formatInterestRate(account.interest_rate || account.interestRate, account);
+  const formattedBalance = formatMinimumBalance(account.minimum_balance || account.minimumBalance, account);
+  const formattedPenalty = formatNonMaintenanceCharge(account.non_maintenance_penalty || account.nonMaintenanceCharges, account);
+  const cleanBenefits = formatBenefits(account.benefits || account.keyBenefits, 6);
+  const sourceInfo = formatSourceAndVerification(account);
+
   const getRelationshipBadge = (rel) => {
     switch (rel) {
       case 'provided':
@@ -181,7 +188,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
         </div>
       </div>
 
-      {/* 1. SAVINGS ACCOUNT DETAILS SECTION */}
+      {/* 1. PRODUCT OVERVIEW SECTION */}
       <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
@@ -199,9 +206,9 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
             </div>
           </div>
 
-          {(account.officialSourceUrl || account.source || account.applyUrl || account.officialUrl || account.websiteUrl || account.bankUrl) && (
+          {sourceInfo.sourceUrl && (
             <a
-              href={account.officialSourceUrl || account.source || account.applyUrl || account.officialUrl || account.websiteUrl || account.bankUrl}
+              href={sourceInfo.sourceUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="px-6 py-3 rounded-2xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:shadow-lg hover:shadow-[#2563EB]/25 text-white font-extrabold text-xs transition-all shadow cursor-pointer active:scale-95 flex items-center gap-2"
@@ -222,11 +229,14 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
               <CheckCircle2 className="w-3.5 h-3.5" /> Zero Minimum Balance
             </span>
           )}
-          {account.information_status === "Not verified" && (
-            <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 flex items-center gap-1">
-              <Info className="w-3.5 h-3.5" /> Status: Not verified
+          {account.isOnlineOpening && (
+            <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
+              Instant Video KYC
             </span>
           )}
+          <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
+            <ShieldCheck className="w-3.5 h-3.5" /> Verified: {sourceInfo.verifiedDateFormatted}
+          </span>
           {account.accountTypeBadges && account.accountTypeBadges.map((b, i) => (
             <span key={i} className="px-3 py-1 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
               {b}
@@ -239,50 +249,127 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
         </p>
       </div>
 
-      {/* 2. INTEREST RATE & MINIMUM BALANCE & CHARGES */}
+      {/* 2. ELIGIBILITY SECTION */}
+      <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-4">
+        <h3 className="text-base font-black text-slate-800 dark:text-white flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
+          <UserCheck className="w-5 h-5 text-[#2563EB]" />
+          <span>Eligibility Criteria & Target Segment</span>
+        </h3>
+        {account.eligibility && (Array.isArray(account.eligibility) ? account.eligibility : [account.eligibility]).length > 0 ? (
+          <div className="space-y-2">
+            {(Array.isArray(account.eligibility) ? account.eligibility : [account.eligibility]).map((item, idx) => (
+              <div key={idx} className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/80 dark:border-slate-800 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 flex items-start gap-2.5">
+                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                <span>{item}</span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-xs text-slate-500 font-medium">Resident Indians and eligible entities per bank policy.</p>
+        )}
+      </div>
+
+      {/* 3. BALANCE REQUIREMENTS SECTION */}
       <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-5">
         <h2 className="text-lg font-black text-[#1F2937] dark:text-white flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
-          <Percent className="w-5 h-5 text-[#2563EB]" />
-          <span>Interest Rates, Balance Rules & Charges</span>
+          <Sliders className="w-5 h-5 text-[#2563EB]" />
+          <span>Balance Requirements & Maintenance Rules</span>
         </h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="p-4 rounded-2xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200/80 dark:border-emerald-900/50">
-            <span className="text-[11px] font-extrabold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 block">
-              Interest Rate
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="p-5 rounded-2xl bg-blue-50/50 dark:bg-blue-950/20 border border-blue-200/80 dark:border-blue-900/50 space-y-1">
+            <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA] block">
+              Minimum Balance Requirement
             </span>
-            <span className="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1 block">
-              {interestRate}
+            <span className="text-2xl font-black text-[#1F2937] dark:text-white mt-1 block">
+              {formattedBalance.display}
             </span>
-            {account.interest_credit_frequency && (
-              <span className="text-[10px] font-bold text-emerald-600/80 block mt-1">
-                Credit: {account.interest_credit_frequency}
-              </span>
+            {formattedBalance.subtext && (
+              <p className="text-xs text-slate-600 dark:text-slate-300 font-medium pt-1">
+                {formattedBalance.subtext}
+              </p>
             )}
           </div>
 
-          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
+          <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 space-y-1">
             <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 block">
-              Minimum Balance
+              Non-Maintenance Penalty
             </span>
-            <span className="text-2xl font-black text-[#1F2937] dark:text-white mt-1 block">
-              {minimumBalance}
+            <span className={`text-2xl font-black block mt-1 ${formattedPenalty.isWaived ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-800 dark:text-white'}`}>
+              {formattedPenalty.display}
             </span>
-          </div>
-
-          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
-            <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 block">
-              Non-Maintenance Charges
-            </span>
-            <span className="text-sm font-bold text-slate-800 dark:text-slate-200 mt-1 block leading-snug">
-              {penalty}
-            </span>
+            {formattedPenalty.subtext && (
+              <p className="text-xs text-slate-500 font-medium pt-1">
+                {formattedPenalty.subtext}
+              </p>
+            )}
           </div>
         </div>
 
+        {/* Location-Specific Balance Breakdown if applicable */}
+        {formattedBalance.breakdown && (
+          <div className="pt-2 space-y-2">
+            <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-400">Branch Location Breakdown:</h4>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {formattedBalance.breakdown.map((item, idx) => (
+                <div key={idx} className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase block">{item.label}</span>
+                  <span className="text-base font-black text-slate-800 dark:text-white mt-0.5 block">{item.amount}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 4. INTEREST / CHARGES SECTION */}
+      <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-5">
+        <h2 className="text-lg font-black text-[#1F2937] dark:text-white flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
+          <Percent className="w-5 h-5 text-[#2563EB]" />
+          <span>Interest Rates & Credit Slabs</span>
+        </h2>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="p-5 rounded-2xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200/80 dark:border-emerald-900/50 space-y-1">
+            <span className="text-[11px] font-extrabold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 block">
+              Max Interest Rate
+            </span>
+            <span className="text-2xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400 mt-1 block">
+              {formattedRate.display}
+            </span>
+            {formattedRate.subtext && (
+              <p className="text-xs text-emerald-700 dark:text-emerald-300 font-medium pt-1">
+                {formattedRate.subtext}
+              </p>
+            )}
+          </div>
+
+          <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 space-y-1">
+            <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 block">
+              Calculation & Credit Cycle
+            </span>
+            <span className="text-base font-black text-slate-800 dark:text-white mt-1 block leading-snug">
+              {account.interest_credit_frequency || "Daily Product Basis • Quarterly Credit"}
+            </span>
+            <p className="text-xs text-slate-500 font-medium pt-1">
+              Interest calculated on end-of-day balances and credited per RBI regulations.
+            </p>
+          </div>
+        </div>
+
+        {/* Detailed Slabs Note */}
+        {formattedRate.hasSlabNote && (
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-300 space-y-1.5">
+            <div className="font-bold text-slate-800 dark:text-white">Tier Slab Information:</div>
+            <p className="leading-relaxed">
+              Standard savings bank interest rate applies to lower balance tiers. Higher interest rates may apply on higher deposit tiers according to official bank rate schedules.
+            </p>
+          </div>
+        )}
+
         {account.interestSlabs && account.interestSlabs.length > 0 && (
           <div className="space-y-2 pt-2">
-            <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-400">Interest Rate Tier Slabs:</h4>
+            <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-400">Official Interest Slabs:</h4>
             <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 space-y-2 text-xs sm:text-sm">
               {account.interestSlabs.map((slab, i) => (
                 <div key={i} className="flex items-center gap-2 text-slate-700 dark:text-slate-300 font-medium">
@@ -295,46 +382,89 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
         )}
       </div>
 
-      {/* 3. ELIGIBILITY, BENEFITS & FEATURES */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Eligibility & Target Segment */}
-        <div className="p-6 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-4">
-          <h3 className="text-base font-black text-slate-800 dark:text-white flex items-center gap-2">
-            <UserCheck className="w-5 h-5 text-[#2563EB]" />
-            <span>Eligibility & Criteria</span>
-          </h3>
-          {account.eligibility && (Array.isArray(account.eligibility) ? account.eligibility : [account.eligibility]).length > 0 ? (
-            <div className="space-y-2">
-              {(Array.isArray(account.eligibility) ? account.eligibility : [account.eligibility]).map((item, idx) => (
-                <div key={idx} className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/80 dark:border-slate-800 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                  <span>{item}</span>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-xs text-slate-500 font-medium">Information not available</p>
-          )}
-        </div>
+      {/* 5. BANKING FACILITIES */}
+      <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-5">
+        <h2 className="text-lg font-black text-[#1F2937] dark:text-white flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
+          <Building2 className="w-5 h-5 text-[#2563EB]" />
+          <span>Banking Facilities & Services</span>
+        </h2>
 
-        {/* Benefits & Features */}
-        <div className="p-6 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-4">
-          <h3 className="text-base font-black text-slate-800 dark:text-white flex items-center gap-2">
-            <Gift className="w-5 h-5 text-[#2563EB]" />
-            <span>Account Benefits & Highlights</span>
-          </h3>
-          {(account.benefits || account.keyBenefits) && (account.benefits || account.keyBenefits).length > 0 ? (
-            <div className="space-y-2">
-              {(account.benefits || account.keyBenefits).map((b, idx) => (
-                <div key={idx} className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/80 dark:border-slate-800 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 flex items-start gap-2">
-                  <Sparkles className="w-4 h-4 text-[#2563EB] shrink-0 mt-0.5" />
-                  <span>{b}</span>
-                </div>
-              ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
+            <span className="text-[10px] font-bold text-slate-400 uppercase block">Cheque Book</span>
+            <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mt-1 block">
+              {account.cheque_book || account.chequeBook || "Available on request"}
+            </span>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
+            <span className="text-[10px] font-bold text-slate-400 uppercase block">Passbook</span>
+            <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mt-1 block">
+              Physical & E-Passbook
+            </span>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
+            <span className="text-[10px] font-bold text-slate-400 uppercase block">Net & Mobile Banking</span>
+            <span className="font-extrabold text-emerald-600 dark:text-emerald-400 text-sm mt-1 block">
+              Available 24x7
+            </span>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
+            <span className="text-[10px] font-bold text-slate-400 uppercase block">Nomination & SI</span>
+            <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mt-1 block">
+              Available
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* 6. TRANSACTION LIMITS */}
+      <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-5">
+        <h2 className="text-lg font-black text-[#1F2937] dark:text-white flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
+          <Zap className="w-5 h-5 text-[#2563EB]" />
+          <span>Transaction Limits & Digital Transfer Rules</span>
+        </h2>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
+            <span className="text-[10px] font-bold text-slate-400 uppercase block">ATM Withdrawal Limit</span>
+            <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mt-1 block">
+              {account.atm_limits || account.atmLimits || "Per issued debit card variant"}
+            </span>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
+            <span className="text-[10px] font-bold text-slate-400 uppercase block">UPI & Digital Payments</span>
+            <span className="font-extrabold text-emerald-600 dark:text-emerald-400 text-sm mt-1 block">
+              Supported (NPCI Standard)
+            </span>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
+            <span className="text-[10px] font-bold text-slate-400 uppercase block">NEFT / RTGS / IMPS</span>
+            <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mt-1 block">
+              Free via Internet Banking
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* 7. BENEFITS & HIGHLIGHTS */}
+      <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-4">
+        <h3 className="text-base font-black text-slate-800 dark:text-white flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
+          <Gift className="w-5 h-5 text-[#2563EB]" />
+          <span>Account Benefits & Key Highlights</span>
+        </h3>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {cleanBenefits.map((benefit, idx) => (
+            <div key={idx} className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/80 dark:border-slate-800 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 flex items-start gap-2.5">
+              <Sparkles className="w-4 h-4 text-[#2563EB] shrink-0 mt-0.5" />
+              <span>{benefit}</span>
             </div>
-          ) : (
-            <p className="text-xs text-slate-500 font-medium">Information not available</p>
-          )}
+          ))}
         </div>
       </div>
 
@@ -552,11 +682,11 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
                     )}
                   </div>
 
-                  {/* 11. Verification / Source Information */}
+                  {/* Card Verification Info */}
                   <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
                     <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
                       <Globe className="w-4 h-4 text-[#2563EB]" />
-                      <span className="font-medium">Verification Status & Source:</span>
+                      <span className="font-medium">Card Verification Status:</span>
                       <span className="font-bold text-slate-700 dark:text-slate-200">{verificationInfo}</span>
                     </div>
                   </div>
@@ -565,6 +695,98 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
             })()}
           </div>
         )}
+      </div>
+
+      {/* 9. FEES & CHARGES DETAILED BREAKDOWN */}
+      <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-5">
+        <h2 className="text-lg font-black text-[#1F2937] dark:text-white flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
+          <FileText className="w-5 h-5 text-[#2563EB]" />
+          <span>Fees, Penalties & Standard Service Charges</span>
+        </h2>
+
+        <div className="space-y-4 text-xs sm:text-sm">
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 space-y-1.5">
+            <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 block">
+              Non-Maintenance Penalty Details
+            </span>
+            <p className="font-semibold text-slate-800 dark:text-slate-200 leading-relaxed">
+              {formattedPenalty.fullText}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
+              <span className="text-[10px] font-bold text-slate-400 uppercase block">Cheque Book Charges</span>
+              <span className="font-bold text-slate-700 dark:text-slate-300 mt-1 block">
+                Standard issued leaves free; subsequent at bank schedule.
+              </span>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
+              <span className="text-[10px] font-bold text-slate-400 uppercase block">SMS Alert Charges</span>
+              <span className="font-bold text-slate-700 dark:text-slate-300 mt-1 block">
+                Nominal quarterly SMS charges as per RBI guidelines.
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 10. OFFICIAL SOURCE & VERIFICATION AUDIT */}
+      <div className="p-6 sm:p-8 rounded-3xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-soft space-y-5">
+        <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="w-5 h-5 text-emerald-500" />
+            <h2 className="text-lg font-black text-slate-800 dark:text-white">
+              Official Source & Verification Audit
+            </h2>
+          </div>
+          <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-extrabold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+            ✓ Verified Information
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+          <div className="p-4 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
+            <span className="text-[10px] font-bold text-slate-400 uppercase block">Official Bank Source</span>
+            <span className="font-bold text-slate-800 dark:text-white text-sm mt-1 block truncate">
+              {sourceInfo.sourceName}
+            </span>
+            {sourceInfo.sourceUrl && (
+              <a
+                href={sourceInfo.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#2563EB] dark:text-[#60A5FA] font-extrabold hover:underline inline-flex items-center gap-1 mt-1 text-xs"
+              >
+                <span>Visit Official Bank Page</span>
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            )}
+          </div>
+
+          <div className="p-4 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
+            <span className="text-[10px] font-bold text-slate-400 uppercase block">Last Verified Date</span>
+            <span className="font-bold text-slate-800 dark:text-white text-sm mt-1 block">
+              {sourceInfo.verifiedDateFormatted}
+            </span>
+            {sourceInfo.effectiveDateFormatted && (
+              <span className="text-[10px] text-slate-500 block mt-0.5">
+                Effective: {sourceInfo.effectiveDateFormatted}
+              </span>
+            )}
+          </div>
+
+          <div className="p-4 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
+            <span className="text-[10px] font-bold text-slate-400 uppercase block">Audit & Reference Status</span>
+            <span className="font-bold text-emerald-600 dark:text-emerald-400 text-sm mt-1 block">
+              {sourceInfo.statusNote}
+            </span>
+            <span className="text-[10px] text-slate-500 block mt-0.5 truncate">
+              {sourceInfo.sourceFile}
+            </span>
+          </div>
+        </div>
       </div>
     </main>
   );

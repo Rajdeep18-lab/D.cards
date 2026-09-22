@@ -22,6 +22,7 @@ import { savingsAccounts, getAssociatedDebitCards } from '../data/mockSavingsAcc
 import { currentAccounts, getAssociatedDebitCardForCurrentAccount } from '../data/currentAccounts/index.js';
 import { getCoveredBanksDirectory, canonicalBankName } from '../utils/bankDirectoryUtils';
 import BankLogo from './BankLogo';
+import { formatInterestRate, formatMinimumBalance } from '../utils/bankingDataFormatter';
 
 const RECENT_SEARCHES_KEY = 'dcard_recent_searches_v1';
 const MAX_RECENT_SEARCHES = 6;
@@ -476,7 +477,7 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
                                   )}
                                 </div>
                                 <span className="text-[10px] text-slate-400 font-medium block mt-0.5">
-                                  {s.bank} • Rate: {s.interestRate} • Min: {s.minimumBalance} • Linked: {cardName}
+                                  {s.bank} • Rate: {formatInterestRate(s.interestRate, s).display} • Min: {formatMinimumBalance(s.minimumBalance, s).display} • Linked: {cardName}
                                 </span>
                               </div>
                             </div>
@@ -530,7 +531,7 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
                                   </span>
                                 </div>
                                 <span className="text-[10px] text-slate-400 font-medium block mt-0.5">
-                                  {c.bankName || c.bank} • MAB: {c.minimumBalance} • Cheques: {c.freeChequeLeaves || 'Included'} • Linked: {cardName}
+                                  {c.bankName || c.bank} • MAB: {formatMinimumBalance(c.minimumBalance, c).display} • Cheques: {c.freeChequeLeaves || 'Included'} • Linked: {cardName}
                                 </span>
                               </div>
                             </div>

@@ -15,6 +15,12 @@ import { getAssociatedDebitCards } from '../data/mockSavingsAccounts';
 import { useWishlist } from '../context/WishlistContext';
 import { safeString, safeArray } from '../utils/safeUtils';
 import BankLogo from './BankLogo';
+import { 
+  formatInterestRate, 
+  formatMinimumBalance, 
+  formatNonMaintenanceCharge, 
+  formatSourceAndVerification 
+} from '../utils/bankingDataFormatter';
 
 function SavingsAccountDetailsModal({ isOpen, onClose, account, onSelectDebitCard, onToggleCompare, isCompared }) {
   const { isWishlisted, toggleWishlist } = useWishlist();
@@ -34,9 +40,12 @@ function SavingsAccountDetailsModal({ isOpen, onClose, account, onSelectDebitCar
   const associatedCards = getAssociatedDebitCards(account);
   const bankName = account.bank_name || account.bank || "Partner Bank";
   const accountName = account.variant_name || account.accountName || "Savings Account";
-  const interestRate = account.interest_rate || account.interestRate || "Information not available";
-  const minimumBalance = account.minimum_balance || account.minimumBalance || "Information not available";
-  const penalty = account.non_maintenance_penalty || account.nonMaintenanceCharges || "Information not available";
+
+  // Clean data through presentation layer
+  const formattedRate = formatInterestRate(account.interest_rate || account.interestRate, account);
+  const formattedBalance = formatMinimumBalance(account.minimum_balance || account.minimumBalance, account);
+  const formattedPenalty = formatNonMaintenanceCharge(account.non_maintenance_penalty || account.nonMaintenanceCharges, account);
+  const sourceInfo = formatSourceAndVerification(account);
 
   const getRelationshipBadge = (rel) => {
     switch (rel) {
@@ -139,18 +148,24 @@ function SavingsAccountDetailsModal({ isOpen, onClose, account, onSelectDebitCar
               </h3>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                <div className="p-3.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                  <span className="text-slate-400 font-bold uppercase text-[10px] block">Interest Rate</span>
-                  <span className="text-xl font-black text-emerald-600 dark:text-emerald-400 mt-0.5 block">{interestRate}</span>
+                <div className="p-3.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-0.5">
+                  <span className="text-slate-400 font-bold uppercase text-[10px] block">Max Interest Rate</span>
+                  <span className="text-xl font-black text-emerald-600 dark:text-emerald-400 mt-0.5 block">{formattedRate.display}</span>
+                  {formattedRate.subtext && (
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400 block pt-0.5">{formattedRate.subtext}</span>
+                  )}
                 </div>
-                <div className="p-3.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                <div className="p-3.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-0.5">
                   <span className="text-slate-400 font-bold uppercase text-[10px] block">Minimum Balance</span>
-                  <span className="text-xl font-black text-slate-800 dark:text-white mt-0.5 block">{minimumBalance}</span>
+                  <span className="text-xl font-black text-slate-800 dark:text-white mt-0.5 block">{formattedBalance.display}</span>
+                  {formattedBalance.subtext && (
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400 block pt-0.5">{formattedBalance.subtext}</span>
+                  )}
                 </div>
               </div>
 
               <div className="space-y-1 pt-2 border-t border-slate-200/80 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-400">
-                <p><strong>Non-Maintenance Charges:</strong> {penalty}</p>
+                <p><strong>Non-Maintenance Charges:</strong> {formattedPenalty.display} {formattedPenalty.subtext ? `(${formattedPenalty.subtext})` : ''}</p>
               </div>
             </div>
 

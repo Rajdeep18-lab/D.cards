@@ -14,6 +14,13 @@ import { getAssociatedDebitCardsForCurrentAccount, getDebitCardRelationshipStatu
 import { useWishlist } from '../context/WishlistContext';
 import { safeString, safeArray } from '../utils/safeUtils';
 import BankLogo from './BankLogo';
+import { 
+  formatMinimumBalance, 
+  formatCashDepositLimit, 
+  formatNonMaintenanceCharge, 
+  formatBenefits, 
+  formatSourceAndVerification 
+} from '../utils/bankingDataFormatter';
 
 function CurrentAccountDetailsModal({ isOpen, onClose, account, onSelectDebitCard, onToggleCompare, isCompared }) {
   const { isWishlisted, toggleWishlist } = useWishlist();
@@ -33,9 +40,13 @@ function CurrentAccountDetailsModal({ isOpen, onClose, account, onSelectDebitCar
   const associatedCards = getAssociatedDebitCardsForCurrentAccount(account);
   const bankName = account.bankName || account.bank_name || account.bank || "Partner Bank";
   const accountName = account.accountName || account.variant_name || "Current Account";
-  const minimumBalance = account.minimumBalance || account.minimum_balance || "Information not available";
-  const averageBalanceRequirement = account.averageBalanceRequirement || minimumBalance;
-  const penalty = account.nonMaintenanceCharge || account.non_maintenance_penalty || "Information not available";
+
+  // Clean data through presentation layer
+  const formattedBalance = formatMinimumBalance(account.minimumBalance || account.minimum_balance || account.averageBalanceRequirement, account);
+  const formattedCashLimit = formatCashDepositLimit(account.cashDepositLimit || account.freeCashDepositPerMonth, account);
+  const formattedFee = formatNonMaintenanceCharge(account.nonMaintenanceCharge || account.non_maintenance_penalty, account);
+  const highlights = formatBenefits(account.keyBenefits || account.benefits, 6);
+  const sourceInfo = formatSourceAndVerification(account);
 
   const getRelationshipBadge = (rel) => {
     switch (rel) {
@@ -114,29 +125,38 @@ function CurrentAccountDetailsModal({ isOpen, onClose, account, onSelectDebitCar
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
               <div className="p-4 rounded-2xl bg-blue-50/60 dark:bg-blue-950/20 border border-blue-200/80 dark:border-blue-900/50">
                 <span className="text-[10.5px] font-extrabold uppercase tracking-wider text-blue-700 dark:text-blue-400 block mb-1">
-                  Monthly Avg Balance
+                  Average Balance (AQB)
                 </span>
-                <span className="text-xl sm:text-2xl font-black text-[#1F2937] dark:text-white tracking-tight">
-                  {minimumBalance}
+                <span className="text-xl sm:text-2xl font-black text-[#1F2937] dark:text-white tracking-tight block">
+                  {formattedBalance.display}
                 </span>
+                {formattedBalance.subtext && (
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400 block mt-0.5">{formattedBalance.subtext}</span>
+                )}
               </div>
 
               <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60">
                 <span className="text-[10.5px] font-extrabold uppercase tracking-wider text-slate-400 block mb-1">
                   Non-Maintenance Fee
                 </span>
-                <span className="text-sm font-bold text-slate-800 dark:text-slate-200 block truncate">
-                  {penalty}
+                <span className="text-base font-black text-slate-800 dark:text-slate-200 block truncate">
+                  {formattedFee.display}
                 </span>
+                {formattedFee.subtext && (
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400 block mt-0.5">{formattedFee.subtext}</span>
+                )}
               </div>
 
               <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60">
                 <span className="text-[10.5px] font-extrabold uppercase tracking-wider text-slate-400 block mb-1">
-                  Suitable For
+                  Cash Deposit Limit
                 </span>
-                <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block truncate">
-                  {account.suitableFor || "SMEs & Traders"}
+                <span className="text-base font-black text-blue-600 dark:text-blue-400 block truncate">
+                  {formattedCashLimit.display}
                 </span>
+                {formattedCashLimit.subtext && (
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400 block mt-0.5 line-clamp-1">{formattedCashLimit.subtext}</span>
+                )}
               </div>
             </div>
 

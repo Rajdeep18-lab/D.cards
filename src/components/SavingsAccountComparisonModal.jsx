@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Check, CheckCircle2, XCircle, CreditCard, Scale, Info, ExternalLink } from 'lucide-react';
 import { getAssociatedDebitCard, getAssociatedDebitCards } from '../data/mockSavingsAccounts';
 import BankLogo from './BankLogo';
+import { formatInterestRate, formatMinimumBalance, formatNonMaintenanceCharge } from '../utils/bankingDataFormatter';
 
 function SavingsAccountComparisonModal({ isOpen, onClose, compareQueue = [], onRemove, onSelectDebitCard }) {
   useEffect(() => {
@@ -110,12 +111,12 @@ function SavingsAccountComparisonModal({ isOpen, onClose, compareQueue = [], onR
 
                             <div className="p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
                               <span className="text-[9.5px] font-bold text-slate-400 uppercase block">Interest Rate</span>
-                              <span className="font-black text-emerald-600 dark:text-emerald-400">{acc.interestRate}</span>
+                              <span className="font-black text-emerald-600 dark:text-emerald-400">{formatInterestRate(acc.interestRate, acc).display}</span>
                             </div>
 
                             <div className="p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
                               <span className="text-[9.5px] font-bold text-slate-400 uppercase block">Min Balance</span>
-                              <span className="font-bold text-slate-800 dark:text-slate-200">{acc.minimumBalance}</span>
+                              <span className="font-bold text-slate-800 dark:text-slate-200">{formatMinimumBalance(acc.minimumBalance, acc).display}</span>
                             </div>
 
                             <div className="p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
@@ -188,21 +189,41 @@ function SavingsAccountComparisonModal({ isOpen, onClose, compareQueue = [], onR
                       {/* Interest Rate */}
                       <tr>
                         <td className="p-3.5 font-bold text-slate-700 dark:text-slate-300 sticky left-0 bg-white dark:bg-[#0F172A] z-10">Interest Rate</td>
-                        {compareQueue.map((acc) => (
-                          <td key={acc.id} className="p-3.5 text-center font-black text-emerald-600 dark:text-emerald-400 text-base">
-                            {acc.interestRate}
-                          </td>
-                        ))}
+                        {compareQueue.map((acc) => {
+                          const rateObj = formatInterestRate(acc.interestRate, acc);
+                          return (
+                            <td key={acc.id} className="p-3.5 text-center">
+                              <div className="font-black text-emerald-600 dark:text-emerald-400 text-base">
+                                {rateObj.display}
+                              </div>
+                              {rateObj.badge && (
+                                <span className="inline-block mt-0.5 text-[9.5px] font-semibold text-slate-500 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">
+                                  {rateObj.badge}
+                                </span>
+                              )}
+                            </td>
+                          );
+                        })}
                       </tr>
 
                       {/* Minimum Balance */}
                       <tr>
                         <td className="p-3.5 font-bold text-slate-700 dark:text-slate-300 sticky left-0 bg-white dark:bg-[#0F172A] z-10">Minimum Balance</td>
-                        {compareQueue.map((acc) => (
-                          <td key={acc.id} className="p-3.5 text-center font-bold text-slate-800 dark:text-slate-200">
-                            {acc.minimumBalance}
-                          </td>
-                        ))}
+                        {compareQueue.map((acc) => {
+                          const minBal = formatMinimumBalance(acc.minimumBalance, acc);
+                          return (
+                            <td key={acc.id} className="p-3.5 text-center">
+                              <div className="font-bold text-slate-800 dark:text-slate-200">
+                                {minBal.display}
+                              </div>
+                              {minBal.subtext && (
+                                <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">
+                                  {minBal.subtext}
+                                </div>
+                              )}
+                            </td>
+                          );
+                        })}
                       </tr>
 
                       {/* Zero Balance Status */}
@@ -224,11 +245,14 @@ function SavingsAccountComparisonModal({ isOpen, onClose, compareQueue = [], onR
                       {/* Non-Maintenance Charges */}
                       <tr>
                         <td className="p-3.5 font-bold text-slate-700 dark:text-slate-300 sticky left-0 bg-white dark:bg-[#0F172A] z-10">Non-Maintenance Charges</td>
-                        {compareQueue.map((acc) => (
-                          <td key={acc.id} className="p-3.5 text-center text-xs font-medium text-slate-600 dark:text-slate-300">
-                            {acc.nonMaintenanceCharges || "Nil"}
-                          </td>
-                        ))}
+                        {compareQueue.map((acc) => {
+                          const charge = formatNonMaintenanceCharge(acc.nonMaintenanceCharges, acc);
+                          return (
+                            <td key={acc.id} className="p-3.5 text-center text-xs font-semibold text-slate-700 dark:text-slate-300">
+                              {charge.display}
+                            </td>
+                          );
+                        })}
                       </tr>
 
                       {/* Online Video KYC */}

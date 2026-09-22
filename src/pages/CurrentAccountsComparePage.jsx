@@ -5,6 +5,7 @@ import { getAssociatedDebitCardForCurrentAccount } from '../data/currentAccounts
 import BankLogo from '../components/BankLogo';
 import { safeArray } from '../utils/safeUtils';
 import { useSEO } from '../hooks/useSEO';
+import { formatMinimumBalance, formatNonMaintenanceCharge, formatCashDepositLimit } from '../utils/bankingDataFormatter';
 
 function CurrentAccountsComparePage({ compareQueue = [], setCompareQueue, onSelectDebitCard }) {
   useSEO({
@@ -122,30 +123,55 @@ function CurrentAccountsComparePage({ compareQueue = [], setCompareQueue, onSele
               </tr>
 
               <tr>
-                <td className="p-4 font-bold text-slate-700 dark:text-slate-300">Minimum Balance (MAB)</td>
-                {queue.map(acc => (
-                  <td key={acc.id} className="p-4 text-center font-black text-[#1F2937] dark:text-white text-base">
-                    {acc.minimumBalance}
-                  </td>
-                ))}
+                <td className="p-4 font-bold text-slate-700 dark:text-slate-300">Minimum Balance (MAB/AQB)</td>
+                {queue.map(acc => {
+                  const minBal = formatMinimumBalance(acc.minimumBalance, acc);
+                  return (
+                    <td key={acc.id} className="p-4 text-center">
+                      <div className="font-black text-[#1F2937] dark:text-white text-base">
+                        {minBal.display}
+                      </div>
+                      {minBal.subtext && (
+                        <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">
+                          {minBal.subtext}
+                        </div>
+                      )}
+                    </td>
+                  );
+                })}
               </tr>
 
               <tr>
                 <td className="p-4 font-bold text-slate-700 dark:text-slate-300">Non-Maintenance Penalty</td>
-                {queue.map(acc => (
-                  <td key={acc.id} className="p-4 text-center font-bold text-rose-500">
-                    {acc.nonMaintenanceCharge}
-                  </td>
-                ))}
+                {queue.map(acc => {
+                  const charge = formatNonMaintenanceCharge(acc.nonMaintenanceCharge || acc.nonMaintenanceCharges, acc);
+                  return (
+                    <td key={acc.id} className="p-4 text-center">
+                      <div className="font-bold text-rose-500 text-xs sm:text-sm">
+                        {charge.display}
+                      </div>
+                    </td>
+                  );
+                })}
               </tr>
 
               <tr>
                 <td className="p-4 font-bold text-slate-700 dark:text-slate-300">Free Cash Deposit Limit</td>
-                {queue.map(acc => (
-                  <td key={acc.id} className="p-4 text-center text-xs font-semibold text-slate-600 dark:text-slate-300">
-                    {acc.cashDepositLimit}
-                  </td>
-                ))}
+                {queue.map(acc => {
+                  const deposit = formatCashDepositLimit(acc.cashDepositLimit, acc);
+                  return (
+                    <td key={acc.id} className="p-4 text-center">
+                      <div className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                        {deposit.display}
+                      </div>
+                      {deposit.subtext && (
+                        <div className="text-[10px] text-slate-400 mt-0.5">
+                          {deposit.subtext}
+                        </div>
+                      )}
+                    </td>
+                  );
+                })}
               </tr>
 
               <tr>

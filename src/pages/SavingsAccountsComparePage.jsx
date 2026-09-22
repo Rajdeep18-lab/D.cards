@@ -4,6 +4,7 @@ import { Scale, ArrowLeft, Building2, CreditCard, Briefcase } from 'lucide-react
 import { getAssociatedDebitCard, getAssociatedDebitCards } from '../data/mockSavingsAccounts';
 import BankLogo from '../components/BankLogo';
 import { useSEO } from '../hooks/useSEO';
+import { formatInterestRate, formatMinimumBalance, formatNonMaintenanceCharge } from '../utils/bankingDataFormatter';
 
 function SavingsAccountsComparePage({ compareQueue = [], setCompareQueue, onSelectDebitCard }) {
   useSEO({
@@ -115,19 +116,39 @@ function SavingsAccountsComparePage({ compareQueue = [], setCompareQueue, onSele
               </tr>
               <tr>
                 <td className="p-4 font-bold text-slate-700 dark:text-slate-300">Interest Rate</td>
-                {compareQueue.map(acc => (
-                  <td key={acc.id} className="p-4 text-center font-black text-emerald-600 dark:text-emerald-400 text-base">
-                    {acc.interestRate}
-                  </td>
-                ))}
+                {compareQueue.map(acc => {
+                  const rateObj = formatInterestRate(acc.interestRate, acc);
+                  return (
+                    <td key={acc.id} className="p-4 text-center">
+                      <div className="font-black text-emerald-600 dark:text-emerald-400 text-base">
+                        {rateObj.display}
+                      </div>
+                      {rateObj.badge && (
+                        <span className="inline-block mt-1 text-[10px] font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded">
+                          {rateObj.badge}
+                        </span>
+                      )}
+                    </td>
+                  );
+                })}
               </tr>
               <tr>
                 <td className="p-4 font-bold text-slate-700 dark:text-slate-300">Minimum Balance</td>
-                {compareQueue.map(acc => (
-                  <td key={acc.id} className="p-4 text-center font-bold">
-                    {acc.minimumBalance}
-                  </td>
-                ))}
+                {compareQueue.map(acc => {
+                  const minBal = formatMinimumBalance(acc.minimumBalance, acc);
+                  return (
+                    <td key={acc.id} className="p-4 text-center">
+                      <div className="font-bold text-slate-900 dark:text-white">
+                        {minBal.display}
+                      </div>
+                      {minBal.subtext && (
+                        <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">
+                          {minBal.subtext}
+                        </div>
+                      )}
+                    </td>
+                  );
+                })}
               </tr>
               <tr>
                 <td className="p-4 font-bold text-slate-700 dark:text-slate-300">Zero Balance Available</td>
@@ -139,11 +160,16 @@ function SavingsAccountsComparePage({ compareQueue = [], setCompareQueue, onSele
               </tr>
               <tr>
                 <td className="p-4 font-bold text-slate-700 dark:text-slate-300">Non-Maintenance Charge</td>
-                {compareQueue.map(acc => (
-                  <td key={acc.id} className="p-4 text-center text-xs font-medium text-slate-600 dark:text-slate-400">
-                    {acc.nonMaintenanceCharges || "Standard Fee"}
-                  </td>
-                ))}
+                {compareQueue.map(acc => {
+                  const charge = formatNonMaintenanceCharge(acc.nonMaintenanceCharges, acc);
+                  return (
+                    <td key={acc.id} className="p-4 text-center">
+                      <div className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                        {charge.display}
+                      </div>
+                    </td>
+                  );
+                })}
               </tr>
               <tr>
                 <td className="p-4 font-bold text-slate-700 dark:text-slate-300">Online Video KYC</td>
