@@ -160,6 +160,56 @@ function CurrentAccountDetailsModal({ isOpen, onClose, account, onSelectDebitCar
               </div>
             </div>
 
+            {/* Location Breakdown if available */}
+            {formattedBalance.breakdown && formattedBalance.breakdown.length > 0 && (
+              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2">
+                <span className="text-[10.5px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
+                  Location-Specific Minimum Balance
+                </span>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  {formattedBalance.breakdown.map((b, i) => (
+                    <div key={i} className="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                      <span className="text-[10px] text-slate-400 block font-semibold">{b.label}</span>
+                      <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mt-0.5 block">{b.amount}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Structured Banking Parameters (Section 4) */}
+            <div className="p-4 rounded-2xl bg-slate-50/60 dark:bg-slate-900/50 border border-slate-200/70 dark:border-slate-800 space-y-3">
+              <span className="text-[10.5px] font-extrabold uppercase tracking-wider text-slate-400 block">
+                Commercial Account Parameters:
+              </span>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
+                <div className="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700">
+                  <span className="text-[9.5px] font-bold text-slate-400 uppercase block">Withdrawal Limit</span>
+                  <span className="font-bold text-slate-800 dark:text-slate-200 block truncate mt-0.5">
+                    {account.cashWithdrawalLimit || "Unlimited at base"}
+                  </span>
+                </div>
+                <div className="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700">
+                  <span className="text-[9.5px] font-bold text-slate-400 uppercase block">NEFT / RTGS</span>
+                  <span className="font-bold text-slate-800 dark:text-slate-200 block truncate mt-0.5">
+                    {account.neft || account.rtgs || "Free Digital"}
+                  </span>
+                </div>
+                <div className="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700">
+                  <span className="text-[9.5px] font-bold text-slate-400 uppercase block">Cheque Facility</span>
+                  <span className="font-bold text-slate-800 dark:text-slate-200 block truncate mt-0.5">
+                    {account.chequeBook || account.freeChequeLeaves || "Included"}
+                  </span>
+                </div>
+                <div className="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700">
+                  <span className="text-[9.5px] font-bold text-slate-400 uppercase block">POS Terminal</span>
+                  <span className="font-bold text-slate-800 dark:text-slate-200 block truncate mt-0.5">
+                    {account.posTerminal || "Available on request"}
+                  </span>
+                </div>
+              </div>
+            </div>
+
             {/* Business Constitutions */}
             {account.businessConstitution && account.businessConstitution.length > 0 && (
               <div className="space-y-2">
@@ -202,7 +252,7 @@ function CurrentAccountDetailsModal({ isOpen, onClose, account, onSelectDebitCar
               {associatedCards.length === 0 ? (
                 <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs text-slate-500 flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 text-slate-400 shrink-0" />
-                  <span>{getDebitCardRelationshipStatusForCurrentAccount(account).message || 'Debit card association not specified in provided data.'}</span>
+                  <span>Linked Debit Card: Not specified on official source</span>
                 </div>
               ) : (
                 <div className="space-y-2">
@@ -249,9 +299,25 @@ function CurrentAccountDetailsModal({ isOpen, onClose, account, onSelectDebitCar
             </div>
 
             {/* Verification Metadata */}
-            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs flex flex-wrap items-center justify-between gap-2 text-slate-500">
-              <span>Source: <strong className="text-slate-700 dark:text-slate-300">{account.sourceType || "Official Bank Source"}</strong></span>
-              <span>Last Verified: <strong className="text-slate-700 dark:text-slate-300">{account.lastVerified || "Recent"}</strong></span>
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs flex flex-wrap items-center justify-between gap-3 text-slate-500">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="font-bold text-slate-700 dark:text-slate-300">Verified:</span>
+                <span>{sourceInfo.verifiedDateFormatted}</span>
+                <span className="text-slate-300 dark:text-slate-700">•</span>
+                <span className="font-bold text-slate-700 dark:text-slate-300">Source:</span>
+                <span>{sourceInfo.sourceName}</span>
+              </div>
+              {sourceInfo.sourceUrl && (
+                <a
+                  href={sourceInfo.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#2563EB] dark:text-[#60A5FA] hover:underline font-bold inline-flex items-center gap-1"
+                >
+                  <span>View Official Source</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              )}
             </div>
           </div>
 

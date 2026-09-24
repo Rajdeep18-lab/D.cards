@@ -321,6 +321,21 @@ function CurrentAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
             )}
           </div>
         </div>
+
+        {/* Location-Specific Balance Breakdown if applicable */}
+        {formattedBalance.breakdown && (
+          <div className="pt-2 space-y-2">
+            <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-400">Branch Location Breakdown:</h4>
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+              {formattedBalance.breakdown.map((item, idx) => (
+                <div key={idx} className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase block">{item.label}</span>
+                  <span className="text-base font-black text-slate-800 dark:text-white mt-0.5 block">{item.amount}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* 4. INTEREST RULES & RBI REGULATION */}
@@ -434,10 +449,10 @@ function CurrentAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
           <div className="p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-center space-y-3">
             <AlertCircle className="w-12 h-12 text-slate-400 mx-auto" />
             <h3 className="text-lg font-bold text-slate-700 dark:text-slate-200">
-              Debit card association not specified in provided data.
+              Linked Debit Card: Not specified on official source
             </h3>
             <p className="text-xs text-slate-500 max-w-md mx-auto">
-              No debit card can be displayed as associated with this account unless explicitly established by official source documentation.
+              The official source does not specify a linked debit card variant for this account. No generic debit card has been arbitrarily attached.
             </p>
           </div>
         ) : (

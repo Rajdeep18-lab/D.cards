@@ -367,7 +367,34 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
           </div>
         )}
 
-        {account.interestSlabs && account.interestSlabs.length > 0 && (
+        {formattedRate.slabs && formattedRate.slabs.length > 0 ? (
+          <div className="space-y-3 pt-2">
+            <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-400">Official Interest Slabs:</h4>
+            <div className="rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
+              <table className="w-full text-left text-xs sm:text-sm">
+                <thead className="bg-slate-50 dark:bg-slate-900 text-[11px] uppercase font-bold text-slate-500">
+                  <tr>
+                    <th className="px-4 py-3">Balance Slab</th>
+                    <th className="px-4 py-3 text-right">Rate</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-900/40">
+                  {formattedRate.slabs.map((slab, i) => (
+                    <tr key={i} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50">
+                      <td className="px-4 py-3 text-slate-700 dark:text-slate-300 font-semibold">{slab.slab}</td>
+                      <td className="px-4 py-3 text-right font-black text-emerald-600 dark:text-emerald-400">{slab.rate}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            {formattedRate.variantSpecificNote && (
+              <p className="text-xs text-slate-500 italic">
+                Variant-specific rate: {formattedRate.variantSpecificNote}
+              </p>
+            )}
+          </div>
+        ) : account.interestSlabs && account.interestSlabs.length > 0 ? (
           <div className="space-y-2 pt-2">
             <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-400">Official Interest Slabs:</h4>
             <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 space-y-2 text-xs sm:text-sm">
@@ -379,7 +406,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
               ))}
             </div>
           </div>
-        )}
+        ) : null}
       </div>
 
       {/* 5. BANKING FACILITIES */}
@@ -493,14 +520,10 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
           <div className="p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-center space-y-3">
             <AlertCircle className="w-12 h-12 text-slate-400 mx-auto" />
             <h3 className="text-lg font-bold text-slate-700 dark:text-slate-200">
-              {getDebitCardRelationshipStatus(account).status === 'pending'
-                ? 'Debit card relationship pending verification.'
-                : 'Debit card information not available for this account.'}
+              Linked Debit Card: Not specified on official source
             </h3>
             <p className="text-xs text-slate-500 max-w-md mx-auto">
-              {getDebitCardRelationshipStatus(account).status === 'pending'
-                ? 'The debit card relationship for this account is being audited and is pending verification.'
-                : 'No verified debit card details are explicitly mapped to this specific account in the master bank directory.'}
+              The official source does not specify a linked debit card variant for this account. No generic debit card has been arbitrarily attached.
             </p>
           </div>
         ) : (

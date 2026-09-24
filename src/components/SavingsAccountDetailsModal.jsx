@@ -164,6 +164,55 @@ function SavingsAccountDetailsModal({ isOpen, onClose, account, onSelectDebitCar
                 </div>
               </div>
 
+              {/* Structured Rate Slabs Table if available */}
+              {formattedRate.slabs && formattedRate.slabs.length > 0 && (
+                <div className="pt-2 border-t border-slate-200/80 dark:border-slate-800 space-y-2">
+                  <span className="text-[10.5px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
+                    Interest Rate Slabs
+                  </span>
+                  <div className="rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700">
+                    <table className="w-full text-left text-xs">
+                      <thead className="bg-slate-100 dark:bg-slate-800 text-[10px] uppercase font-bold text-slate-500">
+                        <tr>
+                          <th className="px-3.5 py-2">Balance Slab</th>
+                          <th className="px-3.5 py-2 text-right">Rate</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                        {formattedRate.slabs.map((slab, i) => (
+                          <tr key={i} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50">
+                            <td className="px-3.5 py-2 text-slate-700 dark:text-slate-300 font-medium">{slab.slab}</td>
+                            <td className="px-3.5 py-2 text-right font-bold text-emerald-600 dark:text-emerald-400">{slab.rate}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  {formattedRate.variantSpecificNote && (
+                    <span className="text-[10.5px] text-slate-500 dark:text-slate-400 block italic">
+                      Variant-specific rate: {formattedRate.variantSpecificNote}
+                    </span>
+                  )}
+                </div>
+              )}
+
+              {/* Location Breakdown if available */}
+              {formattedBalance.breakdown && formattedBalance.breakdown.length > 0 && (
+                <div className="pt-2 border-t border-slate-200/80 dark:border-slate-800 space-y-2">
+                  <span className="text-[10.5px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
+                    Location-Specific Minimum Balance
+                  </span>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    {formattedBalance.breakdown.map((b, i) => (
+                      <div key={i} className="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                        <span className="text-[10px] text-slate-400 block font-semibold">{b.label}</span>
+                        <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mt-0.5 block">{b.amount}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="space-y-1 pt-2 border-t border-slate-200/80 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-400">
                 <p><strong>Non-Maintenance Charges:</strong> {formattedPenalty.display} {formattedPenalty.subtext ? `(${formattedPenalty.subtext})` : ''}</p>
               </div>
@@ -248,8 +297,30 @@ function SavingsAccountDetailsModal({ isOpen, onClose, account, onSelectDebitCar
               ) : (
                 <div className="p-4 bg-white/80 dark:bg-slate-900/80 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 text-amber-500 shrink-0" />
-                  <span>Debit card information not available for this account.</span>
+                  <span>Linked Debit Card: Not specified on official source</span>
                 </div>
+              )}
+            </div>
+
+            {/* Source & Verification Metadata Box */}
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs flex flex-wrap items-center justify-between gap-3 text-slate-500">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="font-bold text-slate-700 dark:text-slate-300">Verified:</span>
+                <span>{sourceInfo.verifiedDateFormatted}</span>
+                <span className="text-slate-300 dark:text-slate-700">•</span>
+                <span className="font-bold text-slate-700 dark:text-slate-300">Source:</span>
+                <span>{sourceInfo.sourceName}</span>
+              </div>
+              {sourceInfo.sourceUrl && (
+                <a
+                  href={sourceInfo.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#2563EB] dark:text-[#60A5FA] hover:underline font-bold inline-flex items-center gap-1"
+                >
+                  <span>View Official Source</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
               )}
             </div>
 

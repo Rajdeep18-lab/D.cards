@@ -61,6 +61,7 @@ export function extractUrls(text) {
 
 /**
  * Format Interest Rate for compact cards and metrics
+ * Intelligently separates core rates, slab tiers, variant-specific notes, and embedded sources.
  */
 export function formatInterestRate(rawRate, account = {}) {
   const fullText = safeString(rawRate || account.interest_rate || account.interestRate);
@@ -71,17 +72,36 @@ export function formatInterestRate(rawRate, account = {}) {
       rateValue: null,
       subtext: null,
       hasSlabNote: false,
+      slabs: [],
+      rateDetails: [],
+      variantSpecificNote: null,
+      sourceUrl: null,
+      effectiveDate: null,
       fullText: fullText || 'Not specified'
     };
   }
 
-  // Check if current account with RBI 0% prohibition
-  if (fullText.includes('0%') || fullText.toLowerCase().includes('prohibit') || (account.account_type === 'Current' && !fullText.match(/[1-9]/))) {
+  // Check if current account where RBI regulations prohibit interest
+  const isCurrentAccount = 
+    account.account_type === 'Current' || 
+    account.accountType === 'Current Account' ||
+    /current\s*account/i.test(account.account_type || '') ||
+    /current\s*account/i.test(account.accountType || '') ||
+    /rbi regulations prohibit interest/i.test(fullText);
+
+  // Strictly check for 0% (avoid false positive on 4.00% matching 0%)
+  const hasExplicitZeroPercent = /(?:^|\D)0(?:\.0+)?%/i.test(fullText);
+  if (isCurrentAccount && (hasExplicitZeroPercent || /prohibit/i.test(fullText) || !fullText.match(/[1-9]/))) {
     return {
       display: '0% p.a.',
       rateValue: 0,
       subtext: 'Current Account (RBI regulations prohibit interest)',
       hasSlabNote: false,
+      slabs: [],
+      rateDetails: [],
+      variantSpecificNote: null,
+      sourceUrl: null,
+      effectiveDate: null,
       fullText
     };
   }
@@ -107,20 +127,81 @@ export function formatInterestRate(rawRate, account = {}) {
   // Clean trailing stars or punctuation
   displayRate = displayRate.replace(/[*;,\s]+$/, '');
 
-  // Determine clarifying subtext
-  let subtext = null;
-  let hasSlabNote = false;
+  // Extract embedded source URL if present in rate string
+  const urlMatch = fullText.match(/(?:Source:\s*)?((?:https?:\/\/|www\.)[^\s,;)]+|canarabank\.bank\.in[^\s,;)]+)/i);
+  let extractedSourceUrl = null;
+  if (urlMatch) {
+    extractedSourceUrl = urlMatch[1].startsWith('http') ? urlMatch[1] : `https://${urlMatch[1]}`;
+  }
+
+  // Extract effective date if present
+  let extractedEffectiveDate = null;
+  const effMatch = fullText.match(/effective\s*([\d.-]+)/i);
+  if (effMatch) {
+    extractedEffectiveDate = formatDisplayDate(effMatch[1]);
+  }
+
+  // Extract variant-specific note
+  let variantSpecificNote = null;
+  if (/variant-specific rate not stated/i.test(fullText)) {
+    variantSpecificNote = 'Not stated on official source';
+  }
+
+  // Parse structured rate details and slabs
+  const slabs = [];
+  const rateDetails = [];
   const lower = fullText.toLowerCase();
 
-  if (lower.includes('slab') || lower.includes('balances below') || lower.includes('slabs rise') || lower.includes('tier') || (account.interestSlabs && account.interestSlabs.length > 0)) {
-    subtext = 'Rate may vary by balance slab.';
+  // Check for bank-wide slab below Rs 100 Cr
+  const belowMatch = fullText.match(/below\s*(?:Rs\.?|₹)?\s*([\d,]+\s*(?:Cr|Lakh)?)/i);
+  if (belowMatch) {
+    const threshold = `Below ₹${belowMatch[1].trim()}`;
+    slabs.push({ slab: threshold, rate: displayRate });
+    rateDetails.push(`${threshold}: ${displayRate}`);
+  }
+
+  // Check for higher slabs e.g. "slabs rise to 4.00% only at Rs 2,000 Cr+"
+  const higherSlabMatch = fullText.match(/(?:rise to|up to)\s*([\d.]+%)\s*(?:only at|at|above)\s*(?:Rs\.?|₹)?\s*([\d,]+\s*(?:Cr|Lakh)?\+?)/i);
+  if (higherSlabMatch) {
+    const higherRate = higherSlabMatch[1].toLowerCase().includes('p.a') ? higherSlabMatch[1] : `${higherSlabMatch[1]} p.a.`;
+    const higherThreshold = `₹${higherSlabMatch[2].trim()}`;
+    slabs.push({ slab: higherThreshold, rate: higherRate });
+    rateDetails.push(`Higher slab: up to ${higherRate}`);
+    rateDetails.push(`Applicable threshold: ${higherThreshold}`);
+  }
+
+  // Add explicit slabs from account.interestSlabs if provided
+  if (account.interestSlabs && Array.isArray(account.interestSlabs) && account.interestSlabs.length > 0) {
+    account.interestSlabs.forEach(item => {
+      if (typeof item === 'string') {
+        const parts = item.split(/[:–-]/);
+        if (parts.length >= 2) {
+          slabs.push({ slab: parts[0].trim(), rate: parts[1].trim() });
+        } else {
+          rateDetails.push(item);
+        }
+      } else if (item && item.slab && item.rate) {
+        slabs.push(item);
+      }
+    });
+  }
+
+  if (variantSpecificNote) {
+    rateDetails.push(`Variant-specific rate: ${variantSpecificNote}`);
+  }
+
+  // Determine subtext
+  let subtext = 'Bank-wide savings rate';
+  let hasSlabNote = false;
+
+  if (lower.includes('slab') || lower.includes('balances below') || lower.includes('slabs rise') || slabs.length > 0) {
+    subtext = 'Bank-wide savings rate (tiered)';
     hasSlabNote = true;
   } else if (lower.includes('fd bonus') || lower.includes('bonus')) {
     subtext = '+ FD Bonus on linked deposits.';
   } else if (lower.includes('below') && !lower.includes('slab')) {
-    const thresholdMatch = fullText.match(/below\s*([^\);,]+)/i);
-    if (thresholdMatch) {
-      subtext = `For balances below ${thresholdMatch[1].trim()}.`;
+    if (belowMatch) {
+      subtext = `For balances below ${belowMatch[1].trim()}.`;
     }
   }
 
@@ -129,12 +210,18 @@ export function formatInterestRate(rawRate, account = {}) {
     rateValue: account.interestRateValue || parseFloat(displayRate) || null,
     subtext,
     hasSlabNote,
+    slabs,
+    rateDetails,
+    variantSpecificNote,
+    extractedSourceUrl,
+    extractedEffectiveDate,
     fullText
   };
 }
 
 /**
  * Format Minimum Balance / AMB / MAB for compact cards and metrics
+ * Intelligently separates multi-location tiers (Metro, Urban, Semi-Urban, Rural) into structured rows.
  */
 export function formatMinimumBalance(rawBalance, account = {}) {
   const fullText = safeString(rawBalance || account.minimum_balance || account.minimumBalance || account.averageMonthlyBalance);
@@ -179,39 +266,67 @@ export function formatMinimumBalance(rawBalance, account = {}) {
 
   // Location-specific breakdown detection
   // e.g. "AMB Rs 2,000 urban/metro; Rs 1,000 semi-urban; Rs 500 rural"
-  // or "₹500 rural / ₹1,000 semi-urban / ₹2,000 urban/metro"
-  // or "₹3,000 Metro/Urban / ₹2,000 Semi-Urban / ₹1,000 Rural"
-  const hasUrban = /urban|metro/i.test(fullText);
+  // e.g. "AMB Rs 7,500 metro / Rs 5,000 urban / Rs 2,000 semi-urban / Rs 1,000 rural (2023 PDF)"
+  const hasMetro = /\bmetro\b/i.test(fullText);
+  const hasUrban = /\burban\b/i.test(fullText);
   const hasSemi = /semi-?urban/i.test(fullText);
-  const hasRural = /rural/i.test(fullText);
+  const hasRural = /\brural\b/i.test(fullText);
 
-  if ((hasUrban && hasSemi) || (hasUrban && hasRural)) {
-    // Extract location tiers
-    let urbanAmt = '₹2,000';
-    let semiAmt = '₹1,000';
-    let ruralAmt = '₹500';
+  if ((hasUrban && hasSemi) || (hasMetro && hasSemi) || (hasUrban && hasRural)) {
+    const breakdown = [];
 
-    const urbanMatch = fullText.match(/(?:Rs\.?|₹)\s*([\d,]+)\s*(?:urban|metro)/i) || fullText.match(/(?:urban|metro)[^₹Rs\d]*(?:Rs\.?|₹)?\s*([\d,]+)/i);
-    const semiMatch = fullText.match(/(?:Rs\.?|₹)\s*([\d,]+)\s*(?:semi-?urban)/i) || fullText.match(/(?:semi-?urban)[^₹Rs\d]*(?:Rs\.?|₹)?\s*([\d,]+)/i);
-    const ruralMatch = fullText.match(/(?:Rs\.?|₹)\s*([\d,]+)\s*(?:rural)/i) || fullText.match(/(?:rural)[^₹Rs\d]*(?:Rs\.?|₹)?\s*([\d,]+)/i);
-
-    if (urbanMatch) urbanAmt = `₹${urbanMatch[1]}`;
-    if (semiMatch) semiAmt = `₹${semiMatch[1]}`;
-    if (ruralMatch) ruralAmt = `₹${ruralMatch[1]}`;
-
-    return {
-      display: urbanAmt,
-      badge: null,
-      isZero: false,
-      subtext: `Urban: ${urbanAmt} • Semi: ${semiAmt} • Rural: ${ruralAmt}`,
-      breakdown: [
-        { label: 'Urban / Metro', amount: urbanAmt },
-        { label: 'Semi-Urban', amount: semiAmt },
-        { label: 'Rural', amount: ruralAmt }
-      ],
-      hasLocationBreakdown: true,
-      fullText
+    // Helper to format clean currency string
+    const formatAmt = (numStr) => {
+      const clean = numStr.replace(/[^\d]/g, '');
+      const num = parseInt(clean, 10);
+      return isNaN(num) ? `₹${numStr}` : `₹${num.toLocaleString('en-IN')}`;
     };
+
+    // Check if metro and urban have different values
+    const metroOnlyMatch = fullText.match(/(?:Rs\.?|₹)?\s*([\d,]+)\s*metro(?!\s*\/|\s*and|\s*urban)/i) ||
+                           fullText.match(/metro[^\d₹Rs]*(?:Rs\.?|₹)?\s*([\d,]+)/i);
+    const urbanOnlyMatch = fullText.match(/(?:Rs\.?|₹)?\s*([\d,]+)\s*urban(?!\s*\/|\s*and|\s*metro)/i) ||
+                           fullText.match(/(?<!semi-)urban[^\d₹Rs]*(?:Rs\.?|₹)?\s*([\d,]+)/i);
+    const urbanMetroMatch = fullText.match(/(?:Rs\.?|₹)?\s*([\d,]+)\s*(?:urban\/metro|metro\/urban|urban\s*and\s*metro|metro\s*and\s*urban)/i) ||
+                            fullText.match(/(?:urban\/metro|metro\/urban)[^\d₹Rs]*(?:Rs\.?|₹)?\s*([\d,]+)/i);
+    const semiMatch = fullText.match(/(?:Rs\.?|₹)?\s*([\d,]+)\s*semi-?urban/i) ||
+                      fullText.match(/semi-?urban[^\d₹Rs]*(?:Rs\.?|₹)?\s*([\d,]+)/i);
+    const ruralMatch = fullText.match(/(?:Rs\.?|₹)?\s*([\d,]+)\s*rural/i) ||
+                       fullText.match(/rural[^\d₹Rs]*(?:Rs\.?|₹)?\s*([\d,]+)/i);
+
+    if (metroOnlyMatch && urbanOnlyMatch && metroOnlyMatch[1] !== urbanOnlyMatch[1]) {
+      breakdown.push({ label: 'Metro', amount: formatAmt(metroOnlyMatch[1]) });
+      breakdown.push({ label: 'Urban', amount: formatAmt(urbanOnlyMatch[1]) });
+    } else if (urbanMetroMatch) {
+      breakdown.push({ label: 'Metro / Urban', amount: formatAmt(urbanMetroMatch[1]) });
+    } else if (urbanOnlyMatch) {
+      breakdown.push({ label: 'Metro / Urban', amount: formatAmt(urbanOnlyMatch[1]) });
+    } else if (metroOnlyMatch) {
+      breakdown.push({ label: 'Metro / Urban', amount: formatAmt(metroOnlyMatch[1]) });
+    }
+
+    if (semiMatch) {
+      breakdown.push({ label: 'Semi-Urban', amount: formatAmt(semiMatch[1]) });
+    }
+
+    if (ruralMatch) {
+      breakdown.push({ label: 'Rural', amount: formatAmt(ruralMatch[1]) });
+    }
+
+    if (breakdown.length > 0) {
+      const primaryDisplay = breakdown[0].amount;
+      const subtextParts = breakdown.map(b => `${b.label}: ${b.amount}`);
+
+      return {
+        display: primaryDisplay,
+        badge: null,
+        isZero: false,
+        subtext: subtextParts.join(' • '),
+        breakdown,
+        hasLocationBreakdown: true,
+        fullText
+      };
+    }
   }
 
   // Quarterly Average Balance (QAB) e.g., "QAB Rs 1 lakh and above"
@@ -505,11 +620,115 @@ export function formatBenefits(rawBenefits, maxCount = 4) {
 }
 
 /**
- * Format Source & Verification Metadata for clean presentation
+ * Format Debit Card Relationship Status
+ * Strictly adheres to rule: NEVER attach generic or unverified debit cards.
+ * If not officially established, displays "Not specified on official source".
+ */
+export function formatDebitCardRelationship(account = {}, associatedCards = null, isCurrent = false) {
+  const cards = safeArray(associatedCards);
+
+  if (cards.length > 0) {
+    const primary = cards[0];
+    const cardName = primary.name || primary.card_name || primary.cardName || 'Debit Card';
+    return {
+      isLinked: true,
+      label: isCurrent 
+        ? (cards.length > 1 ? `PROVIDED BUSINESS CARDS (${cards.length})` : 'BUSINESS DEBIT CARD')
+        : (cards.length > 1 ? `PROVIDED DEBIT CARDS (${cards.length})` : 'DEBIT CARD WITH THIS ACCOUNT'),
+      statusText: cardName,
+      cards,
+      primaryCard: primary
+    };
+  }
+
+  // Not verified or not specified on official source
+  return {
+    isLinked: false,
+    label: 'Linked Debit Card',
+    statusText: 'Not specified on official source',
+    cards: [],
+    primaryCard: null
+  };
+}
+
+/**
+ * Format Current Account Details into clean, structured label/value pairs.
+ * Avoids giant paragraphs, normalizes limits, charges, and transfers.
+ */
+export function formatCurrentAccountDetails(account = {}, associatedCards = null) {
+  const isMissing = (val) => {
+    if (!val) return true;
+    const str = String(val).toLowerCase().trim();
+    return str === '' || 
+      str === 'not specified' || 
+      str === 'not yet retrieved' || 
+      str === 'not retrieved' || 
+      str === 'not specified on official source' ||
+      str === 'not specified in retrieved excerpt' ||
+      str === 'information not available' ||
+      str === 'not stated' ||
+      str.includes('not specified in retrieved excerpt') ||
+      str.includes('not yet retrieved');
+  };
+
+  const cleanVal = (val, fallback = 'Not specified') => {
+    if (isMissing(val)) return fallback;
+    const str = String(val).trim();
+    // remove parenthetical source notes like "(per description)", "(2023 PDF)", etc.
+    const cleaned = str.replace(/\([^)]*(?:description|pdf|retrieved|excerpt)[^)]*\)/gi, '').trim();
+    return cleaned || fallback;
+  };
+
+  const balanceObj = formatMinimumBalance(account.minimumBalance || account.minimum_balance || account.averageBalanceRequirement, account);
+  const cashLimitObj = formatCashDepositLimit(account.cashDepositLimit || account.freeCashDepositPerMonth, account);
+  const chargeObj = formatNonMaintenanceCharge(account.nonMaintenanceCharge || account.nonMaintenanceCharges || account.non_maintenance_penalty, account);
+  const debitRel = formatDebitCardRelationship(account, associatedCards, true);
+
+  const accountType = cleanVal(account.accountType || account.account_type, 'Current Account');
+  const withdrawalLimit = cleanVal(account.cashWithdrawalLimit);
+  const neft = cleanVal(account.neft);
+  const rtgs = cleanVal(account.rtgs);
+  const imps = cleanVal(account.imps);
+  const chequeFacility = cleanVal(account.chequeBook || account.freeChequeLeaves);
+
+  const fields = [
+    { label: 'ACCOUNT TYPE', value: accountType, isMissing: false },
+    { label: 'MINIMUM BALANCE', value: balanceObj.display, subtext: balanceObj.subtext, breakdown: balanceObj.breakdown, isMissing: isMissing(balanceObj.display) },
+    { label: 'CASH DEPOSIT LIMIT', value: cashLimitObj.display, subtext: cashLimitObj.subtext, isMissing: isMissing(cashLimitObj.display) },
+    { label: 'CASH DEPOSIT CHARGES', value: chargeObj.display, subtext: chargeObj.subtext, isMissing: isMissing(chargeObj.display) },
+    { label: 'WITHDRAWAL LIMIT', value: withdrawalLimit, isMissing: isMissing(withdrawalLimit) },
+    { label: 'NEFT', value: neft, isMissing: isMissing(neft) },
+    { label: 'RTGS', value: rtgs, isMissing: isMissing(rtgs) },
+    { label: 'IMPS', value: imps, isMissing: isMissing(imps) },
+    { label: 'CHEQUE FACILITY', value: chequeFacility, isMissing: isMissing(chequeFacility) },
+    { label: 'DEBIT CARD', value: debitRel.statusText, isMissing: !debitRel.isLinked }
+  ];
+
+  return {
+    accountType,
+    balance: balanceObj,
+    cashLimit: cashLimitObj,
+    charges: chargeObj,
+    withdrawalLimit,
+    neft,
+    rtgs,
+    imps,
+    chequeFacility,
+    debitCard: debitRel,
+    fields
+  };
+}
+
+/**
+ * Format Source & Verification Metadata for clean presentation.
+ * Never outputs raw long URLs as text; provides clean names and clickable links.
  */
 export function formatSourceAndVerification(account = {}) {
+  const bankName = account.bankName || account.bank_name || account.bank || 'Bank';
+
+  // Extract date
   const rawDate = account.lastVerified || account.as_of_date || account.verifiedDate;
-  const verifiedDateFormatted = formatDisplayDate(rawDate) || 'Sep 2026';
+  let verifiedDateFormatted = formatDisplayDate(rawDate);
   
   // Extract effective date if present
   let effectiveDateFormatted = null;
@@ -519,31 +738,69 @@ export function formatSourceAndVerification(account = {}) {
     effectiveDateFormatted = formatDisplayDate(effMatch[1]);
   }
 
-  // Clean URL
-  const rawUrl = account.officialSourceUrl || account.officialSource || account.source || account.applyUrl || account.bankUrl;
-  let cleanUrl = rawUrl;
-  let sourceDomain = 'Official Bank Portal';
-  if (rawUrl) {
-    try {
-      const parsed = new URL(rawUrl.startsWith('http') ? rawUrl : 'https://' + rawUrl);
-      sourceDomain = parsed.hostname.replace(/^www\./, '');
-      cleanUrl = parsed.href;
-    } catch {
-      cleanUrl = rawUrl.startsWith('http') ? rawUrl : 'https://' + rawUrl;
-    }
+  // If verified date missing but effective date found, or vice-versa
+  if (!verifiedDateFormatted && effectiveDateFormatted) {
+    verifiedDateFormatted = effectiveDateFormatted;
+  } else if (!verifiedDateFormatted) {
+    verifiedDateFormatted = 'Sep 2026';
   }
 
-  const bankName = account.bankName || account.bank_name || account.bank || 'Bank';
+  // Collect all sources
+  const rawUrls = [];
+  if (account.officialSourceUrl) {
+    rawUrls.push({ label: `Official ${bankName} Portal`, url: account.officialSourceUrl });
+  }
+  if (account.officialSource && account.officialSource !== account.officialSourceUrl) {
+    rawUrls.push({ label: 'Official Product Page', url: account.officialSource });
+  }
+  if (account.source && !rawUrls.some(u => u.url === account.source)) {
+    rawUrls.push({ label: 'Official Source Page', url: account.source });
+  }
+
+  // Also check if interest rate has embedded URL
+  const { urls: rateUrls } = extractUrls(fullRate);
+  rateUrls.forEach((u, i) => {
+    if (!rawUrls.some(r => r.url === u)) {
+      rawUrls.push({ label: rateUrls.length > 1 ? `Official Rate Schedule ${i + 1}` : 'Official Rate Schedule', url: u });
+    }
+  });
+
+  // Normalize URLs and create clean objects
+  const sources = rawUrls.map((s, idx) => {
+    let cleanUrl = s.url;
+    let domain = 'Official Bank Portal';
+    try {
+      const parsed = new URL(cleanUrl.startsWith('http') ? cleanUrl : 'https://' + cleanUrl);
+      domain = parsed.hostname.replace(/^www\./, '');
+      cleanUrl = parsed.href;
+    } catch {
+      cleanUrl = cleanUrl.startsWith('http') ? cleanUrl : 'https://' + cleanUrl;
+    }
+    return {
+      label: s.label || `Official Source ${idx + 1}`,
+      domain,
+      url: cleanUrl
+    };
+  });
+
+  const primarySource = sources.length > 0 ? sources[0] : {
+    label: `Official ${bankName} Source`,
+    domain: 'Official Bank Portal',
+    url: null
+  };
+
   const isVerified = account.information_status !== 'Not verified' && account.status !== 'unverified';
 
   return {
     isVerified,
     verifiedDateFormatted,
     effectiveDateFormatted,
-    sourceName: `${bankName} Official Portal`,
-    sourceDomain,
-    sourceUrl: cleanUrl,
+    sourceName: `Official ${bankName}`,
+    sourceDomain: primarySource.domain,
+    sourceUrl: primarySource.url,
+    sources,
     statusNote: account.information_status || 'Verified from Official Bank Dataset',
     sourceFile: account.sourceFile || `${bankName} Product Catalog`
   };
 }
+

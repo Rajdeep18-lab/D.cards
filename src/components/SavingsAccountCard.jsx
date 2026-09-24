@@ -9,7 +9,8 @@ import {
   formatInterestRate, 
   formatMinimumBalance, 
   formatBenefits, 
-  formatSourceAndVerification 
+  formatSourceAndVerification,
+  formatDebitCardRelationship
 } from '../utils/bankingDataFormatter';
 
 function SavingsAccountCard({ account, onViewDetails, onToggleCompare, isCompared, onSelectDebitCard }) {
@@ -20,7 +21,7 @@ function SavingsAccountCard({ account, onViewDetails, onToggleCompare, isCompare
   const wishlisted = isWishlisted(accountId);
 
   const associatedCards = getAssociatedDebitCards(account);
-  const primaryCard = associatedCards.length > 0 ? associatedCards[0] : null;
+  const debitRel = formatDebitCardRelationship(account, associatedCards, false);
 
   const bankName = account.bank_name || account.bank || "Partner Bank";
   const accountName = account.variant_name || account.accountName || account.account_name || "Savings Account";
@@ -37,7 +38,7 @@ function SavingsAccountCard({ account, onViewDetails, onToggleCompare, isCompare
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -4 }}
       transition={{ duration: 0.25 }}
-      className="h-full rounded-3xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-800 shadow-soft hover:shadow-xl hover:border-[#2563EB]/40 transition-all duration-300 flex flex-col justify-between overflow-hidden text-left relative group"
+      className="h-full rounded-3xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-800 shadow-soft hover:shadow-xl hover:border-[#2563EB]/40 transition-all duration-300 flex flex-col justify-between overflow-hidden text-left relative group min-w-0"
     >
       {/* Top Bar with Bank & Wishlist */}
       <div className="p-5 sm:p-6 pb-4 border-b border-slate-100 dark:border-slate-800/80">
@@ -95,9 +96,9 @@ function SavingsAccountCard({ account, onViewDetails, onToggleCompare, isCompare
       </div>
 
       {/* Main Stats Grid: Max Interest Rate & Min Balance */}
-      <div className="p-5 sm:p-6 py-4 grid grid-cols-2 gap-3 bg-[#F8FAFC]/60 dark:bg-slate-900/40 border-b border-slate-100 dark:border-slate-800/80">
+      <div className="p-4 sm:p-5 py-4 grid grid-cols-1 sm:grid-cols-2 gap-3 bg-[#F8FAFC]/60 dark:bg-slate-900/40 border-b border-slate-100 dark:border-slate-800/80 items-stretch">
         {/* MAX INTEREST RATE */}
-        <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/60 shadow-xs text-left min-h-[92px] flex flex-col justify-between">
+        <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/60 shadow-xs text-left min-h-[110px] flex flex-col justify-between overflow-hidden">
           <div>
             <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500 block mb-0.5">
               MAX INTEREST RATE
@@ -106,28 +107,55 @@ function SavingsAccountCard({ account, onViewDetails, onToggleCompare, isCompare
               {formattedRate.display}
             </span>
           </div>
-          {formattedRate.subtext && (
-            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium leading-tight block mt-1 line-clamp-1" title={formattedRate.subtext}>
+
+          {formattedRate.rateDetails && formattedRate.rateDetails.length > 0 ? (
+            <div className="mt-2 pt-2 border-t border-slate-100 dark:border-slate-700/60 space-y-1">
+              <span className="text-[9.5px] font-bold text-slate-500 dark:text-slate-400 block uppercase tracking-wider">
+                Rate Details:
+              </span>
+              <ul className="space-y-0.5 text-[10.5px] text-slate-600 dark:text-slate-300 font-medium">
+                {formattedRate.rateDetails.slice(0, 3).map((detail, idx) => (
+                  <li key={idx} className="flex items-start gap-1 leading-tight truncate">
+                    <span className="text-[#2563EB] dark:text-[#60A5FA] shrink-0">•</span>
+                    <span className="truncate" title={detail}>{detail}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : formattedRate.subtext ? (
+            <span className="text-[10.5px] text-slate-500 dark:text-slate-400 font-medium leading-tight block mt-1 line-clamp-1" title={formattedRate.subtext}>
               {formattedRate.subtext}
             </span>
-          )}
+          ) : null}
         </div>
 
         {/* MIN. BALANCE */}
-        <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/60 shadow-xs text-left min-h-[92px] flex flex-col justify-between">
+        <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/60 shadow-xs text-left min-h-[110px] flex flex-col justify-between overflow-hidden">
           <div>
             <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500 block mb-0.5">
               MIN. BALANCE
             </span>
-            <span className="text-base sm:text-lg font-black text-[#1F2937] dark:text-white tracking-tight block">
-              {formattedBalance.display}
-            </span>
+            {!formattedBalance.hasLocationBreakdown && (
+              <span className="text-base sm:text-lg font-black text-[#1F2937] dark:text-white tracking-tight block">
+                {formattedBalance.display}
+              </span>
+            )}
           </div>
-          {formattedBalance.subtext && (
-            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium leading-tight block mt-1 line-clamp-1" title={formattedBalance.subtext}>
+
+          {formattedBalance.breakdown && formattedBalance.breakdown.length > 0 ? (
+            <div className="space-y-1 pt-1">
+              {formattedBalance.breakdown.map((tier, idx) => (
+                <div key={idx} className="flex items-center justify-between text-[11px] leading-tight gap-2">
+                  <span className="text-slate-500 dark:text-slate-400 font-medium truncate">{tier.label}</span>
+                  <span className="font-black text-slate-800 dark:text-slate-100 shrink-0">{tier.amount}</span>
+                </div>
+              ))}
+            </div>
+          ) : formattedBalance.subtext ? (
+            <span className="text-[10.5px] text-slate-500 dark:text-slate-400 font-medium leading-tight block mt-1 line-clamp-1" title={formattedBalance.subtext}>
               {formattedBalance.subtext}
             </span>
-          )}
+          ) : null}
         </div>
       </div>
 
@@ -153,18 +181,18 @@ function SavingsAccountCard({ account, onViewDetails, onToggleCompare, isCompare
             <CreditCard className="w-3.5 h-3.5" />
           </div>
           <div className="min-w-0">
-            <span className="text-[9px] font-extrabold uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA] block leading-none">
-              {associatedCards.length > 1 ? `PROVIDED DEBIT CARDS (${associatedCards.length}):` : 'ASSOCIATED DEBIT CARD:'}
+            <span className="text-[9px] font-extrabold uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA] block leading-none truncate">
+              {debitRel.label}:
             </span>
-            <span className="text-xs font-bold text-slate-800 dark:text-slate-100 truncate block mt-0.5">
-              {primaryCard ? (primaryCard.name || primaryCard.card_name || primaryCard.cardName) : (getDebitCardRelationshipStatus(account).message || 'Debit card details on request.')}
+            <span className={`text-xs truncate block mt-0.5 ${debitRel.isLinked ? 'font-bold text-slate-800 dark:text-slate-100' : 'font-medium text-slate-500 dark:text-slate-400'}`}>
+              {debitRel.statusText}
             </span>
           </div>
         </div>
 
-        {primaryCard && onSelectDebitCard && (
+        {debitRel.isLinked && debitRel.primaryCard && onSelectDebitCard && (
           <button
-            onClick={(e) => { e.stopPropagation(); onSelectDebitCard(primaryCard); }}
+            onClick={(e) => { e.stopPropagation(); onSelectDebitCard(debitRel.primaryCard); }}
             className="text-[10.5px] font-extrabold text-[#2563EB] dark:text-[#60A5FA] hover:underline flex items-center gap-0.5 shrink-0 cursor-pointer"
           >
             <span>Card Info</span>
@@ -174,24 +202,24 @@ function SavingsAccountCard({ account, onViewDetails, onToggleCompare, isCompare
       </div>
 
       {/* Small Source / Verification Footer Bar */}
-      <div className="px-5 sm:px-6 py-2 bg-slate-50/80 dark:bg-slate-900/60 border-b border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[10px] text-slate-400 dark:text-slate-500">
-        <div className="flex items-center gap-1.5">
-          <ShieldCheck className="w-3 h-3 text-emerald-500" />
-          <span>Source verified</span>
-          {sourceInfo.verifiedDateFormatted && (
-            <span>• Verified: {sourceInfo.verifiedDateFormatted}</span>
-          )}
+      <div className="px-5 sm:px-6 py-2 bg-slate-50/80 dark:bg-slate-900/60 border-b border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[10px] text-slate-400 dark:text-slate-500 gap-2">
+        <div className="flex items-center gap-1.5 truncate">
+          <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+          <span className="truncate">Verified: <strong className="text-slate-600 dark:text-slate-300 font-semibold">{sourceInfo.verifiedDateFormatted}</strong></span>
         </div>
-        {sourceInfo.sourceUrl && (
+        {sourceInfo.sourceUrl ? (
           <a
             href={sourceInfo.sourceUrl}
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
-            className="text-[#2563EB] dark:text-[#60A5FA] hover:underline font-medium"
+            className="text-[#2563EB] dark:text-[#60A5FA] hover:underline font-bold inline-flex items-center gap-0.5 shrink-0"
+            title="Open official bank source"
           >
-            Official Source
+            <span>Official Source ↗</span>
           </a>
+        ) : (
+          <span className="font-medium text-slate-400 shrink-0">Official Source</span>
         )}
       </div>
 

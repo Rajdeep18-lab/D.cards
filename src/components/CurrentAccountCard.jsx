@@ -10,7 +10,9 @@ import {
   formatCashDepositLimit, 
   formatNonMaintenanceCharge, 
   formatBenefits, 
-  formatSourceAndVerification 
+  formatSourceAndVerification,
+  formatDebitCardRelationship,
+  formatCurrentAccountDetails
 } from '../utils/bankingDataFormatter';
 
 function CurrentAccountCard({ account, onViewDetails, onToggleCompare, isCompared, onSelectDebitCard }) {
@@ -21,15 +23,13 @@ function CurrentAccountCard({ account, onViewDetails, onToggleCompare, isCompare
   const wishlisted = isWishlisted(accountId);
 
   const associatedCards = getAssociatedDebitCardsForCurrentAccount(account);
-  const primaryCard = associatedCards.length > 0 ? associatedCards[0] : null;
+  const debitRel = formatDebitCardRelationship(account, associatedCards, true);
 
   const bankName = account.bankName || account.bank_name || account.bank || "Partner Bank";
   const accountName = account.accountName || account.variant_name || "Current Account";
 
   // Clean data through presentation layer
-  const formattedBalance = formatMinimumBalance(account.minimumBalance || account.minimum_balance || account.averageBalanceRequirement, account);
-  const formattedCashLimit = formatCashDepositLimit(account.cashDepositLimit || account.freeCashDepositPerMonth, account);
-  const formattedFee = formatNonMaintenanceCharge(account.nonMaintenanceCharge || account.nonMaintenanceCharges || account.non_maintenance_penalty, account);
+  const details = formatCurrentAccountDetails(account, associatedCards);
   const highlights = formatBenefits(account.keyBenefits || account.benefits, 4);
   const sourceInfo = formatSourceAndVerification(account);
 
@@ -39,7 +39,7 @@ function CurrentAccountCard({ account, onViewDetails, onToggleCompare, isCompare
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -4 }}
       transition={{ duration: 0.25 }}
-      className="h-full rounded-3xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-800 shadow-soft hover:shadow-xl hover:border-[#2563EB]/40 transition-all duration-300 flex flex-col justify-between overflow-hidden text-left relative group"
+      className="h-full rounded-3xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-800 shadow-soft hover:shadow-xl hover:border-[#2563EB]/40 transition-all duration-300 flex flex-col justify-between overflow-hidden text-left relative group min-w-0"
     >
       {/* Top Bar with Bank & Wishlist */}
       <div className="p-5 sm:p-6 pb-4 border-b border-slate-100 dark:border-slate-800/80">
@@ -79,63 +79,104 @@ function CurrentAccountCard({ account, onViewDetails, onToggleCompare, isCompare
         <div className="flex flex-wrap items-center gap-1.5 mt-2.5">
           <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-extrabold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 flex items-center gap-1">
             <Briefcase className="w-3 h-3" />
-            <span>{account.accountType || "Current Account"}</span>
+            <span>{details.accountType}</span>
           </span>
 
           {account.suitableFor && (
-            <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 truncate max-w-[200px]">
+            <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 truncate max-w-[200px]" title={account.suitableFor}>
               {account.suitableFor}
             </span>
           )}
         </div>
       </div>
 
-      {/* Main Stats Grid: AQB & Cash Deposit Limit & Non-Maintenance */}
-      <div className="p-5 sm:p-6 py-4 bg-[#F8FAFC]/60 dark:bg-slate-900/40 border-b border-slate-100 dark:border-slate-800/80 space-y-2.5">
-        <div className="grid grid-cols-2 gap-3">
+      {/* Main Stats Grid: AQB & Cash Deposit Limit */}
+      <div className="p-4 sm:p-5 py-4 bg-[#F8FAFC]/60 dark:bg-slate-900/40 border-b border-slate-100 dark:border-slate-800/80 space-y-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-stretch">
           {/* AQB / MIN. BALANCE */}
-          <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/60 shadow-xs text-left min-h-[92px] flex flex-col justify-between">
+          <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/60 shadow-xs text-left min-h-[105px] flex flex-col justify-between overflow-hidden">
             <div>
               <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500 block mb-0.5">
                 AQB / MIN. BALANCE
               </span>
-              <span className="text-base sm:text-lg font-black text-[#1F2937] dark:text-white tracking-tight block">
-                {formattedBalance.display}
-              </span>
+              {!details.balance.hasLocationBreakdown && (
+                <span className="text-base sm:text-lg font-black text-[#1F2937] dark:text-white tracking-tight block">
+                  {details.balance.display}
+                </span>
+              )}
             </div>
-            {formattedBalance.subtext && (
-              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium leading-tight block mt-1 line-clamp-1" title={formattedBalance.subtext}>
-                {formattedBalance.subtext}
+
+            {details.balance.breakdown && details.balance.breakdown.length > 0 ? (
+              <div className="space-y-1 pt-1">
+                {details.balance.breakdown.map((tier, idx) => (
+                  <div key={idx} className="flex items-center justify-between text-[11px] leading-tight gap-2">
+                    <span className="text-slate-500 dark:text-slate-400 font-medium truncate">{tier.label}</span>
+                    <span className="font-black text-slate-800 dark:text-slate-100 shrink-0">{tier.amount}</span>
+                  </div>
+                ))}
+              </div>
+            ) : details.balance.subtext ? (
+              <span className="text-[10.5px] text-slate-500 dark:text-slate-400 font-medium leading-tight block mt-1 line-clamp-1" title={details.balance.subtext}>
+                {details.balance.subtext}
               </span>
-            )}
+            ) : null}
           </div>
 
           {/* CASH DEPOSIT LIMIT */}
-          <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/60 shadow-xs text-left min-h-[92px] flex flex-col justify-between">
+          <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/60 shadow-xs text-left min-h-[105px] flex flex-col justify-between overflow-hidden">
             <div>
               <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500 block mb-0.5">
                 CASH DEPOSIT LIMIT
               </span>
               <span className="text-base sm:text-lg font-black text-blue-600 dark:text-blue-400 tracking-tight block">
-                {formattedCashLimit.display}
+                {details.cashLimit.display}
               </span>
             </div>
-            {formattedCashLimit.subtext && (
-              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium leading-tight block mt-1 line-clamp-1" title={formattedCashLimit.subtext}>
-                {formattedCashLimit.subtext}
+            {details.cashLimit.subtext && (
+              <span className="text-[10.5px] text-slate-500 dark:text-slate-400 font-medium leading-tight block mt-1 line-clamp-1" title={details.cashLimit.subtext}>
+                {details.cashLimit.subtext}
               </span>
             )}
           </div>
         </div>
 
-        {/* NON-MAINTENANCE CHARGE ROW */}
-        <div className="px-3.5 py-2 rounded-xl bg-slate-100/80 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/40 flex items-center justify-between text-xs">
-          <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Non-Maintenance:
-          </span>
-          <span className="font-bold text-slate-800 dark:text-slate-200 text-[11px] truncate ml-2">
-            {formattedFee.display}
-          </span>
+        {/* STRUCTURED PARAMETERS ROW (Section 4) */}
+        <div className="grid grid-cols-2 gap-2 text-xs">
+          <div className="px-3 py-2 rounded-xl bg-slate-100/70 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/40">
+            <span className="text-[9.5px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500 block">
+              Non-Maintenance
+            </span>
+            <span className="font-bold text-slate-800 dark:text-slate-200 text-[11px] truncate block mt-0.5" title={details.charges.display}>
+              {details.charges.display}
+            </span>
+          </div>
+
+          <div className="px-3 py-2 rounded-xl bg-slate-100/70 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/40">
+            <span className="text-[9.5px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500 block">
+              Cheque Facility
+            </span>
+            <span className="font-bold text-slate-800 dark:text-slate-200 text-[11px] truncate block mt-0.5" title={details.chequeFacility}>
+              {details.chequeFacility}
+            </span>
+          </div>
+
+          <div className="px-3 py-2 rounded-xl bg-slate-100/70 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/40">
+            <span className="text-[9.5px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500 block">
+              NEFT / RTGS
+            </span>
+            <span className="font-bold text-slate-800 dark:text-slate-200 text-[11px] truncate block mt-0.5" title={details.neft}>
+              {details.neft !== 'Not specified' ? details.neft : details.rtgs}
+            </span>
+          </div>
+
+          <div className="px-3 py-2 rounded-xl bg-slate-100/70 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/40">
+            <span className="text-[9.5px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500 block">
+              Withdrawal Limit
+            </span>
+            <span className="font-bold text-slate-800 dark:text-slate-200 text-[11px] truncate block mt-0.5" title={details.withdrawalLimit}>
+              {details.withdrawalLimit}
+            </span>
+          </div>
         </div>
       </div>
 
@@ -161,18 +202,18 @@ function CurrentAccountCard({ account, onViewDetails, onToggleCompare, isCompare
             <CreditCard className="w-3.5 h-3.5" />
           </div>
           <div className="min-w-0">
-            <span className="text-[9px] font-extrabold uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA] block leading-none">
-              {associatedCards.length > 1 ? `BUSINESS DEBIT CARDS (${associatedCards.length}):` : 'BUSINESS DEBIT CARD:'}
+            <span className="text-[9px] font-extrabold uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA] block leading-none truncate">
+              {debitRel.label}:
             </span>
-            <span className="text-xs font-bold text-slate-800 dark:text-slate-100 truncate block mt-0.5">
-              {primaryCard ? (primaryCard.name || primaryCard.card_name || primaryCard.cardName) : (getDebitCardRelationshipStatusForCurrentAccount(account).message || 'Debit card details on request.')}
+            <span className={`text-xs truncate block mt-0.5 ${debitRel.isLinked ? 'font-bold text-slate-800 dark:text-slate-100' : 'font-medium text-slate-500 dark:text-slate-400'}`}>
+              {debitRel.statusText}
             </span>
           </div>
         </div>
 
-        {primaryCard && onSelectDebitCard && (
+        {debitRel.isLinked && debitRel.primaryCard && onSelectDebitCard && (
           <button
-            onClick={(e) => { e.stopPropagation(); onSelectDebitCard(primaryCard); }}
+            onClick={(e) => { e.stopPropagation(); onSelectDebitCard(debitRel.primaryCard); }}
             className="text-[10.5px] font-extrabold text-[#2563EB] dark:text-[#60A5FA] hover:underline flex items-center gap-0.5 shrink-0 cursor-pointer"
           >
             <span>Card Info</span>
@@ -182,24 +223,24 @@ function CurrentAccountCard({ account, onViewDetails, onToggleCompare, isCompare
       </div>
 
       {/* Small Source / Verification Footer Bar */}
-      <div className="px-5 sm:px-6 py-2 bg-slate-50/80 dark:bg-slate-900/60 border-b border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[10px] text-slate-400 dark:text-slate-500">
-        <div className="flex items-center gap-1.5">
-          <ShieldCheck className="w-3 h-3 text-emerald-500" />
-          <span>Source verified</span>
-          {sourceInfo.verifiedDateFormatted && (
-            <span>• Verified: {sourceInfo.verifiedDateFormatted}</span>
-          )}
+      <div className="px-5 sm:px-6 py-2 bg-slate-50/80 dark:bg-slate-900/60 border-b border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[10px] text-slate-400 dark:text-slate-500 gap-2">
+        <div className="flex items-center gap-1.5 truncate">
+          <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+          <span className="truncate">Verified: <strong className="text-slate-600 dark:text-slate-300 font-semibold">{sourceInfo.verifiedDateFormatted}</strong></span>
         </div>
-        {sourceInfo.sourceUrl && (
+        {sourceInfo.sourceUrl ? (
           <a
             href={sourceInfo.sourceUrl}
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
-            className="text-[#2563EB] dark:text-[#60A5FA] hover:underline font-medium"
+            className="text-[#2563EB] dark:text-[#60A5FA] hover:underline font-bold inline-flex items-center gap-0.5 shrink-0"
+            title="Open official bank source"
           >
-            Official Source
+            <span>Official Source ↗</span>
           </a>
+        ) : (
+          <span className="font-medium text-slate-400 shrink-0">Official Source</span>
         )}
       </div>
 
