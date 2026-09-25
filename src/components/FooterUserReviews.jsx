@@ -21,7 +21,7 @@ export function getStoredReviews() {
 export function saveStoredReview(newReview) {
   try {
     const current = getStoredReviews();
-    const updated = [newReview, ...current];
+    const updated = [newReview, ...current].slice(0, 50);
     localStorage.setItem(REVIEWS_STORAGE_KEY, JSON.stringify(updated));
     return updated;
   } catch (e) {
@@ -85,6 +85,11 @@ function FooterUserReviews() {
       return;
     }
 
+    if (trimmedName.length > 50) {
+      setError('Name cannot exceed 50 characters.');
+      return;
+    }
+
     if (!rating || rating < 1 || rating > 5) {
       setError('Please select a star rating between 1 and 5.');
       return;
@@ -92,6 +97,11 @@ function FooterUserReviews() {
 
     if (!trimmedReview || trimmedReview.length < 5) {
       setError('Please write your review (minimum 5 characters).');
+      return;
+    }
+
+    if (trimmedReview.length > 1000) {
+      setError('Review cannot exceed 1000 characters.');
       return;
     }
 
@@ -109,6 +119,7 @@ function FooterUserReviews() {
     const newReview = {
       id: `review-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
       name: trimmedName,
+      user: trimmedName,
       rating: Number(rating),
       text: trimmedReview,
       // Date formatted cleanly, e.g. "15 Sep 2026"

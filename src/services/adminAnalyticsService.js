@@ -397,6 +397,16 @@ export const adminAnalyticsService = {
       return true;
     }
 
+function escapeHtml(str) {
+  if (str == null) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
     if (format === "pdf") {
       const printWindow = window.open('', '_blank');
       if (printWindow) {
@@ -404,7 +414,7 @@ export const adminAnalyticsService = {
           <!DOCTYPE html>
           <html>
             <head>
-              <title>${filename}</title>
+              <title>${escapeHtml(filename)}</title>
               <style>
                 body { font-family: 'Poppins', sans-serif; padding: 24px; color: #1F2937; }
                 h1 { color: #2563EB; border-bottom: 2px solid #2563EB; padding-bottom: 8px; }
@@ -418,7 +428,7 @@ export const adminAnalyticsService = {
               <h1>D.CARD Executive Intelligence Report</h1>
               <div class="meta">
                 <p><strong>Export Date:</strong> ${new Date().toLocaleString()}</p>
-                <p><strong>Timeframe:</strong> ${timeRange}</p>
+                <p><strong>Timeframe:</strong> ${escapeHtml(timeRange)}</p>
                 <p><strong>Total Users:</strong> ${users.length} | <strong>Total Cards:</strong> ${cards.length} | <strong>Queries:</strong> ${contacts.length}</p>
               </div>
 
@@ -428,7 +438,7 @@ export const adminAnalyticsService = {
                   <tr><th>Name</th><th>Email</th><th>City</th><th>State</th></tr>
                 </thead>
                 <tbody>
-                  ${users.slice(0, 50).map(u => `<tr><td>${u.name || u.full_name || 'Member'}</td><td>${u.email || ''}</td><td>${u.city || ''}</td><td>${u.state || ''}</td></tr>`).join('')}
+                  ${users.slice(0, 50).map(u => `<tr><td>${escapeHtml(u.name || u.full_name || 'Member')}</td><td>${escapeHtml(u.email || '')}</td><td>${escapeHtml(u.city || '')}</td><td>${escapeHtml(u.state || '')}</td></tr>`).join('')}
                 </tbody>
               </table>
 
@@ -438,7 +448,7 @@ export const adminAnalyticsService = {
                   <tr><th>Card Name</th><th>Bank</th><th>Network</th><th>Fee</th></tr>
                 </thead>
                 <tbody>
-                  ${cards.slice(0, 50).map(c => `<tr><td>${c.cardName || ''}</td><td>${c.bank || ''}</td><td>${c.network || ''}</td><td>₹${c.annualFee || 0}</td></tr>`).join('')}
+                  ${cards.slice(0, 50).map(c => `<tr><td>${escapeHtml(c.cardName || '')}</td><td>${escapeHtml(c.bank || '')}</td><td>${escapeHtml(c.network || '')}</td><td>₹${escapeHtml(c.annualFee || 0)}</td></tr>`).join('')}
                 </tbody>
               </table>
 

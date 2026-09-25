@@ -133,14 +133,29 @@ export default async function handler(req, res) {
     };
   }
 
-  // CORS headers
+  // Dynamic CORS origin validation for secure cross-origin requests
+  const requestOrigin = req.headers?.origin || '';
+  const allowedOrigins = [
+    'https://www.dcard.website',
+    'https://dcard.website',
+    'http://localhost:5173',
+    'http://localhost:3000',
+    'http://127.0.0.1:5173'
+  ];
+  const isAllowedOrigin = allowedOrigins.includes(requestOrigin) || 
+    (requestOrigin.endsWith('.vercel.app') && requestOrigin.startsWith('https://'));
+
   if (typeof res.setHeader === 'function') {
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+    if (isAllowedOrigin) {
+      res.setHeader('Access-Control-Allow-Origin', requestOrigin);
+      res.setHeader('Access-Control-Allow-Credentials', 'true');
+    } else {
+      res.setHeader('Access-Control-Allow-Origin', 'https://www.dcard.website');
+    }
+    res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
     res.setHeader(
       'Access-Control-Allow-Headers',
-      'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+      'Content-Type, X-Requested-With, Accept'
     );
   }
 

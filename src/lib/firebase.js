@@ -52,7 +52,6 @@ const firebaseConfig = {
 
 // Initialize Firebase App singleton
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-console.log("firebase connected", app);
 
 
 // Initialize Firebase Auth instance

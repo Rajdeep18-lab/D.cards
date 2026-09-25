@@ -12,20 +12,44 @@ service cloud.firestore {
       return isAuthenticated() && request.auth.uid == userId;
     }
     
-    // Helper function to check if user is an admin
+    // Helper function to check if user is an admin (strictly via protected admins tables or verified primary admin)
     function isAdmin() {
       return isAuthenticated() && 
         ((request.auth.token.email != null && request.auth.token.email.toLowerCase() == 'ritikanshu072@gmail.com') ||
          (exists(/databases/$(database)/documents/admins/$(request.auth.uid)) && 
           get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role == 'admin') ||
          (exists(/databases/$(database)/documents/admin_users/$(request.auth.uid)) && 
-          get(/databases/$(database)/documents/admin_users/$(request.auth.uid)).data.role == 'admin') ||
-         (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
-          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'));
+          get(/databases/$(database)/documents/admin_users/$(request.auth.uid)).data.role == 'admin'));
     }
 
     // Debit Cards Collection (Public Read, Admin Write Only)
     match /debit_cards/{cardId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Savings Accounts Collections (Public Read, Admin Write Only)
+    match /savings_accounts/{accId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /savingsAccounts/{accId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Current Accounts Collections (Public Read, Admin Write Only)
+    match /current_accounts/{accId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /currentAccounts/{accId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Account to Debit Card Mappings (Public Read, Admin Write Only)
+    match /account_card_mappings/{mapId} {
       allow read: if true;
       allow write: if isAdmin();
     }

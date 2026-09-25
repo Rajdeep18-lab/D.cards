@@ -1,6 +1,5 @@
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
-import { viteSingleFile } from "vite-plugin-singlefile";
 import { generateSitemapAndRobots } from "./scripts/generate-sitemap.js";
 import aiAdvisorHandler from "./api/ai-advisor.js";
 
@@ -76,7 +75,6 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [
       react(),
-      viteSingleFile(),
       sitemapPlugin(),
       aiAdvisorDevPlugin()
     ],

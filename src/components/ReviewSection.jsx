@@ -37,15 +37,19 @@ function ReviewSection({ onOpenContact }) {
 
   const handleSubmitReview = (e) => {
     e.preventDefault();
-    if (!reviewText.trim() || !userName.trim()) return;
+    const cleanUser = userName.trim().slice(0, 50);
+    const cleanText = reviewText.trim().slice(0, 1000);
+    const cleanCard = cardName.trim().slice(0, 80);
+    if (!cleanText || !cleanUser) return;
 
     const newReview = {
       id: `custom-${Date.now()}`,
-      user: userName.trim(),
+      user: cleanUser,
+      name: cleanUser,
       role: userRole,
-      cardName: cardName.trim() || 'Verified Card User',
-      rating: Number(rating),
-      text: reviewText.trim(),
+      cardName: cleanCard || 'Verified Card User',
+      rating: Math.min(5, Math.max(1, Number(rating) || 5)),
+      text: cleanText,
       date: new Date().toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }),
       isUserSubmitted: true
     };
@@ -53,7 +57,7 @@ function ReviewSection({ onOpenContact }) {
     try {
       const saved = localStorage.getItem('dcard_user_reviews');
       const existingCustom = saved ? JSON.parse(saved) : [];
-      const updatedCustom = [newReview, ...existingCustom];
+      const updatedCustom = [newReview, ...existingCustom].slice(0, 50);
       localStorage.setItem('dcard_user_reviews', JSON.stringify(updatedCustom));
       setReviewsList([newReview, ...reviewsList]);
     } catch (err) {
@@ -130,10 +134,10 @@ function ReviewSection({ onOpenContact }) {
               <div
                 className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs text-white flex-shrink-0 shadow-sm bg-gradient-to-br from-[#2563EB] to-[#3B82F6]"
               >
-                {review.user?.charAt(0).toUpperCase() || 'U'}
+                {(review.user || review.name || 'U').charAt(0).toUpperCase()}
               </div>
               <div className="min-w-0">
-                <p className="font-bold text-xs sm:text-sm text-[#1F2937] dark:text-white truncate">{review.user}</p>
+                <p className="font-bold text-xs sm:text-sm text-[#1F2937] dark:text-white truncate">{review.user || review.name || 'Member'}</p>
                 <p className="text-xs text-[#6B7280] dark:text-slate-400 truncate">{review.role || 'Cardholder'}</p>
               </div>
             </div>
