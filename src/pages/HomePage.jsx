@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import HeroSection from '../components/HeroSection';
 import CardOfTheMonthBanner from '../components/CardOfTheMonthBanner';
+import AIAssistanceSection from '../components/AIAssistanceSection';
 import { 
   Sparkles, 
   Bot, 
@@ -20,7 +21,9 @@ function HomePage({
   onViewDetails,
   activeCardsList = [],
   toggleCompareQueue,
-  compareQueue = []
+  compareQueue = [],
+  savingsCompareQueue = [],
+  setSavingsCompareQueue
 }) {
   useSEO({
     title: "D.Card – Compare Debit Cards, Savings & Current Accounts in India",
@@ -237,52 +240,13 @@ function HomePage({
           </div>
         </section>
 
-        {/* ── 3. COMPARISON + AI ADVISOR FEATURE ── */}
-        <section className="select-none text-left">
-          <div className="p-8 sm:p-10 rounded-3xl bg-gradient-to-r from-[#0B3D91] via-[#1E3A8A] to-[#1E293B] text-white shadow-xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8 border border-slate-700/80">
-            <div className="space-y-4 max-w-xl text-left z-10">
-              <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md text-xs font-bold text-[#60A5FA] uppercase tracking-wider border border-white/10">
-                <Scale className="w-4 h-4 text-[#60A5FA]" />
-                PRODUCT COMPARISON & AI DISCOVERY
-              </span>
-
-              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight leading-tight">
-                Make Better Banking Choices
-              </h2>
-
-              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
-                Compare products side by side or ask D.CARD AI to help you explore available banking products.
-              </p>
-
-              <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                <button
-                  onClick={() => handleNavigateProtected('/compare')}
-                  className="px-6 py-3.5 rounded-xl bg-white text-[#2563EB] hover:bg-slate-100 font-bold text-xs tracking-wide uppercase shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95 min-h-[44px]"
-                >
-                  <Scale className="w-4 h-4" />
-                  <span>Compare Products</span>
-                </button>
-
-                <button
-                  onClick={() => handleNavigateProtected('/ai-advisor')}
-                  className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] text-white font-bold text-xs tracking-wide uppercase shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95 min-h-[44px]"
-                >
-                  <Bot className="w-4 h-4" />
-                  <span>Ask D.CARD AI</span>
-                </button>
-              </div>
-            </div>
-
-            <div className="w-full md:w-56 h-40 rounded-3xl bg-white/10 backdrop-blur-md border border-white/20 flex flex-col items-center justify-center text-white shadow-2xl relative z-10 flex-shrink-0 p-4 space-y-2 text-center">
-              <Bot className="w-10 h-10 text-[#60A5FA]" />
-              <span className="text-xs font-extrabold text-white">Product Discovery Assistant</span>
-              <span className="text-[10px] text-emerald-400 font-semibold uppercase flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                Side-by-Side Matrix
-              </span>
-            </div>
-          </div>
-        </section>
+        {/* ── 3. D.CARD AI ASSISTANCE SECTION ── */}
+        <AIAssistanceSection
+          onSelectDebitCard={onViewDetails}
+          toggleCompareQueue={toggleCompareQueue}
+          compareQueue={compareQueue}
+          setSavingsCompareQueue={setSavingsCompareQueue}
+        />
 
         {/* ── 4. HOW D.CARD WORKS ── */}
         <section className="select-none text-left space-y-8">
