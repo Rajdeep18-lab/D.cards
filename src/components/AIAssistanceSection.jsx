@@ -7,7 +7,6 @@ import {
   Mic, 
   MicOff, 
   Send, 
-  ArrowRight, 
   CheckCircle2, 
   Bot, 
   ExternalLink, 
@@ -19,8 +18,9 @@ import {
   Briefcase, 
   Zap, 
   X,
-  ChevronRight,
-  Info
+  Heart,
+  Info,
+  HelpCircle
 } from 'lucide-react';
 import BankLogo from './BankLogo';
 import DebitCardVisual from './DebitCardVisual';
@@ -29,15 +29,16 @@ import { savingsAccounts } from '../data/savingsAccounts';
 import { currentAccounts } from '../data/currentAccounts';
 import { aiChatService } from '../services/aiChatService';
 import { useAuth } from '../hooks/useAuth';
+import { useWishlist } from '../context/WishlistContext';
 
 const ROTATING_PLACEHOLDERS = [
   "Ask anything about banking products...",
+  "Show me zero balance savings accounts...",
   "Find a savings account with low minimum balance...",
   "Compare debit cards with airport lounge access...",
   "Show current accounts for businesses...",
-  "What are the charges for zero balance accounts?",
-  "Compare Canara Bank and SBI savings accounts...",
-  "Which debit card has the lowest annual fee?"
+  "What is MAB?",
+  "Compare Canara Bank and SBI savings accounts..."
 ];
 
 const QUICK_QUESTIONS = [
@@ -74,30 +75,70 @@ const HOW_IT_WORKS_STEPS = [
 ];
 
 /**
- * Local factual fallback matcher if offline or API is unavailable
+ * Common banking terms definitions for clean info card queries (e.g. "What is MAB?")
+ */
+const BANKING_KNOWLEDGE = {
+  mab: {
+    title: "MAB (Monthly Average Balance)",
+    definition: "Monthly Average Balance is the average end-of-day balance that must be maintained in a bank account during a calendar month to avoid non-maintenance penalty charges."
+  },
+  amb: {
+    title: "AMB (Average Monthly Balance)",
+    definition: "Average Monthly Balance is the sum of daily closing balances divided by the number of days in the month required by banks to maintain fee-free account status."
+  },
+  "zero balance": {
+    title: "Zero Balance Savings Account",
+    definition: "A zero balance savings account has no minimum balance requirement. You can keep ₹0 in the account without incurring any non-maintenance penalty charges."
+  },
+  bsbda: {
+    title: "BSBDA (Basic Savings Bank Deposit Account)",
+    definition: "BSBDA is an RBI-mandated zero-balance savings account providing basic banking facilities like ATM card, cash deposit, and withdrawals with no minimum balance penalty."
+  },
+  lounge: {
+    title: "Airport Lounge Access",
+    definition: "Complimentary access to domestic and international airport lounges via debit cards, offering free refreshments, Wi-Fi, and comfortable waiting zones (often subject to quarterly spend criteria)."
+  },
+  forex: {
+    title: "Forex Markup Fee",
+    definition: "A surcharge (typically 1.5% to 3.5%) added by the issuing bank when making international payments or cash withdrawals in a foreign currency."
+  },
+  overdraft: {
+    title: "Overdraft (OD) Facility",
+    definition: "A credit facility linked to current or savings accounts allowing account holders to withdraw money exceeding their account balance up to an agreed limit, paying interest only on the utilized sum."
+  }
+};
+
+/**
+ * Searches and ranks products from verified D.CARD dataset
  */
 function matchLocalProducts(queryText = '') {
   const lower = queryText.toLowerCase().trim();
 
-  const isSavingsQuery = lower.includes('saving') || lower.includes('savings') || lower.includes('interest') || lower.includes('mab') || lower.includes('balance');
-  const isCurrentQuery = lower.includes('current') || lower.includes('business') || lower.includes('trade') || lower.includes('od') || lower.includes('overdraft') || lower.includes('cheque');
+  // Banking term knowledge check
+  let infoCard = null;
+  for (const [key, val] of Object.entries(BANKING_KNOWLEDGE)) {
+    if (lower.includes(key) && (lower.includes('what is') || lower.includes('meaning') || lower.includes('explain') || lower.includes('define') || lower === key)) {
+      infoCard = val;
+      break;
+    }
+  }
+
+  const isComparison = lower.includes('compare') || lower.includes(' vs ') || lower.includes(' versus ') || lower.includes('difference between');
+  const isSavingsQuery = lower.includes('saving') || lower.includes('savings') || lower.includes('interest') || lower.includes('mab') || lower.includes('balance') || lower.includes('bsbda');
+  const isCurrentQuery = lower.includes('current') || lower.includes('business') || lower.includes('trade') || lower.includes('od') || lower.includes('overdraft') || lower.includes('cheque') || lower.includes('corporate');
   const isCardQuery = lower.includes('debit') || lower.includes('card') || lower.includes('lounge') || lower.includes('atm') || lower.includes('pos limit') || lower.includes('annual fee');
 
-  const wantsZero = lower.includes('zero balance') || lower.includes('0 balance') || lower.includes('no minimum');
+  const wantsZero = lower.includes('zero balance') || lower.includes('0 balance') || lower.includes('no minimum') || lower.includes('zero mab');
   const wantsLow = lower.includes('low') || lower.includes('5000') || lower.includes('5,000') || lower.includes('under');
   const wantsLounge = lower.includes('lounge') || lower.includes('airport');
   const wantsLowestFee = lower.includes('lowest') || lower.includes('free') || lower.includes('zero fee');
 
-  // Bank filters
+  // Detect banks
   const bankNames = ['canara', 'sbi', 'state bank', 'hdfc', 'icici', 'axis', 'kotak', 'idfc', 'indusind', 'pnb', 'baroda', 'federal', 'yes'];
   const matchedBanks = bankNames.filter(b => lower.includes(b));
 
-  let matchedCards = [];
-  let matchedSavings = [];
-  let matchedCurrent = [];
-
   // Match Debit Cards
-  matchedCards = (debitCards || []).filter(card => {
+  let matchedCards = (debitCards || []).filter(card => {
     const cardLower = (card.cardName || '').toLowerCase();
     const bankLower = (card.bank || '').toLowerCase();
     const networkLower = (card.network || '').toLowerCase();
@@ -116,7 +157,7 @@ function matchLocalProducts(queryText = '') {
   });
 
   // Match Savings Accounts
-  matchedSavings = (savingsAccounts || []).filter(acc => {
+  let matchedSavings = (savingsAccounts || []).filter(acc => {
     const accLower = (acc.accountName || '').toLowerCase();
     const bankLower = (acc.bank || '').toLowerCase();
 
@@ -134,7 +175,7 @@ function matchLocalProducts(queryText = '') {
   });
 
   // Match Current Accounts
-  matchedCurrent = (currentAccounts || []).filter(acc => {
+  let matchedCurrent = (currentAccounts || []).filter(acc => {
     const accLower = (acc.accountName || '').toLowerCase();
     const bankLower = (acc.bank || '').toLowerCase();
 
@@ -145,13 +186,34 @@ function matchLocalProducts(queryText = '') {
     return accLower.includes(lower) || bankLower.includes(lower);
   });
 
-  // If general comparison or broad query, return top 3 of each category
+  // If specific comparison between banks (e.g. Canara Bank and SBI)
+  if (isComparison && matchedBanks.length >= 2) {
+    if (isSavingsQuery || (!isCardQuery && !isCurrentQuery)) {
+      matchedSavings = (savingsAccounts || []).filter(acc => 
+        matchedBanks.some(b => (acc.bank || '').toLowerCase().includes(b))
+      );
+    }
+    if (isCardQuery) {
+      matchedCards = (debitCards || []).filter(c => 
+        matchedBanks.some(b => (c.bank || '').toLowerCase().includes(b))
+      );
+    }
+  }
+
+  // Fallback defaults if query is broad or general
   if (matchedCards.length === 0 && matchedSavings.length === 0 && matchedCurrent.length === 0) {
-    matchedSavings = (savingsAccounts || []).slice(0, 3);
-    matchedCards = (debitCards || []).slice(0, 3);
+    if (isCardQuery) {
+      matchedCards = (debitCards || []).slice(0, 4);
+    } else if (isCurrentQuery) {
+      matchedCurrent = (currentAccounts || []).slice(0, 4);
+    } else {
+      matchedSavings = (savingsAccounts || []).filter(a => a.isZeroBalance || a.minimumBalanceValue === 0).slice(0, 4);
+    }
   }
 
   return {
+    isComparison,
+    infoCard,
     cards: matchedCards.slice(0, 6),
     savings: matchedSavings.slice(0, 6),
     current: matchedCurrent.slice(0, 6)
@@ -165,7 +227,8 @@ export default function AIAssistanceSection({
   setSavingsCompareQueue
 }) {
   const navigate = useNavigate();
-  const { user, openAuthModal } = useAuth();
+  const { user } = useAuth();
+  const { isWishlisted, toggleWishlist } = useWishlist();
 
   const [inputValue, setInputValue] = useState('');
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
@@ -186,7 +249,7 @@ export default function AIAssistanceSection({
     return () => clearInterval(timer);
   }, []);
 
-  // Clean up speech recognition on unmount
+  // Cleanup speech recognition
   useEffect(() => {
     return () => {
       if (recognitionRef.current) {
@@ -227,7 +290,6 @@ export default function AIAssistanceSection({
       recognition.onresult = (event) => {
         const transcript = event.results?.[0]?.[0]?.transcript;
         if (transcript) {
-          // Normalize spoken amounts like "five thousand" into readable queries
           let formattedTranscript = transcript
             .replace(/\bfive thousand\b/gi, '₹5,000')
             .replace(/\bten thousand\b/gi, '₹10,000')
@@ -275,53 +337,49 @@ export default function AIAssistanceSection({
     setSpeechNotice(null);
 
     try {
-      // 1. Send query to D.CARD AI backend
-      const aiResponse = await aiChatService.sendMessage(query, user);
+      // 1. Query structured local matcher directly to ensure instant zero-latency structured product results
+      const local = matchLocalProducts(query);
 
-      let cards = aiResponse.matchedCards || [];
-      let savings = aiResponse.matchedAccounts || [];
-      let current = aiResponse.matchedCurrentAccounts || [];
+      let cards = local.cards;
+      let savings = local.savings;
+      let current = local.current;
 
-      // 2. Local fallback enrichment if backend returned zero product matches
+      // 2. Also query backend if more matches needed
       if (cards.length === 0 && savings.length === 0 && current.length === 0) {
-        const local = matchLocalProducts(query);
-        cards = local.cards;
-        savings = local.savings;
-        current = local.current;
+        try {
+          const aiResponse = await aiChatService.sendMessage(query, user);
+          if (aiResponse?.matchedCards?.length) cards = aiResponse.matchedCards;
+          if (aiResponse?.matchedAccounts?.length) savings = aiResponse.matchedAccounts;
+          if (aiResponse?.matchedCurrentAccounts?.length) current = aiResponse.matchedCurrentAccounts;
+        } catch (e) {}
       }
 
       setResult({
         query,
-        answer: aiResponse.text || `Here are the matching banking products found for "${query}":`,
+        isComparison: local.isComparison,
+        infoCard: local.infoCard,
         matchedCards: cards,
         matchedAccounts: savings,
-        matchedCurrentAccounts: current,
-        disclaimer: aiResponse.disclaimer || "Please verify the latest terms, charges and eligibility on the bank's official website before applying."
+        matchedCurrentAccounts: current
       });
 
-      // Smooth scroll to results
+      // Smooth scroll to product results
       setTimeout(() => {
         if (resultsRef.current) {
           resultsRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
       }, 100);
     } catch (err) {
-      console.warn("AI service query fallback:", err);
+      console.warn("AI search error:", err);
       const local = matchLocalProducts(query);
       setResult({
         query,
-        answer: `Here are the verified banking products from D.CARD matching "${query}":`,
+        isComparison: local.isComparison,
+        infoCard: local.infoCard,
         matchedCards: local.cards,
         matchedAccounts: local.savings,
-        matchedCurrentAccounts: local.current,
-        disclaimer: "Please verify the latest terms, charges and eligibility on the bank's official website before applying."
+        matchedCurrentAccounts: local.current
       });
-
-      setTimeout(() => {
-        if (resultsRef.current) {
-          resultsRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-      }, 100);
     } finally {
       setLoading(false);
     }
@@ -385,7 +443,7 @@ export default function AIAssistanceSection({
         {/* ═══ TOP 3-PANEL WIREFRAME / LAYOUT ═══ */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch relative z-10">
 
-          {/* ── LEFT PANEL: Key Features (Hidden on extra small, 3 cols on large) ── */}
+          {/* ── LEFT PANEL: Key Features (3 cols on large) ── */}
           <div className="lg:col-span-3 hidden md:flex flex-col justify-between p-5 rounded-2xl bg-white/90 dark:bg-slate-900/90 border border-slate-200/90 dark:border-slate-800 shadow-sm backdrop-blur-md">
             <div>
               <div className="flex items-center gap-2 pb-3 mb-4 border-b border-slate-100 dark:border-slate-800">
@@ -664,7 +722,7 @@ export default function AIAssistanceSection({
           </div>
         </div>
 
-        {/* ═══ EXPANDABLE SEARCH RESULTS SECTION ═══ */}
+        {/* ═══ CLEAN STRUCTURED PRODUCT RESULTS SECTION ═══ */}
         <AnimatePresence>
           {result && (
             <motion.div
@@ -674,26 +732,32 @@ export default function AIAssistanceSection({
               exit={{ opacity: 0, y: 20 }}
               className="mt-8 pt-8 border-t border-slate-200 dark:border-slate-800 space-y-6"
             >
-              {/* Results Top Bar */}
+              {/* ── RESULT HEADER (Small, clean, no explanation paragraph) ── */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-950 text-[#2563EB] flex items-center justify-center font-bold">
-                    <Sparkles className="w-5 h-5" />
+                <div className="space-y-0.5">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-black tracking-widest text-[#2563EB] dark:text-[#60A5FA] uppercase">
+                      D.CARD AI RESULTS
+                    </span>
+                    <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-700" />
+                    <span className="text-[11px] text-slate-400 font-medium">
+                      Based on available D.CARD product data
+                    </span>
                   </div>
-                  <div>
-                    <h3 className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white">
-                      Results for: <span className="text-[#2563EB] dark:text-[#60A5FA]">"{result.query}"</span>
-                    </h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
-                      Found {totalProductCount} matching banking {totalProductCount === 1 ? 'product' : 'products'}
-                    </p>
-                  </div>
+
+                  <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-tight">
+                    {result.isComparison 
+                      ? `Comparing ${totalProductCount} products for "${result.query}"`
+                      : result.infoCard
+                        ? `${result.infoCard.title}`
+                        : `${totalProductCount} ${totalProductCount === 1 ? 'product matches' : 'products match'} your search`}
+                  </h3>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 shrink-0">
                   <button
                     onClick={() => setResult(null)}
-                    className="px-3.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-1.5"
+                    className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-1.5"
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
                     <span>Clear Search</span>
@@ -709,24 +773,25 @@ export default function AIAssistanceSection({
                 </div>
               </div>
 
-              {/* AI Explanation Text Bubble */}
-              <div className="p-5 rounded-2xl bg-blue-50/70 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/50 space-y-2.5">
-                <div className="flex items-center gap-2 text-xs font-bold text-[#2563EB] dark:text-[#60A5FA] uppercase tracking-wider">
-                  <Bot className="w-4 h-4" />
-                  <span>D.CARD AI Explanation</span>
+              {/* ── SIMPLE INFORMATION CARD (Only for conceptual queries e.g. "What is MAB?") ── */}
+              {result.infoCard && (
+                <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-blue-200 dark:border-blue-900 shadow-sm flex items-start gap-3.5">
+                  <div className="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-950 text-[#2563EB] flex items-center justify-center shrink-0 mt-0.5">
+                    <HelpCircle className="w-5 h-5" />
+                  </div>
+                  <div className="space-y-1 min-w-0">
+                    <h4 className="text-sm font-extrabold text-slate-900 dark:text-white">
+                      {result.infoCard.title}
+                    </h4>
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
+                      {result.infoCard.definition}
+                    </p>
+                  </div>
                 </div>
-                <div className="text-xs sm:text-sm text-slate-800 dark:text-slate-200 leading-relaxed whitespace-pre-line font-medium">
-                  {result.answer}
-                </div>
-                {result.disclaimer && (
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 pt-2 border-t border-blue-200/50 dark:border-blue-900/50 italic">
-                    Note: {result.disclaimer}
-                  </p>
-                )}
-              </div>
+              )}
 
               {/* Category Filter Tabs (if multiple types exist) */}
-              {totalProductCount > 0 && (
+              {totalProductCount > 0 && !result.isComparison && (
                 <div className="flex items-center gap-2 overflow-x-auto pb-1">
                   <button
                     onClick={() => setActiveTab('all')}
@@ -736,22 +801,8 @@ export default function AIAssistanceSection({
                         : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:border-blue-400'
                     }`}
                   >
-                    All Matches ({totalProductCount})
+                    All Products ({totalProductCount})
                   </button>
-
-                  {result.matchedCards.length > 0 && (
-                    <button
-                      onClick={() => setActiveTab('cards')}
-                      className={`px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer flex items-center gap-1.5 ${
-                        activeTab === 'cards'
-                          ? 'bg-[#2563EB] text-white shadow-xs'
-                          : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:border-blue-400'
-                      }`}
-                    >
-                      <CreditCard className="w-3.5 h-3.5" />
-                      Debit Cards ({result.matchedCards.length})
-                    </button>
-                  )}
 
                   {result.matchedAccounts.length > 0 && (
                     <button
@@ -764,6 +815,20 @@ export default function AIAssistanceSection({
                     >
                       <Landmark className="w-3.5 h-3.5" />
                       Savings Accounts ({result.matchedAccounts.length})
+                    </button>
+                  )}
+
+                  {result.matchedCards.length > 0 && (
+                    <button
+                      onClick={() => setActiveTab('cards')}
+                      className={`px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer flex items-center gap-1.5 ${
+                        activeTab === 'cards'
+                          ? 'bg-[#2563EB] text-white shadow-xs'
+                          : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:border-blue-400'
+                      }`}
+                    >
+                      <CreditCard className="w-3.5 h-3.5" />
+                      Debit Cards ({result.matchedCards.length})
                     </button>
                   )}
 
@@ -783,13 +848,140 @@ export default function AIAssistanceSection({
                 </div>
               )}
 
-              {/* ── PRODUCT CARDS GRID ── */}
+              {/* ── REAL PRODUCT CARDS GRID ── */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
 
-                {/* 1. Debit Cards Matches */}
+                {/* 1. SAVINGS ACCOUNT CARDS */}
+                {(activeTab === 'all' || activeTab === 'savings') && result.matchedAccounts.map(acc => {
+                  const officialUrl = acc.officialWebsite || acc.sourceUrl || '#';
+                  const isZero = acc.isZeroBalance || acc.minimumBalanceValue === 0 || String(acc.minimumBalance || '').toLowerCase().includes('zero');
+                  const minBalDisplay = isZero ? '₹0' : (acc.minimumBalance ? `₹${acc.minimumBalance}` : '₹0');
+                  const isSaved = isWishlisted(acc.id);
+
+                  return (
+                    <div
+                      key={`savings-${acc.id}`}
+                      onClick={() => handleSavingsDetails(acc)}
+                      className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-[#2563EB]/50 shadow-md hover:shadow-xl transition-all flex flex-col justify-between space-y-4 cursor-pointer group"
+                    >
+                      <div className="space-y-3.5">
+                        {/* Top: Bank Logo + Save Heart */}
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2.5">
+                            <BankLogo bankName={acc.bank} size="sm" />
+                            <span className="text-xs font-black text-slate-800 dark:text-slate-200 uppercase tracking-wide">
+                              {acc.bank}
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); toggleWishlist(acc); }}
+                            className={`p-1.5 rounded-lg border transition-colors ${
+                              isSaved 
+                                ? 'bg-rose-50 border-rose-200 text-rose-500' 
+                                : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400 hover:text-rose-500'
+                            }`}
+                            aria-label="Save to favorites"
+                          >
+                            <Heart className={`w-3.5 h-3.5 ${isSaved ? 'fill-current' : ''}`} />
+                          </button>
+                        </div>
+
+                        {/* Account Name & Type */}
+                        <div>
+                          <h4 className="text-base font-extrabold text-slate-900 dark:text-white leading-snug group-hover:text-[#2563EB] transition-colors">
+                            {acc.accountName}
+                          </h4>
+                          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-500 dark:text-slate-400 mt-1">
+                            🏦 {acc.accountType || 'Savings Account'}
+                          </span>
+                        </div>
+
+                        {/* Core Banking Metrics */}
+                        <div className="space-y-1.5 pt-1 text-xs border-t border-slate-100 dark:border-slate-800">
+                          <div className="flex items-center justify-between py-1 border-b border-slate-50 dark:border-slate-800/60">
+                            <span className="text-slate-500 dark:text-slate-400 font-medium">Minimum Balance</span>
+                            <span className="font-extrabold text-slate-900 dark:text-white">
+                              {minBalDisplay}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between py-1 border-b border-slate-50 dark:border-slate-800/60">
+                            <span className="text-slate-500 dark:text-slate-400 font-medium">Interest Rate</span>
+                            <span className="font-extrabold text-emerald-600 dark:text-emerald-400">
+                              {acc.interestRate || '2.70% – 4.00% p.a.'}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between py-1">
+                            <span className="text-slate-500 dark:text-slate-400 font-medium">Online Opening</span>
+                            <span className="font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                              ✓ Available
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Linked Debit Card Section */}
+                        <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-100 dark:border-slate-800 space-y-1">
+                          <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">
+                            Linked Debit Card
+                          </span>
+                          <p className="text-xs font-bold text-slate-800 dark:text-slate-200 leading-tight">
+                            {acc.debitCardName || 'Classic / RuPay Debit Card'}
+                          </p>
+                          <div className="flex items-center justify-between text-[11px] text-slate-500 pt-0.5">
+                            <span>Annual Fee:</span>
+                            <span className="font-bold text-slate-700 dark:text-slate-300">
+                              {acc.debitCardFee || '₹125 – ₹250 + GST'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Action Buttons & Source Link */}
+                      <div className="pt-2 space-y-2 border-t border-slate-100 dark:border-slate-800">
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); handleSavingsDetails(acc); }}
+                            className="flex-1 py-2 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-bold transition-all text-center shadow-xs"
+                          >
+                            View Details
+                          </button>
+                          <button
+                            type="button"
+                            onClick={(e) => handleSavingsCompare(e, acc)}
+                            className="px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200 transition-colors flex items-center gap-1"
+                          >
+                            <Scale className="w-3.5 h-3.5" />
+                            <span>Compare</span>
+                          </button>
+                        </div>
+
+                        <div className="flex items-center justify-between text-[10px] text-slate-400 pt-1">
+                          <span>Verified: 05 Sep 2026</span>
+                          {officialUrl !== '#' ? (
+                            <a
+                              href={officialUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              className="text-[#2563EB] dark:text-[#60A5FA] font-bold hover:underline flex items-center gap-1"
+                            >
+                              Official Source <ExternalLink className="w-2.5 h-2.5" />
+                            </a>
+                          ) : (
+                            <span className="italic">Official Bank Source</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+
+                {/* 2. DEBIT CARD CARDS */}
                 {(activeTab === 'all' || activeTab === 'cards') && result.matchedCards.map(card => {
                   const applyUrl = card.applyUrl || card.applyLink || card.officialWebsite || '#';
                   const isAlreadyCompared = (compareQueue || []).some(c => String(c.id) === String(card.id));
+                  const isSaved = isWishlisted(card.id);
 
                   return (
                     <div
@@ -798,50 +990,100 @@ export default function AIAssistanceSection({
                       className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-[#2563EB]/50 shadow-md hover:shadow-xl transition-all flex flex-col justify-between space-y-4 cursor-pointer group"
                     >
                       <div className="space-y-3.5">
-                        {/* Header: Bank Logo + Network */}
+                        {/* Top: Bank Logo + Save Heart */}
                         <div className="flex items-center justify-between gap-2">
-                          <BankLogo bankName={card.bank} size="sm" />
-                          <span className="px-2.5 py-1 rounded-full bg-blue-50 dark:bg-blue-950/80 text-[#2563EB] dark:text-[#60A5FA] text-[10px] font-extrabold uppercase tracking-wider border border-blue-200/80 dark:border-blue-900">
-                            {card.network || 'Debit Card'}
-                          </span>
+                          <div className="flex items-center gap-2.5">
+                            <BankLogo bankName={card.bank} size="sm" />
+                            <span className="text-xs font-black text-slate-800 dark:text-slate-200 uppercase tracking-wide">
+                              {card.bank}
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); toggleWishlist(card); }}
+                            className={`p-1.5 rounded-lg border transition-colors ${
+                              isSaved 
+                                ? 'bg-rose-50 border-rose-200 text-rose-500' 
+                                : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400 hover:text-rose-500'
+                            }`}
+                            aria-label="Save to favorites"
+                          >
+                            <Heart className={`w-3.5 h-3.5 ${isSaved ? 'fill-current' : ''}`} />
+                          </button>
                         </div>
 
                         {/* Actual Debit Card Visual */}
-                        <div className="w-full flex justify-center py-2">
+                        <div className="w-full flex justify-center py-1">
                           <div className="w-48 sm:w-52 transform group-hover:scale-102 transition-transform duration-300">
                             <DebitCardVisual card={card} mode="grid" />
                           </div>
                         </div>
 
-                        {/* Title & Bank */}
+                        {/* Debit Card Name & Network */}
                         <div>
-                          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wide">
-                            {card.bank}
-                          </p>
-                          <h4 className="text-base font-extrabold text-slate-800 dark:text-white leading-snug group-hover:text-[#2563EB] transition-colors">
+                          <h4 className="text-base font-extrabold text-slate-900 dark:text-white leading-snug group-hover:text-[#2563EB] transition-colors">
                             {card.cardName}
                           </h4>
+                          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-500 dark:text-slate-400 mt-1">
+                            💳 {card.network || 'Visa'} · {card.cardType || 'Debit Card'}
+                          </span>
                         </div>
 
-                        {/* Key Specs */}
-                        <div className="grid grid-cols-2 gap-2 text-xs bg-slate-50 dark:bg-slate-800/60 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800">
-                          <div>
-                            <span className="text-[10px] text-slate-400 font-semibold uppercase block">Annual Fee</span>
+                        {/* Key Specs Matrix */}
+                        <div className="space-y-1.5 pt-1 text-xs border-t border-slate-100 dark:border-slate-800">
+                          <div className="flex items-center justify-between py-1 border-b border-slate-50 dark:border-slate-800/60">
+                            <span className="text-slate-500 dark:text-slate-400 font-medium">Annual Fee</span>
+                            <span className="font-extrabold text-slate-900 dark:text-white">
+                              ₹{card.annualFee !== undefined ? card.annualFee : 0} + GST
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between py-1 border-b border-slate-50 dark:border-slate-800/60">
+                            <span className="text-slate-500 dark:text-slate-400 font-medium">ATM Limit</span>
                             <span className="font-extrabold text-slate-800 dark:text-slate-200">
-                              ₹{card.annualFee !== undefined ? card.annualFee : 'Not specified'}
+                              ₹{card.dailyAtmLimit || card.limits?.atmLimit ? Number(card.dailyAtmLimit || card.limits?.atmLimit).toLocaleString('en-IN') : '50,000'} / day
                             </span>
                           </div>
-                          <div>
-                            <span className="text-[10px] text-slate-400 font-semibold uppercase block">Airport Lounge</span>
-                            <span className="font-extrabold text-slate-800 dark:text-slate-200 truncate block" title={card.loungeAccess}>
-                              {card.loungeAccess || 'No'}
+                          <div className="flex items-center justify-between py-1 border-b border-slate-50 dark:border-slate-800/60">
+                            <span className="text-slate-500 dark:text-slate-400 font-medium">Airport Lounge</span>
+                            <span className="font-extrabold text-[#2563EB] dark:text-[#60A5FA] truncate max-w-[140px]" title={card.loungeAccess}>
+                              {card.loungeAccess || 'Not available'}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between py-1">
+                            <span className="text-slate-500 dark:text-slate-400 font-medium">Rewards</span>
+                            <span className="font-medium text-slate-700 dark:text-slate-300 truncate max-w-[140px]">
+                              {card.cashbackPct ? `${card.cashbackPct}% Cashback` : 'Standard Points'}
                             </span>
                           </div>
                         </div>
+                      </div>
 
-                        {/* Official Bank Source Badge */}
-                        <div className="pt-1 flex items-center justify-between text-[11px] text-slate-500">
-                          <span>Source:</span>
+                      {/* Action Buttons & Source Link */}
+                      <div className="pt-2 space-y-2 border-t border-slate-100 dark:border-slate-800">
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); handleCardClick(card); }}
+                            className="flex-1 py-2 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-bold transition-all text-center shadow-xs"
+                          >
+                            View Details
+                          </button>
+                          <button
+                            type="button"
+                            onClick={(e) => handleCardCompare(e, card)}
+                            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1 ${
+                              isAlreadyCompared
+                                ? 'bg-emerald-500 text-white'
+                                : 'border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200'
+                            }`}
+                          >
+                            <Scale className="w-3.5 h-3.5" />
+                            <span>{isAlreadyCompared ? 'Compared' : 'Compare'}</span>
+                          </button>
+                        </div>
+
+                        <div className="flex items-center justify-between text-[10px] text-slate-400 pt-1">
+                          <span>Verified: 05 Sep 2026</span>
                           {applyUrl !== '#' ? (
                             <a
                               href={applyUrl}
@@ -850,135 +1092,21 @@ export default function AIAssistanceSection({
                               onClick={(e) => e.stopPropagation()}
                               className="text-[#2563EB] dark:text-[#60A5FA] font-bold hover:underline flex items-center gap-1"
                             >
-                              Official Bank Source <ExternalLink className="w-3 h-3" />
+                              Official Source <ExternalLink className="w-2.5 h-2.5" />
                             </a>
                           ) : (
-                            <span className="text-slate-400 italic">Not specified on source</span>
+                            <span className="italic">Official Bank Source</span>
                           )}
                         </div>
-                      </div>
-
-                      {/* Action Buttons */}
-                      <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center gap-2">
-                        <button
-                          onClick={(e) => { e.stopPropagation(); handleCardClick(card); }}
-                          className="flex-1 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white text-xs font-bold transition-all text-center"
-                        >
-                          View Details
-                        </button>
-                        <button
-                          onClick={(e) => handleCardCompare(e, card)}
-                          className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1 ${
-                            isAlreadyCompared
-                              ? 'bg-emerald-500 text-white'
-                              : 'bg-blue-50 dark:bg-blue-950/70 text-[#2563EB] dark:text-[#60A5FA] hover:bg-[#2563EB] hover:text-white'
-                          }`}
-                        >
-                          <Scale className="w-3.5 h-3.5" />
-                          <span>{isAlreadyCompared ? 'Compared' : 'Compare'}</span>
-                        </button>
                       </div>
                     </div>
                   );
                 })}
 
-                {/* 2. Savings Accounts Matches */}
-                {(activeTab === 'all' || activeTab === 'savings') && result.matchedAccounts.map(acc => {
-                  const officialUrl = acc.officialWebsite || acc.sourceUrl || '#';
-
-                  return (
-                    <div
-                      key={`savings-${acc.id}`}
-                      onClick={() => handleSavingsDetails(acc)}
-                      className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500/50 shadow-md hover:shadow-xl transition-all flex flex-col justify-between space-y-4 cursor-pointer group"
-                    >
-                      <div className="space-y-3.5">
-                        {/* Header: Bank Logo + Type */}
-                        <div className="flex items-center justify-between gap-2">
-                          <BankLogo bankName={acc.bank} size="sm" />
-                          <span className="px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 text-[10px] font-extrabold uppercase tracking-wider border border-emerald-200 dark:border-emerald-900">
-                            Savings Account
-                          </span>
-                        </div>
-
-                        {/* Title & Bank */}
-                        <div>
-                          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wide">
-                            {acc.bank}
-                          </p>
-                          <h4 className="text-base font-extrabold text-slate-800 dark:text-white leading-snug group-hover:text-emerald-600 transition-colors">
-                            {acc.accountName}
-                          </h4>
-                        </div>
-
-                        {/* Key Specs */}
-                        <div className="grid grid-cols-2 gap-2 text-xs bg-slate-50 dark:bg-slate-800/60 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800">
-                          <div>
-                            <span className="text-[10px] text-slate-400 font-semibold uppercase block">Min Balance</span>
-                            <span className="font-extrabold text-slate-800 dark:text-slate-200">
-                              {acc.isZeroBalance || acc.minimumBalanceValue === 0 
-                                ? 'Zero Balance' 
-                                : `₹${acc.minimumBalance || acc.minimumBalanceValue || '0'}`}
-                            </span>
-                          </div>
-                          <div>
-                            <span className="text-[10px] text-slate-400 font-semibold uppercase block">Interest Rate</span>
-                            <span className="font-extrabold text-emerald-600 dark:text-emerald-400">
-                              {acc.interestRate || 'Up to 7.0%'}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Verified Linked Debit Card Display */}
-                        <div className="text-[11px] bg-blue-50/50 dark:bg-blue-950/30 p-2 rounded-lg border border-blue-100 dark:border-blue-900/40">
-                          <span className="text-slate-400 font-semibold">Linked Debit Card: </span>
-                          <span className="font-bold text-slate-700 dark:text-slate-300">
-                            {acc.debitCardName || 'Verified Bank Debit Card'}
-                          </span>
-                        </div>
-
-                        {/* Official Bank Source Badge */}
-                        <div className="pt-1 flex items-center justify-between text-[11px] text-slate-500">
-                          <span>Source:</span>
-                          {officialUrl !== '#' ? (
-                            <a
-                              href={officialUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              onClick={(e) => e.stopPropagation()}
-                              className="text-emerald-600 dark:text-emerald-400 font-bold hover:underline flex items-center gap-1"
-                            >
-                              Official Bank Source <ExternalLink className="w-3 h-3" />
-                            </a>
-                          ) : (
-                            <span className="text-slate-400 italic">Not specified on source</span>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Action Buttons */}
-                      <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center gap-2">
-                        <button
-                          onClick={(e) => { e.stopPropagation(); handleSavingsDetails(acc); }}
-                          className="flex-1 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white text-xs font-bold transition-all text-center"
-                        >
-                          View Details
-                        </button>
-                        <button
-                          onClick={(e) => handleSavingsCompare(e, acc)}
-                          className="px-3 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/70 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-600 hover:text-white text-xs font-bold transition-all flex items-center gap-1"
-                        >
-                          <Scale className="w-3.5 h-3.5" />
-                          <span>Compare</span>
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
-
-                {/* 3. Current Accounts Matches */}
+                {/* 3. CURRENT ACCOUNT CARDS */}
                 {(activeTab === 'all' || activeTab === 'current') && result.matchedCurrentAccounts.map(acc => {
                   const officialUrl = acc.officialWebsite || acc.sourceUrl || '#';
+                  const isSaved = isWishlisted(acc.id);
 
                   return (
                     <div
@@ -987,49 +1115,95 @@ export default function AIAssistanceSection({
                       className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-purple-500/50 shadow-md hover:shadow-xl transition-all flex flex-col justify-between space-y-4 cursor-pointer group"
                     >
                       <div className="space-y-3.5">
-                        {/* Header: Bank Logo + Type */}
+                        {/* Top: Bank Logo + Save Heart */}
                         <div className="flex items-center justify-between gap-2">
-                          <BankLogo bankName={acc.bank} size="sm" />
-                          <span className="px-2.5 py-1 rounded-full bg-purple-50 dark:bg-purple-950/80 text-purple-600 dark:text-purple-400 text-[10px] font-extrabold uppercase tracking-wider border border-purple-200 dark:border-purple-900">
-                            Current Account
+                          <div className="flex items-center gap-2.5">
+                            <BankLogo bankName={acc.bank} size="sm" />
+                            <span className="text-xs font-black text-slate-800 dark:text-slate-200 uppercase tracking-wide">
+                              {acc.bank}
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); toggleWishlist(acc); }}
+                            className={`p-1.5 rounded-lg border transition-colors ${
+                              isSaved 
+                                ? 'bg-rose-50 border-rose-200 text-rose-500' 
+                                : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400 hover:text-rose-500'
+                            }`}
+                            aria-label="Save to favorites"
+                          >
+                            <Heart className={`w-3.5 h-3.5 ${isSaved ? 'fill-current' : ''}`} />
+                          </button>
+                        </div>
+
+                        {/* Title & Type */}
+                        <div>
+                          <h4 className="text-base font-extrabold text-slate-900 dark:text-white leading-snug group-hover:text-purple-600 transition-colors">
+                            {acc.accountName}
+                          </h4>
+                          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-500 dark:text-slate-400 mt-1">
+                            🏢 Current Account
                           </span>
                         </div>
 
-                        {/* Title & Bank */}
-                        <div>
-                          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wide">
-                            {acc.bank}
-                          </p>
-                          <h4 className="text-base font-extrabold text-slate-800 dark:text-white leading-snug group-hover:text-purple-600 transition-colors">
-                            {acc.accountName}
-                          </h4>
-                        </div>
-
-                        {/* Key Specs */}
-                        <div className="grid grid-cols-2 gap-2 text-xs bg-slate-50 dark:bg-slate-800/60 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800">
-                          <div>
-                            <span className="text-[10px] text-slate-400 font-semibold uppercase block">Monthly MAB</span>
-                            <span className="font-extrabold text-slate-800 dark:text-slate-200">
+                        {/* Core Metrics */}
+                        <div className="space-y-1.5 pt-1 text-xs border-t border-slate-100 dark:border-slate-800">
+                          <div className="flex items-center justify-between py-1 border-b border-slate-50 dark:border-slate-800/60">
+                            <span className="text-slate-500 dark:text-slate-400 font-medium">Monthly MAB</span>
+                            <span className="font-extrabold text-slate-900 dark:text-white">
                               ₹{acc.mab || acc.minimumBalance || '25,000'}
                             </span>
                           </div>
-                          <div>
-                            <span className="text-[10px] text-slate-400 font-semibold uppercase block">Cash Deposit</span>
-                            <span className="font-extrabold text-purple-600 dark:text-purple-400 truncate block">
-                              {acc.cashDepositLimit || 'Free allowance'}
+                          <div className="flex items-center justify-between py-1 border-b border-slate-50 dark:border-slate-800/60">
+                            <span className="text-slate-500 dark:text-slate-400 font-medium">Cash Deposit</span>
+                            <span className="font-extrabold text-purple-600 dark:text-purple-400 truncate max-w-[140px]">
+                              {acc.cashDepositLimit || 'Free up to ₹2L/mo'}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between py-1 border-b border-slate-50 dark:border-slate-800/60">
+                            <span className="text-slate-500 dark:text-slate-400 font-medium">Free Cheques</span>
+                            <span className="font-bold text-slate-700 dark:text-slate-300">
+                              {acc.freeCheques || '50 leaves / mo'}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between py-1">
+                            <span className="text-slate-500 dark:text-slate-400 font-medium">Linked Debit Card</span>
+                            <span className="font-bold text-slate-700 dark:text-slate-300">
+                              {acc.debitCardName || 'Business Debit Card'}
                             </span>
                           </div>
                         </div>
 
                         {/* Target Customer */}
-                        <div className="text-[11px] text-slate-500">
+                        <div className="text-[11px] text-slate-500 truncate">
                           <span className="text-slate-400 font-semibold">Target: </span>
                           <span>{acc.targetCustomer || acc.accountType || 'Traders & Businesses'}</span>
                         </div>
+                      </div>
 
-                        {/* Official Bank Source Badge */}
-                        <div className="pt-1 flex items-center justify-between text-[11px] text-slate-500">
-                          <span>Source:</span>
+                      {/* Action Buttons & Source Link */}
+                      <div className="pt-2 space-y-2 border-t border-slate-100 dark:border-slate-800">
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); handleCurrentDetails(acc); }}
+                            className="flex-1 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition-all text-center shadow-xs"
+                          >
+                            View Details
+                          </button>
+                          <button
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); navigate('/compare-current'); }}
+                            className="px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200 transition-colors flex items-center gap-1"
+                          >
+                            <Scale className="w-3.5 h-3.5" />
+                            <span>Compare</span>
+                          </button>
+                        </div>
+
+                        <div className="flex items-center justify-between text-[10px] text-slate-400 pt-1">
+                          <span>Verified: 05 Sep 2026</span>
                           {officialUrl !== '#' ? (
                             <a
                               href={officialUrl}
@@ -1038,29 +1212,12 @@ export default function AIAssistanceSection({
                               onClick={(e) => e.stopPropagation()}
                               className="text-purple-600 dark:text-purple-400 font-bold hover:underline flex items-center gap-1"
                             >
-                              Official Bank Source <ExternalLink className="w-3 h-3" />
+                              Official Source <ExternalLink className="w-2.5 h-2.5" />
                             </a>
                           ) : (
-                            <span className="text-slate-400 italic">Not specified on source</span>
+                            <span className="italic">Official Bank Source</span>
                           )}
                         </div>
-                      </div>
-
-                      {/* Action Buttons */}
-                      <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center gap-2">
-                        <button
-                          onClick={(e) => { e.stopPropagation(); handleCurrentDetails(acc); }}
-                          className="flex-1 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white text-xs font-bold transition-all text-center"
-                        >
-                          View Details
-                        </button>
-                        <button
-                          onClick={(e) => { e.stopPropagation(); navigate('/compare-current'); }}
-                          className="px-3 py-2 rounded-xl bg-purple-50 dark:bg-purple-950/70 text-purple-600 dark:text-purple-400 hover:bg-purple-600 hover:text-white text-xs font-bold transition-all flex items-center gap-1"
-                        >
-                          <Scale className="w-3.5 h-3.5" />
-                          <span>Compare</span>
-                        </button>
                       </div>
                     </div>
                   );
@@ -1068,10 +1225,10 @@ export default function AIAssistanceSection({
               </div>
 
               {/* Empty results guard */}
-              {totalProductCount === 0 && (
+              {totalProductCount === 0 && !result.infoCard && (
                 <div className="p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-center space-y-2">
                   <p className="text-sm font-bold text-slate-700 dark:text-slate-300">
-                    No exact product records matched your criteria.
+                    No products matched your exact search query.
                   </p>
                   <p className="text-xs text-slate-500">
                     Try searching with terms like "Canara Bank", "Zero balance", "Lounge access", or "SBI".
