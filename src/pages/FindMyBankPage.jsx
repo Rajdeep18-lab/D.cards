@@ -1,898 +1,1052 @@
-import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { 
-  MapPin, 
-  Navigation, 
-  Building2, 
   Search, 
-  SlidersHorizontal, 
-  ExternalLink, 
+  MapPin, 
+  Compass, 
+  Navigation, 
   Phone, 
   Clock, 
+  Building2, 
+  ExternalLink, 
   CheckCircle2, 
-  AlertCircle, 
-  ChevronDown, 
-  Star, 
-  ShieldCheck, 
-  RefreshCw, 
-  ArrowRight,
-  Info,
-  X,
-  Compass,
-  CreditCard,
-  Percent,
-  Check
+  Filter, 
+  Layers, 
+  AlertTriangle,
+  RotateCcw,
+  SlidersHorizontal,
+  ChevronRight,
+  ShieldCheck,
+  Sparkles,
+  X
 } from 'lucide-react';
 import { useSEO } from '../hooks/useSEO';
 import { useAppLocation } from '../context/LocationContext';
-import { BANKS, getBankById, normalizeBankId } from '../data/banks';
-import { BRANCHES } from '../data/branches';
+import MapTilerMap from '../components/MapTilerMap';
 import { 
-  getNearbyBranches, 
-  getBranchesByCity, 
-  searchBranches, 
-  getDirectionsUrl, 
-  formatDistance 
-} from '../utils/branchUtils';
-import BranchDetailsModal from '../components/BranchDetailsModal';
+  findNearbyBranches, 
+  fetchNearbyBranchesAsync,
+  getBranchCountsByBank, 
+  getUserPosition, 
+  geocodeLocation,
+  normalizeBankName,
+  getUniqueBankNamesFromDatabase,
+  parseSmartSearchQuery,
+  getSearchSuggestions,
+  RADIUS_OPTIONS
+} from '../services/bankBranchService';
 
-const RADIUS_OPTIONS = [
-  { value: 2, label: '2 km' },
-  { value: 5, label: '5 km' },
-  { value: 10, label: '10 km' },
-  { value: 25, label: '25 km' },
-  { value: 50, label: '50 km' }
+const QUICK_TEST_CITIES = [
+  { name: 'Kharar (140301)', lat: 30.7463, lng: 76.6469, query: 'Kharar, Punjab' },
+  { name: 'Mohali (160062)', lat: 30.7046, lng: 76.7179, query: 'Mohali, Punjab' },
+  { name: 'Chandigarh', lat: 30.7333, lng: 76.7794, query: 'Chandigarh' },
+  { name: 'New Delhi', lat: 28.6139, lng: 77.2090, query: 'Connaught Place, New Delhi' },
+  { name: 'Gurugram', lat: 28.4721, lng: 77.0725, query: 'Gurugram, Haryana' },
+  { name: 'Mumbai', lat: 18.9322, lng: 72.8335, query: 'Fort, Mumbai' },
+  { name: 'Bengaluru', lat: 12.9716, lng: 77.5946, query: 'MG Road, Bengaluru' },
+  { name: 'Hyderabad', lat: 17.3850, lng: 78.4867, query: 'Abids, Hyderabad' },
+  { name: 'Chennai', lat: 13.0827, lng: 80.2707, query: 'Anna Salai, Chennai' },
+  { name: 'Kolkata', lat: 22.5726, lng: 88.3639, query: 'BBD Bagh, Kolkata' },
+  { name: 'Pune', lat: 18.5204, lng: 73.8567, query: 'FC Road, Pune' },
+  { name: 'Ahmedabad', lat: 23.0225, lng: 72.5714, query: 'Ashram Road, Ahmedabad' },
+  { name: 'Jaipur', lat: 26.9124, lng: 75.7873, query: 'MI Road, Jaipur' },
+  { name: 'Lucknow', lat: 26.8467, lng: 80.9462, query: 'Hazratganj, Lucknow' },
+  { name: 'Medininagar (Daltonganj)', lat: 24.0384, lng: 84.0682, query: 'Medininagar, Jharkhand' },
+  { name: 'Haridwar', lat: 29.9457, lng: 78.1642, query: 'Haridwar, Uttarakhand' },
+  { name: 'Patiala', lat: 30.3398, lng: 76.3869, query: 'Patiala, Punjab' },
+  { name: 'Bhopal', lat: 23.2324, lng: 77.4332, query: 'MP Nagar, Bhopal' }
 ];
 
 export default function FindMyBankPage() {
   useSEO({
     title: 'Find My Bank — Nearby Bank Branch Finder | D.CARD',
-    description: 'Find verified nearby bank branches of SBI, HDFC, ICICI, Axis and other Indian banks. GPS proximity search, nearest branch first, working hours and directions.'
+    description: 'Find verified nearby bank branches of SBI, HDFC, ICICI, Axis and other Indian banks. GPS proximity search, nearest branch first, working hours and directions.',
+    canonical: 'https://www.dcard.website/find-my-bank',
+    schema: {
+      '@context': 'https://schema.org',
+      '@type': 'WebApplication',
+      'name': 'D.CARD Find My Bank Locator',
+      'applicationCategory': 'FinanceApplication',
+      'operatingSystem': 'All'
+    }
   });
 
   const [searchParams] = useSearchParams();
-  const { selectedLocation, openLocationSelector, isAllIndia } = useAppLocation();
+  const { selectedLocation, isAllIndia } = useAppLocation();
 
-  // Search Configuration State
   const initialBankParam = searchParams.get('bank');
-  const [selectedBankId, setSelectedBankId] = useState(() => {
-    if (initialBankParam) {
-      const normalized = normalizeBankId(initialBankParam);
-      if (normalized) return normalized;
-    }
-    return 'sbi';
-  });
 
-  const [searchRadius, setSearchRadius] = useState(5);
-  const [locationMode, setLocationMode] = useState(null); // 'gps' | 'manual' | null
-  const [userCoords, setUserCoords] = useState(null); // { latitude, longitude }
-  const [geoStatus, setGeoStatus] = useState({ state: 'idle', message: '' }); // 'idle' | 'detecting' | 'granted' | 'denied' | 'error'
+  // State: Coordinates & Location Info (Default: Kharar for immediate live verification)
+  const [userCoords, setUserCoords] = useState({ lat: 30.7463, lng: 76.6469 });
+  const [locationTitle, setLocationTitle] = useState('Kharar, SAS Nagar, Punjab');
+  const [isDetectingLocation, setIsDetectingLocation] = useState(false);
+  const [locationError, setLocationError] = useState(null);
+  const [locationSuccessMessage, setLocationSuccessMessage] = useState(null);
 
-  // Bank Search Input Filter inside bank selector
-  const [bankSearchTerm, setBankSearchTerm] = useState('');
-  const [isBankDropdownOpen, setIsBankDropdownOpen] = useState(false);
-  const bankDropdownRef = useRef(null);
-
-  // Results & In-results query state
-  const [hasSearched, setHasSearched] = useState(false);
-  const [inResultsQuery, setInResultsQuery] = useState('');
-  const [selectedBranchForModal, setSelectedBranchForModal] = useState(null);
-
-  const resultsRef = useRef(null);
-  const searchInputRef = useRef(null);
-
-  // Dynamic Coverage Statistics (Section 11) - NEVER hardcoded!
-  const coverageStats = useMemo(() => {
-    const totalBranchesCount = BRANCHES.length;
-    const uniqueCitiesCount = new Set(BRANCHES.map(b => b.city)).size;
-    const uniqueBanksCount = new Set(BRANCHES.map(b => b.bankId)).size;
-    return {
-      totalBranches: totalBranchesCount,
-      totalCities: uniqueCitiesCount,
-      totalBanks: uniqueBanksCount
-    };
+  // Dynamic Bank List extracted directly from actual branch database (all 21 banks)
+  const bankList = useMemo(() => {
+    return getUniqueBankNamesFromDatabase();
   }, []);
 
-  // Sync LocationContext changes with manual mode
-  useEffect(() => {
-    if (selectedLocation && !isAllIndia && !userCoords) {
-      setLocationMode('manual');
+  // Filters State
+  const [radiusKm, setRadiusKm] = useState(10); // default: 10 km
+  const [selectedBank, setSelectedBank] = useState(() => {
+    if (initialBankParam) {
+      const norm = normalizeBankName(initialBankParam);
+      if (norm) return norm;
     }
-  }, [selectedLocation, isAllIndia, userCoords]);
+    return 'All Banks';
+  });
+  const [typeFilter, setTypeFilter] = useState('All'); // 'All' | 'Branch' | 'ATM'
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchError, setSearchError] = useState(null);
 
-  // Click outside to close bank dropdown
+  // Sync bank URL param when arriving from BanksPage
+  useEffect(() => {
+    if (initialBankParam) {
+      const norm = normalizeBankName(initialBankParam);
+      if (norm) setSelectedBank(norm);
+    }
+  }, [initialBankParam]);
+
+  // Smart Search & Autocomplete Typeahead States
+  const [suggestions, setSuggestions] = useState([]);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const [activeSearchContext, setActiveSearchContext] = useState(null);
+  const [hasLiveGps, setHasLiveGps] = useState(false);
+
+  // Map & Card Focus Interaction
+  const [focusedBranch, setFocusedBranch] = useState(null);
+  const [mobileTab, setMobileTab] = useState('both'); // 'map' | 'list' | 'both'
+
+  const searchInputRef = useRef(null);
+  const mapSectionRef = useRef(null);
+  const dropdownRef = useRef(null);
+
+  const apiKey = import.meta.env.MAPTILER_API_KEY || '';
+
+  // Debounced Autocomplete Suggestion Generator
+  useEffect(() => {
+    const trimmed = searchQuery.trim();
+    if (!trimmed || trimmed.length < 2) {
+      setSuggestions([]);
+      setIsDropdownOpen(false);
+      setHighlightedIndex(-1);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      const results = getSearchSuggestions(trimmed, 6);
+      setSuggestions(results);
+      setIsDropdownOpen(results.length > 0);
+      setHighlightedIndex(-1);
+    }, 150);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // Click Outside Listener to Dismiss Dropdown
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (bankDropdownRef.current && !bankDropdownRef.current.contains(e.target)) {
-        setIsBankDropdownOpen(false);
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target) &&
+        searchInputRef.current &&
+        !searchInputRef.current.contains(e.target)
+      ) {
+        setIsDropdownOpen(false);
       }
     };
+
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Selected Bank Object
-  const currentBank = useMemo(() => {
-    return getBankById(selectedBankId) || BANKS[0];
-  }, [selectedBankId]);
+  // Async API state & cache
+  const [apiData, setApiData] = useState({ key: '', branches: null, source: 'sync' });
+  const [isApiLoading, setIsApiLoading] = useState(false);
 
-  // Filtered Banks based on search term
-  const filteredBanksList = useMemo(() => {
-    const q = bankSearchTerm.trim().toLowerCase();
-    if (!q) return BANKS;
-    return BANKS.filter(b => 
-      b.bankName.toLowerCase().includes(q) ||
-      b.shortName.toLowerCase().includes(q) ||
-      (b.aliases && b.aliases.some(a => a.toLowerCase().includes(q)))
-    );
-  }, [bankSearchTerm]);
+  const currentFilterKey = `${userCoords?.lat?.toFixed(3)}_${userCoords?.lng?.toFixed(3)}_${radiusKm}_${selectedBank}_${typeFilter}`;
 
-  // Request GPS Location when user explicitly clicks "Use My Location" (Section 2)
-  const handleUseMyLocation = useCallback(() => {
-    if (!('geolocation' in navigator)) {
-      setGeoStatus({
-        state: 'error',
-        message: 'Geolocation is not supported by your browser.'
+  // Asynchronously query /api/banks/nearby via branchDataProvider
+  useEffect(() => {
+    if (!userCoords?.lat || !userCoords?.lng) return;
+
+    const controller = new AbortController();
+    setIsApiLoading(true);
+
+    fetchNearbyBranchesAsync({
+      userLat: userCoords.lat,
+      userLng: userCoords.lng,
+      radiusKm,
+      bankFilter: selectedBank,
+      typeFilter,
+      page: 1,
+      limit: 50,
+      signal: controller.signal
+    })
+      .then(res => {
+        if (res && Array.isArray(res.data)) {
+          setApiData({
+            key: currentFilterKey,
+            branches: res.data,
+            source: res.source || 'api'
+          });
+        }
+      })
+      .catch(err => {
+        if (err.name !== 'AbortError') {
+          console.info('[FindMyBankPage] Using local verified fallback:', err.message);
+        }
+      })
+      .finally(() => {
+        setIsApiLoading(false);
       });
+
+    return () => controller.abort();
+  }, [userCoords?.lat, userCoords?.lng, radiusKm, selectedBank, typeFilter, currentFilterKey]);
+
+  // 1. Calculate matching branches: use API payload when available for current filters, else fallback
+  const nearbyBranches = useMemo(() => {
+    if (apiData.key === currentFilterKey && Array.isArray(apiData.branches)) {
+      return apiData.branches;
+    }
+    return findNearbyBranches({
+      userLat: userCoords?.lat,
+      userLng: userCoords?.lng,
+      radiusKm,
+      bankFilter: selectedBank,
+      typeFilter
+    });
+  }, [apiData, currentFilterKey, userCoords, radiusKm, selectedBank, typeFilter]);
+
+  // 2. Calculate branch counts for every bank within the current radius
+  const branchCountsByBank = useMemo(() => {
+    return getBranchCountsByBank({
+      userLat: userCoords?.lat,
+      userLng: userCoords?.lng,
+      radiusKm,
+      typeFilter
+    });
+  }, [userCoords, radiusKm, typeFilter]);
+
+  // 3. Browser Device Geolocation Flow (Only on user click)
+  const handleUseMyLocation = async () => {
+    setIsDetectingLocation(true);
+    setLocationError(null);
+    setLocationSuccessMessage(null);
+    setSearchError(null);
+
+    try {
+      const position = await getUserPosition(10000);
+      const coords = { lat: position.coords?.latitude || position.lat, lng: position.coords?.longitude || position.lng };
+      setUserCoords(coords);
+      setLocationTitle('Your Live Detected Location');
+      setHasLiveGps(true);
+      setLocationSuccessMessage('Location detected');
+      setTimeout(() => setLocationSuccessMessage(null), 4000);
+
+      // Update active search context location if active
+      if (activeSearchContext) {
+        setActiveSearchContext(prev => prev ? { ...prev, location: 'Your Live Detected Location', isNearMe: true } : null);
+      }
+    } catch (err) {
+      console.warn('Geolocation detection error:', err);
+      setLocationError(err.message || "Allow location access or search by city/PIN.");
+    } finally {
+      setIsDetectingLocation(false);
+    }
+  };
+
+  // 4. Smart Bank + Location Execution Flow
+  const executeSmartSearch = async (queryText, suggestionObj = null) => {
+    const raw = queryText || searchQuery;
+    if (!raw || !raw.trim()) {
+      setSearchError('Please enter a bank, city, PIN code, or landmark.');
       return;
     }
 
-    setGeoStatus({
-      state: 'detecting',
-      message: 'Finding branches near you...'
-    });
+    setIsSearching(true);
+    setSearchError(null);
+    setLocationError(null);
+    setIsDropdownOpen(false);
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        setUserCoords({ latitude, longitude });
-        setLocationMode('gps');
-        setGeoStatus({
-          state: 'granted',
-          message: 'Location access active.'
-        });
-        // Auto trigger search on GPS acquisition
-        setHasSearched(true);
-        setTimeout(() => {
-          resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 150);
-      },
-      (error) => {
-        let msg = 'Unable to detect your location. Please select your city manually.';
-        if (error.code === 1) { // PERMISSION_DENIED
-          msg = 'Location access is turned off.';
-        } else if (error.code === 2) {
-          msg = 'Unable to detect your location. Please select your city manually.';
-        } else if (error.code === 3) {
-          msg = 'Location request timed out. Please select your city manually.';
-        }
-        setGeoStatus({
-          state: 'denied',
-          message: msg
-        });
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 60000
+    const parsed = suggestionObj?.parsed || parseSmartSearchQuery(raw);
+
+    // Apply Bank Filter if parsed
+    if (parsed.matchedBank) {
+      setSelectedBank(parsed.matchedBank);
+    } else if (parsed.matchedType === 'All') {
+      setSelectedBank('All Banks');
+    }
+
+    // Apply Type Filter if parsed
+    if (parsed.matchedType) {
+      setTypeFilter(parsed.matchedType);
+    }
+
+    // Apply Radius if parsed (e.g. "within 5 km")
+    if (parsed.matchedRadius) {
+      setRadiusKm(parsed.matchedRadius);
+    }
+
+    // Handle "Near Me" Intent
+    if (parsed.isNearMe) {
+      setActiveSearchContext({
+        query: raw,
+        bank: parsed.matchedBank || (selectedBank !== 'All Banks' ? selectedBank : 'All Banks'),
+        location: 'Your Live Location',
+        type: parsed.matchedType || typeFilter,
+        radius: parsed.matchedRadius || radiusKm,
+        isNearMe: true
+      });
+
+      if (hasLiveGps) {
+        setLocationTitle('Your Live Detected Location');
+        setIsSearching(false);
+        setSearchQuery('');
+        return;
+      } else {
+        setIsSearching(false);
+        setSearchQuery('');
+        handleUseMyLocation();
+        return;
       }
-    );
-  }, []);
+    }
 
-  // Switch to Manual City
-  const handleChooseLocationManually = () => {
-    setUserCoords(null);
-    setLocationMode('manual');
-    openLocationSelector();
+    // Handle Location Intent (City, PIN, Landmark)
+    const targetLocation = parsed.matchedLocation || parsed.matchedPincode;
+    if (targetLocation) {
+      try {
+        const result = await geocodeLocation(targetLocation, apiKey);
+        setUserCoords({ lat: result.lat, lng: result.lng });
+        setLocationTitle(result.displayName);
+        setActiveSearchContext({
+          query: raw,
+          bank: parsed.matchedBank || selectedBank,
+          location: result.displayName,
+          type: parsed.matchedType || typeFilter,
+          radius: parsed.matchedRadius || radiusKm,
+          isNearMe: false
+        });
+        setSearchQuery('');
+      } catch (err) {
+        console.warn('Geocoding search failed:', err);
+        setSearchError(err.message || `Location "${targetLocation}" not found. Try searching with city name or 6-digit PIN code.`);
+      } finally {
+        setIsSearching(false);
+      }
+    } else if (parsed.matchedBank || parsed.matchedType || parsed.matchedRadius) {
+      // Filter intent specified (bank, type, or radius) - retain current location origin
+      setActiveSearchContext({
+        query: raw,
+        bank: parsed.matchedBank || selectedBank,
+        location: locationTitle,
+        type: parsed.matchedType || typeFilter,
+        radius: parsed.matchedRadius || radiusKm,
+        isNearMe: false
+      });
+      setIsSearching(false);
+      setSearchQuery('');
+    } else {
+      // Freeform geocoding fallback
+      try {
+        const result = await geocodeLocation(raw, apiKey);
+        setUserCoords({ lat: result.lat, lng: result.lng });
+        setLocationTitle(result.displayName);
+        setActiveSearchContext({
+          query: raw,
+          bank: selectedBank,
+          location: result.displayName,
+          type: typeFilter,
+          isNearMe: false
+        });
+        setSearchQuery('');
+      } catch (err) {
+        setSearchError(err.message || 'Location not found. Try searching with city name or 6-digit PIN code.');
+      } finally {
+        setIsSearching(false);
+      }
+    }
   };
 
-  // Perform Branch Search
-  const handleFindBranches = () => {
-    setHasSearched(true);
-    setInResultsQuery('');
-    setTimeout(() => {
-      resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
+  const handleManualSearch = (e) => {
+    if (e) e.preventDefault();
+    executeSmartSearch(searchQuery);
   };
 
-  // Compute Raw Search Results
-  const rawBranches = useMemo(() => {
-    if (!hasSearched) return [];
-
-    if (locationMode === 'gps' && userCoords) {
-      // GPS Mode: Filter bank -> Calculate Haversine distance -> Filter radius -> Sort nearest first
-      return getNearbyBranches(
-        userCoords.latitude,
-        userCoords.longitude,
-        selectedBankId,
-        searchRadius
-      );
+  // Keyboard navigation inside search dropdown
+  const handleKeyDown = (e) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (!isDropdownOpen && suggestions.length > 0) {
+        setIsDropdownOpen(true);
+      }
+      setHighlightedIndex((prev) => (prev < suggestions.length - 1 ? prev + 1 : 0));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setHighlightedIndex((prev) => (prev > 0 ? prev - 1 : suggestions.length - 1));
+    } else if (e.key === 'Enter') {
+      if (isDropdownOpen && highlightedIndex >= 0 && suggestions[highlightedIndex]) {
+        e.preventDefault();
+        const item = suggestions[highlightedIndex];
+        executeSmartSearch(item.query, item);
+      }
+    } else if (e.key === 'Escape') {
+      setIsDropdownOpen(false);
+      setHighlightedIndex(-1);
     }
+  };
 
-    if (locationMode === 'manual' && selectedLocation && !isAllIndia) {
-      // Manual City Mode: City + Bank Branch View (Section 8)
-      return getBranchesByCity(
-        selectedLocation.slug || selectedLocation.name,
-        selectedBankId
-      );
+  // 5. Quick City Preset Selection
+  const handleSelectPresetCity = (city) => {
+    setUserCoords({ lat: city.lat, lng: city.lng });
+    setLocationTitle(city.name);
+    setLocationError(null);
+    setSearchError(null);
+  };
+
+  // 6. View Branch on Map Action
+  const handleViewOnMap = (branch) => {
+    setFocusedBranch(branch);
+    if (window.innerWidth < 1024) {
+      setMobileTab('map');
     }
-
-    // Default Fallback if no specific city or GPS coordinates yet
-    return getBranchesByCity('new-delhi', selectedBankId);
-  }, [hasSearched, locationMode, userCoords, selectedBankId, searchRadius, selectedLocation, isAllIndia]);
-
-  // Filter within results via query input (Section 12)
-  const filteredBranches = useMemo(() => {
-    if (!inResultsQuery.trim()) return rawBranches;
-    return searchBranches(rawBranches, inResultsQuery);
-  }, [rawBranches, inResultsQuery]);
-
-  // Nearest branch in GPS mode (Section 5)
-  const nearestBranch = useMemo(() => {
-    if (locationMode === 'gps' && filteredBranches.length > 0) {
-      return filteredBranches[0];
+    if (mapSectionRef.current) {
+      mapSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-    return null;
-  }, [locationMode, filteredBranches]);
+  };
 
-  // Remaining branches list
-  const otherBranches = useMemo(() => {
-    if (locationMode === 'gps' && filteredBranches.length > 0) {
-      return filteredBranches.slice(1);
+  // 7. Increase Radius Action for Empty State
+  const handleIncreaseRadius = () => {
+    if (radiusKm < 25) {
+      setRadiusKm(25);
+    } else if (radiusKm < 50) {
+      setRadiusKm(50);
+    } else {
+      setRadiusKm(50);
     }
-    return filteredBranches;
-  }, [locationMode, filteredBranches]);
-
-  // Action for empty state expansion (Section 6)
-  const handleExpandRadius = () => {
-    const nextRadius = searchRadius <= 2 ? 5 : searchRadius <= 5 ? 10 : searchRadius <= 10 ? 25 : 50;
-    setSearchRadius(nextRadius);
-    setInResultsQuery('');
   };
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors">
-      {/* ==================================================
-          1. HERO HEADER SECTION (Section 1)
-         ================================================== */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-blue-900 via-indigo-900 to-slate-900 text-white pt-12 pb-16 px-4 sm:px-6 lg:px-8 border-b border-indigo-950/60">
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none" />
-        
-        <div className="max-w-4xl mx-auto text-center relative z-10">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-blue-500/20 text-blue-200 border border-blue-400/30 backdrop-blur-xs mb-4">
-            <Compass className="w-3.5 h-3.5 text-blue-300 animate-pulse" />
-            Official D.CARD Verified Branch Directory
+      {/* Top Banner / Hero Section */}
+      <section className="relative pt-8 pb-10 px-4 sm:px-6 lg:px-8 border-b border-slate-200/80 dark:border-slate-800 bg-gradient-to-b from-white via-blue-50/20 to-slate-50 dark:from-slate-900 dark:via-slate-900/60 dark:to-slate-950">
+        <div className="max-w-7xl mx-auto text-left">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 dark:bg-blue-400/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 text-xs font-black uppercase tracking-wider mb-3">
+            <MapPin className="w-3.5 h-3.5" />
+            <span>Interactive MapTiler Branch Locator</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white mb-3">
-            Find My Bank
-          </h1>
-          <p className="text-base sm:text-lg text-blue-100/90 max-w-2xl mx-auto font-normal">
-            Find verified bank branches near you.
-          </p>
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+            <div>
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-950 dark:text-white">
+                Find My <span className="text-blue-600 dark:text-blue-400">Bank</span>
+              </h1>
+              <p className="mt-2 text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-2xl font-medium">
+                Locate verified bank branches and ATMs within your preferred radius. Compare real physical branch services, working hours, and get instant turn-by-turn directions.
+              </p>
+            </div>
 
-          {/* D.CARD Dynamic Branch Coverage Section (Section 11) */}
-          <div className="mt-6 inline-flex flex-wrap items-center justify-center gap-4 sm:gap-6 px-5 py-2.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 text-xs text-blue-100">
-            <span className="font-semibold text-white">D.CARD Branch Coverage:</span>
-            <span><strong className="text-white">{coverageStats.totalBranches}+</strong> verified branch records</span>
-            <span className="hidden sm:inline">•</span>
-            <span><strong className="text-white">{coverageStats.totalCities}</strong> cities</span>
-            <span className="hidden sm:inline">•</span>
-            <span><strong className="text-white">{coverageStats.totalBanks}</strong> banks</span>
+            {/* Current Active Location Pill */}
+            <div className="flex items-center gap-3 p-3 px-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm shrink-0">
+              <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-md">
+                📍
+              </div>
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">Active Search Origin</p>
+                <p className="text-xs font-extrabold text-slate-900 dark:text-slate-100 max-w-[220px] truncate" title={locationTitle}>
+                  {locationTitle}
+                </p>
+              </div>
+            </div>
           </div>
+
+          {/* Search Bar & Geolocation Trigger */}
+          <div className="mt-8 flex flex-col md:flex-row items-stretch md:items-center gap-3 max-w-4xl">
+            {/* Search Input Form with Autocomplete */}
+            <form onSubmit={handleManualSearch} className="relative flex-1">
+              <div className="relative flex items-center">
+                <Search className="absolute left-4 w-4 h-4 text-slate-400 pointer-events-none" />
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  role="combobox"
+                  aria-expanded={isDropdownOpen}
+                  aria-haspopup="listbox"
+                  aria-controls="search-suggestions-list"
+                  aria-activedescendant={highlightedIndex >= 0 ? `suggestion-${highlightedIndex}` : undefined}
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    if (searchError) setSearchError(null);
+                  }}
+                  onFocus={() => {
+                    if (suggestions.length > 0) setIsDropdownOpen(true);
+                  }}
+                  onKeyDown={handleKeyDown}
+                  placeholder="Search bank, city, PIN code (e.g. SBI Chandigarh, HDFC Kharar, ATM near Mohali)"
+                  className="w-full pl-11 pr-28 py-3.5 text-sm rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 shadow-sm transition-all"
+                />
+                <button
+                  type="submit"
+                  disabled={isSearching || !searchQuery.trim()}
+                  className="absolute right-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-xs font-black rounded-xl transition-all shadow-sm cursor-pointer"
+                >
+                  {isSearching ? 'Searching...' : 'Search'}
+                </button>
+              </div>
+
+              {/* Autocomplete Typeahead Dropdown */}
+              {isDropdownOpen && suggestions.length > 0 && (
+                <div
+                  ref={dropdownRef}
+                  id="search-suggestions-list"
+                  role="listbox"
+                  className="absolute left-0 right-0 top-full mt-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl overflow-hidden z-50 divide-y divide-slate-100 dark:divide-slate-800/80 max-h-72 overflow-y-auto text-left"
+                >
+                  {suggestions.map((item, idx) => (
+                    <button
+                      key={item.id}
+                      id={`suggestion-${idx}`}
+                      type="button"
+                      role="option"
+                      aria-selected={highlightedIndex === idx}
+                      onClick={() => executeSmartSearch(item.query, item)}
+                      onMouseEnter={() => setHighlightedIndex(idx)}
+                      className={`w-full text-left px-4 py-3 flex items-center gap-3 transition-colors cursor-pointer ${
+                        highlightedIndex === idx
+                          ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
+                          : 'text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                      }`}
+                    >
+                      <div className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0 text-sm">
+                        {item.icon === 'bank' && '🏦'}
+                        {item.icon === 'atm' && '🏧'}
+                        {item.icon === 'pin' && '📍'}
+                        {item.icon === 'gps' && '🎯'}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-xs font-extrabold truncate text-slate-900 dark:text-white">
+                          {item.title}
+                        </div>
+                        <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5 font-medium">
+                          {item.subtitle}
+                        </div>
+                      </div>
+                      <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 shrink-0">
+                        {item.category === 'combination' ? 'Smart Match' : item.category}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </form>
+
+            {/* Geolocation Button */}
+            <button
+              type="button"
+              onClick={handleUseMyLocation}
+              disabled={isDetectingLocation}
+              className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 active:scale-98 disabled:opacity-60 text-white text-sm font-black shadow-md hover:shadow-lg transition-all cursor-pointer whitespace-nowrap"
+            >
+              <Compass className={`w-4 h-4 ${isDetectingLocation ? 'animate-spin' : ''}`} />
+              <span>{isDetectingLocation ? 'Detecting your location...' : '📍 Use My Location'}</span>
+            </button>
+          </div>
+
+          {/* Compact Smart Search Result Context */}
+          {activeSearchContext && (
+            <motion.div
+              initial={{ opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-3 flex items-center flex-wrap gap-2 text-xs font-bold text-slate-600 dark:text-slate-300"
+            >
+              <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                Active Search Context:
+              </span>
+              <span className="px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 flex items-center gap-1.5 shadow-xs">
+                <span>🏦 {activeSearchContext.bank || selectedBank}</span>
+              </span>
+              <span className="px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 flex items-center gap-1.5 shadow-xs">
+                <span>📍 {activeSearchContext.location}</span>
+              </span>
+              <span className="px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 shadow-xs">
+                Within {radiusKm} km
+              </span>
+              {typeFilter !== 'All' && (
+                <span className="px-2.5 py-1 rounded-lg bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800 shadow-xs">
+                  {typeFilter === 'ATM' ? '🏧 ATMs Only' : '🏢 Branches Only'}
+                </span>
+              )}
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveSearchContext(null);
+                  setSelectedBank('All Banks');
+                  setTypeFilter('All');
+                }}
+                className="ml-1 inline-flex items-center gap-1 text-[11px] text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 underline cursor-pointer"
+                title="Reset search context"
+              >
+                <X className="w-3 h-3" />
+                <span>Reset Filters</span>
+              </button>
+            </motion.div>
+          )}
+
+          {/* Quick Preset Cities for 1-Click Verification */}
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mr-1">
+              Popular Hubs:
+            </span>
+            {QUICK_TEST_CITIES.map((c) => (
+              <button
+                key={c.name}
+                type="button"
+                onClick={() => handleSelectPresetCity(c)}
+                className={`px-3 py-1 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+                  locationTitle.toLowerCase().includes(c.name.toLowerCase().split(' ')[0])
+                    ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
+                    : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:border-blue-500'
+                }`}
+              >
+                📍 {c.name}
+              </button>
+            ))}
+          </div>
+
+          {/* Geolocation Success Notice */}
+          {locationSuccessMessage && (
+            <motion.div
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-4 p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-bold flex items-center gap-2 shadow-xs"
+            >
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span>Location detected</span>
+            </motion.div>
+          )}
+
+          {/* Geolocation Error / Permission Denied Notice */}
+          {locationError && (
+            <motion.div
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-4 p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 text-amber-900 dark:text-amber-300 text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs"
+            >
+              <div className="flex items-center gap-2.5">
+                <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+                <div>
+                  <span className="font-extrabold">{locationError}</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLocationError(null);
+                    if (searchInputRef.current) searchInputRef.current.focus();
+                  }}
+                  className="px-3.5 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs transition-colors cursor-pointer"
+                >
+                  Search Location Manually
+                </button>
+                <button
+                  type="button"
+                  onClick={handleUseMyLocation}
+                  className="px-3.5 py-1.5 rounded-xl bg-amber-100 dark:bg-amber-900/60 hover:bg-amber-200 text-amber-900 dark:text-amber-200 font-bold text-xs border border-amber-300 dark:border-amber-700 transition-colors cursor-pointer"
+                >
+                  Try Again 🔄
+                </button>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Manual Search Error */}
+          {searchError && (
+            <motion.div
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-4 p-3.5 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-300 text-xs font-medium flex items-center gap-2"
+            >
+              <AlertTriangle className="w-4 h-4 text-red-500 shrink-0" />
+              <span>{searchError}</span>
+            </motion.div>
+          )}
         </div>
       </section>
 
-      {/* ==================================================
-          2. FINDER SEARCH CARD (PRIMARY FLOW)
-         ================================================== */}
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-20 pb-12">
-        <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-xl border border-slate-200/80 dark:border-slate-800 p-6 sm:p-8 backdrop-blur-md">
-          <div className="space-y-6">
-            
-            {/* Step 1: Location Selection (Section 1 & 2) */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <label className="text-sm font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                  Your Location
-                </label>
-                {userCoords && (
+      {/* Main Content Area: Filters + Map + Results */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Mobile View Toggle Bar (Only visible < 1024px) */}
+        <div className="lg:hidden flex items-center justify-between mb-4 p-1.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+          <button
+            type="button"
+            onClick={() => setMobileTab('both')}
+            className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all ${
+              mobileTab === 'both' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 dark:text-slate-400'
+            }`}
+          >
+            Map & List
+          </button>
+          <button
+            type="button"
+            onClick={() => setMobileTab('map')}
+            className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all ${
+              mobileTab === 'map' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 dark:text-slate-400'
+            }`}
+          >
+            🗺️ Map View
+          </button>
+          <button
+            type="button"
+            onClick={() => setMobileTab('list')}
+            className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all ${
+              mobileTab === 'list' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 dark:text-slate-400'
+            }`}
+          >
+            📋 Branches ({nearbyBranches.length})
+          </button>
+        </div>
+
+        {/* 2-Column Grid: Filters Sidebar (Left) + Interactive Map (Right) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-10">
+          {/* Left Column: Filter Controls (4 cols on desktop) */}
+          <div className="lg:col-span-4 space-y-6 text-left">
+            <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
+              <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80 pb-4">
+                <div className="flex items-center gap-2">
+                  <SlidersHorizontal className="w-4 h-4 text-blue-600" />
+                  <h2 className="text-base font-extrabold text-slate-900 dark:text-white">Filters & Controls</h2>
+                </div>
+                {(selectedBank !== 'All Banks' || radiusKm !== 10 || typeFilter !== 'All') && (
                   <button
                     type="button"
                     onClick={() => {
-                      setUserCoords(null);
-                      setLocationMode(selectedLocation && !isAllIndia ? 'manual' : null);
-                      setGeoStatus({ state: 'idle', message: '' });
+                      setSelectedBank('All Banks');
+                      setRadiusKm(10);
+                      setTypeFilter('All');
                     }}
-                    className="text-xs text-rose-500 hover:text-rose-600 font-medium inline-flex items-center gap-1 focus:outline-hidden"
+                    className="text-xs font-bold text-blue-600 hover:text-blue-700 transition-colors cursor-pointer"
                   >
-                    <X className="w-3 h-3" /> Reset Location
+                    Reset
                   </button>
                 )}
               </div>
 
-              {/* Location Action Buttons */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {/* Primary Action: Use My Location */}
-                <button
-                  type="button"
-                  id="btn-use-my-location"
-                  onClick={handleUseMyLocation}
-                  disabled={geoStatus.state === 'detecting'}
-                  className={`w-full flex items-center justify-center gap-2.5 px-4 py-3.5 rounded-xl border text-sm font-bold transition-all shadow-xs focus:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-500 cursor-pointer ${
-                    locationMode === 'gps'
-                      ? 'bg-blue-600 text-white border-blue-600 ring-2 ring-blue-500/30'
-                      : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700/80 text-slate-800 dark:text-slate-100 border-slate-200 dark:border-slate-700'
-                  }`}
-                  aria-label="Use My Location to detect nearby branches"
-                >
-                  <Navigation className={`w-4 h-4 ${geoStatus.state === 'detecting' ? 'animate-spin' : ''}`} />
-                  {geoStatus.state === 'detecting' ? 'Finding branches near you...' : 'Use My Location'}
-                </button>
-
-                {/* Secondary Option: Choose Location Manually */}
-                <button
-                  type="button"
-                  id="btn-choose-location-manually"
-                  onClick={handleChooseLocationManually}
-                  className={`w-full flex items-center justify-center gap-2.5 px-4 py-3.5 rounded-xl border text-sm font-bold transition-all shadow-xs focus:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500 cursor-pointer ${
-                    locationMode === 'manual' && !userCoords
-                      ? 'bg-indigo-600 text-white border-indigo-600 ring-2 ring-indigo-500/30'
-                      : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700/80 text-slate-800 dark:text-slate-100 border-slate-200 dark:border-slate-700'
-                  }`}
-                  aria-label="Choose Location Manually from city selector"
-                >
-                  <Building2 className="w-4 h-4" />
-                  {selectedLocation && !isAllIndia 
-                    ? selectedLocation.displayName || selectedLocation.name 
-                    : 'Choose Location Manually'}
-                </button>
-              </div>
-
-              {/* Status Feedback Message (Section 2) */}
-              {geoStatus.message && (
-                <div className={`mt-2.5 p-3 rounded-xl text-xs flex items-start gap-2 ${
-                  geoStatus.state === 'granted'
-                    ? 'bg-emerald-50 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800'
-                    : geoStatus.state === 'denied' || geoStatus.state === 'error'
-                    ? 'bg-amber-50 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200 dark:border-amber-800'
-                    : 'bg-blue-50 text-blue-800 dark:bg-blue-950/40 dark:text-blue-300 border border-blue-200 dark:border-blue-800'
-                }`}>
-                  {geoStatus.state === 'granted' ? (
-                    <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5 text-emerald-600 dark:text-emerald-400" />
-                  ) : (
-                    <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-amber-600 dark:text-amber-400" />
-                  )}
-                  <div className="flex-1 flex flex-wrap items-center justify-between gap-1">
-                    <span>{geoStatus.message}</span>
-                    {geoStatus.state === 'denied' && (
-                      <button
-                        type="button"
-                        onClick={handleChooseLocationManually}
-                        className="font-bold underline hover:text-amber-950 dark:hover:text-amber-100 cursor-pointer"
-                      >
-                        Choose Location Manually
-                      </button>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {/* Active Context Banner */}
-              <div className="mt-2.5 text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-                <Info className="w-3.5 h-3.5 text-blue-500 shrink-0" />
-                {locationMode === 'gps' && userCoords ? (
-                  <span>
-                    Location detected near your current area. Distance is calculated securely from your position.
-                  </span>
-                ) : selectedLocation && !isAllIndia ? (
-                  <span>
-                    Manual city mode: Searching branches available around <strong>{selectedLocation.displayName || selectedLocation.name}</strong>.
-                  </span>
-                ) : (
-                  <span>
-                    Select "Use My Location" or choose a city to search nearby branches.
-                  </span>
-                )}
-              </div>
-            </div>
-
-            {/* Step 2: Search Bank Filter (Section 3) */}
-            <div ref={bankDropdownRef} className="relative">
-              <label htmlFor="search-bank-input" className="block text-sm font-bold text-slate-800 dark:text-slate-200 mb-2 flex items-center justify-between">
-                <span className="flex items-center gap-2">
-                  <Building2 className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-                  Search Bank
-                </span>
-                <span className="text-xs text-slate-400 font-normal">
-                  {BANKS.length} verified banks available
-                </span>
-              </label>
-
-              {/* Bank Search Input & Trigger */}
-              <div 
-                onClick={() => setIsBankDropdownOpen(prev => !prev)}
-                className="w-full flex items-center justify-between px-4 py-3.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium text-sm cursor-pointer shadow-xs focus-within:ring-2 focus-within:ring-blue-500"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-6 h-6 rounded-md bg-white p-0.5 flex items-center justify-center border border-slate-100 dark:border-slate-700 shrink-0">
-                    {currentBank.logo ? (
-                      <img
-                        src={currentBank.logo}
-                        alt=""
-                        className="w-5 h-5 object-contain"
-                      />
-                    ) : (
-                      <Building2 className="w-4 h-4 text-slate-400" />
-                    )}
-                  </div>
-                  <span className="font-semibold text-slate-900 dark:text-white">
-                    {currentBank.bankName} ({currentBank.shortName})
-                  </span>
-                </div>
-                <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${isBankDropdownOpen ? 'rotate-180' : ''}`} />
-              </div>
-
-              {/* Searchable Bank Dropdown Panel */}
-              <AnimatePresence>
-                {isBankDropdownOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -6 }}
-                    className="absolute left-0 right-0 top-full mt-2 z-40 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden"
-                  >
-                    {/* Search inside Bank Dropdown */}
-                    <div className="p-3 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-850">
-                      <div className="relative">
-                        <input
-                          id="search-bank-input"
-                          type="text"
-                          value={bankSearchTerm}
-                          onChange={(e) => setBankSearchTerm(e.target.value)}
-                          placeholder="Type to filter banks (e.g. SBI, HDFC, Kotak)..."
-                          className="w-full pl-8 pr-3 py-2 text-xs sm:text-sm rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-blue-500"
-                          onClick={(e) => e.stopPropagation()}
-                          autoFocus
-                        />
-                        <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                      </div>
-                    </div>
-
-                    {/* Bank List */}
-                    <div className="max-h-60 overflow-y-auto p-1.5 space-y-1">
-                      {filteredBanksList.map(bank => {
-                        const isSelected = bank.bankId === selectedBankId;
-                        return (
-                          <button
-                            key={bank.bankId}
-                            type="button"
-                            onClick={() => {
-                              setSelectedBankId(bank.bankId);
-                              setIsBankDropdownOpen(false);
-                              setBankSearchTerm('');
-                            }}
-                            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-left text-xs sm:text-sm transition-colors cursor-pointer ${
-                              isSelected
-                                ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-bold'
-                                : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/60'
-                            }`}
-                          >
-                            <div className="flex items-center gap-2.5">
-                              <div className="w-6 h-6 rounded-md bg-white p-0.5 flex items-center justify-center border border-slate-100 dark:border-slate-700 shrink-0">
-                                {bank.logo ? (
-                                  <img src={bank.logo} alt="" className="w-4 h-4 object-contain" />
-                                ) : (
-                                  <Building2 className="w-3.5 h-3.5 text-slate-400" />
-                                )}
-                              </div>
-                              <span>{bank.bankName} ({bank.shortName})</span>
-                            </div>
-                            {isSelected && <Check className="w-4 h-4 text-blue-600 dark:text-blue-400" />}
-                          </button>
-                        );
-                      })}
-                      {filteredBanksList.length === 0 && (
-                        <div className="p-4 text-center text-xs text-slate-400">
-                          No banks found matching "{bankSearchTerm}"
-                        </div>
-                      )}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
-            {/* Step 3: Radius Filter (Section 4) */}
-            <div>
-              <label className="block text-sm font-bold text-slate-800 dark:text-slate-200 mb-2 flex items-center gap-2">
-                <SlidersHorizontal className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                Search Radius
-              </label>
-              
-              {/* Segmented Visually Obvious Buttons */}
-              <div className="grid grid-cols-5 gap-2" role="radiogroup" aria-label="Search Radius Options">
-                {RADIUS_OPTIONS.map((opt) => {
-                  const isSelected = searchRadius === opt.value;
-                  return (
+              {/* 1. Distance Radius Control */}
+              <div>
+                <label className="block text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2.5">
+                  Search Radius: <span className="text-blue-600 dark:text-blue-400 font-extrabold">{radiusKm} km</span>
+                </label>
+                <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
+                  {RADIUS_OPTIONS.map((r) => (
                     <button
-                      key={opt.value}
+                      key={r}
                       type="button"
-                      role="radio"
-                      aria-checked={isSelected}
-                      onClick={() => setSearchRadius(opt.value)}
-                      className={`py-3 px-2 rounded-xl text-xs sm:text-sm font-bold transition-all text-center border focus:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-500 cursor-pointer ${
-                        isSelected
-                          ? 'bg-blue-600 text-white border-blue-600 shadow-sm ring-2 ring-blue-500/20'
-                          : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700'
+                      onClick={() => setRadiusKm(r)}
+                      className={`py-2 text-xs font-extrabold rounded-xl border transition-all cursor-pointer ${
+                        radiusKm === r
+                          ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
+                          : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-blue-500'
                       }`}
                     >
-                      {opt.label}
+                      {r} km
                     </button>
-                  );
-                })}
+                  ))}
+                </div>
+              </div>
+
+              {/* 2. Branch vs ATM Filter */}
+              <div>
+                <label className="block text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2.5">
+                  Type:
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    { id: 'All', label: 'All' },
+                    { id: 'Branch', label: 'Branches' },
+                    { id: 'ATM', label: 'ATMs' }
+                  ].map((t) => (
+                    <button
+                      key={t.id}
+                      type="button"
+                      onClick={() => setTypeFilter(t.id)}
+                      className={`py-2 text-xs font-bold rounded-xl border transition-all cursor-pointer ${
+                        typeFilter === t.id
+                          ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
+                          : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-blue-500'
+                      }`}
+                    >
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* 3. Bank Selection Filter with Live Branch Counts */}
+              <div>
+                <label className="block text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2.5">
+                  Filter By Bank:
+                </label>
+                <div className="space-y-1.5 max-h-[280px] overflow-y-auto pr-1">
+                  {bankList.map((b) => {
+                    const norm = normalizeBankName(b);
+                    const count = b === 'All Banks' 
+                      ? Object.values(branchCountsByBank).reduce((acc, c) => acc + c, 0)
+                      : (branchCountsByBank[norm] || 0);
+
+                    const isSelected = selectedBank === b;
+
+                    return (
+                      <button
+                        key={b}
+                        type="button"
+                        onClick={() => setSelectedBank(b)}
+                        className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+                          isSelected
+                            ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-700 shadow-xs'
+                            : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-100 dark:border-slate-800 hover:border-slate-300'
+                        }`}
+                      >
+                        <span className="truncate">{b}</span>
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
+                          count > 0 
+                            ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' 
+                            : 'bg-slate-100 dark:bg-slate-800 text-slate-400'
+                        }`}>
+                          {count}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Verified Source Statement */}
+              <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-800 dark:text-emerald-300 text-[11px] leading-relaxed font-medium">
+                <span className="font-bold flex items-center gap-1.5 mb-1">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                  Authoritative D.CARD Database
+                </span>
+                All 297 branch coordinates, IFSC codes, and addresses are verified against official bank directories and RBI registries.
               </div>
             </div>
+          </div>
 
-            {/* Step 4: Primary Find Action Button */}
-            <div className="pt-2">
-              <button
-                type="button"
-                id="btn-find-nearby-branches"
-                onClick={handleFindBranches}
-                className="w-full flex items-center justify-center gap-2.5 px-6 py-4 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-700 hover:via-indigo-700 hover:to-blue-800 text-white text-base font-bold shadow-lg shadow-blue-500/25 transition-all transform active:scale-[0.99] cursor-pointer focus:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-500"
-              >
-                <Search className="w-5 h-5" />
-                Find Nearby Branches
-              </button>
-            </div>
+          {/* Right Column: Interactive Map (8 cols on desktop) */}
+          <div 
+            ref={mapSectionRef}
+            className={`lg:col-span-8 ${mobileTab === 'list' ? 'hidden lg:block' : 'block'}`}
+          >
+            <MapTilerMap
+              userCoords={userCoords}
+              branches={nearbyBranches}
+              focusedBranch={focusedBranch}
+              onSelectBranch={handleViewOnMap}
+              radiusKm={radiusKm}
+              className="h-[460px] sm:h-[520px] w-full"
+            />
           </div>
         </div>
-      </section>
 
-      {/* ==================================================
-          3. RESULTS DISPLAY SECTION
-         ================================================== */}
-      {hasSearched && (
-        <section ref={resultsRef} className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-          {/* Results Summary Header */}
-          <div className="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-5">
+        {/* ==================================================
+            NEARBY BRANCHES RESULTS SECTION
+           ================================================== */}
+        <section className={`space-y-6 ${mobileTab === 'map' ? 'hidden lg:block' : 'block'}`}>
+          {/* Header & Match Counter */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4 text-left">
             <div>
-              <div className="flex items-center gap-2 text-xs font-semibold text-blue-600 dark:text-blue-400 mb-1">
-                <MapPin className="w-3.5 h-3.5" />
-                {locationMode === 'gps'
-                  ? `Within ${searchRadius} km from your location`
-                  : `Around ${selectedLocation?.displayName || selectedLocation?.name || 'Selected City'}`}
-              </div>
-
-              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                {currentBank.shortName} Branches Near You
+              <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
+                <span>Nearby Banks & Branches</span>
+                <span className="text-xs px-2.5 py-1 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 font-extrabold">
+                  {nearbyBranches.length} {nearbyBranches.length === 1 ? 'branch found' : 'branches found'}
+                </span>
               </h2>
-
-              <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-                {locationMode === 'gps' ? (
-                  <>
-                    <span className="font-semibold text-slate-900 dark:text-slate-200">
-                      {filteredBranches.length} verified {currentBank.shortName}
-                    </span>{' '}
-                    {filteredBranches.length === 1 ? 'branch record' : 'branch records'} found within {searchRadius} km.
-                  </>
-                ) : (
-                  <>
-                    <span className="font-semibold text-slate-900 dark:text-slate-200">
-                      {filteredBranches.length} verified {currentBank.shortName}
-                    </span>{' '}
-                    {filteredBranches.length === 1 ? 'branch record' : 'branch records'} available around {selectedLocation?.displayName || selectedLocation?.name}.
-                  </>
-                )}
+              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 font-medium">
+                {selectedBank === 'All Banks' 
+                  ? `Showing all verified branches within ${radiusKm} km of ${locationTitle}`
+                  : `Showing ${selectedBank} branches within ${radiusKm} km of ${locationTitle}`}
               </p>
             </div>
 
-            {/* In-Results Instant Search Input (Section 12) */}
-            <div className="w-full md:w-72 relative">
-              <input
-                ref={searchInputRef}
-                type="text"
-                value={inResultsQuery}
-                onChange={(e) => setInResultsQuery(e.target.value)}
-                placeholder="Search branch, locality, PIN or IFSC..."
-                className="w-full pl-9 pr-8 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-blue-500 shadow-xs"
-                aria-label="Search within branch results"
-              />
-              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-              {inResultsQuery && (
-                <button
-                  type="button"
-                  onClick={() => setInResultsQuery('')}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
-                  aria-label="Clear branch search"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              )}
-            </div>
+            {/* Quick Bank Summary Badge */}
+            {selectedBank !== 'All Banks' && (
+              <div className="px-3.5 py-1.5 rounded-xl bg-blue-600 text-white text-xs font-black shadow-xs shrink-0 self-start sm:self-auto">
+                {selectedBank}: {nearbyBranches.length} {nearbyBranches.length === 1 ? 'branch' : 'branches'} found near you
+              </div>
+            )}
           </div>
 
-          {/* ==================================================
-              3A. EMPTY STATE (Section 6)
-             ================================================== */}
-          {filteredBranches.length === 0 ? (
-            <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 sm:p-12 text-center shadow-sm">
-              <div className="w-16 h-16 rounded-2xl bg-amber-100 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto mb-4">
-                <AlertCircle className="w-8 h-8" />
+          {/* Empty State when no branches found within radius */}
+          {nearbyBranches.length === 0 ? (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="p-10 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-center shadow-sm space-y-4 max-w-xl mx-auto my-12"
+            >
+              <div className="w-16 h-16 mx-auto rounded-3xl bg-amber-500/10 text-amber-500 flex items-center justify-center text-3xl font-black">
+                🏦
               </div>
-
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
-                {inResultsQuery
-                  ? `No branch records matched "${inResultsQuery}"`
-                  : 'No verified branch record is currently available within the selected search area.'}
+              <h3 className="text-xl font-extrabold text-slate-900 dark:text-white">
+                No branches found within {radiusKm} km.
               </h3>
-
-              <p className="text-sm text-slate-600 dark:text-slate-400 max-w-md mx-auto mb-6">
-                {inResultsQuery
-                  ? 'Try clearing the search query to view all branch records found within this search area.'
-                  : 'Try increasing the search radius.'}
+              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto leading-relaxed">
+                There are no verified {selectedBank !== 'All Banks' ? selectedBank : ''} bank branches or ATMs recorded within {radiusKm} km of this location.
               </p>
-
-              <div className="flex flex-wrap items-center justify-center gap-3">
-                {inResultsQuery ? (
-                  <button
-                    type="button"
-                    onClick={() => setInResultsQuery('')}
-                    className="px-5 py-2.5 rounded-xl bg-blue-600 text-white text-xs sm:text-sm font-semibold hover:bg-blue-700 transition-colors shadow-xs"
-                  >
-                    Clear Filter
-                  </button>
-                ) : (
-                  <>
-                    {searchRadius < 50 && (
-                      <button
-                        type="button"
-                        onClick={handleExpandRadius}
-                        className="px-5 py-2.5 rounded-xl bg-blue-600 text-white text-xs sm:text-sm font-semibold hover:bg-blue-700 transition-colors shadow-xs"
-                      >
-                        Increase Radius
-                      </button>
-                    )}
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                        setIsBankDropdownOpen(true);
-                      }}
-                      className="px-5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs sm:text-sm font-semibold hover:bg-slate-50 dark:hover:bg-slate-750 transition-colors"
-                    >
-                      Choose Another Bank
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={handleChooseLocationManually}
-                      className="px-5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs sm:text-sm font-semibold hover:bg-slate-50 dark:hover:bg-slate-750 transition-colors"
-                    >
-                      Choose Location Manually
-                    </button>
-                  </>
-                )}
+              <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
+                <button
+                  type="button"
+                  onClick={handleIncreaseRadius}
+                  className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold rounded-xl transition-all shadow-sm cursor-pointer"
+                >
+                  Increase Radius
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (searchInputRef.current) searchInputRef.current.focus();
+                  }}
+                  className="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-800 dark:text-slate-200 text-xs font-extrabold rounded-xl border border-slate-200 dark:border-slate-700 transition-all cursor-pointer"
+                >
+                  Search Another Location
+                </button>
               </div>
-            </div>
+            </motion.div>
           ) : (
-            <div className="space-y-6">
-              {/* ==================================================
-                  3B. NEAREST BRANCH HIGHLIGHT (Section 5)
-                 ================================================== */}
-              {nearestBranch && (
-                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-500/10 via-blue-500/5 to-transparent dark:from-amber-400/10 dark:via-blue-900/10 dark:to-transparent border-2 border-amber-400/60 dark:border-amber-400/40 p-6 sm:p-7 shadow-lg shadow-amber-500/5 transition-all">
-                  {/* Nearest Badge */}
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-amber-400 text-amber-950 uppercase tracking-wider mb-4 shadow-xs">
-                    <Star className="w-3.5 h-3.5 fill-amber-950 text-amber-950" />
-                    Nearest
-                  </div>
-
-                  <div className="flex flex-col md:flex-row md:items-start justify-between gap-5">
-                    <div className="flex items-start gap-4">
-                      {currentBank.logo ? (
-                        <div className="w-14 h-14 rounded-2xl bg-white p-2 flex items-center justify-center shadow-md border border-slate-100 dark:border-slate-800 shrink-0">
-                          <img
-                            src={currentBank.logo}
-                            alt=""
-                            className="w-full h-full object-contain"
-                          />
-                        </div>
-                      ) : (
-                        <div className="w-14 h-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-md">
-                          <Building2 className="w-7 h-7" />
-                        </div>
-                      )}
-
-                      <div>
-                        <div className="text-xs font-semibold text-slate-500 dark:text-slate-400">
-                          {currentBank.bankName}
-                        </div>
-                        <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mt-0.5">
-                          {nearestBranch.branchName}
-                        </h3>
-                        <p className="text-sm text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
-                          {nearestBranch.address}
-                        </p>
-                        <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-slate-500 dark:text-slate-400 font-mono">
-                          <span>{nearestBranch.city}, {nearestBranch.state}</span>
-                          <span>•</span>
-                          <span>PIN: <strong className="text-slate-700 dark:text-slate-200">{nearestBranch.pincode}</strong></span>
-                          <span>•</span>
-                          <span>IFSC: <strong className="text-blue-700 dark:text-blue-300 font-bold">{nearestBranch.ifsc}</strong></span>
-                        </div>
-
-                        {nearestBranch.openingHours && (
-                          <div className="mt-2 inline-flex items-center gap-1.5 text-xs text-emerald-700 dark:text-emerald-400 font-sans">
-                            <Clock className="w-3.5 h-3.5" />
-                            <span>{nearestBranch.openingHours}</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Distance & Actions */}
-                    <div className="flex flex-col sm:items-end justify-between gap-4 shrink-0">
-                      {nearestBranch.distanceText && (
-                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-blue-100 dark:bg-blue-950/80 text-blue-900 dark:text-blue-200 text-sm font-extrabold border border-blue-200 dark:border-blue-900">
-                          <MapPin className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                          {nearestBranch.distanceText} away
-                        </div>
-                      )}
-
-                      <div className="flex items-center gap-2 w-full sm:w-auto">
-                        <button
-                          type="button"
-                          onClick={() => setSelectedBranchForModal(nearestBranch)}
-                          className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs sm:text-sm font-semibold hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-xs focus:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-500"
-                        >
-                          View Details
-                        </button>
-
-                        <a
-                          href={getDirectionsUrl(nearestBranch)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-bold shadow-md hover:shadow-lg transition-all focus:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-500"
-                        >
-                          <Navigation className="w-4 h-4" />
-                          Get Directions
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* ==================================================
-                  3C. OTHER BRANCHES LIST (Section 5)
-                 ================================================== */}
-              {otherBranches.length > 0 && (
-                <div className="space-y-4 pt-2">
-                  {nearestBranch && (
-                    <div className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-1">
-                      Other Nearby Branches (Sorted by Distance)
-                    </div>
-                  )}
-
-                  <div className="grid grid-cols-1 gap-4">
-                    {otherBranches.map((branch) => (
-                      <div
-                        key={branch.branchId || branch.ifsc}
-                        className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-5 sm:p-6 shadow-xs hover:shadow-md transition-all flex flex-col md:flex-row md:items-center justify-between gap-4"
-                      >
-                        <div className="flex items-start gap-3.5">
-                          {currentBank.logo ? (
-                            <div className="w-11 h-11 rounded-xl bg-white p-1.5 flex items-center justify-center shadow-xs border border-slate-100 dark:border-slate-800 shrink-0 mt-0.5">
-                              <img
-                                src={currentBank.logo}
-                                alt=""
-                                className="w-full h-full object-contain"
-                              />
-                            </div>
-                          ) : (
-                            <div className="w-11 h-11 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center shrink-0 mt-0.5">
-                              <Building2 className="w-5 h-5" />
-                            </div>
-                          )}
-
-                          <div>
-                            <div className="flex flex-wrap items-center gap-2">
-                              <h4 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
-                                {branch.branchName}
-                              </h4>
-                              {branch.distanceText && (
-                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 text-xs font-bold">
-                                  <MapPin className="w-3 h-3 text-blue-600 dark:text-blue-400" />
-                                  {branch.distanceText} away
-                                </span>
-                              )}
-                            </div>
-
-                            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
-                              {branch.address}
-                            </p>
-
-                            <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-slate-500 dark:text-slate-400 font-mono">
-                              <span>{branch.city}, {branch.state}</span>
-                              <span>•</span>
-                              <span>PIN: <strong className="text-slate-700 dark:text-slate-200">{branch.pincode}</strong></span>
-                              <span>•</span>
-                              <span>IFSC: <strong className="text-blue-700 dark:text-blue-300 font-bold">{branch.ifsc}</strong></span>
-                              {branch.openingHours && (
-                                <>
-                                  <span>•</span>
-                                  <span className="font-sans inline-flex items-center gap-1 text-slate-600 dark:text-slate-300">
-                                    <Clock className="w-3 h-3 text-slate-400" />
-                                    {branch.openingHours.split(',')[0]}
-                                  </span>
-                                </>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Card Actions */}
-                        <div className="flex items-center gap-2 pt-2 md:pt-0 shrink-0 border-t md:border-t-0 border-slate-100 dark:border-slate-800">
-                          <button
-                            type="button"
-                            onClick={() => setSelectedBranchForModal(branch)}
-                            className="px-3.5 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-semibold hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-xs focus:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-500"
-                          >
-                            View Details
-                          </button>
-
-                          <a
-                            href={getDirectionsUrl(branch)}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs hover:shadow-sm transition-all focus:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-500"
-                          >
-                            <Navigation className="w-3.5 h-3.5" />
-                            Get Directions
-                          </a>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Data Transparency & Trust Disclaimers (Section 10 & 17) */}
-              <div className="mt-8 space-y-3">
-                <div className="p-4 rounded-2xl bg-blue-50/60 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/40 text-xs text-blue-900 dark:text-blue-200 flex items-start gap-2.5">
-                  <ShieldCheck className="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
-                  <div>
-                    <span className="font-bold">Data Transparency:</span>{' '}
-                    Showing verified branch records currently available in the D.CARD directory. Branch coverage is continuously expanded using official bank sources.
-                  </div>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400 flex items-start gap-2.5">
-                  <Info className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
-                  <div>
-                    <span className="font-semibold text-slate-700 dark:text-slate-300">Disclaimer:</span>{' '}
-                    Branch information is provided for informational purposes. Branch details, hours and services may change. Please verify important details with the bank before visiting.
-                  </div>
-                </div>
-              </div>
+            /* Branch Cards Grid */
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
+              <AnimatePresence>
+                {nearbyBranches.map((branch) => (
+                  <BranchCard
+                    key={branch.id}
+                    branch={branch}
+                    onViewOnMap={() => handleViewOnMap(branch)}
+                    isFocused={focusedBranch?.id === branch.id}
+                  />
+                ))}
+              </AnimatePresence>
             </div>
           )}
         </section>
-      )}
-
-      {/* ==================================================
-          4. BRANCH DETAILS MODAL
-         ================================================== */}
-      <BranchDetailsModal
-        branch={selectedBranchForModal}
-        isOpen={Boolean(selectedBranchForModal)}
-        onClose={() => setSelectedBranchForModal(null)}
-      />
+      </main>
     </div>
+  );
+}
+
+/**
+ * Individual Bank Branch Card Component
+ */
+function BranchCard({ branch, onViewOnMap, isFocused }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 14 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -14 }}
+      whileHover={{ y: -3 }}
+      transition={{ duration: 0.2 }}
+      className={`p-6 rounded-3xl bg-white dark:bg-slate-900 border transition-all flex flex-col justify-between space-y-5 shadow-sm hover:shadow-md ${
+        isFocused
+          ? 'border-blue-500 ring-2 ring-blue-500/20 shadow-lg'
+          : 'border-slate-200 dark:border-slate-800'
+      }`}
+    >
+      <div className="space-y-4">
+        {/* Top Header: Bank Name & Distance */}
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-2xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-900/60 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xl font-bold shrink-0 shadow-xs">
+              {branch.branch_type === 'ATM' ? '🏧' : '🏦'}
+            </div>
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 block">
+                {branch.branch_type} • IFSC: {branch.ifsc || 'Not available'}
+              </span>
+              <h3 className="text-base font-black text-slate-900 dark:text-white leading-tight">
+                {branch.bank_name}
+              </h3>
+              <p className="text-xs font-bold text-blue-600 dark:text-blue-400 mt-0.5">
+                {branch.branch_name}
+              </p>
+            </div>
+          </div>
+
+          {/* Distance Badge */}
+          <span className="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 text-xs font-black shrink-0 whitespace-nowrap">
+            {branch.distanceFormatted}
+          </span>
+        </div>
+
+        {/* Address */}
+        <div className="text-xs text-slate-600 dark:text-slate-300 font-medium leading-relaxed flex items-start gap-2 pt-1">
+          <MapPin className="w-3.5 h-3.5 text-blue-600 shrink-0 mt-0.5" />
+          <span>
+            {branch.address}, {branch.city}, {branch.state} - {branch.pincode}
+          </span>
+        </div>
+
+        {/* Meta Details: Phone & Opening Hours */}
+        <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400">
+          <div className="flex items-center gap-2">
+            <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+            <span>
+              Phone: <strong className="text-slate-800 dark:text-slate-200">{branch.phone || 'Not available'}</strong>
+            </span>
+          </div>
+          <div className="flex items-start gap-2">
+            <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
+            <span className="text-[11px] leading-snug">
+              Hours: <strong className="text-slate-800 dark:text-slate-200">{branch.opening_hours || 'Not available'}</strong>
+            </span>
+          </div>
+        </div>
+
+        {/* Available Services */}
+        {branch.services && branch.services.length > 0 && (
+          <div className="pt-2">
+            <p className="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">
+              Available Services:
+            </p>
+            <div className="flex flex-wrap gap-1.5">
+              {branch.services.map((svc) => (
+                <span
+                  key={svc}
+                  className="px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-semibold"
+                >
+                  {svc}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Action Buttons: View on Map & Get Directions */}
+      <div className="grid grid-cols-2 gap-2.5 pt-4 border-t border-slate-100 dark:border-slate-800">
+        <button
+          type="button"
+          onClick={onViewOnMap}
+          className="py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+        >
+          <Navigation className="w-3.5 h-3.5 text-blue-600" />
+          <span>View on Map</span>
+        </button>
+
+        <a
+          href={branch.directionsUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black transition-all flex items-center justify-center gap-1.5 shadow-xs cursor-pointer active:scale-95"
+        >
+          <span>Get Directions</span>
+          <ExternalLink className="w-3 h-3" />
+        </a>
+      </div>
+    </motion.div>
   );
 }

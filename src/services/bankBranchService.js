@@ -7,6 +7,7 @@ import {
   getSupportedRadiusOptions
 } from './branchDataProvider.js';
 import { validateBranchRecord } from '../utils/branchDataValidator.js';
+import { BRANCHES } from '../data/branches.js';
 export { parseSmartSearchQuery } from '../utils/smartSearchParser.js';
 export { getSearchSuggestions } from '../utils/searchAutocompleteService.js';
 export { getSupportedRadiusOptions };
@@ -319,6 +320,22 @@ export async function geocodeLocation(query, apiKey, signal = null) {
   }
   if (lower.includes('nagpur') || lower.includes('440010')) {
     return { lat: 21.1441, lng: 79.0628, displayName: 'Nagpur, Maharashtra, India' };
+  }
+
+  // Check verified BRANCHES dataset for city, pincode, or Daltonganj -> Medininagar alias
+  const matchedBranch = BRANCHES.find(b => 
+    b.pincode === cleanQuery ||
+    b.city.toLowerCase() === lower ||
+    b.city.toLowerCase().includes(lower) ||
+    lower.includes(b.city.toLowerCase()) ||
+    (lower.includes('daltonganj') && b.city.toLowerCase() === 'medininagar')
+  );
+  if (matchedBranch && typeof matchedBranch.latitude === 'number' && typeof matchedBranch.longitude === 'number') {
+    return {
+      lat: matchedBranch.latitude,
+      lng: matchedBranch.longitude,
+      displayName: `${matchedBranch.city}, ${matchedBranch.state}, India`
+    };
   }
 
   // Secondary fallback: Nominatim OpenStreetMap Geocoding

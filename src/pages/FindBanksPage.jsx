@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useSearchParams } from 'react-router-dom';
 import { 
   Search, 
   MapPin, 
@@ -82,10 +83,27 @@ function FindBanksPage() {
     return getUniqueBankNamesFromDatabase();
   }, []);
 
+  const [searchParams] = useSearchParams();
+  const initialBankParam = searchParams.get('bank');
+
   // Filters State
   const [radiusKm, setRadiusKm] = useState(10); // default: 10 km
-  const [selectedBank, setSelectedBank] = useState('All Banks');
+  const [selectedBank, setSelectedBank] = useState(() => {
+    if (initialBankParam) {
+      const norm = normalizeBankName(initialBankParam);
+      if (norm) return norm;
+    }
+    return 'All Banks';
+  });
   const [typeFilter, setTypeFilter] = useState('All'); // 'All' | 'Branch' | 'ATM'
+
+  // Sync bank URL param if it changes
+  useEffect(() => {
+    if (initialBankParam) {
+      const norm = normalizeBankName(initialBankParam);
+      if (norm) setSelectedBank(norm);
+    }
+  }, [initialBankParam]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [searchError, setSearchError] = useState(null);
