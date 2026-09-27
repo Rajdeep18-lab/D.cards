@@ -16,6 +16,8 @@ import ComparePage from "./pages/ComparePage";
 import AIAdvisorPage from "./pages/AIAdvisorPage";
 import SavedCardsPage from "./pages/SavedCardsPage";
 import BanksPage from "./pages/BanksPage";
+import FindBanksPage from "./pages/FindBanksPage";
+import FindMyBankPage from "./pages/FindMyBankPage";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
 import FoundersPage from "./pages/FoundersPage";
@@ -54,6 +56,9 @@ import { cardService } from "./services/cardService";
 import { ToastProvider, useToast } from "./context/ToastContext";
 import { WishlistProvider, useWishlist } from "./context/WishlistContext";
 import { AuthProvider } from "./context/AuthContext";
+import { LocationProvider, useAppLocation } from "./context/LocationContext";
+import LocationSelectorModal from "./components/LocationSelectorModal";
+import { isProductAvailableInLocation } from "./data/locations";
 import { useAuth } from "./hooks/useAuth";
 import { bankCards, debitCards } from "./data/mockData";
 
@@ -222,6 +227,12 @@ function AppContent() {
     redirectTarget,
     setRedirectTarget
   } = useAuth();
+
+  const {
+    selectedLocation,
+    isLocationModalOpen,
+    closeLocationSelector
+  } = useAppLocation();
 
   const [profileActiveTab, setProfileActiveTab] = useState("profile");
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
@@ -621,6 +632,9 @@ function AppContent() {
   const filteredCards = useMemo(() => {
     let cards = safeMap(activeCardsList, c => normalizeCard(c));
 
+    // Location availability filter
+    cards = cards.filter(card => isProductAvailableInLocation(card, selectedLocation));
+
     const q = safeLower(query).trim();
     if (q) {
       const terms = q.split(/\s+/).filter(Boolean);
@@ -870,7 +884,7 @@ function AppContent() {
     query, activeFilters, selectedUserTypes, selectedNetworks, selectedCategories,
     selectedFeeTier, selectedAtmLimitTier, selectedPosLimitTier, selectedFeatures,
     selectedBankTypes, selectedBanks, feeRange, balanceRange, minRating, minCashback,
-    atmRange, posRange, sortBy, activeCardsList
+    atmRange, posRange, sortBy, activeCardsList, selectedLocation
   ]);
 
   const cardsPageContent = (
@@ -976,6 +990,38 @@ function AppContent() {
           <Route 
             path="/forgot-password" 
             element={<AuthRedirectHandler defaultTab="forgot" />} 
+          />
+
+          {/* Public Bank Locator routes */}
+          <Route 
+            path="/find-my-bank" 
+            element={<FindMyBankPage />} 
+          />
+          <Route 
+            path="/find-banks" 
+            element={<FindBanksPage />} 
+          />
+          <Route 
+            path="/banks-near-you" 
+            element={<Navigate to="/find-my-bank" replace />} 
+          />
+
+          {/* Public Informational pages */}
+          <Route 
+            path="/about" 
+            element={<AboutPage />} 
+          />
+          <Route 
+            path="/founders" 
+            element={<Navigate to="/about" replace />} 
+          />
+          <Route 
+            path="/team" 
+            element={<Navigate to="/about" replace />} 
+          />
+          <Route 
+            path="/contact" 
+            element={<ContactPage />} 
           />
 
           {/* 2. PROTECTED ROUTES (Centralized guard — authentication required) */}
@@ -1220,23 +1266,7 @@ function AppContent() {
               } 
             />
 
-            {/* Informational internal pages */}
-            <Route 
-              path="/about" 
-              element={<AboutPage />} 
-            />
-            <Route 
-              path="/founders" 
-              element={<Navigate to="/about" replace />} 
-            />
-            <Route 
-              path="/team" 
-              element={<Navigate to="/about" replace />} 
-            />
-            <Route 
-              path="/contact" 
-              element={<ContactPage />} 
-            />
+
 
             {/* User Profile */}
             <Route 
@@ -1270,6 +1300,11 @@ function AppContent() {
         isOpen={isAuthModalOpen} 
         onClose={handleCloseAuthModal} 
         onSuccessAction={handleAuthSuccessResume}
+      />
+
+      <LocationSelectorModal
+        isOpen={isLocationModalOpen}
+        onClose={closeLocationSelector}
       />
 
       <Suspense fallback={null}>
@@ -1331,7 +1366,9 @@ function App() {
         <AuthProvider>
           <WishlistProvider>
             <BrowserRouter>
-              <AppContent />
+              <LocationProvider>
+                <AppContent />
+              </LocationProvider>
             </BrowserRouter>
           </WishlistProvider>
         </AuthProvider>

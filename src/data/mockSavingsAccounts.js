@@ -1,6 +1,6 @@
 import { canonicalBankName } from "../utils/bankDirectoryUtils.js";
 import { masterDebitCardsMap } from "./debitCardsData.js";
-import { getAccountDebitCardMappings } from "./accountDebitCardMappings.js";
+import { getAccountDebitCardMappings } from "./accountCardMappings/index.js";
 
 /**
  * BANK COMPARISON PLATFORM - SAVINGS ACCOUNTS & ASSOCIATED DEBIT CARDS

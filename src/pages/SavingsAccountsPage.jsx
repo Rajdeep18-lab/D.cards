@@ -33,6 +33,8 @@ import { savingsAccountService } from '../services/savingsAccountService';
 import { getAssociatedDebitCard } from '../data/mockSavingsAccounts';
 import { safeString, safeLower, safeArray, parseNumericValue } from '../utils/safeUtils';
 import { useSEO } from '../hooks/useSEO';
+import { useAppLocation } from '../context/LocationContext';
+import { isProductAvailableInLocation } from '../data/locations';
 
 const BANK_OPTIONS = [
   "HDFC Bank",
@@ -297,6 +299,7 @@ function matchesDebitCardFilter(acc, cardFilter) {
 }
 
 function SavingsAccountsPage({ onSelectDebitCard }) {
+  const { selectedLocation } = useAppLocation();
   useSEO({
     title: "Savings Accounts in India – Compare Interest Rates & Min Balance | D.Card",
     description: "Explore and compare savings accounts from leading banks in India. Check interest rates, minimum balance requirements, and features on D.Card.",
@@ -388,6 +391,9 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
   // Filter & Sort Pipeline
   const filteredAccounts = useMemo(() => {
     let result = [...accounts].filter(Boolean);
+
+    // Location availability filter
+    result = result.filter(acc => isProductAvailableInLocation(acc, selectedLocation));
 
     // 1. Search Query Filter
     const q = safeLower(searchQuery);
@@ -587,7 +593,8 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
     selectedOpeningMethods,
     selectedBankingFeatures,
     selectedDebitCardFilters,
-    sortBy
+    sortBy,
+    selectedLocation
   ]);
 
   const activeFiltersCount = useMemo(() => {

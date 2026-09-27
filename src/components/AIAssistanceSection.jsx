@@ -20,7 +20,8 @@ import {
   X,
   Heart,
   Info,
-  HelpCircle
+  HelpCircle,
+  MapPin
 } from 'lucide-react';
 import BankLogo from './BankLogo';
 import DebitCardVisual from './DebitCardVisual';
@@ -32,29 +33,31 @@ import { useAuth } from '../hooks/useAuth';
 import { useWishlist } from '../context/WishlistContext';
 
 const ROTATING_PLACEHOLDERS = [
-  "Ask anything about banking products...",
+  "Ask anything about banking products & branches...",
   "Show me zero balance savings accounts...",
-  "Find a savings account with low minimum balance...",
+  "Find nearest SBI ATM in Kharar...",
   "Compare debit cards with airport lounge access...",
+  "Chandigarh mein HDFC branch...",
   "Show current accounts for businesses...",
-  "What is MAB?",
   "Compare Canara Bank and SBI savings accounts..."
 ];
 
 const QUICK_QUESTIONS = [
   "Find a savings account with low minimum balance",
+  "Kharar mein SBI ka nearest ATM",
   "Compare Canara Bank savings accounts",
   "Show debit cards with lounge access",
+  "Chandigarh mein HDFC branch",
   "Which accounts have zero balance?",
-  "Find current accounts for businesses",
-  "Compare debit cards and annual fees"
+  "Find current accounts for businesses"
 ];
 
 const EXAMPLE_QUERIES = [
   "Find a savings account under ₹5,000 MAB",
+  "Kharar mein SBI ATM",
   "Which debit cards have lounge access?",
   "Compare SBI and HDFC savings accounts",
-  "What is MAB?",
+  "Chandigarh mein HDFC branch",
   "Show current accounts for businesses"
 ];
 
@@ -343,6 +346,7 @@ export default function AIAssistanceSection({
       let cards = local.cards;
       let savings = local.savings;
       let current = local.current;
+      let locations = [];
 
       // 2. Also query backend if more matches needed
       if (cards.length === 0 && savings.length === 0 && current.length === 0) {
@@ -351,6 +355,7 @@ export default function AIAssistanceSection({
           if (aiResponse?.matchedCards?.length) cards = aiResponse.matchedCards;
           if (aiResponse?.matchedAccounts?.length) savings = aiResponse.matchedAccounts;
           if (aiResponse?.matchedCurrentAccounts?.length) current = aiResponse.matchedCurrentAccounts;
+          if (aiResponse?.matchedLocations?.length) locations = aiResponse.matchedLocations;
         } catch (e) {}
       }
 
@@ -360,7 +365,8 @@ export default function AIAssistanceSection({
         infoCard: local.infoCard,
         matchedCards: cards,
         matchedAccounts: savings,
-        matchedCurrentAccounts: current
+        matchedCurrentAccounts: current,
+        matchedLocations: locations
       });
 
       // Smooth scroll to product results
@@ -378,7 +384,8 @@ export default function AIAssistanceSection({
         infoCard: local.infoCard,
         matchedCards: local.cards,
         matchedAccounts: local.savings,
-        matchedCurrentAccounts: local.current
+        matchedCurrentAccounts: local.current,
+        matchedLocations: []
       });
     } finally {
       setLoading(false);
@@ -427,7 +434,8 @@ export default function AIAssistanceSection({
 
   const totalProductCount = (result?.matchedCards?.length || 0) + 
     (result?.matchedAccounts?.length || 0) + 
-    (result?.matchedCurrentAccounts?.length || 0);
+    (result?.matchedCurrentAccounts?.length || 0) +
+    (result?.matchedLocations?.length || 0);
 
   return (
     <section 
@@ -845,6 +853,20 @@ export default function AIAssistanceSection({
                       Current Accounts ({result.matchedCurrentAccounts.length})
                     </button>
                   )}
+
+                  {(result.matchedLocations?.length || 0) > 0 && (
+                    <button
+                      onClick={() => setActiveTab('locations')}
+                      className={`px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer flex items-center gap-1.5 ${
+                        activeTab === 'locations'
+                          ? 'bg-[#2563EB] text-white shadow-xs'
+                          : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:border-blue-400'
+                      }`}
+                    >
+                      <MapPin className="w-3.5 h-3.5" />
+                      Verified Branches & ATMs ({result.matchedLocations.length})
+                    </button>
+                  )}
                 </div>
               )}
 
@@ -1216,6 +1238,86 @@ export default function AIAssistanceSection({
                             </a>
                           ) : (
                             <span className="italic">Official Bank Source</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+
+                {/* 4. VERIFIED BANK BRANCH / ATM CARDS */}
+                {(activeTab === 'all' || activeTab === 'locations') && (result.matchedLocations || []).map(loc => {
+                  return (
+                    <div
+                      key={`loc-${loc.id}`}
+                      className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-blue-400 shadow-md hover:shadow-xl transition-all flex flex-col justify-between space-y-4"
+                    >
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-black uppercase tracking-wide text-slate-900 dark:text-white">
+                            {loc.bank_name}
+                          </span>
+                          <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wide border ${
+                            loc.branch_type === 'ATM' ? 'bg-amber-50 border-amber-200 text-amber-700' : 'bg-blue-50 border-blue-200 text-blue-700'
+                          }`}>
+                            {loc.branch_type || 'Branch'}
+                          </span>
+                        </div>
+                        <h4 className="text-base font-extrabold text-slate-900 dark:text-white leading-snug">
+                          {loc.branch_name || `${loc.bank_name} ${loc.branch_type || 'Branch'}`}
+                        </h4>
+                        <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                          {loc.address}, {loc.city}, {loc.state} - {loc.pincode}
+                        </p>
+                        {loc.distanceKm != null && (
+                          <div className="text-xs font-bold text-blue-600 dark:text-blue-400">
+                            📍 {loc.distanceKm} km away
+                          </div>
+                        )}
+                        {loc.phone && (
+                          <p className="text-[11px] text-slate-500">
+                            📞 {loc.phone}
+                          </p>
+                        )}
+                        {loc.opening_hours && (
+                          <p className="text-[11px] text-slate-500">
+                            🕒 {loc.opening_hours}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="pt-2 space-y-2 border-t border-slate-100 dark:border-slate-800">
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => navigate(`/find-banks?bank=${encodeURIComponent(loc.bank_name || '')}&city=${encodeURIComponent(loc.city || '')}&highlight=${loc.id}`)}
+                            className="flex-1 py-2 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-bold transition-all text-center shadow-xs"
+                          >
+                            View on Map
+                          </button>
+                          {loc.directionsUrl && (
+                            <a
+                              href={loc.directionsUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all"
+                            >
+                              Directions ↗
+                            </a>
+                          )}
+                        </div>
+
+                        <div className="flex items-center justify-between text-[10px] text-slate-400 pt-1">
+                          <span>Verified: {loc.verified_on || '2026-09'}</span>
+                          {loc.source_url && (
+                            <a
+                              href={loc.source_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[#2563EB] font-bold hover:underline flex items-center gap-1"
+                            >
+                              Official Source <ExternalLink className="w-2.5 h-2.5" />
+                            </a>
                           )}
                         </div>
                       </div>

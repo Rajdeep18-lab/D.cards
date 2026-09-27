@@ -10,8 +10,9 @@ function Footer({ onOpenLegal }) {
       { name: 'Savings Accounts', path: '/savings-accounts' },
       { name: 'Current Accounts', path: '/current-accounts' },
       { name: 'Compare Cards', path: '/compare' },
-      { name: 'AI Advisor', path: '/ai-advisor' },
+      { name: 'AI Assistance', path: '/ai-advisor' },
       { name: 'Top Banks', path: '/banks' },
+      { name: 'Find My Bank', path: '/find-my-bank' },
     ],
     'Company': [
       { name: 'About Us', path: '/about' },
@@ -129,7 +130,7 @@ function Footer({ onOpenLegal }) {
           >
             <div className="flex items-center gap-2">
               <Bot className="w-4 h-4 text-[#60A5FA]" />
-              <span>Ask AI Advisor</span>
+              <span>Ask AI Assistance</span>
             </div>
             <ArrowRight className="w-4 h-4 text-[#60A5FA] group-hover:translate-x-1 transition-transform" />
           </Link>

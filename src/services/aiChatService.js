@@ -179,7 +179,7 @@ export const aiChatService = {
     // Instant local greeting for pure "hi" / "hello"
     if (["hi", "hello", "hey", "namaste", "greetings", "hallo"].some(w => lowerMsg === w || lowerMsg.startsWith(w + " "))) {
       return {
-        text: "👋 **Hello! Welcome to D.CARD AI Advisor.**\n\nI can help you explore and compare verified Indian banking products:\n- 🏦 **Savings Accounts** (Zero Balance, High Interest, Student, Salary, Online Video KYC)\n- 🏢 **Current Accounts** (Business MAB, Limits, Overdraft & Cheques)\n- 💳 **Verified Linked Debit Cards** (RuPay, Visa, Mastercard, ATM Limits, Lounge Access)\n- 🔄 **Factual Side-by-Side Comparisons**\n\nWhat banking product are you looking to compare today?",
+        text: "👋 Hello! Welcome to D.CARD AI Assistance.\n\nI can help you explore and compare verified Indian banking products and locate branches & ATMs:\n• Savings Accounts (Zero Balance, High Interest, Student, Salary, Online Video KYC)\n• Current Accounts (Business MAB, Limits, Overdraft & Cheques)\n• Verified Linked Debit Cards (RuPay, Visa, Mastercard, ATM Limits, Lounge Access)\n• Verified Bank Branches & ATMs Near You\n• Factual Side-by-Side Comparisons\n\nWhat would you like to explore or locate today?",
         type: "greeting",
         timestamp
       };
@@ -194,7 +194,8 @@ export const aiChatService = {
         body: JSON.stringify({
           message: cleanMsg,
           conversationHistory: conversationHistory.slice(-10),
-          conversationState
+          conversationState,
+          userCoords: chatContext.userCoords || null
         })
       });
 
@@ -207,10 +208,14 @@ export const aiChatService = {
 
       return {
         text: data.answer,
-        type: "ai_response",
+        type: data.type || "ai_response",
+        intent: data.intent || "GENERAL_BANKING_INFORMATION",
         matchedAccounts: data.matchedAccounts || [],
         matchedCurrentAccounts: data.matchedCurrentAccounts || [],
         matchedCards: data.matchedCards || [],
+        matchedLocations: data.matchedLocations || [],
+        extractedRequirements: data.extractedRequirements || {},
+        suggestedActions: data.suggestedActions || [],
         disclaimer: data.disclaimer || "Please verify the latest terms, charges and eligibility on the bank's official website before applying.",
         conversationState: {
           ...conversationState,
@@ -232,7 +237,7 @@ export const aiChatService = {
       }
 
       return {
-        text: "I'm having trouble connecting to the AI Advisor service right now. You can still explore D.CARD's verified products manually through the navigation menu.",
+        text: "I'm having trouble connecting to D.CARD AI Assistance right now. You can still explore verified products and locate bank branches manually through the navigation menu.",
         type: "error",
         timestamp
       };

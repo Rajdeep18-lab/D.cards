@@ -7,7 +7,7 @@ import { compareService } from '../services/compareService';
 import { debitCards } from '../data/mockData';
 import { savingsAccounts } from '../data/mockSavingsAccounts';
 import { currentAccounts } from '../data/currentAccounts';
-import { INDIAN_LOCATIONS } from '../data/indianLocations';
+import { INDIAN_LOCATIONS } from '../data/locations';
 import { getRecentlyViewed } from '../utils/recentlyViewedUtils';
 
 // Profile sub-components

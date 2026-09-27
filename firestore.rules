@@ -60,6 +60,12 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // Bank Branches & ATMs Collection (Public Read, Admin Write Only)
+    match /bank_branches/{branchId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     // FAQ Collection (Public Read, Admin Write Only)
     match /faq/{faqId} {
       allow read: if true;

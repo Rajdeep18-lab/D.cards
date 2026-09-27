@@ -35,7 +35,7 @@ import {
 
 import { allDebitCards } from '../data/mockData';
 import { savingsAccounts } from '../data/mockSavingsAccounts';
-import { accountDebitCardMappings } from '../data/accountDebitCardMappings';
+import { accountDebitCardMappings } from '../data/accountCardMappings/index.js';
 import { useWishlist } from '../context/WishlistContext';
 import { useAuth } from '../hooks/useAuth';
 import { useSEO } from '../hooks/useSEO';
@@ -125,7 +125,10 @@ function getLinkedSavingsAccounts(card) {
     const mid = String(m.card_id || '');
     return mid === cardSlug || mid === cardNumId;
   });
-  const explicitAccountIds = new Set(explicitMappings.map(m => String(m.account_id)));
+  const explicitAccountIds = new Set(explicitMappings.flatMap(m => [
+    String(m.account_id || ''),
+    String(m.account_numeric_id || '')
+  ]).filter(Boolean));
 
   const fromMappings = savingsAccounts.filter(acc => {
     const pid = String(acc.product_id || '');
@@ -1138,7 +1141,7 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
                         const accPid = String(acc.product_id || '');
                         const accNid = String(acc.id || '');
                         return (mid === String(cardSlug || '') || mid === String(cardId || ''))
-                          && (String(m.account_id) === accPid || String(m.account_id) === accNid);
+                          && (String(m.account_id) === accPid || String(m.account_id) === accNid || String(m.account_numeric_id) === accNid || String(m.account_numeric_id) === accPid);
                       });
                       const rel = relFromAccount || relFromMappings;
                       const { label: relLabel, cls: relCls } = relInfo(rel);

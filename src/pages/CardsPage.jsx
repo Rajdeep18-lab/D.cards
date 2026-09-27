@@ -6,6 +6,7 @@ import QuickFilterChips from '../components/QuickFilterChips';
 import VirtualizedCardGrid from '../components/VirtualizedCardGrid';
 import LoadingSkeleton from '../components/LoadingSkeleton';
 import { useSEO } from '../hooks/useSEO';
+import { useAppLocation } from '../context/LocationContext';
 
 function CardsPage({
   filteredCards,
@@ -67,6 +68,7 @@ function CardsPage({
     canonicalUrl: "https://www.dcard.website/cards"
   });
 
+  const { selectedLocation, isAllIndia, selectLocation } = useAppLocation();
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
   useEffect(() => {
@@ -82,6 +84,12 @@ function CardsPage({
 
   // Construct active filter chips array for top bar display
   const activeChipsList = [];
+  if (!isAllIndia && selectedLocation?.name) {
+    activeChipsList.push({
+      label: `📍 ${selectedLocation.name}${selectedLocation.stateCode ? `, ${selectedLocation.stateCode}` : ''}`,
+      onRemove: () => selectLocation('all-india')
+    });
+  }
   if (query) activeChipsList.push({ label: `Search: "${query}"`, onRemove: () => setQuery('') });
   selectedBanks.forEach(b => activeChipsList.push({ label: b, onRemove: () => toggleBank(b) }));
   selectedNetworks.forEach(n => activeChipsList.push({ label: n, onRemove: () => toggleNetwork(n) }));

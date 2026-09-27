@@ -58,7 +58,7 @@ export function safeStringArray(arr, fallback = []) {
  * Normalizes verification source fields
  */
 export function normalizeSourceInfo(data) {
-  const officialSource = safeString(data.officialSource || data.officialSourceUrl || data.source, "");
+  const officialSource = safeString(data.officialSource || data.officialSourceUrl || data.source_url || data.source || data.official_source_url, "");
   let sourceType = safeString(data.sourceType, officialSource ? "Official Bank Source" : "Public/Third-party Source");
   
   // Rule: Never display "Bank Verified" unless strictly verified
@@ -66,12 +66,17 @@ export function normalizeSourceInfo(data) {
     sourceType = officialSource ? "Official Bank Source" : "Public/Third-party Source";
   }
 
-  const lastVerified = safeString(data.lastVerified || data.as_of_date, "Recent");
+  const lastVerified = safeString(data.lastVerified || data.as_of_date || data.verified_on || data.data_verified_on, "Recent");
 
   return {
     officialSource: officialSource || NOT_AVAILABLE,
+    official_source_url: officialSource || "",
+    source_url: officialSource || "",
+    source: officialSource || "",
     sourceType,
-    lastVerified
+    lastVerified,
+    verified_on: lastVerified,
+    data_verified_on: lastVerified
   };
 }
 

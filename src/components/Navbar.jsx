@@ -14,11 +14,13 @@ import {
   MoreHorizontal,
   Info,
   Mail,
-  ShieldAlert
+  ShieldAlert,
+  MapPin
 } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { useWishlist } from "../context/WishlistContext";
 import TopDisclaimerTicker from "./TopDisclaimerTicker";
+import LocationSelectorButton from "./LocationSelectorButton";
 
 function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOpenLegal }) {
   const { user, profile, logout, openAuthModal } = useAuth();
@@ -69,12 +71,13 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
     { name: "Savings Accounts", path: "/savings-accounts", isProtected: true },
     { name: "Current Accounts", path: "/current-accounts", isProtected: true },
     { name: "Compare", path: "/compare", isProtected: true },
-    { name: "AI Advisor", path: "/ai-advisor", isProtected: true },
+    { name: "AI Assistance", path: "/ai-advisor", isProtected: true },
     { name: "Banks", path: "/banks", isProtected: true },
   ];
 
   // Secondary links (visible on wide screens >= 1400px; neatly tucked inside "More ▾" on 1024px-1399px)
   const secondaryNavLinks = [
+    { name: "Find My Bank", path: "/find-my-bank", isProtected: false, icon: MapPin },
     { name: "About", path: "/about", isProtected: false, icon: Info },
     { name: "Contact", path: "/contact", isProtected: false, icon: Mail },
     { name: "My Profile", path: "/profile", isProtected: true, icon: User },
@@ -83,6 +86,7 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
   // Full list for mobile drawer
   const allNavLinks = [
     ...primaryNavLinks,
+    { name: "Find My Bank", path: "/find-my-bank", isProtected: false },
     { name: "About", path: "/about", isProtected: false },
     { name: "Contact", path: "/contact", isProtected: false },
   ];
@@ -127,8 +131,8 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
       >
         <div className="w-full max-w-[1536px] mx-auto px-3 sm:px-5 lg:px-6 h-full flex items-center justify-between gap-2 sm:gap-4">
           
-          {/* ── LEFT: D.CARD LOGO ── */}
-          <div className="shrink-0 flex items-center">
+          {/* ── LEFT: D.CARD LOGO + LOCATION SELECTOR ── */}
+          <div className="shrink-0 flex items-center gap-2 sm:gap-3.5">
             <Link
               to="/"
               className="flex items-center gap-2 group text-left bg-transparent border-0 cursor-pointer focus:outline-none"
@@ -147,6 +151,11 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
                 </span>
               </div>
             </Link>
+
+            {/* Desktop Location Selector */}
+            <div className="hidden md:block">
+              <LocationSelectorButton variant="desktop" />
+            </div>
           </div>
 
           {/* ── CENTER: DESKTOP NAVIGATION (>= 1024px) ── */}
@@ -349,6 +358,11 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
               </button>
             )}
 
+            {/* Mobile Location Selector Icon Button (< 768px) */}
+            <div className="md:hidden flex items-center">
+              <LocationSelectorButton variant="mobile" />
+            </div>
+
             {/* 5. Hamburger Menu Trigger for Mobile & Tablet (< 1024px) */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -376,6 +390,11 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
          ================================================== */}
       {isMobileMenuOpen && (
         <div className="absolute top-full left-0 right-0 lg:hidden border-b border-[#E5E7EB] dark:border-slate-800 bg-white/98 dark:bg-[#0F172A]/98 backdrop-blur-xl px-4 py-4 space-y-1 text-left shadow-2xl z-[55] max-h-[calc(100vh-120px)] overflow-y-auto">
+          {/* Mobile Drawer Location Selector */}
+          <div className="px-2 pb-2 mb-2 border-b border-gray-100 dark:border-slate-800">
+            <LocationSelectorButton variant="desktop" className="w-full justify-between" />
+          </div>
+
           <div className="text-[11px] font-extrabold uppercase tracking-wider text-gray-400 dark:text-slate-500 px-3 py-1">
             Navigation Menu
           </div>

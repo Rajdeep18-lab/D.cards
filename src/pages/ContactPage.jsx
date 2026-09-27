@@ -150,7 +150,7 @@ function ContactPage() {
                 </div>
                 <div>
                   <p className="text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider">AI Instant Assistant</p>
-                  <p className="text-xs font-bold text-[#2563EB] dark:text-[#60A5FA]">Available 24/7 via D.CARD AI Advisor</p>
+                  <p className="text-xs font-bold text-[#2563EB] dark:text-[#60A5FA]">Available 24/7 via D.CARD AI Assistance</p>
                 </div>
               </div>
             </div>

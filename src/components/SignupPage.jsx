@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Lock, Eye, EyeOff, User, Phone, MapPin, ArrowRight, ArrowLeft, Check, AlertCircle, ShieldCheck, Sparkles, GraduationCap, Briefcase, Plane, Crown, HeartHandshake, UserCheck } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
-import { INDIAN_LOCATIONS, COUNTRY_CODES } from '../data/indianLocations';
+import { INDIAN_LOCATIONS, COUNTRY_CODES } from '../data/locations';
 
 function evaluatePasswordStrength(pass) {
   if (!pass) return { score: 0, label: 'None', color: 'bg-gray-300' };

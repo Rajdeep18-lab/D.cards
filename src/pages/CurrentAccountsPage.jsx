@@ -25,6 +25,8 @@ import { currentAccountService } from '../services/currentAccountService';
 import { safeString, safeLower, safeArray, parseNumericValue } from '../utils/safeUtils';
 import { useNavigate } from 'react-router-dom';
 import { useSEO } from '../hooks/useSEO';
+import { useAppLocation } from '../context/LocationContext';
+import { isProductAvailableInLocation } from '../data/locations';
 
 const BANK_OPTIONS = [
   "State Bank of India",
@@ -78,6 +80,7 @@ function CurrentAccountsPage({ onSelectDebitCard }) {
   });
 
   const navigate = useNavigate();
+  const { selectedLocation } = useAppLocation();
   const [accounts, setAccounts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedAccountForModal, setSelectedAccountForModal] = useState(null);
@@ -130,6 +133,9 @@ function CurrentAccountsPage({ onSelectDebitCard }) {
   // Filter & Search computation
   const filteredAccounts = useMemo(() => {
     let result = [...accounts];
+
+    // Location availability filter
+    result = result.filter(acc => isProductAvailableInLocation(acc, selectedLocation));
 
     // 1. Text Search
     if (searchQuery.trim()) {
@@ -207,7 +213,7 @@ function CurrentAccountsPage({ onSelectDebitCard }) {
     }
 
     return result;
-  }, [accounts, searchQuery, selectedBanks, selectedTypes, selectedBusinessTypes, selectedBalanceRange, requireDebitCard, sortBy]);
+  }, [accounts, searchQuery, selectedBanks, selectedTypes, selectedBusinessTypes, selectedBalanceRange, requireDebitCard, sortBy, selectedLocation]);
 
   const activeFilterCount = (selectedBanks.length ? 1 : 0) +
                             (selectedTypes.length ? 1 : 0) +

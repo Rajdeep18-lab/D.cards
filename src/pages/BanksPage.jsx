@@ -336,17 +336,27 @@ function BanksPage({
             </div>
           </div>
 
-          {profile.officialWebsite && (
-            <a
-              href={profile.officialWebsite}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-6 py-3 rounded-2xl bg-white text-[#0B3D91] hover:bg-slate-100 font-extrabold text-xs transition-all shadow-lg flex items-center gap-2 shrink-0 cursor-pointer active:scale-95"
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <Link
+              to={`/find-my-bank?bank=${encodeURIComponent(activeBankObj?.id || '')}`}
+              className="px-5 py-3 rounded-2xl bg-white/20 hover:bg-white/30 backdrop-blur-md text-white font-extrabold text-xs transition-all shadow-md flex items-center gap-2 shrink-0 cursor-pointer active:scale-95 border border-white/30"
             >
-              <span>Visit Official Website</span>
-              <ExternalLink className="w-4 h-4 text-[#2563EB]" />
-            </a>
-          )}
+              <MapPin className="w-4 h-4 text-white" />
+              <span>Find Branches Near You</span>
+            </Link>
+
+            {profile.officialWebsite && (
+              <a
+                href={profile.officialWebsite}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-6 py-3 rounded-2xl bg-white text-[#0B3D91] hover:bg-slate-100 font-extrabold text-xs transition-all shadow-lg flex items-center gap-2 shrink-0 cursor-pointer active:scale-95"
+              >
+                <span>Visit Official Website</span>
+                <ExternalLink className="w-4 h-4 text-[#2563EB]" />
+              </a>
+            )}
+          </div>
         </div>
 
         {/* ── 6. BANK PRODUCT SUMMARY (Dynamic Numbers) ── */}

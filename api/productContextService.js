@@ -92,10 +92,10 @@ export function getRelevantProductsForAI(query = '', conversationState = {}) {
     // Bank match
     if (targetBanks.length > 0) {
       if (targetBanks.some(b => bankLower.includes(b.toLowerCase()) || b.toLowerCase().includes(bankLower))) {
-        score += 15;
+        score += 25;
       } else {
-        // Penalty if explicit banks were asked and this account does not match
-        score -= 20;
+        // Strict penalty if explicit banks were asked and this account does not match
+        score -= 100;
       }
     }
 
@@ -161,9 +161,9 @@ export function getRelevantProductsForAI(query = '', conversationState = {}) {
 
       if (targetBanks.length > 0) {
         if (targetBanks.some(b => bankLower.includes(b.toLowerCase()) || b.toLowerCase().includes(bankLower))) {
-          score += 15;
+          score += 25;
         } else {
-          score -= 20;
+          score -= 100;
         }
       }
 
@@ -195,9 +195,9 @@ export function getRelevantProductsForAI(query = '', conversationState = {}) {
 
     if (targetBanks.length > 0) {
       if (targetBanks.some(b => bankLower.includes(b.toLowerCase()) || b.toLowerCase().includes(bankLower))) {
-        score += 15;
+        score += 25;
       } else {
-        score -= 15;
+        score -= 100;
       }
     }
 

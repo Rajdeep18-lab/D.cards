@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import AIChatAssistant from '../components/AIChatAssistant';
 import BankLogo from '../components/BankLogo';
+import MapTilerMap from '../components/MapTilerMap';
 import { useSEO } from '../hooks/useSEO';
 import { useNavigate as useNav } from 'react-router-dom';
 import { useWishlist } from '../context/WishlistContext';
@@ -17,18 +18,18 @@ import { useWishlist } from '../context/WishlistContext';
 
 const SUGGESTED_PROMPTS = [
   { category: 'Zero Balance',    query: 'Which savings account has zero minimum balance?'                        },
+  { category: 'Branch Locator',  query: 'Kharar mein SBI ka nearest ATM batao'                                  },
   { category: 'SBI vs HDFC',     query: 'Compare SBI and HDFC savings accounts'                                  },
-  { category: 'Student Account', query: 'Which savings account is suitable for a student?'                       },
-  { category: 'Debit Card Link', query: 'What debit card comes with SBI Savings Plus Account and what features?' },
+  { category: 'ATM Locator',     query: 'Chandigarh mein HDFC branch'                                            },
   { category: 'Lounge Access',   query: 'Which debit cards offer complimentary airport lounge access?'           },
-  { category: 'Video KYC',       query: 'Which savings accounts can be opened online via Video KYC?'             },
+  { category: 'Debit Card Link', query: 'What debit card comes with SBI Savings Plus Account and what features?' },
 ];
 
 const QUICK_NAV = [
   { label: 'Savings Accounts',  href: '/savings-accounts',  icon: <Building2  className="w-4 h-4" /> },
   { label: 'Current Accounts',  href: '/current-accounts',  icon: <Landmark   className="w-4 h-4" /> },
   { label: 'Debit Cards',       href: '/debit-cards',       icon: <CreditCard className="w-4 h-4" /> },
-  { label: 'Compare Products',  href: '/compare',           icon: <Scale      className="w-4 h-4" /> },
+  { label: 'Find Banks & ATMs', href: '/find-banks',        icon: <Zap        className="w-4 h-4" /> },
 ];
 
 /* ─── ProductInsightsPanel ───────────────────────────────────────────────────── */
@@ -128,10 +129,11 @@ function InsightCard({ item, type, navigate, toggleWishlist, isWishlisted }) {
   );
 }
 
-/** Right-side product insights panel */
+/** Right-side product & location insights panel */
 function ProductInsightsPanel({ insights, navigate, toggleWishlist, isWishlisted }) {
-  const { accounts = [], cards = [] } = insights || {};
-  const total = accounts.length + cards.length;
+  const { accounts = [], cards = [], locations = [] } = insights || {};
+  const [focusedLocation, setFocusedLocation] = useState(null);
+  const total = accounts.length + cards.length + locations.length;
 
   /* Empty state */
   if (total === 0) {
@@ -142,17 +144,17 @@ function ProductInsightsPanel({ insights, navigate, toggleWishlist, isWishlisted
             <Sparkles className="w-6 h-6" />
           </div>
           <div className="space-y-1.5">
-            <h3 className="text-sm font-bold text-gray-900">Live Product Matches</h3>
+            <h3 className="text-sm font-bold text-gray-900">Live Matches</h3>
             <p className="text-xs text-gray-500 leading-relaxed">
-              Matching savings accounts, current accounts, and debit cards will appear here as you chat.
+              Matching accounts, debit cards, bank branches, and ATMs will appear here as you chat.
             </p>
           </div>
 
           <div className="w-full space-y-1.5 pt-2">
             {[
               { icon: <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />, text: 'Verified bank fee structures' },
-              { icon: <ShieldCheck  className="w-3.5 h-3.5 text-blue-500 shrink-0"    />, text: 'Independent & unsponsored' },
-              { icon: <Scale        className="w-3.5 h-3.5 text-purple-500 shrink-0"  />, text: 'Instant comparison readiness' },
+              { icon: <ShieldCheck  className="w-3.5 h-3.5 text-blue-500 shrink-0"    />, text: 'Verified branches & ATMs' },
+              { icon: <Scale        className="w-3.5 h-3.5 text-purple-500 shrink-0"  />, text: 'Direct directions & map links' },
             ].map(({ icon, text }, i) => (
               <div key={i} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-50 border border-gray-100/80 text-left">
                 {icon}
@@ -186,6 +188,91 @@ function ProductInsightsPanel({ insights, navigate, toggleWishlist, isWishlisted
   /* Results state */
   return (
     <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      {/* Bank Branch / ATM locations with interactive MapTilerMap */}
+      {locations.length > 0 && (
+        <div className="space-y-3">
+          <div className="flex items-center justify-between px-0.5">
+            <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">
+              Verified Locations ({locations.length})
+            </p>
+            <Link to="/find-banks" className="text-[10px] font-bold text-[#2563EB] hover:underline flex items-center gap-0.5">
+              Full Map <ChevronRight className="w-3 h-3" />
+            </Link>
+          </div>
+
+          {/* Interactive MapTiler map */}
+          <div className="rounded-2xl overflow-hidden border border-gray-200 shadow-xs">
+            <MapTilerMap
+              branches={locations}
+              focusedBranch={focusedLocation}
+              onSelectBranch={(b) => setFocusedLocation(b)}
+              className="h-44 w-full"
+            />
+          </div>
+
+          {locations.slice(0, 4).map(loc => (
+            <div 
+              key={loc.id} 
+              className={`p-3.5 rounded-2xl bg-white border transition-all space-y-2 text-xs shadow-xs ${
+                focusedLocation?.id === loc.id ? 'border-[#2563EB] ring-2 ring-blue-100' : 'border-gray-200 hover:border-blue-300'
+              }`}
+            >
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <span className="font-bold text-gray-900 block leading-snug truncate">{loc.bank_name}</span>
+                  <p className="text-[11px] font-semibold text-gray-600 truncate">{loc.branch_name}</p>
+                </div>
+                <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wide border shrink-0 ${
+                  loc.branch_type === 'ATM' ? 'bg-amber-50 border-amber-200 text-amber-700' : 'bg-blue-50 border-blue-200 text-blue-700'
+                }`}>
+                  {loc.branch_type === 'ATM' ? '🏧 ATM' : '🏦 Branch'}
+                </span>
+              </div>
+              <p className="text-gray-500 text-[11px] leading-snug line-clamp-2">📍 {loc.address}, {loc.city} - {loc.pincode}</p>
+              
+              {loc.distanceFormatted && (
+                <p className="text-[11px] font-bold text-emerald-600">📏 {loc.distanceFormatted}</p>
+              )}
+
+              <div className="flex items-center justify-between pt-2 border-t border-gray-100 text-[10px] gap-2 flex-wrap">
+                <span className="text-[9px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100">
+                  ✓ Verified {loc.verified_on || 'Official'}
+                </span>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setFocusedLocation(loc)}
+                    className="font-bold text-[#2563EB] bg-blue-50 hover:bg-blue-100 px-2 py-1 rounded-lg transition-colors cursor-pointer"
+                  >
+                    Focus Map
+                  </button>
+                  {loc.directionsUrl && (
+                    <a
+                      href={loc.directionsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded-lg transition-colors"
+                    >
+                      Directions ↗
+                    </a>
+                  )}
+                  {loc.source_url && (
+                    <a
+                      href={loc.source_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-semibold text-gray-500 hover:text-blue-600 px-1.5 py-1 rounded-lg transition-colors"
+                    >
+                      Source 🌐
+                    </a>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Savings / Current Account cards */}
       {accounts.length > 0 && (
         <div className="space-y-2">
@@ -241,8 +328,8 @@ function ProductInsightsPanel({ insights, navigate, toggleWishlist, isWishlisted
 
 function AIAdvisorPage({ onOpenContact, onSelectDebitCard, toggleCompareQueue, setSavingsCompareQueue }) {
   useSEO({
-    title:        'D.CARD AI Advisor – Discover Savings Accounts, Debit Cards & More',
-    description:  'Ask D.CARD AI Advisor about savings accounts, current accounts and debit cards. Compare fees, limits, interest rates and benefits using verified product information.',
+    title:        'D.CARD AI Assistance – Discover Accounts, Cards, Branches & ATMs',
+    description:  'Ask D.CARD AI Assistance about savings accounts, current accounts, debit cards, bank branches, and ATMs using verified Indian banking data.',
     canonicalUrl: 'https://www.dcard.website/ai-advisor',
   });
 
@@ -264,14 +351,18 @@ function AIAdvisorPage({ onOpenContact, onSelectDebitCard, toggleCompareQueue, s
     if (location.state?.query) setActiveExternalQuery(location.state.query);
   }, [location.state]);
 
-  /* Lifted state: matched products from the AI response */
-  const [insights, setInsights] = useState({ accounts: [], cards: [] });
+  /* Lifted state: matched products and locations from the AI response */
+  const [insights, setInsights] = useState({ accounts: [], cards: [], locations: [] });
 
   const handleProductsFound = useCallback((payload) => {
-    setInsights({ accounts: payload.accounts || [], cards: payload.cards || [] });
+    setInsights({
+      accounts: payload.accounts || [],
+      cards: payload.cards || [],
+      locations: payload.locations || [],
+    });
   }, []);
 
-  const totalInsights = (insights.accounts?.length || 0) + (insights.cards?.length || 0);
+  const totalInsights = (insights.accounts?.length || 0) + (insights.cards?.length || 0) + (insights.locations?.length || 0);
 
   return (
     <main className="min-h-screen bg-[#F8FAFC] pb-10" style={{ fontFamily: 'Inter, Poppins, sans-serif' }}>
@@ -287,7 +378,7 @@ function AIAdvisorPage({ onOpenContact, onSelectDebitCard, toggleCompareQueue, s
               <div>
                 <div className="flex items-center gap-2">
                   <h1 className="text-base sm:text-lg font-black text-gray-900 leading-tight">
-                    D.CARD AI Advisor
+                    D.CARD AI Assistance
                   </h1>
                   <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[10px] font-bold">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -295,7 +386,7 @@ function AIAdvisorPage({ onOpenContact, onSelectDebitCard, toggleCompareQueue, s
                   </span>
                 </div>
                 <p className="text-[11px] sm:text-xs text-gray-500 leading-snug">
-                  Ask questions to discover, understand, and compare verified Indian banking products
+                  Ask questions to discover products, branches, ATMs, and compare verified Indian banking data
                 </p>
               </div>
             </div>

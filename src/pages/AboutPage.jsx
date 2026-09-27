@@ -136,10 +136,10 @@ function AboutPage() {
       actionPath: "/compare"
     },
     {
-      title: "AI Financial Advisor",
+      title: "D.CARD AI Assistance",
       desc: "Ask questions grounded in live database records with zero hallucinated rates. Get instant verified answers tailored to your specific spending patterns.",
       icon: Bot,
-      actionText: "Ask AI Advisor",
+      actionText: "Ask AI Assistance",
       actionPath: "/ai-advisor"
     }
   ];

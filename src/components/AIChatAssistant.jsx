@@ -5,6 +5,7 @@ import {
   Bot, User, Send, X, Minus, Maximize2, Trash2,
   ShieldCheck, CreditCard, Plane, CheckCircle2,
   Heart, ChevronRight, Scale, Building2, RefreshCw,
+  MapPin, Navigation, Compass, Mic, MicOff, ExternalLink, Map
 } from 'lucide-react';
 import { aiChatService } from '../services/aiChatService';
 import { useAuth } from '../hooks/useAuth';
@@ -15,22 +16,22 @@ import BankLogo from './BankLogo';
 
 const QUICK_ACTIONS = [
   { label: 'Zero Balance Savings',  query: 'Which savings account has zero minimum balance?'         },
+  { label: 'ATM Near Kharar',       query: 'Kharar mein SBI ka nearest ATM batao'                    },
   { label: 'Student Account',       query: 'Which savings account is suitable for a student?'         },
+  { label: 'HDFC in Chandigarh',    query: 'Chandigarh mein HDFC branch'                             },
   { label: 'SBI vs HDFC',           query: 'Compare SBI and HDFC savings accounts'                    },
-  { label: 'Account Debit Card',    query: 'What debit card comes with SBI Savings Plus Account?'     },
+  { label: 'ICICI within 5 km',     query: 'ICICI branches within 5 km'                              },
   { label: 'Lounge Access',         query: 'Which debit cards offer airport lounge access?'            },
-  { label: 'Online KYC Accounts',   query: 'Which savings accounts can be opened online via Video KYC?'},
-  { label: 'Zero Annual Fee Cards', query: 'Show me zero annual fee debit cards'                      },
-  { label: 'IDFC FIRST Tiers',      query: 'What are the IDFC FIRST Bank savings account tiers?'      },
+  { label: 'Banks Near Me',         query: 'banks near me'                                           },
 ];
 
 const STARTER_PROMPTS = [
   { label: 'Zero Balance Savings',  query: 'Which savings account has zero minimum balance?'          },
-  { label: 'Student Account',       query: 'Which savings account is suitable for a student?'         },
+  { label: 'Nearest ATM Kharar',    query: 'Kharar mein SBI ka nearest ATM batao'                    },
   { label: 'SBI vs HDFC',           query: 'Compare SBI and HDFC savings accounts'                    },
-  { label: 'Account Debit Card',    query: 'What debit card comes with SBI Savings Plus Account?'     },
-  { label: 'Lounge Access',         query: 'Which debit cards offer airport lounge access?'            },
-  { label: 'Video KYC Accounts',    query: 'Which savings accounts can be opened online?'             },
+  { label: 'HDFC Chandigarh',       query: 'Chandigarh mein HDFC branch'                             },
+  { label: 'Lounge Access Cards',   query: 'Which debit cards offer airport lounge access?'            },
+  { label: 'ICICI within 5 km',     query: 'ICICI branches within 5 km'                              },
 ];
 
 /* ─── Sub-components ────────────────────────────────────────────────────────── */
@@ -97,7 +98,84 @@ function ProductMiniCard({ item, type, onView, onCompare, onSave, wishlisted }) 
   );
 }
 
-/** Animated "Analyzing D.CARD product data..." indicator */
+/**
+ * Verified Branch & ATM Location Card shown in AI response bubbles
+ */
+function LocationMiniCard({ location, onNavigate }) {
+  const isAtm = location.branch_type === 'ATM';
+
+  return (
+    <div className="p-3.5 rounded-2xl bg-white border border-gray-200/90 hover:border-blue-400 hover:shadow-xs transition-all space-y-2.5 text-left">
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex items-center gap-2 min-w-0">
+          <BankLogo bankName={location.bank_name} size="sm" className="shrink-0" />
+          <div className="min-w-0">
+            <p className="text-[10px] font-black text-gray-400 uppercase tracking-wider truncate">{location.bank_name}</p>
+            <p className="text-xs font-bold text-gray-900 leading-snug truncate">{location.branch_name}</p>
+          </div>
+        </div>
+        <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0 ${
+          isAtm ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-blue-50 text-blue-700 border border-blue-200'
+        }`}>
+          {isAtm ? '🏧 ATM' : '🏦 Branch'}
+        </span>
+      </div>
+
+      <div className="text-[11px] text-gray-600 leading-relaxed space-y-1">
+        <p className="line-clamp-2 text-gray-700">📍 {location.address}, {location.city} - {location.pincode}</p>
+        {location.distanceFormatted && (
+          <p className="text-[11px] font-bold text-emerald-600">📏 {location.distanceFormatted}</p>
+        )}
+        {location.phone && location.phone !== 'Not available' && (
+          <p className="text-[10px] text-gray-500">📞 {location.phone}</p>
+        )}
+        {location.ifsc && (
+          <p className="text-[10px] text-gray-500">🏛️ IFSC: <span className="font-mono font-semibold text-gray-800">{location.ifsc}</span></p>
+        )}
+        {location.opening_hours && location.opening_hours !== 'Not available' && (
+          <p className="text-[10px] text-gray-500">🕒 {location.opening_hours}</p>
+        )}
+      </div>
+
+      <div className="pt-2 border-t border-gray-100 flex items-center justify-between gap-2 flex-wrap">
+        <span className="text-[9px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100">
+          ✓ Verified {location.verified_on || 'Official'}
+        </span>
+        <div className="flex items-center gap-1.5">
+          <button
+            type="button"
+            onClick={() => onNavigate(`/find-banks?search=${encodeURIComponent(location.city || location.bank_name)}`)}
+            className="px-2 py-1 text-[10px] font-bold text-[#2563EB] bg-blue-50 hover:bg-blue-100 rounded-lg transition-all cursor-pointer"
+          >
+            View on Map
+          </button>
+          {location.directionsUrl && (
+            <a
+              href={location.directionsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-2 py-1 text-[10px] font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all"
+            >
+              Directions ↗
+            </a>
+          )}
+          {location.source_url && (
+            <a
+              href={location.source_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-2 py-1 text-[10px] font-bold text-gray-500 hover:text-blue-600 rounded-lg transition-all"
+            >
+              Source 🌐
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** Animated "Analyzing D.CARD product & location data..." indicator */
 function TypingIndicator() {
   return (
     <motion.div
@@ -119,7 +197,7 @@ function TypingIndicator() {
           ))}
         </div>
         <span className="text-xs font-medium text-gray-500">
-          Analyzing D.CARD product data...
+          Analyzing D.CARD product & location data...
         </span>
       </div>
     </motion.div>
@@ -203,9 +281,74 @@ function AIChatAssistant({
   const [isSearching,        setIsSearching]         = useState(false);
   const [conversationState,  setConversationState]   = useState({});
   const [lastQuery,          setLastQuery]           = useState('');
+  const [userCoords,         setUserCoords]          = useState(null);
+  const [isListening,        setIsListening]         = useState(false);
 
   const chatContainerRef  = useRef(null);
   const inputRef          = useRef(null);
+  const recognitionRef    = useRef(null);
+
+  /**
+   * Toggles browser speech recognition for natural voice queries (English, Hindi, Hinglish)
+   */
+  const toggleVoiceInput = useCallback(() => {
+    if (isListening) {
+      if (recognitionRef.current) recognitionRef.current.stop();
+      setIsListening(false);
+      return;
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("Voice input isn't supported in this browser. You can type your query instead.");
+      return;
+    }
+
+    try {
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'en-IN';
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.onstart = () => setIsListening(true);
+      recognition.onresult = (event) => {
+        const transcript = event.results?.[0]?.[0]?.transcript;
+        if (transcript) {
+          setInputValue(transcript);
+        }
+        setIsListening(false);
+      };
+      recognition.onerror = () => setIsListening(false);
+      recognition.onend = () => setIsListening(false);
+
+      recognitionRef.current = recognition;
+      recognition.start();
+    } catch {
+      setIsListening(false);
+    }
+  }, [isListening]);
+
+  /**
+   * Requests browser geolocation only upon explicit user trigger
+   */
+  const handleUseMyLocation = useCallback(() => {
+    if (typeof window === 'undefined' || !navigator.geolocation) {
+      alert("Geolocation is not supported by your browser. Please search by city name or 6-digit PIN code.");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const coords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        setUserCoords(coords);
+        handleSendMessage("banks near me", coords);
+      },
+      (err) => {
+        alert("Location access was denied or timed out. Please enter a city or PIN code instead.");
+      },
+      { timeout: 10000 }
+    );
+  }, []);
 
   /**
    * Scroll ONLY the chat container to the bottom.
@@ -266,7 +409,8 @@ function AIChatAssistant({
   }, [messages, scrollToBottom]);
 
   /* ── Core send handler ── */
-  const handleSendMessage = useCallback(async (textToSend) => {
+  /* ── Core send handler ── */
+  const handleSendMessage = useCallback(async (textToSend, overrideCoords = null) => {
     const query = (textToSend || inputValue).trim();
     if (!query || isSearching) return;
 
@@ -285,7 +429,8 @@ function AIChatAssistant({
     setIsSearching(true);
 
     try {
-      const context  = { conversationState, conversationHistory: newMessages };
+      const activeCoords = overrideCoords || userCoords;
+      const context  = { conversationState, conversationHistory: newMessages, userCoords: activeCoords };
       const response = await aiChatService.sendMessage(query, user, context);
 
       if (response.conversationState) setConversationState(response.conversationState);
@@ -295,14 +440,19 @@ function AIChatAssistant({
         ...(response.matchedCurrentAccounts || []),
       ];
       const matchedCards = response.matchedCards || [];
+      const matchedLocations = response.matchedLocations || [];
+      const suggestedActions = response.suggestedActions || [];
 
       const botMsg = {
         id:              `${Date.now()}-bot`,
         sender:          'bot',
         text:            response.text,
         type:            response.type,
+        intent:          response.intent,
         matchedAccounts,
         matchedCards,
+        matchedLocations,
+        suggestedActions,
         disclaimer:      response.disclaimer,
         timestamp:       response.timestamp || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       };
@@ -311,8 +461,8 @@ function AIChatAssistant({
       setMessages(updatedHistory);
 
       // Lift matched products to parent (for right-side insights panel)
-      if (onProductsFound && (matchedAccounts.length > 0 || matchedCards.length > 0)) {
-        onProductsFound({ accounts: matchedAccounts, cards: matchedCards, query });
+      if (onProductsFound && (matchedAccounts.length > 0 || matchedCards.length > 0 || matchedLocations.length > 0)) {
+        onProductsFound({ accounts: matchedAccounts, cards: matchedCards, locations: matchedLocations, query });
       }
 
       if (user?.uid) aiChatService.saveUserChatHistory(user.uid, updatedHistory);
@@ -331,7 +481,7 @@ function AIChatAssistant({
       setIsSearching(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inputValue, isSearching, messages, conversationState, user, onProductsFound]);
+  }, [inputValue, isSearching, messages, conversationState, userCoords, user, onProductsFound]);
 
   const handleClearChat = useCallback(async () => {
     setMessages([]);
@@ -473,6 +623,79 @@ function AIChatAssistant({
                 </div>
               )}
 
+              {/* Matched Bank Branches / ATMs */}
+              {!isUser && (msg.matchedLocations?.length ?? 0) > 0 && (
+                <div className="w-full space-y-1.5">
+                  <div className="flex items-center justify-between px-0.5">
+                    <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">
+                      Verified Locations ({msg.matchedLocations.length})
+                    </p>
+                    <button
+                      onClick={() => navigate('/find-banks')}
+                      className="text-[10px] font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                    >
+                      Open Find Banks <Map className="w-3 h-3" />
+                    </button>
+                  </div>
+                  {msg.matchedLocations.slice(0, 3).map((loc) => (
+                    <LocationMiniCard
+                      key={loc.id}
+                      location={loc}
+                      onSelect={(l) => {
+                        navigate(`/find-banks?bank=${encodeURIComponent(l.bank_name || '')}&city=${encodeURIComponent(l.city || '')}&highlight=${l.id}`);
+                      }}
+                    />
+                  ))}
+                  {msg.matchedLocations.length > 3 && (
+                    <button
+                      onClick={() => navigate('/find-banks')}
+                      className="text-[10px] text-blue-600 font-semibold px-0.5 hover:underline block text-left"
+                    >
+                      +{msg.matchedLocations.length - 3} more verified locations found. View all on Find Banks →
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {/* Suggested Contextual Actions */}
+              {!isUser && (msg.suggestedActions?.length ?? 0) > 0 && (
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {msg.suggestedActions.map((action, actIdx) => {
+                    if (action.action === 'USE_MY_LOCATION') {
+                      return (
+                        <button
+                          key={actIdx}
+                          onClick={handleUseMyLocation}
+                          className="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-blue-50 text-[#2563EB] border border-blue-200 hover:bg-blue-100 flex items-center gap-1.5 transition-colors active:scale-95 shadow-xs"
+                        >
+                          <Compass className="w-3.5 h-3.5 text-[#2563EB]" />
+                          {action.label}
+                        </button>
+                      );
+                    }
+                    if (action.action === 'OPEN_FIND_BANKS') {
+                      return (
+                        <button
+                          key={actIdx}
+                          onClick={() => {
+                            const params = new URLSearchParams();
+                            if (action.params?.city) params.set('city', action.params.city);
+                            if (action.params?.bank) params.set('bank', action.params.bank);
+                            if (action.params?.type && action.params.type !== 'ALL') params.set('type', action.params.type);
+                            navigate(`/find-banks?${params.toString()}`);
+                          }}
+                          className="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200 flex items-center gap-1.5 transition-colors active:scale-95 shadow-xs"
+                        >
+                          <MapPin className="w-3.5 h-3.5 text-[#2563EB]" />
+                          {action.label}
+                        </button>
+                      );
+                    }
+                    return null;
+                  })}
+                </div>
+              )}
+
               {/* Source / disclaimer */}
               {!isUser && msg.disclaimer && (
                 <p className="text-[10px] text-gray-400 italic leading-snug px-0.5 max-w-sm">
@@ -513,7 +736,7 @@ function AIChatAssistant({
   const renderInput = () => (
     <form
       onSubmit={e => { e.preventDefault(); handleSendMessage(); }}
-      className="px-4 py-3 border-t border-gray-200/80 bg-white flex items-center gap-2.5 shrink-0"
+      className="px-4 py-3 border-t border-gray-200/80 bg-white flex items-center gap-2 shrink-0"
     >
       <input
         ref={inputRef}
@@ -523,11 +746,24 @@ function AIChatAssistant({
         onKeyDown={e => {
           if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(); }
         }}
-        placeholder="Ask about savings accounts, debit cards or current accounts..."
+        placeholder="Ask about accounts, cards, Kharar SBI ATM, Chandigarh branch..."
         disabled={isSearching}
         className="flex-1 rounded-full bg-[#F8FAFC] border border-gray-200 px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 outline-none focus:border-[#2563EB] focus:bg-white transition-all disabled:opacity-60"
         aria-label="Type your banking question"
       />
+      <button
+        type="button"
+        onClick={toggleVoiceInput}
+        title={isListening ? 'Listening (English / Hindi / Hinglish)... Click to stop' : 'Voice input (English / Hindi / Hinglish)'}
+        className={`w-9 h-9 rounded-full border flex items-center justify-center transition-all shrink-0 active:scale-95 ${
+          isListening
+            ? 'bg-red-500 border-red-600 text-white animate-pulse'
+            : 'border-gray-200 bg-[#F8FAFC] hover:bg-blue-50 hover:border-blue-200 text-gray-500 hover:text-blue-600'
+        }`}
+        aria-label="Voice input"
+      >
+        {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+      </button>
       {messages.length > 0 && (
         <button
           type="button"
@@ -584,11 +820,11 @@ function AIChatAssistant({
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setIsOpen(true)}
-          aria-label="Open D.CARD AI Advisor"
+          aria-label="Open D.CARD AI Assistance"
           className="flex items-center gap-2.5 px-4 py-3 rounded-full bg-[#2563EB] hover:bg-blue-700 text-white font-bold text-xs shadow-lg shadow-blue-500/25 border border-blue-500/30 cursor-pointer transition-all"
         >
           <Bot className="w-4 h-4" />
-          <span>D.CARD AI Advisor</span>
+          <span>D.CARD AI Assistance</span>
           <span className="w-2 h-2 rounded-full bg-emerald-400 border border-white shadow-sm" title="Online" />
         </motion.button>
       )}
@@ -615,10 +851,10 @@ function AIChatAssistant({
                   <Bot className="w-4 h-4 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-[13px] font-black text-white leading-none">D.CARD AI Advisor</h3>
+                  <h3 className="text-[13px] font-black text-white leading-none">D.CARD AI Assistance</h3>
                   <p className="text-[10px] text-blue-200 font-semibold mt-0.5 flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    Banking Product Discovery
+                    Banking & Location Discovery
                   </p>
                 </div>
               </div>
@@ -635,7 +871,7 @@ function AIChatAssistant({
                   onClick={() => setIsOpen(false)}
                   title="Close"
                   className="w-7 h-7 rounded-full bg-blue-500/60 hover:bg-blue-400/80 flex items-center justify-center text-white transition-colors"
-                  aria-label="Close AI Advisor"
+                  aria-label="Close AI Assistance"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>

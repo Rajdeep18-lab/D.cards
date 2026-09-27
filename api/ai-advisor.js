@@ -1,10 +1,18 @@
 import { GoogleGenAI } from '@google/genai';
 import { getRelevantProductsForAI, buildPromptContext } from './productContextService.js';
+import { 
+  classifyUserIntent, 
+  extractProductRequirements, 
+  extractLocationParameters, 
+  find_bank_locations, 
+  isLocationQueryAmbiguous,
+  buildLocationPromptContext 
+} from './aiLocationService.js';
 
 // In-memory rate limiting map: ip -> timestamps[]
 const rateLimitMap = new Map();
 const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
-const MAX_REQUESTS_PER_WINDOW = 35;
+const MAX_REQUESTS_PER_WINDOW = 45;
 
 /**
  * Basic rate limiting guard
@@ -23,96 +31,77 @@ function isRateLimited(clientIp) {
   return false;
 }
 
-const SYSTEM_INSTRUCTION = `You are D.CARD AI Advisor.
+const SYSTEM_INSTRUCTION = `You are D.CARD AI Assistance.
 
-D.CARD is an independent banking product discovery and comparison platform.
+D.CARD is an independent banking product discovery and comparison platform in India.
 
-Your job is to help users understand and compare Savings Accounts, Current Accounts, Debit Cards, and related banking product information available in D.CARD's verified product database.
+Your job is to help users:
+1. Discover, understand, and compare verified Indian banking products (Savings Accounts, Current Accounts, Debit Cards).
+2. Locate verified Bank Branches and ATMs across India using D.CARD's verified location database.
 
-Use the provided D.CARD product data as the primary source of truth.
+LANGUAGE SUPPORT:
+- Support English, Hindi, and Hinglish naturally.
+- Respond in the user's preferred conversational style (e.g., if asked in Hinglish like "bhai zero balance account batao", respond warmly and concisely in Hinglish/English).
 
-Never invent:
-- interest rates
-- minimum balance
-- average balance
-- account charges
-- debit card fees
-- ATM limits
-- POS limits
-- online transaction limits
-- lounge access
-- insurance benefits
-- rewards
-- eligibility
-- account benefits
-- card benefits
-- bank policies
+CRITICAL FORMATTING RULES:
+- NEVER output raw Markdown table syntax (do NOT use | col | col |).
+- NEVER output raw heading markers like ### or ##.
+- NEVER output horizontal rules like ---.
+- NEVER output raw JSON in your visible text response.
+- Keep responses short, direct, friendly, and concise. Do not write essays.
 
-If a requested piece of information is not present in the D.CARD data, clearly say that the information is not available in the current D.CARD dataset.
+CRITICAL ZERO HALLUCINATION RULES:
+- Use the provided D.CARD verified product and location data as the ONLY source of truth.
+- NEVER invent:
+  * bank branches, ATMs, addresses, IFSC codes, phone numbers, or opening hours.
+  * interest rates, minimum balance, average balance, account charges, debit card fees, ATM limits, POS limits, or lounge access.
+- If a requested bank branch or ATM is not in the provided location context, clearly state:
+  "I couldn't find a verified location matching your request in D.CARD's current database."
+- When comparing products, use factual differences from the available data.
+- Never claim one product is universally best.
 
-Do not guess.
+ACCOUNT <-> DEBIT CARD RELATIONSHIP RULE:
+- When describing a debit card linked with a savings or current account, ONLY reference the debit card actually linked/issued with that account in the verified context. Do NOT randomly attach another card.
 
-If product data appears incomplete, say so.
+PRIVACY & SENSITIVE DATA:
+- Never ask users for Aadhaar, PAN, card numbers, CVV, OTP, PIN, net banking credentials, or passwords.
+- If provided, do not process and politely advise them never to share sensitive details.
 
-When comparing products, use factual differences from the available data.
+LOCATION CONSENT:
+- If a user asks for "nearest" or "near me" without specifying a city and without live location provided, politely ask for their city, area, or 6-digit PIN code.`;
 
-Do not claim that one product is universally best.
+/**
+ * Strips raw markdown table syntax, raw heading hashes, and JSON blocks
+ */
+function cleanVisibleAiText(text = '') {
+  let cleaned = String(text || '').trim();
 
-The appropriate product depends on the user's stated requirements.
+  // Remove code blocks with JSON
+  cleaned = cleaned.replace(/```(?:json)?\s*[\s\S]*?```/gi, '');
 
-You may help the user understand which products match specific criteria.
-For example:
-- zero balance
-- low minimum balance
-- student-friendly eligibility
-- lower fees
-- lounge access
-- higher ATM limit
-- debit card benefits
-- digital banking features
+  // Strip markdown headers like ### or ##
+  cleaned = cleaned.replace(/^#{1,6}\s+/gm, '');
 
-Always explain the factual reason for the match based strictly on D.CARD product data.
+  // Strip markdown horizontal rules like --- or ***
+  cleaned = cleaned.replace(/^[-*_]{3,}\s*$/gm, '');
 
-CRITICAL ACCOUNT <-> DEBIT CARD RELATIONSHIP RULE:
-When showing or describing a debit card for a savings or current account, ONLY reference the debit card actually linked/issued with that account variant in the verified D.CARD context. Do NOT randomly attach a bank's other debit cards.
+  // Convert markdown table rows into clean bullet points
+  cleaned = cleaned.replace(/^\|?\s*([^|\n]+?)\s*\|\s*([^|\n]+?)\s*\|?$/gm, (match, p1, p2) => {
+    if (p1.includes('---') || p2.includes('---')) return '';
+    return `• ${p1.trim()}: ${p2.trim()}`;
+  });
 
-D.CARD is NOT a bank.
-Do not claim to open accounts.
-Do not claim to approve accounts.
-Do not claim to issue debit cards.
-Do not claim to process KYC.
+  // Strip remaining standalone pipes
+  cleaned = cleaned.replace(/^\||\|$/gm, '').replace(/\|/g, '·');
 
-Do not ask users for:
-- Aadhaar number
-- PAN number
-- bank account number
-- debit card number
-- CVV
-- PIN
-- OTP
-- passwords
-- UPI PIN
-- net banking credentials
-- card credentials
-- sensitive financial information
+  // Strip repetitive prefixes
+  cleaned = cleaned.replace(/^(?:D\.CARD\s+)?(?:AI\s+)?(?:EXPLANATION|ADVISOR|ASSISTANCE):\s*/i, '');
 
-Never request these details.
-If a user provides sensitive information, do not store or process it and politely tell them not to share it.
+  // Normalize excessive newlines
+  cleaned = cleaned.replace(/\n{3,}/g, '\n\n');
 
-Do not guarantee financial outcomes.
-Do not provide investment advice.
-Do not impersonate banks.
-
-For actual account opening or application, direct the user to the official bank website.
-Always distinguish D.CARD product information from the bank's official terms.
-
-When appropriate, remind the user:
-"Please verify the latest terms, charges and eligibility on the bank's official website before applying."
-
-Keep responses concise, useful and easy to understand.
-Use clean markdown tables or bullet points when comparing multiple products.
-
-If the user asks a question unrelated to banking products, answer briefly and politely, but guide them back to banking product comparison on D.CARD.`;
+  return cleaned.trim();
+}
 
 /**
  * Main serverless handler (compatible with Vercel & Node server runtimes)
@@ -153,10 +142,7 @@ export default async function handler(req, res) {
       res.setHeader('Access-Control-Allow-Origin', 'https://www.dcard.website');
     }
     res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
-    res.setHeader(
-      'Access-Control-Allow-Headers',
-      'Content-Type, X-Requested-With, Accept'
-    );
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Requested-With, Accept');
   }
 
   if (req.method === 'OPTIONS') {
@@ -178,7 +164,7 @@ export default async function handler(req, res) {
 
   try {
     const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {});
-    const { message, conversationHistory = [], conversationState = {} } = body;
+    const { message, conversationHistory = [], conversationState = {}, userCoords = null } = body;
 
     // 1. Input Validation
     if (!message || typeof message !== 'string' || !message.trim()) {
@@ -195,23 +181,106 @@ export default async function handler(req, res) {
     // 2. Server API Key Validation
     const apiKey = (process.env.GEMINI_API_KEY || '').trim();
     if (!apiKey || apiKey === 'your-gemini-api-key-here') {
-      console.error('[AI Advisor Error] Server GEMINI_API_KEY is missing or unconfigured.');
+      console.error('[AI Assistance Error] Server GEMINI_API_KEY is missing or unconfigured.');
       const devError = process.env.NODE_ENV !== 'production'
         ? 'Server configuration error: GEMINI_API_KEY is not configured in server environment variables.'
-        : 'AI Advisor is temporarily unavailable. Please try again later.';
+        : 'AI Assistance is temporarily unavailable. Please try again later.';
       res.status(500).json({ error: devError });
       return;
     }
 
-    // 3. Grounded Product Context Retrieval
-    const relevantProducts = getRelevantProductsForAI(cleanMessage, conversationState);
-    const contextPromptString = buildPromptContext(relevantProducts);
+    // 3. Controlled Intent Classification & Requirement Extraction
+    const intentObj = classifyUserIntent(cleanMessage, conversationState);
+    const productRequirements = extractProductRequirements(cleanMessage);
+    const locationParams = extractLocationParameters(cleanMessage, conversationState, userCoords);
 
-    // 4. Initialize Official Google GenAI Client
+    let locationResult = null;
+    let matchedLocations = [];
+    const isLocationQuery = intentObj.primaryIntent === 'find_bank_location' || 
+                            intentObj.primaryIntent.startsWith('BANK_LOCATION') || 
+                            intentObj.isCombined || 
+                            Boolean(intentObj.isLocation);
+
+    // 4. Execute Controlled Location Tool if location intent is present
+    if (isLocationQuery) {
+      // Check for unknown/unsupported bank
+      if (locationParams.isUnknownBank) {
+        res.status(200).json({
+          type: 'no_results',
+          intent: 'find_bank_location',
+          answer: `I couldn't find any verified branches or ATMs for ${locationParams.unknownBankName || 'this bank'} in D.CARD's verified database. Currently, D.CARD tracks verified locations for 21 major Indian banks.`,
+          matchedAccounts: [],
+          matchedCurrentAccounts: [],
+          matchedCards: [],
+          matchedLocations: [],
+          extractedRequirements: productRequirements,
+          detectedBanks: [],
+          suggestedActions: [
+            { label: 'Find Verified Banks', action: 'NAVIGATE', url: '/find-banks' }
+          ],
+          disclaimer: "Please verify the latest terms, charges and eligibility on the bank's official website before applying or visiting."
+        });
+        return;
+      }
+
+      // Check if essential location information is ambiguous
+      if (isLocationQueryAmbiguous(locationParams, userCoords)) {
+        let clarifyMsg = "Sure — which city, PIN code, or location should I search around?";
+        if (locationParams.isNearMe) {
+          clarifyMsg = "To show branches or ATMs near you, please grant location access in your browser, or tell me your city, area, or 6-digit PIN code.";
+        }
+        res.status(200).json({
+          type: 'clarification_required',
+          intent: 'find_bank_location',
+          answer: clarifyMsg,
+          matchedAccounts: [],
+          matchedCurrentAccounts: [],
+          matchedCards: [],
+          matchedLocations: [],
+          extractedRequirements: productRequirements,
+          detectedBanks: locationParams.bank ? [locationParams.bank] : [],
+          suggestedActions: [
+            { label: 'Use My Location', action: 'USE_MY_LOCATION' },
+            { label: 'Find Banks & ATMs', action: 'NAVIGATE', url: '/find-banks' }
+          ],
+          disclaimer: "Please verify the latest terms, charges and eligibility on the bank's official website before applying or visiting."
+        });
+        return;
+      }
+
+      locationResult = await find_bank_locations({
+        bank_name: locationParams.bank_name,
+        location_query: locationParams.location_query,
+        city: locationParams.city,
+        state: locationParams.state,
+        pincode: locationParams.pincode,
+        branch_type: locationParams.branch_type,
+        radius_km: locationParams.radius_km,
+        latitude: userCoords?.lat || null,
+        longitude: userCoords?.lng || null,
+        services: locationParams.services,
+        isUnknownBank: locationParams.isUnknownBank,
+        unknownBankName: locationParams.unknownBankName
+      });
+      matchedLocations = locationResult.locations || [];
+    }
+
+    // 5. Product Context Retrieval
+    const relevantProducts = getRelevantProductsForAI(cleanMessage, {
+      ...conversationState,
+      ...productRequirements
+    });
+
+    const productContextPrompt = buildPromptContext(relevantProducts);
+    const locationContextPrompt = isLocationQuery 
+      ? buildLocationPromptContext(matchedLocations)
+      : '';
+
+    // 6. Initialize Official Google GenAI Client
     const ai = new GoogleGenAI({ apiKey });
     const modelName = (process.env.GEMINI_MODEL || 'gemini-3.8-flash').trim();
 
-    // 5. Build Multi-Turn History (bounded to last 10 messages)
+    // 7. Build Multi-Turn History (bounded to last 10 messages)
     const boundedHistory = Array.isArray(conversationHistory)
       ? conversationHistory.slice(-10)
       : [];
@@ -232,20 +301,24 @@ export default async function handler(req, res) {
       }
     }
 
-    // Current turn with grounded database context
-    const currentPromptWithContext = `CURRENT VERIFIED D.CARD PRODUCT CONTEXT:
-==================================================
-${contextPromptString}
-==================================================
-
-USER QUESTION: "${cleanMessage}"`;
+    // Current turn with grounded database and location context
+    const currentPromptWithContext = [
+      `USER INTENT: ${intentObj.primaryIntent}${intentObj.isCombined ? ' + BANK_LOCATION_SEARCH' : ''}`,
+      productRequirements && Object.keys(productRequirements).length > 0 ? `EXTRACTED REQUIREMENTS: ${JSON.stringify(productRequirements)}` : '',
+      `==================================================`,
+      `CURRENT VERIFIED D.CARD PRODUCT CONTEXT:`,
+      productContextPrompt,
+      `==================================================`,
+      locationContextPrompt ? `${locationContextPrompt}\n==================================================` : '',
+      `USER QUESTION: "${cleanMessage}"`
+    ].filter(Boolean).join('\n\n');
 
     contents.push({
       role: 'user',
       parts: [{ text: currentPromptWithContext }]
     });
 
-    // 6. Invoke Gemini with configurable model and automatic fallback on temporary 503 spikes
+    // 8. Invoke Gemini with automatic model fallback
     const candidateModels = [
       (process.env.GEMINI_MODEL || 'gemini-3.8-flash').trim(),
       'gemini-3.5-flash',
@@ -270,7 +343,7 @@ USER QUESTION: "${cleanMessage}"`;
         if (response?.text) break;
       } catch (err) {
         lastModelError = err;
-        console.warn(`[AI Advisor Notice] Model ${currentModel} returned error (${err.message || err}). Attempting fallback...`);
+        console.warn(`[AI Assistance Notice] Model ${currentModel} returned error (${err.message || err}). Attempting fallback...`);
       }
     }
 
@@ -279,25 +352,54 @@ USER QUESTION: "${cleanMessage}"`;
     }
 
     const aiText = response.text || '';
-
     if (!aiText.trim()) {
       throw new Error('Empty response received from Gemini.');
     }
 
-    // 7. Return Structured Output
+    const cleanAnswer = cleanVisibleAiText(aiText);
+
+    // Determine high-level response type
+    let responseType = 'information_answer';
+    if (intentObj.isCombined) {
+      responseType = 'combined_results';
+    } else if (isLocationQuery) {
+      responseType = matchedLocations.length > 0 ? 'location_results' : 'no_results';
+    } else if ((relevantProducts.savingsAccounts?.length || 0) + (relevantProducts.debitCards?.length || 0) > 0) {
+      responseType = 'product_results';
+    } else if (intentObj.primaryIntent === 'PRODUCT_COMPARISON') {
+      responseType = 'comparison_results';
+    }
+
+    // Contextual suggested actions
+    const suggestedActions = [];
+    if (matchedLocations.length > 0 || isLocationQuery) {
+      const queryParam = locationParams.location ? `?search=${encodeURIComponent(locationParams.location)}` : '';
+      suggestedActions.push({
+        label: 'Open in Find Banks',
+        action: 'NAVIGATE',
+        url: `/find-banks${queryParam}`
+      });
+    }
+
+    // 9. Return Structured Output
     res.status(200).json({
-      answer: aiText.trim(),
+      type: responseType,
+      intent: intentObj.primaryIntent,
+      answer: cleanAnswer,
       matchedAccounts: relevantProducts.savingsAccounts || [],
       matchedCurrentAccounts: relevantProducts.currentAccounts || [],
       matchedCards: relevantProducts.debitCards || [],
+      matchedLocations: matchedLocations,
+      extractedRequirements: productRequirements,
       detectedBanks: relevantProducts.detectedBanks || [],
-      disclaimer: "Please verify the latest terms, charges and eligibility on the bank's official website before applying."
+      suggestedActions,
+      disclaimer: "Please verify the latest terms, charges and eligibility on the bank's official website before applying or visiting."
     });
 
   } catch (err) {
-    console.error('[AI Advisor Error] Exception while generating response:', err.message || err);
+    console.error('[AI Assistance Error] Exception while generating response:', err.message || err);
     res.status(500).json({
-      error: 'AI Advisor is temporarily unavailable. Please try again later.'
+      error: 'AI Assistance is temporarily unavailable. Please try again later.'
     });
   }
 }
