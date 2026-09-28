@@ -64,9 +64,8 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Primary core banking product links (always visible on desktop >= 1024px)
-  const primaryNavLinks = [
-    { name: "Home", path: "/", end: true, isProtected: false },
+  // Primary core banking product links
+  const coreNavLinks = [
     { name: "Debit Cards", path: "/cards", isProtected: true },
     { name: "Savings Accounts", path: "/savings-accounts", isProtected: true },
     { name: "Current Accounts", path: "/current-accounts", isProtected: true },
@@ -75,17 +74,17 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
     { name: "Banks", path: "/banks", isProtected: true },
   ];
 
-  // Secondary links (visible on wide screens >= 1400px; neatly tucked inside "More ▾" on 1024px-1399px)
+  // Secondary links
   const secondaryNavLinks = [
     { name: "Find My Bank", path: "/find-my-bank", isProtected: false, icon: MapPin },
     { name: "About", path: "/about", isProtected: false, icon: Info },
     { name: "Contact", path: "/contact", isProtected: false, icon: Mail },
-    { name: "My Profile", path: "/profile", isProtected: true, icon: User },
   ];
 
   // Full list for mobile drawer
   const allNavLinks = [
-    ...primaryNavLinks,
+    { name: "Home", path: "/", end: true, isProtected: false },
+    ...coreNavLinks,
     { name: "Find My Bank", path: "/find-my-bank", isProtected: false },
     { name: "About", path: "/about", isProtected: false },
     { name: "Contact", path: "/contact", isProtected: false },
@@ -129,70 +128,56 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
             : "border-b border-[#E5E7EB]/60 dark:border-slate-800/60 bg-white/90 dark:bg-[#0F172A]/90 backdrop-blur-md"
         }`}
       >
-        <div className="w-full max-w-[1536px] mx-auto px-3 sm:px-5 lg:px-6 h-full flex items-center justify-between gap-2 sm:gap-4">
+        <div className="w-full max-w-[1720px] mx-auto px-3 sm:px-4 lg:px-6 h-full flex items-center justify-between gap-3 xl:gap-4">
           
-          {/* ── LEFT: D.CARD LOGO + LOCATION SELECTOR ── */}
-          <div className="shrink-0 flex items-center gap-2 sm:gap-3.5">
+          {/* ── LEFT: D.CARD LOGO + TAGLINE (shrink-0) ── */}
+          <div className="shrink-0 flex items-center gap-2.5 sm:gap-3.5">
             <Link
               to="/"
-              className="flex items-center gap-2 group text-left bg-transparent border-0 cursor-pointer focus:outline-none"
+              className="flex items-center gap-2 group text-left bg-transparent border-0 cursor-pointer focus:outline-none shrink-0"
+              aria-label="D.CARD Home"
             >
               <img 
                 src="/logo-mark.png" 
                 alt="D.CARD Logo" 
                 className="h-9 sm:h-10 w-auto object-contain group-hover:scale-105 transition-transform duration-300 shrink-0"
               />
-              <div className="flex flex-col justify-center">
-                <span className="text-base sm:text-xl font-extrabold tracking-tight leading-none text-[#0F172A] dark:text-white font-sans">
+              <div className="flex flex-col justify-center shrink-0">
+                <span className="text-base sm:text-xl font-extrabold tracking-tight leading-none text-[#0F172A] dark:text-white font-sans whitespace-nowrap">
                   D.<span className="text-[#2563EB]">CARD</span>
                 </span>
-                <span className="hidden min-[380px]:block text-[8.5px] sm:text-[9px] font-bold text-[#6B7280] dark:text-slate-400 tracking-wider uppercase mt-0.5 sm:mt-1 leading-tight whitespace-nowrap">
+                <span className="hidden min-[400px]:block text-[8.5px] sm:text-[9px] font-bold text-[#6B7280] dark:text-slate-400 tracking-wider uppercase mt-0.5 sm:mt-1 leading-tight whitespace-nowrap">
                   COMPARE. CHOOSE. BENEFIT.
                 </span>
               </div>
             </Link>
 
-            {/* Desktop Location Selector */}
-            <div className="hidden md:block">
+            {/* Tablet Location Selector (768px - 1199px) */}
+            <div className="hidden md:block min-[1200px]:hidden shrink-0">
               <LocationSelectorButton variant="desktop" />
             </div>
           </div>
 
-          {/* ── CENTER: DESKTOP NAVIGATION (>= 1024px) ── */}
-          <nav className="hidden lg:flex items-center justify-center gap-1 xl:gap-1.5 flex-1 min-w-0 px-2">
-            {/* Primary Core Product Links */}
-            {primaryNavLinks.map((link) => (
-              <NavLink
-                key={link.name}
-                to={link.path}
-                end={link.end}
-                onClick={(e) => handleProtectedClick(e, link.path, link.isProtected)}
-                className={({ isActive }) =>
-                  `px-2 py-1.5 rounded-xl text-[12px] xl:text-[12.5px] 2xl:text-[13px] font-semibold transition-all whitespace-nowrap flex items-center gap-1 shrink-0 ${
-                    isActive
-                      ? 'text-[#2563EB] dark:text-[#60A5FA] font-bold bg-[#EFF6FF] dark:bg-slate-800/80 shadow-xs border border-[#2563EB]/15 dark:border-[#60A5FA]/20'
-                      : 'text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] dark:hover:text-[#60A5FA] hover:bg-gray-100/60 dark:hover:bg-slate-800/40'
-                  }`
-                }
-              >
-                <span>{link.name}</span>
-                {link.name === "Compare" && compareCount > 0 && (
-                  <span className="inline-flex items-center justify-center px-1.5 py-0.2 text-[10px] font-extrabold rounded-full bg-emerald-500 text-white leading-none shadow-xs">
-                    {compareCount}
-                  </span>
-                )}
-              </NavLink>
-            ))}
+          {/* ── MIDDLE: LOCATION SELECTOR + NAVIGATION LINKS (Desktop >= 1200px) ── */}
+          <div className="hidden min-[1200px]:flex items-center justify-center gap-2.5 xl:gap-3.5 2xl:gap-4.5 flex-1 min-w-0">
+            {/* Desktop Location Selector */}
+            <div className="shrink-0">
+              <LocationSelectorButton variant="desktop" />
+            </div>
 
-            {/* Secondary Links: Directly in row on wide screens (>= 1400px) */}
-            <div className="hidden min-[1400px]:flex items-center gap-1 xl:gap-1.5 shrink-0">
-              {secondaryNavLinks.map((link) => (
+            {/* Visual Separator between Location Selector & Navigation */}
+            <div className="h-5 w-px bg-gray-200/90 dark:bg-slate-700/80 shrink-0" aria-hidden="true" />
+
+            {/* Desktop Navigation Links */}
+            <nav className="flex items-center gap-1 xl:gap-1.5 2xl:gap-2 shrink-0">
+              {/* Core Product Links */}
+              {coreNavLinks.map((link) => (
                 <NavLink
                   key={link.name}
                   to={link.path}
                   onClick={(e) => handleProtectedClick(e, link.path, link.isProtected)}
                   className={({ isActive }) =>
-                    `px-2 py-1.5 rounded-xl text-[12px] xl:text-[12.5px] 2xl:text-[13px] font-semibold transition-all whitespace-nowrap flex items-center gap-1 shrink-0 ${
+                    `px-2.5 py-1.5 rounded-xl text-[12px] xl:text-[12.5px] 2xl:text-[13px] font-semibold transition-all whitespace-nowrap flex items-center gap-1 shrink-0 ${
                       isActive
                         ? 'text-[#2563EB] dark:text-[#60A5FA] font-bold bg-[#EFF6FF] dark:bg-slate-800/80 shadow-xs border border-[#2563EB]/15 dark:border-[#60A5FA]/20'
                         : 'text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] dark:hover:text-[#60A5FA] hover:bg-gray-100/60 dark:hover:bg-slate-800/40'
@@ -200,76 +185,159 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
                   }
                 >
                   <span>{link.name}</span>
+                  {link.name === "Compare" && compareCount > 0 && (
+                    <span className="inline-flex items-center justify-center px-1.5 py-0.2 text-[10px] font-extrabold rounded-full bg-emerald-500 text-white leading-none shadow-xs ml-0.5 shrink-0">
+                      {compareCount}
+                    </span>
+                  )}
                 </NavLink>
               ))}
-            </div>
 
-            {/* "More ▾" Dropdown: Visible on 1024px-1399px to prevent horizontal collision */}
-            <div className="relative min-[1400px]:hidden shrink-0" ref={moreDropdownRef}>
-              <button
-                onClick={() => setIsMoreDropdownOpen(!isMoreDropdownOpen)}
-                className={`flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[12px] font-semibold transition-all whitespace-nowrap cursor-pointer ${
-                  isMoreDropdownOpen || location.pathname === '/about' || location.pathname === '/contact' || location.pathname === '/profile'
-                    ? 'text-[#2563EB] dark:text-[#60A5FA] font-bold bg-[#EFF6FF] dark:bg-slate-800/80 border border-[#2563EB]/15'
-                    : 'text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] dark:hover:text-[#60A5FA] hover:bg-gray-100/60 dark:hover:bg-slate-800/40'
-                }`}
-                aria-expanded={isMoreDropdownOpen}
-                aria-label="More navigation options"
+              {/* Find My Bank: Visible directly on >= 1380px */}
+              <NavLink
+                to="/find-my-bank"
+                className={({ isActive }) =>
+                  `hidden min-[1380px]:flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[12px] xl:text-[12.5px] 2xl:text-[13px] font-semibold transition-all whitespace-nowrap shrink-0 ${
+                    isActive
+                      ? 'text-[#2563EB] dark:text-[#60A5FA] font-bold bg-[#EFF6FF] dark:bg-slate-800/80 shadow-xs border border-[#2563EB]/15 dark:border-[#60A5FA]/20'
+                      : 'text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] dark:hover:text-[#60A5FA] hover:bg-gray-100/60 dark:hover:bg-slate-800/40'
+                  }`
+                }
               >
-                <span>More</span>
-                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isMoreDropdownOpen ? 'rotate-180' : ''}`} />
+                <span>Find My Bank</span>
+              </NavLink>
+
+              {/* Extended Links: Visible directly in row on Large Desktop (>= 1536px) */}
+              <NavLink
+                to="/about"
+                className={({ isActive }) =>
+                  `hidden min-[1536px]:flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[12px] xl:text-[12.5px] 2xl:text-[13px] font-semibold transition-all whitespace-nowrap shrink-0 ${
+                    isActive
+                      ? 'text-[#2563EB] dark:text-[#60A5FA] font-bold bg-[#EFF6FF] dark:bg-slate-800/80 shadow-xs border border-[#2563EB]/15 dark:border-[#60A5FA]/20'
+                      : 'text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] dark:hover:text-[#60A5FA] hover:bg-gray-100/60 dark:hover:bg-slate-800/40'
+                  }`
+                }
+              >
+                <span>About</span>
+              </NavLink>
+
+              <NavLink
+                to="/contact"
+                className={({ isActive }) =>
+                  `hidden min-[1536px]:flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[12px] xl:text-[12.5px] 2xl:text-[13px] font-semibold transition-all whitespace-nowrap shrink-0 ${
+                    isActive
+                      ? 'text-[#2563EB] dark:text-[#60A5FA] font-bold bg-[#EFF6FF] dark:bg-slate-800/80 shadow-xs border border-[#2563EB]/15 dark:border-[#60A5FA]/20'
+                      : 'text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] dark:hover:text-[#60A5FA] hover:bg-gray-100/60 dark:hover:bg-slate-800/40'
+                  }`
+                }
+              >
+                <span>Contact</span>
+              </NavLink>
+
+              {/* Legal: Visible directly on Large Desktop (>= 1536px) */}
+              <button
+                type="button"
+                onClick={() => onOpenLegal ? onOpenLegal('terms') : null}
+                className="hidden min-[1536px]:flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[12px] xl:text-[12.5px] 2xl:text-[13px] font-semibold text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] dark:hover:text-[#60A5FA] hover:bg-gray-100/60 dark:hover:bg-slate-800/40 transition-all cursor-pointer whitespace-nowrap shrink-0"
+                title="Legal & Terms"
+              >
+                <span>Legal</span>
               </button>
 
-              {isMoreDropdownOpen && (
-                <div className="absolute left-0 mt-2 w-48 rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-700 shadow-xl py-2 z-[60] text-left">
-                  {secondaryNavLinks.map((link) => {
-                    const IconComponent = link.icon;
-                    return (
-                      <NavLink
-                        key={link.name}
-                        to={link.path}
-                        onClick={(e) => {
-                          setIsMoreDropdownOpen(false);
-                          handleProtectedClick(e, link.path, link.isProtected);
-                        }}
-                        className={({ isActive }) =>
-                          `flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold transition-colors ${
-                            isActive
-                              ? 'text-[#2563EB] dark:text-[#60A5FA] bg-[#EFF6FF] dark:bg-slate-800/60 font-bold'
-                              : 'text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] hover:bg-gray-50 dark:hover:bg-slate-800/40'
-                          }`
-                        }
-                      >
-                        {IconComponent && <IconComponent className="w-3.5 h-3.5 text-[#2563EB] shrink-0" />}
-                        <span>{link.name}</span>
-                      </NavLink>
-                    );
-                  })}
-                  <div className="my-1 border-t border-gray-100 dark:border-slate-800" />
-                  <button
-                    onClick={() => {
-                      setIsMoreDropdownOpen(false);
-                      if (onOpenLegal) onOpenLegal('terms');
-                    }}
-                    className="w-full flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] hover:bg-gray-50 dark:hover:bg-slate-800/40 transition-colors cursor-pointer text-left"
-                  >
-                    <Scale className="w-3.5 h-3.5 text-[#2563EB] shrink-0" />
-                    <span>Legal & Terms</span>
-                  </button>
-                </div>
-              )}
-            </div>
-          </nav>
+              {/* "More ▾" Dropdown: Visible on Medium Desktop (< 1536px) */}
+              <div className="relative min-[1536px]:hidden shrink-0" ref={moreDropdownRef}>
+                <button
+                  type="button"
+                  onClick={() => setIsMoreDropdownOpen(!isMoreDropdownOpen)}
+                  className={`flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[12px] font-semibold transition-all whitespace-nowrap cursor-pointer shrink-0 ${
+                    isMoreDropdownOpen || location.pathname === '/about' || location.pathname === '/contact' || location.pathname === '/find-my-bank'
+                      ? 'text-[#2563EB] dark:text-[#60A5FA] font-bold bg-[#EFF6FF] dark:bg-slate-800/80 border border-[#2563EB]/15'
+                      : 'text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] dark:hover:text-[#60A5FA] hover:bg-gray-100/60 dark:hover:bg-slate-800/40'
+                  }`}
+                  aria-expanded={isMoreDropdownOpen}
+                  aria-label="More navigation options"
+                >
+                  <span>More</span>
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isMoreDropdownOpen ? 'rotate-180' : ''}`} />
+                </button>
 
-          {/* ── RIGHT: USER ACTIONS (Favourites, Legal, Theme, Profile/Login) ── */}
-          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 justify-end">
+                {isMoreDropdownOpen && (
+                  <div className="absolute left-0 mt-2 w-48 rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-700 shadow-xl py-2 z-[60] text-left">
+                    {/* Find My Bank: Show in More dropdown when screen < 1380px */}
+                    <NavLink
+                      to="/find-my-bank"
+                      onClick={() => setIsMoreDropdownOpen(false)}
+                      className={({ isActive }) =>
+                        `min-[1380px]:hidden flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold transition-colors ${
+                          isActive
+                            ? 'text-[#2563EB] dark:text-[#60A5FA] bg-[#EFF6FF] dark:bg-slate-800/60 font-bold'
+                            : 'text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] hover:bg-gray-50 dark:hover:bg-slate-800/40'
+                        }`
+                      }
+                    >
+                      <MapPin className="w-3.5 h-3.5 text-[#2563EB] shrink-0" />
+                      <span>Find My Bank</span>
+                    </NavLink>
+
+                    <NavLink
+                      to="/about"
+                      onClick={() => setIsMoreDropdownOpen(false)}
+                      className={({ isActive }) =>
+                        `flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold transition-colors ${
+                          isActive
+                            ? 'text-[#2563EB] dark:text-[#60A5FA] bg-[#EFF6FF] dark:bg-slate-800/60 font-bold'
+                            : 'text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] hover:bg-gray-50 dark:hover:bg-slate-800/40'
+                        }`
+                      }
+                    >
+                      <Info className="w-3.5 h-3.5 text-[#2563EB] shrink-0" />
+                      <span>About</span>
+                    </NavLink>
+
+                    <NavLink
+                      to="/contact"
+                      onClick={() => setIsMoreDropdownOpen(false)}
+                      className={({ isActive }) =>
+                        `flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold transition-colors ${
+                          isActive
+                            ? 'text-[#2563EB] dark:text-[#60A5FA] bg-[#EFF6FF] dark:bg-slate-800/60 font-bold'
+                            : 'text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] hover:bg-gray-50 dark:hover:bg-slate-800/40'
+                        }`
+                      }
+                    >
+                      <Mail className="w-3.5 h-3.5 text-[#2563EB] shrink-0" />
+                      <span>Contact</span>
+                    </NavLink>
+
+                    <div className="my-1 border-t border-gray-100 dark:border-slate-800" />
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsMoreDropdownOpen(false);
+                        if (onOpenLegal) onOpenLegal('terms');
+                      }}
+                      className="w-full flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] hover:bg-gray-50 dark:hover:bg-slate-800/40 transition-colors cursor-pointer text-left"
+                    >
+                      <Scale className="w-3.5 h-3.5 text-[#2563EB] shrink-0" />
+                      <span>Legal & Terms</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            </nav>
+          </div>
+
+          {/* ── RIGHT: USER ACTIONS (Favourites, Theme, Profile/Login, Mobile Menu) ── */}
+          <div className="flex items-center gap-1.5 sm:gap-2 xl:gap-2.5 shrink-0 justify-end">
             
-            {/* 1. ❤️ Favourite button with counter badge */}
+            {/* 1. Favourite button with counter badge */}
             <Link
               to="/saved-cards"
               onClick={(e) => handleProtectedClick(e, '/saved-cards', true)}
-              className="flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-xl text-xs font-semibold text-[#4B5563] dark:text-slate-300 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-slate-800/60 transition-all group shrink-0"
+              className="flex items-center gap-1 p-2 sm:px-2.5 py-1.5 rounded-xl text-xs font-semibold text-[#4B5563] dark:text-slate-300 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-slate-800/60 transition-all group shrink-0"
               title="Saved Favourites"
+              aria-label="Saved Favourites"
             >
               <Heart className="w-4 h-4 text-rose-500 fill-rose-500/20 group-hover:fill-rose-500 transition-all shrink-0" />
               {wishlist && wishlist.length > 0 && (
@@ -279,18 +347,9 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
               )}
             </Link>
 
-            {/* 2. ⚖️ Legal / Terms Button */}
+            {/* 2. Theme Toggle Button */}
             <button
-              onClick={() => onOpenLegal ? onOpenLegal('terms') : null}
-              className="hidden sm:flex items-center gap-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl text-xs font-semibold text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] dark:hover:text-[#60A5FA] hover:bg-[#EFF6FF] dark:hover:bg-slate-800/60 transition-all cursor-pointer shrink-0"
-              title="Legal & Terms"
-            >
-              <Scale className="w-4 h-4 text-[#2563EB] dark:text-[#60A5FA] shrink-0" />
-              <span>Legal</span>
-            </button>
-
-            {/* 3. 🌙 Theme Toggle Button */}
-            <button
+              type="button"
               onClick={toggleDarkMode}
               className="p-2 rounded-xl text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] hover:bg-[#EFF6FF] dark:hover:bg-slate-800/60 transition-all cursor-pointer shrink-0"
               title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
@@ -299,19 +358,20 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
               {isDarkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-[#2563EB]" />}
             </button>
 
-            {/* 4. User Profile / Login Dropdown Button */}
+            {/* 3. User Profile / Login Dropdown Button */}
             {user ? (
               <div className="relative shrink-0" ref={profileDropdownRef}>
                 <button
+                  type="button"
                   onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                  className="flex items-center gap-1.5 sm:gap-2 p-1 pr-2 rounded-full border border-[#E5E7EB] dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-[#2563EB] dark:hover:border-[#60A5FA] transition-all cursor-pointer shadow-xs"
+                  className="flex items-center gap-1.5 sm:gap-2 p-1 pr-2 sm:pr-2.5 rounded-full border border-[#E5E7EB] dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-[#2563EB] dark:hover:border-[#60A5FA] transition-all cursor-pointer shadow-xs shrink-0"
                   aria-expanded={isProfileDropdownOpen}
                   aria-label="User Account Menu"
                 >
                   <div className="w-7 h-7 rounded-full bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white flex items-center justify-center font-bold text-xs shadow-xs shrink-0">
                     {user.email ? user.email.charAt(0).toUpperCase() : 'U'}
                   </div>
-                  <span className="hidden sm:inline text-xs font-bold text-[#1F2937] dark:text-white max-w-[85px] truncate">
+                  <span className="hidden sm:inline-block text-xs font-bold text-[#1F2937] dark:text-white max-w-[85px] xl:max-w-[100px] truncate whitespace-nowrap overflow-hidden text-ellipsis">
                     {profile?.full_name || user.displayName || 'Account'}
                   </span>
                   <ChevronDown className="w-3.5 h-3.5 text-gray-400 shrink-0" />
@@ -336,6 +396,7 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
                       <span>Profile Dashboard</span>
                     </Link>
                     <button
+                      type="button"
                       onClick={() => {
                         setIsProfileDropdownOpen(false);
                         logout();
@@ -350,24 +411,27 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
               </div>
             ) : (
               <button
+                type="button"
                 onClick={handleAuthButtonClick}
-                className="px-3 sm:px-4 py-2 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:opacity-95 text-white text-xs font-semibold shadow-md flex items-center gap-1.5 cursor-pointer transition-all active:scale-95 shrink-0"
+                className="px-3 sm:px-4 py-2 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:opacity-95 text-white text-xs font-semibold shadow-md flex items-center gap-1.5 cursor-pointer transition-all active:scale-95 shrink-0 whitespace-nowrap"
               >
-                <LogIn className="w-3.5 h-3.5" />
+                <LogIn className="w-3.5 h-3.5 shrink-0" />
                 <span>Login</span>
               </button>
             )}
 
             {/* Mobile Location Selector Icon Button (< 768px) */}
-            <div className="md:hidden flex items-center">
+            <div className="md:hidden flex items-center shrink-0">
               <LocationSelectorButton variant="mobile" />
             </div>
 
-            {/* 5. Hamburger Menu Trigger for Mobile & Tablet (< 1024px) */}
+            {/* 4. Hamburger Menu Trigger for Mobile & Tablet (< 1200px) */}
             <button
+              type="button"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-2 rounded-xl text-[#4B5563] dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800 lg:hidden cursor-pointer shrink-0"
+              className="p-2 rounded-xl text-[#4B5563] dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800 min-[1200px]:hidden cursor-pointer shrink-0"
               aria-label="Toggle Navigation Menu"
+              aria-expanded={isMobileMenuOpen}
             >
               {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -380,16 +444,16 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
       {isMobileMenuOpen && (
         <div
           onClick={() => setIsMobileMenuOpen(false)}
-          className="fixed inset-0 bg-black/60 backdrop-blur-xs lg:hidden z-[54]"
+          className="fixed inset-0 bg-black/60 backdrop-blur-xs min-[1200px]:hidden z-[54]"
           style={{ top: "100%" }}
         />
       )}
 
       {/* ==================================================
-          3. MOBILE & TABLET DRAWER NAVIGATION (< 1024px)
+          3. MOBILE & TABLET DRAWER NAVIGATION (< 1200px)
          ================================================== */}
       {isMobileMenuOpen && (
-        <div className="absolute top-full left-0 right-0 lg:hidden border-b border-[#E5E7EB] dark:border-slate-800 bg-white/98 dark:bg-[#0F172A]/98 backdrop-blur-xl px-4 py-4 space-y-1 text-left shadow-2xl z-[55] max-h-[calc(100vh-120px)] overflow-y-auto">
+        <div className="absolute top-full left-0 right-0 min-[1200px]:hidden border-b border-[#E5E7EB] dark:border-slate-800 bg-white/98 dark:bg-[#0F172A]/98 backdrop-blur-xl px-4 py-4 space-y-1 text-left shadow-2xl z-[55] max-h-[calc(100vh-120px)] overflow-y-auto">
           {/* Mobile Drawer Location Selector */}
           <div className="px-2 pb-2 mb-2 border-b border-gray-100 dark:border-slate-800">
             <LocationSelectorButton variant="desktop" className="w-full justify-between" />
