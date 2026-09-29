@@ -159,7 +159,7 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
           </div>
 
           {/* ── MIDDLE: LOCATION SELECTOR + NAVIGATION LINKS (Desktop >= 1280px) ── */}
-          <div className="hidden min-[1280px]:flex items-center justify-center gap-2 xl:gap-3 2xl:gap-4 flex-1 min-w-0">
+          <div className="hidden min-[1280px]:flex items-center justify-center gap-2 xl:gap-2.5 2xl:gap-3 flex-1 min-w-0">
             {/* Desktop Location Selector */}
             <div className="shrink-0">
               <LocationSelectorButton variant="desktop" />
@@ -169,7 +169,7 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
             <div className="h-5 w-px bg-gray-200/90 dark:bg-slate-700/80 shrink-0" aria-hidden="true" />
 
             {/* Desktop Navigation Links */}
-            <nav className="flex items-center gap-1 xl:gap-1.5 2xl:gap-2 shrink-0">
+            <nav className="flex items-center gap-0.5 xl:gap-1 2xl:gap-1.5 shrink-0">
               {/* Core Product Links */}
               {coreNavLinks.map((link) => (
                 <NavLink
@@ -177,7 +177,7 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
                   to={link.path}
                   onClick={(e) => handleProtectedClick(e, link.path, link.isProtected)}
                   className={({ isActive }) =>
-                    `px-2.5 py-1.5 rounded-xl text-[12px] xl:text-[12.5px] 2xl:text-[13px] font-semibold transition-all whitespace-nowrap flex items-center gap-1 shrink-0 ${
+                    `px-2 2xl:px-2.5 py-1.5 rounded-xl text-[12px] 2xl:text-[12.5px] font-semibold transition-all whitespace-nowrap flex items-center gap-1 shrink-0 ${
                       isActive
                         ? 'text-[#2563EB] dark:text-[#60A5FA] font-bold bg-[#EFF6FF] dark:bg-slate-800/80 shadow-xs border border-[#2563EB]/15 dark:border-[#60A5FA]/20'
                         : 'text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] dark:hover:text-[#60A5FA] hover:bg-gray-100/60 dark:hover:bg-slate-800/40'
@@ -197,7 +197,7 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
               <NavLink
                 to="/find-my-bank"
                 className={({ isActive }) =>
-                  `hidden min-[1440px]:flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[12px] xl:text-[12.5px] 2xl:text-[13px] font-semibold transition-all whitespace-nowrap shrink-0 ${
+                  `hidden min-[1440px]:flex items-center gap-1 px-2 2xl:px-2.5 py-1.5 rounded-xl text-[12px] 2xl:text-[12.5px] font-semibold transition-all whitespace-nowrap shrink-0 ${
                     isActive
                       ? 'text-[#2563EB] dark:text-[#60A5FA] font-bold bg-[#EFF6FF] dark:bg-slate-800/80 shadow-xs border border-[#2563EB]/15 dark:border-[#60A5FA]/20'
                       : 'text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] dark:hover:text-[#60A5FA] hover:bg-gray-100/60 dark:hover:bg-slate-800/40'
@@ -211,7 +211,7 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
               <NavLink
                 to="/about"
                 className={({ isActive }) =>
-                  `hidden min-[1536px]:flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[12px] xl:text-[12.5px] 2xl:text-[13px] font-semibold transition-all whitespace-nowrap shrink-0 ${
+                  `hidden min-[1536px]:flex items-center gap-1 px-2 2xl:px-2.5 py-1.5 rounded-xl text-[12px] 2xl:text-[12.5px] font-semibold transition-all whitespace-nowrap shrink-0 ${
                     isActive
                       ? 'text-[#2563EB] dark:text-[#60A5FA] font-bold bg-[#EFF6FF] dark:bg-slate-800/80 shadow-xs border border-[#2563EB]/15 dark:border-[#60A5FA]/20'
                       : 'text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] dark:hover:text-[#60A5FA] hover:bg-gray-100/60 dark:hover:bg-slate-800/40'
@@ -224,7 +224,7 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
               <NavLink
                 to="/contact"
                 className={({ isActive }) =>
-                  `hidden min-[1536px]:flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[12px] xl:text-[12.5px] 2xl:text-[13px] font-semibold transition-all whitespace-nowrap shrink-0 ${
+                  `hidden min-[1536px]:flex items-center gap-1 px-2 2xl:px-2.5 py-1.5 rounded-xl text-[12px] 2xl:text-[12.5px] font-semibold transition-all whitespace-nowrap shrink-0 ${
                     isActive
                       ? 'text-[#2563EB] dark:text-[#60A5FA] font-bold bg-[#EFF6FF] dark:bg-slate-800/80 shadow-xs border border-[#2563EB]/15 dark:border-[#60A5FA]/20'
                       : 'text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] dark:hover:text-[#60A5FA] hover:bg-gray-100/60 dark:hover:bg-slate-800/40'
@@ -238,7 +238,7 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
               <button
                 type="button"
                 onClick={() => onOpenLegal ? onOpenLegal('terms') : null}
-                className="hidden min-[1536px]:flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[12px] xl:text-[12.5px] 2xl:text-[13px] font-semibold text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] dark:hover:text-[#60A5FA] hover:bg-gray-100/60 dark:hover:bg-slate-800/40 transition-all cursor-pointer whitespace-nowrap shrink-0"
+                className="hidden min-[1536px]:flex items-center gap-1 px-2 2xl:px-2.5 py-1.5 rounded-xl text-[12px] 2xl:text-[12.5px] font-semibold text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] dark:hover:text-[#60A5FA] hover:bg-gray-100/60 dark:hover:bg-slate-800/40 transition-all cursor-pointer whitespace-nowrap shrink-0"
                 title="Legal & Terms"
               >
                 <span>Legal</span>
@@ -331,17 +331,17 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
           {/* ── RIGHT: USER ACTIONS (Favourites, Theme, Profile/Login, Mobile Menu) ── */}
           <div className="flex items-center gap-1.5 sm:gap-2 xl:gap-2.5 shrink-0 justify-end">
             
-            {/* 1. Favourite button with counter badge */}
+            {/* 1. Favourite button with attached notification badge */}
             <Link
               to="/saved-cards"
               onClick={(e) => handleProtectedClick(e, '/saved-cards', true)}
-              className="flex items-center gap-1 p-2 sm:px-2.5 py-1.5 rounded-xl text-xs font-semibold text-[#4B5563] dark:text-slate-300 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-slate-800/60 transition-all group shrink-0"
+              className="relative w-9 h-9 flex items-center justify-center rounded-xl text-[#4B5563] dark:text-slate-300 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-slate-800/60 transition-all group shrink-0"
               title="Saved Favourites"
               aria-label="Saved Favourites"
             >
               <Heart className="w-4 h-4 text-rose-500 fill-rose-500/20 group-hover:fill-rose-500 transition-all shrink-0" />
               {wishlist && wishlist.length > 0 && (
-                <span className="inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-extrabold rounded-full bg-rose-500 text-white leading-none shadow-xs">
+                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 flex items-center justify-center text-[10px] font-extrabold rounded-full bg-rose-500 text-white leading-none shadow-xs pointer-events-none">
                   {wishlist.length}
                 </span>
               )}
@@ -351,7 +351,7 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
             <button
               type="button"
               onClick={toggleDarkMode}
-              className="p-2 rounded-xl text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] hover:bg-[#EFF6FF] dark:hover:bg-slate-800/60 transition-all cursor-pointer shrink-0"
+              className="w-9 h-9 flex items-center justify-center rounded-xl text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] hover:bg-[#EFF6FF] dark:hover:bg-slate-800/60 transition-all cursor-pointer shrink-0"
               title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
               aria-label="Toggle Dark Mode"
             >
@@ -364,7 +364,7 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
                 <button
                   type="button"
                   onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                  className="flex items-center gap-1.5 sm:gap-2 p-1 pr-2 sm:pr-2.5 rounded-full border border-[#E5E7EB] dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-[#2563EB] dark:hover:border-[#60A5FA] transition-all cursor-pointer shadow-xs shrink-0"
+                  className="flex items-center gap-1.5 sm:gap-2 p-1 pr-2 sm:pr-2.5 rounded-full border border-[#E5E7EB] dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-[#2563EB] dark:hover:border-[#60A5FA] transition-all cursor-pointer shadow-xs shrink-0 max-w-[150px]"
                   aria-expanded={isProfileDropdownOpen}
                   aria-label="User Account Menu"
                 >

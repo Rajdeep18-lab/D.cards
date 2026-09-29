@@ -319,14 +319,13 @@ export default async function handler(req, res) {
     });
 
     // 8. Invoke Gemini with automatic model fallback
-    const configuredModel = (process.env.GEMINI_MODEL || 'gemini-3.1-flash-lite').trim();
+    const configuredModel = (process.env.GEMINI_MODEL && process.env.GEMINI_MODEL !== 'gemini-3.8-flash')
+      ? process.env.GEMINI_MODEL.trim()
+      : 'gemini-3.6-flash';
     const candidateModels = [
       configuredModel,
-      'gemini-3.1-flash-lite',
-      'gemini-3.5-flash-lite',
-      'gemini-flash-lite-latest',
-      'gemini-3-flash-preview',
-      'gemini-3.8-flash'
+      'gemini-3.6-flash',
+      'gemini-3.5-flash'
     ];
     const modelsToTry = [...new Set(candidateModels)];
 
@@ -335,7 +334,7 @@ export default async function handler(req, res) {
 
     for (const currentModel of modelsToTry) {
       try {
-        response = await ai.models.generateContent({
+        const generatePromise = ai.models.generateContent({
           model: currentModel,
           contents,
           config: {
@@ -343,6 +342,13 @@ export default async function handler(req, res) {
             temperature: 0.2
           }
         });
+
+        // 7-second timeout per model attempt to prevent UI hangs
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error(`Model timeout after 7000ms for ${currentModel}`)), 7000)
+        );
+
+        response = await Promise.race([generatePromise, timeoutPromise]);
         if (response?.text) break;
       } catch (err) {
         lastModelError = err;
@@ -354,28 +360,25 @@ export default async function handler(req, res) {
     if (response && response.text) {
       cleanAnswer = cleanVisibleAiText(response.text);
     } else {
-      // Fallback: If external API is unavailable, generate factual answer grounded in D.CARD database
-      const totalProducts = (relevantProducts.savingsAccounts?.length || 0) + 
-                            (relevantProducts.currentAccounts?.length || 0) + 
-                            (relevantProducts.debitCards?.length || 0);
-      
-      if (totalProducts > 0 || matchedLocations.length > 0) {
-        const parts = [];
-        if (matchedLocations.length > 0) {
-          parts.push(`Found ${matchedLocations.length} verified bank branch/ATM location${matchedLocations.length > 1 ? 's' : ''} in D.CARD's verified database.`);
-        }
-        if (relevantProducts.savingsAccounts?.length > 0) {
-          parts.push(`Found ${relevantProducts.savingsAccounts.length} matching savings account${relevantProducts.savingsAccounts.length > 1 ? 's' : ''}.`);
-        }
-        if (relevantProducts.debitCards?.length > 0) {
-          parts.push(`Found ${relevantProducts.debitCards.length} matching debit card${relevantProducts.debitCards.length > 1 ? 's' : ''}.`);
-        }
-        if (relevantProducts.currentAccounts?.length > 0) {
-          parts.push(`Found ${relevantProducts.currentAccounts.length} matching current account${relevantProducts.currentAccounts.length > 1 ? 's' : ''}.`);
-        }
-        cleanAnswer = parts.join(' ') + ' You can review the verified details, charges, and features below:';
+      // Deterministic D.CARD grounded database fallback
+      const lowerQuery = cleanMessage.toLowerCase();
+      if (relevantProducts.savingsAccounts?.length > 0 && (lowerQuery.includes('zero') || lowerQuery.includes('savings') || lowerQuery.includes('account') || lowerQuery.includes('balance'))) {
+        const topAccounts = relevantProducts.savingsAccounts.slice(0, 4);
+        cleanAnswer = `Based on D.CARD's verified database, here are the top savings accounts matching your requirement:\n\n` +
+          topAccounts.map((a) => `• ${a.accountName || a.name} (${a.bank}): Minimum balance ₹${a.minimumBalanceValue ?? 0}. ${a.tagline || a.features?.[0] || 'Zero balance facility available.'}`).join('\n') +
+          `\n\nYou can review the verified charges, interest rates, and linked debit cards below.`;
+      } else if (relevantProducts.debitCards?.length > 0) {
+        const topCards = relevantProducts.debitCards.slice(0, 4);
+        cleanAnswer = `Based on D.CARD's verified database, here are matching debit cards:\n\n` +
+          topCards.map((c) => `• ${c.name || c.card_name} (${c.bank || c.bank_name}): Annual fee ₹${c.annual_fee || c.annualFee || '0'}. ATM limit ₹${c.daily_atm_limit || c.atmLimit || 'N/A'}.`).join('\n') +
+          `\n\nYou can review complete limits and features below.`;
+      } else if (matchedLocations.length > 0) {
+        const topLocs = matchedLocations.slice(0, 3);
+        cleanAnswer = `Found ${matchedLocations.length} verified branches/ATMs in D.CARD's database:\n\n` +
+          topLocs.map(l => `• ${l.branch_name || l.branchName} (${l.bank_name || l.bankId}): ${l.address}, ${l.city} (IFSC: ${l.ifsc || 'N/A'})`).join('\n') +
+          `\n\nClick "View on Map" or "Get Directions" below.`;
       } else {
-        cleanAnswer = 'AI Advisor is temporarily unavailable. Please try again.';
+        cleanAnswer = 'Hello! I am D.CARD AI Assistance. You can ask me to compare savings accounts, debit cards, check interest rates, or locate verified bank branches and ATMs across India.';
       }
     }
 

@@ -196,7 +196,8 @@ export const aiChatService = {
           conversationHistory: conversationHistory.slice(-10),
           conversationState,
           userCoords: chatContext.userCoords || null
-        })
+        }),
+        signal: typeof AbortSignal !== 'undefined' && AbortSignal.timeout ? AbortSignal.timeout(12000) : undefined
       });
 
       if (!response.ok) {

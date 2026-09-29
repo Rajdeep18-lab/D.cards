@@ -53,7 +53,7 @@ export default function LocationSelectorButton({
     <button
       type="button"
       onClick={handleClick}
-      className={`group inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border border-gray-200/90 dark:border-slate-700/80 bg-white/80 dark:bg-slate-800/80 hover:bg-blue-50/50 dark:hover:bg-slate-700/50 hover:border-[#2563EB]/40 dark:hover:border-[#60A5FA]/40 transition-all cursor-pointer shadow-xs active:scale-98 shrink-0 max-w-[170px] select-none ${className}`}
+      className={`group inline-flex items-center gap-1.5 px-2.5 sm:px-2.5 py-1.5 rounded-xl border border-gray-200/90 dark:border-slate-700/80 bg-white/80 dark:bg-slate-800/80 hover:bg-blue-50/50 dark:hover:bg-slate-700/50 hover:border-[#2563EB]/40 dark:hover:border-[#60A5FA]/40 transition-all cursor-pointer shadow-xs active:scale-98 shrink-0 max-w-[155px] select-none ${className}`}
       aria-label={`Select location, currently ${displayText}`}
       title={`Current location: ${fullLocationText}. Click to change.`}
     >
@@ -61,7 +61,7 @@ export default function LocationSelectorButton({
         <MapPin className="w-3.5 h-3.5 shrink-0" />
       </div>
 
-      <div className="flex flex-col text-left min-w-0 max-w-[100px] sm:max-w-[110px]">
+      <div className="flex flex-col text-left min-w-0 max-w-[90px] sm:max-w-[95px]">
         <span className="text-[9px] font-black uppercase tracking-wider text-gray-400 dark:text-slate-400 leading-none whitespace-nowrap overflow-hidden text-ellipsis block">
           Location
         </span>
