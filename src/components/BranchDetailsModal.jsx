@@ -19,7 +19,7 @@ import {
 import { getDirectionsUrl } from '../utils/branchUtils';
 import { getBankById } from '../data/banks';
 
-export default function BranchDetailsModal({ branch, isOpen, onClose }) {
+export default function BranchDetailsModal({ branch, isOpen, onClose, onViewOnMap }) {
   const [copiedIfsc, setCopiedIfsc] = useState(false);
   const [copiedShare, setCopiedShare] = useState(false);
 
@@ -36,8 +36,12 @@ export default function BranchDetailsModal({ branch, isOpen, onClose }) {
 
   if (!isOpen || !branch) return null;
 
-  const bankInfo = getBankById(branch.bankId);
-  const directionsUrl = getDirectionsUrl(branch);
+  const branchName = branch.branchName || branch.branch_name || 'Branch';
+  const bankName = branch.bank_name || branch.bankName || branch.bankId || '';
+  const bankInfo = getBankById(branch.bankId) || getBankById(bankName.toLowerCase().replace(/[^a-z0-9]/g, ''));
+  const directionsUrl = branch.directionsUrl || getDirectionsUrl(branch);
+  const openingHours = branch.openingHours || branch.opening_hours;
+  const officialSource = branch.officialSourceUrl || branch.source_url;
 
   const handleCopyIfsc = (e) => {
     e.stopPropagation();
@@ -49,10 +53,10 @@ export default function BranchDetailsModal({ branch, isOpen, onClose }) {
 
   const handleShareBranch = (e) => {
     e.stopPropagation();
-    const shareText = `${bankInfo?.bankName || branch.bankId?.toUpperCase()} — ${branch.branchName}\nIFSC: ${branch.ifsc}\nAddress: ${branch.address}, ${branch.city}, ${branch.state} ${branch.pincode}\nDirections: ${directionsUrl}`;
+    const shareText = `${bankInfo?.bankName || bankName || 'Bank'} — ${branchName}\nIFSC: ${branch.ifsc}\nAddress: ${branch.address}, ${branch.city}, ${branch.state} ${branch.pincode}\nDirections: ${directionsUrl}`;
     if (navigator.share) {
       navigator.share({
-        title: `${branch.branchName} (${bankInfo?.shortName || ''})`,
+        title: `${branchName} (${bankInfo?.shortName || bankName})`,
         text: shareText,
         url: window.location.href
       }).catch(() => {});
@@ -104,10 +108,10 @@ export default function BranchDetailsModal({ branch, isOpen, onClose }) {
                     Verified Official Branch
                   </div>
                   <h3 id="branch-modal-title" className="text-xl sm:text-2xl font-bold text-white tracking-tight leading-snug">
-                    {branch.branchName}
+                    {branchName}
                   </h3>
                   <p className="text-blue-100 text-xs sm:text-sm font-medium mt-0.5">
-                    {bankInfo?.bankName || branch.bankId?.toUpperCase()}
+                    {bankInfo?.bankName || bankName}
                   </p>
                 </div>
               </div>
@@ -115,7 +119,7 @@ export default function BranchDetailsModal({ branch, isOpen, onClose }) {
               <button
                 type="button"
                 onClick={onClose}
-                className="rounded-xl p-2 text-white/80 hover:text-white hover:bg-white/10 transition-colors focus:outline-hidden focus:ring-2 focus:ring-white/40"
+                className="rounded-xl p-2 text-white/80 hover:text-white hover:bg-white/10 transition-colors focus:outline-hidden focus:ring-2 focus:ring-white/40 cursor-pointer"
                 aria-label="Close dialog"
               >
                 <X className="w-5 h-5" />
@@ -123,10 +127,10 @@ export default function BranchDetailsModal({ branch, isOpen, onClose }) {
             </div>
 
             {/* Distance Pill if GPS was active */}
-            {branch.distanceText && (
+            {(branch.distanceText || branch.distanceFormatted) && (
               <div className="mt-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white/15 text-white text-xs font-semibold backdrop-blur-xs">
                 <MapPin className="w-3.5 h-3.5 text-amber-300" />
-                <span>{branch.distanceText} away from your location</span>
+                <span>{branch.distanceText || branch.distanceFormatted} away from your location</span>
                 {branch.isNearest && (
                   <span className="ml-1 px-1.5 py-0.5 bg-amber-400 text-amber-950 text-[10px] font-black rounded-md uppercase">
                     Nearest
@@ -161,39 +165,41 @@ export default function BranchDetailsModal({ branch, isOpen, onClose }) {
                   RBI IFSC CODE
                 </div>
                 <div className="text-lg font-mono font-bold text-slate-900 dark:text-white mt-0.5 tracking-wide">
-                  {branch.ifsc}
+                  {branch.ifsc || 'Not available'}
                 </div>
               </div>
-              <button
-                type="button"
-                onClick={handleCopyIfsc}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl bg-blue-600 hover:bg-blue-700 text-white transition-colors shadow-xs focus:outline-hidden focus:ring-2 focus:ring-blue-500 cursor-pointer"
-                title="Copy IFSC to clipboard"
-                aria-label="Copy IFSC code"
-              >
-                {copiedIfsc ? (
-                  <>
-                    <Check className="w-3.5 h-3.5 text-white" />
-                    Copied!
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-3.5 h-3.5 text-white" />
-                    Copy IFSC
-                  </>
-                )}
-              </button>
+              {branch.ifsc && (
+                <button
+                  type="button"
+                  onClick={handleCopyIfsc}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl bg-blue-600 hover:bg-blue-700 text-white transition-colors shadow-xs focus:outline-hidden focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                  title="Copy IFSC to clipboard"
+                  aria-label="Copy IFSC code"
+                >
+                  {copiedIfsc ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 text-white" />
+                      Copied!
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3.5 h-3.5 text-white" />
+                      Copy IFSC
+                    </>
+                  )}
+                </button>
+              )}
             </div>
 
             {/* Operational Info Grid (ONLY displayed if verified) */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-              {branch.openingHours && (
+              {openingHours && (
                 <div className="flex items-start gap-2.5 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
                   <Clock className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
                   <div>
                     <div className="font-semibold text-xs text-slate-900 dark:text-white">Operating Hours</div>
                     <div className="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-normal">
-                      {branch.openingHours}
+                      {openingHours}
                     </div>
                   </div>
                 </div>
@@ -216,14 +222,14 @@ export default function BranchDetailsModal({ branch, isOpen, onClose }) {
             </div>
 
             {/* Official Source Link */}
-            {branch.officialSourceUrl && (
+            {officialSource && (
               <div className="p-3.5 rounded-2xl bg-slate-100/70 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
                 <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400">
                   <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
                   <span>Official verification: {branch.verifiedOn || 'Latest Audit'}</span>
                 </div>
                 <a
-                  href={branch.officialSourceUrl}
+                  href={officialSource}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1 font-semibold text-blue-600 dark:text-blue-400 hover:underline"
@@ -282,6 +288,17 @@ export default function BranchDetailsModal({ branch, isOpen, onClose }) {
             </button>
 
             <div className="flex items-center gap-2.5 w-full sm:w-auto">
+              {onViewOnMap && (
+                <button
+                  type="button"
+                  onClick={() => onViewOnMap(branch)}
+                  className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl border border-blue-600/30 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 text-sm font-bold hover:bg-blue-100 dark:hover:bg-blue-900/60 transition-colors cursor-pointer"
+                >
+                  <MapPin className="w-4 h-4 text-blue-600" />
+                  <span>View on Map</span>
+                </button>
+              )}
+
               <button
                 type="button"
                 onClick={onClose}

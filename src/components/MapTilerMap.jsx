@@ -37,26 +37,46 @@ function MapTilerMap({
   const markersRef = useRef([]);
   const userMarkerRef = useRef(null);
 
-  const [sdkStatus, setSdkStatus] = useState('loading'); // 'loading' | 'ready' | 'missing-key' | 'error'
+  const [sdkStatus, setSdkStatus] = useState('loading'); // 'loading' | 'ready' | 'error'
   const [errorMessage, setErrorMessage] = useState(null);
 
-  const apiKey = import.meta.env.MAPTILER_API_KEY;
+  const apiKey = import.meta.env.MAPTILER_API_KEY || import.meta.env.VITE_MAPTILER_API_KEY || '';
   const isKeyConfigured = apiKey && apiKey.trim() !== '' && apiKey !== 'your-maptiler-api-key';
 
-  // 1. Initialize MapTiler Map
-  useEffect(() => {
-    if (!isKeyConfigured) {
-      setSdkStatus('missing-key');
-      return;
-    }
+  const FALLBACK_OSM_STYLE = {
+    version: 8,
+    sources: {
+      'osm-tiles': {
+        type: 'raster',
+        tiles: [
+          'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
+        ],
+        tileSize: 256,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors'
+      }
+    },
+    layers: [
+      {
+        id: 'osm-tiles-layer',
+        type: 'raster',
+        source: 'osm-tiles',
+        minzoom: 0,
+        maxzoom: 19
+      }
+    ]
+  };
 
+  // 1. Initialize Map
+  useEffect(() => {
     let isSubscribed = true;
 
     loadMapTilerSDK()
       .then((maptilersdk) => {
         if (!isSubscribed || !mapContainerRef.current) return;
 
-        maptilersdk.config.apiKey = apiKey.trim();
+        if (isKeyConfigured) {
+          maptilersdk.config.apiKey = apiKey.trim();
+        }
 
         // Default center: User coordinates or fallback to Kharar/Chandigarh (30.7463, 76.6469)
         const centerLng = userCoords?.lng || 76.6469;
@@ -73,7 +93,7 @@ function MapTilerMap({
 
         const map = new maptilersdk.Map({
           container: mapContainerRef.current,
-          style: maptilersdk.MapStyle.STREETS,
+          style: isKeyConfigured ? maptilersdk.MapStyle.STREETS : FALLBACK_OSM_STYLE,
           center: [centerLng, centerLat],
           zoom: 12,
           navigationControl: false
@@ -92,16 +112,22 @@ function MapTilerMap({
         });
 
         map.on('error', (e) => {
-          console.warn('[MapTiler Map Error]:', e);
-          if (e && e.error && e.error.status === 403) {
-            if (isSubscribed) setSdkStatus('missing-key');
+          console.warn('[Map Warning/Notice]:', e);
+          // If MapTiler key returns 403 Forbidden or style fails, gracefully switch to OSM style
+          if (isSubscribed) {
+            try {
+              map.setStyle(FALLBACK_OSM_STYLE);
+              setSdkStatus('ready');
+            } catch (styleErr) {
+              console.warn('[Map Fallback Error]:', styleErr);
+            }
           }
         });
       })
       .catch((err) => {
-        console.warn('[MapTiler SDK Load Failed]:', err);
+        console.warn('[Map SDK Load Notice]:', err);
         if (isSubscribed) {
-          setErrorMessage(err.message || 'Unable to connect to MapTiler map tiles.');
+          setErrorMessage(err.message || 'Unable to connect to map tiles.');
           setSdkStatus('error');
         }
       });
@@ -183,32 +209,43 @@ function MapTilerMap({
     }
 
     branches.forEach((branch) => {
-      const color = getBankColor(branch.bank_name);
-      bounds.extend([branch.longitude, branch.latitude]);
+      const lat = Number(branch.latitude);
+      const lng = Number(branch.longitude);
+      // Validate coordinates within India bounds
+      if (isNaN(lat) || isNaN(lng) || lat < 6.0 || lat > 38.0 || lng < 68.0 || lng > 98.0) return;
+
+      const bankName = branch.bank_name || branch.bankName || branch.bankId || 'Bank';
+      const branchName = branch.branch_name || branch.branchName || 'Branch';
+      const branchId = branch.id || branch.branchId || `${lat}_${lng}`;
+      const branchType = branch.branch_type || branch.branchType || 'Branch';
+      const color = getBankColor(bankName);
+      const directionsUrl = branch.directionsUrl || `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+
+      bounds.extend([lng, lat]);
       hasPoints = true;
 
       const markerEl = document.createElement('div');
       markerEl.className = 'relative cursor-pointer transition-transform hover:scale-110 active:scale-95';
-      markerEl.id = `map-marker-${branch.id}`;
+      markerEl.id = `map-marker-${branchId}`;
       markerEl.innerHTML = `
         <div style="background-color: ${color};" class="px-2 py-1 rounded-lg text-white font-black text-[10px] shadow-md border-2 border-white flex items-center gap-1">
-          <span>${branch.branch_type === 'ATM' ? '🏧' : '🏦'}</span>
-          <span class="max-w-[80px] truncate">${branch.bank_name}</span>
+          <span>${branchType === 'ATM' ? '🏧' : '🏦'}</span>
+          <span class="max-w-[80px] truncate">${bankName}</span>
         </div>
       `;
 
       const popupContent = `
         <div class="p-3 text-xs font-sans max-w-[240px] text-left">
           <div class="flex items-center gap-1.5 font-black text-slate-900 mb-1">
-            <span class="text-sm">${branch.branch_type === 'ATM' ? '🏧' : '🏦'}</span>
-            <span>${branch.bank_name}</span>
+            <span class="text-sm">${branchType === 'ATM' ? '🏧' : '🏦'}</span>
+            <span>${bankName}</span>
           </div>
-          <p class="font-bold text-slate-800 text-[11px]">${branch.branch_name}</p>
+          <p class="font-bold text-slate-800 text-[11px]">${branchName}</p>
           <p class="text-slate-600 text-[10px] mt-1 leading-snug">${branch.address}, ${branch.city} - ${branch.pincode}</p>
           <div class="mt-2 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
             <span class="font-extrabold text-emerald-600">${branch.distanceFormatted || ''}</span>
             <a 
-              href="${branch.directionsUrl}" 
+              href="${directionsUrl}" 
               target="_blank" 
               rel="noopener noreferrer" 
               class="inline-flex items-center gap-1 px-2 py-1 bg-blue-600 text-white rounded text-[10px] font-bold hover:bg-blue-700 transition-colors"
@@ -222,7 +259,7 @@ function MapTilerMap({
       const popup = new window.maptilersdk.Popup({ offset: 25 }).setHTML(popupContent);
 
       const marker = new window.maptilersdk.Marker({ element: markerEl })
-        .setLngLat([branch.longitude, branch.latitude])
+        .setLngLat([lng, lat])
         .setPopup(popup)
         .addTo(map);
 
@@ -230,7 +267,7 @@ function MapTilerMap({
         if (onSelectBranch) onSelectBranch(branch);
       });
 
-      markersRef.current.push({ id: branch.id, marker, popup, branch });
+      markersRef.current.push({ id: branchId, marker, popup, branch });
     });
 
     // D. Fit bounds smoothly
@@ -261,65 +298,23 @@ function MapTilerMap({
     const map = mapInstanceRef.current;
     if (!map || !focusedBranch) return;
 
+    const lat = Number(focusedBranch.latitude);
+    const lng = Number(focusedBranch.longitude);
+    if (isNaN(lat) || isNaN(lng)) return;
+
     map.flyTo({
-      center: [focusedBranch.longitude, focusedBranch.latitude],
+      center: [lng, lat],
       zoom: 15,
       essential: true,
       duration: 1200
     });
 
-    const target = markersRef.current.find((m) => m.id === focusedBranch.id);
+    const branchId = focusedBranch.id || focusedBranch.branchId;
+    const target = markersRef.current.find((m) => m.id === branchId);
     if (target && target.marker) {
       target.marker.togglePopup();
     }
   }, [focusedBranch]);
-
-  // Fallback View when MapTiler API Key is not yet populated in .env
-  if (sdkStatus === 'missing-key') {
-    return (
-      <div className={`relative flex flex-col items-center justify-center p-6 text-center rounded-3xl bg-slate-900 border border-slate-800 text-white overflow-hidden shadow-xl min-h-[420px] ${className}`}>
-        {/* Subtle grid background */}
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#3b82f6_1px,transparent_1px)] [background-size:16px_16px]"></div>
-
-        <div className="relative z-10 max-w-md space-y-4">
-          <div className="w-14 h-14 mx-auto rounded-2xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-2xl border border-blue-500/30">
-            <Key className="w-7 h-7" />
-          </div>
-
-          <div>
-            <h3 className="text-lg font-black tracking-tight text-white">
-              MapTiler API Key Required
-            </h3>
-            <p className="text-xs text-slate-300 mt-1 leading-relaxed">
-              To render the interactive MapTiler map tiles, add your MapTiler API key to your <code className="px-1.5 py-0.5 rounded bg-slate-800 text-blue-400 font-mono text-[11px]">.env</code> file:
-            </p>
-          </div>
-
-          <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 font-mono text-xs text-blue-300 select-all text-left">
-            MAPTILER_API_KEY=your_key_here
-          </div>
-
-          <p className="text-[11px] text-slate-400">
-            ✅ All {branches.length} bank branches, distance sorting, and Google Maps directions below remain <strong>fully functional</strong>.
-          </p>
-
-          {/* Fallback Interactive Mini-Visualizer */}
-          <div className="pt-2 flex flex-wrap items-center justify-center gap-2">
-            {branches.slice(0, 4).map((b) => (
-              <button
-                key={b.id}
-                type="button"
-                onClick={() => onSelectBranch && onSelectBranch(b)}
-                className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[10px] font-bold text-slate-200 border border-slate-700 transition-colors cursor-pointer"
-              >
-                📍 {b.bank_name} ({b.distanceFormatted})
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   // Error state
   if (sdkStatus === 'error') {
@@ -346,7 +341,7 @@ function MapTilerMap({
         <div className="absolute inset-0 z-20 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs text-white text-xs font-bold">
           <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900/90 border border-slate-700 shadow-lg">
             <div className="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
-            <span>Loading MapTiler Map...</span>
+            <span>Loading Map...</span>
           </div>
         </div>
       )}
@@ -358,7 +353,7 @@ function MapTilerMap({
       <div className="absolute top-3 left-3 z-10 pointer-events-none">
         <span className="px-3 py-1 rounded-full bg-white/90 dark:bg-slate-900/90 backdrop-blur-md text-[10px] font-black text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-1.5">
           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span>MapTiler Vector Map • {branches.length} Branches within {radiusKm} km</span>
+          <span>Interactive Map • {branches.length} Branches within {radiusKm} km</span>
         </span>
       </div>
     </div>

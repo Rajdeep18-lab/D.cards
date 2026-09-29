@@ -322,9 +322,12 @@ export async function geocodeLocation(query, apiKey, signal = null) {
     return { lat: 21.1441, lng: 79.0628, displayName: 'Nagpur, Maharashtra, India' };
   }
 
-  // Check verified BRANCHES dataset for city, pincode, or Daltonganj -> Medininagar alias
+  // Check verified BRANCHES dataset for IFSC, branch name, city, pincode, or Daltonganj -> Medininagar alias
   const matchedBranch = BRANCHES.find(b => 
+    (b.ifsc && b.ifsc.toLowerCase() === lower) ||
     b.pincode === cleanQuery ||
+    (b.branchName && b.branchName.toLowerCase().includes(lower)) ||
+    (b.address && b.address.toLowerCase().includes(lower)) ||
     b.city.toLowerCase() === lower ||
     b.city.toLowerCase().includes(lower) ||
     lower.includes(b.city.toLowerCase()) ||
@@ -334,7 +337,7 @@ export async function geocodeLocation(query, apiKey, signal = null) {
     return {
       lat: matchedBranch.latitude,
       lng: matchedBranch.longitude,
-      displayName: `${matchedBranch.city}, ${matchedBranch.state}, India`
+      displayName: `${matchedBranch.branchName}, ${matchedBranch.city}, ${matchedBranch.state}`
     };
   }
 

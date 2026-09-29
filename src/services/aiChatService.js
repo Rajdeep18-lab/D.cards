@@ -237,7 +237,7 @@ export const aiChatService = {
       }
 
       return {
-        text: "I'm having trouble connecting to D.CARD AI Assistance right now. You can still explore verified products and locate bank branches manually through the navigation menu.",
+        text: "AI Advisor is temporarily unavailable. Please try again.",
         type: "error",
         timestamp
       };

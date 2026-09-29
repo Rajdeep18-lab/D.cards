@@ -1334,6 +1334,9 @@ function AppContent() {
             onOpenContact={() => navigate('/contact')} 
             isCompareActive={compareQueue.length > 0}
             compareDockHeight={compareDockHeight}
+            onSelectDebitCard={handleSelectCardFromItem}
+            toggleCompareQueue={toggleCompareQueue}
+            setSavingsCompareQueue={setSavingsCompareQueue}
           />
         )}
         {isAdminOpen && <AdminDashboardModal isOpen={isAdminOpen} onClose={() => setIsAdminOpen(false)} currentUser={user} />}

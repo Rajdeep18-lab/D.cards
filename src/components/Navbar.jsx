@@ -152,14 +152,14 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
               </div>
             </Link>
 
-            {/* Tablet Location Selector (768px - 1199px) */}
-            <div className="hidden md:block min-[1200px]:hidden shrink-0">
+            {/* Tablet Location Selector (768px - 1279px) */}
+            <div className="hidden md:block min-[1280px]:hidden shrink-0">
               <LocationSelectorButton variant="desktop" />
             </div>
           </div>
 
-          {/* ── MIDDLE: LOCATION SELECTOR + NAVIGATION LINKS (Desktop >= 1200px) ── */}
-          <div className="hidden min-[1200px]:flex items-center justify-center gap-2.5 xl:gap-3.5 2xl:gap-4.5 flex-1 min-w-0">
+          {/* ── MIDDLE: LOCATION SELECTOR + NAVIGATION LINKS (Desktop >= 1280px) ── */}
+          <div className="hidden min-[1280px]:flex items-center justify-center gap-2 xl:gap-3 2xl:gap-4 flex-1 min-w-0">
             {/* Desktop Location Selector */}
             <div className="shrink-0">
               <LocationSelectorButton variant="desktop" />
@@ -193,11 +193,11 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
                 </NavLink>
               ))}
 
-              {/* Find My Bank: Visible directly on >= 1380px */}
+              {/* Find My Bank: Visible directly on >= 1440px */}
               <NavLink
                 to="/find-my-bank"
                 className={({ isActive }) =>
-                  `hidden min-[1380px]:flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[12px] xl:text-[12.5px] 2xl:text-[13px] font-semibold transition-all whitespace-nowrap shrink-0 ${
+                  `hidden min-[1440px]:flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[12px] xl:text-[12.5px] 2xl:text-[13px] font-semibold transition-all whitespace-nowrap shrink-0 ${
                     isActive
                       ? 'text-[#2563EB] dark:text-[#60A5FA] font-bold bg-[#EFF6FF] dark:bg-slate-800/80 shadow-xs border border-[#2563EB]/15 dark:border-[#60A5FA]/20'
                       : 'text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] dark:hover:text-[#60A5FA] hover:bg-gray-100/60 dark:hover:bg-slate-800/40'
@@ -263,12 +263,12 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
 
                 {isMoreDropdownOpen && (
                   <div className="absolute left-0 mt-2 w-48 rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-700 shadow-xl py-2 z-[60] text-left">
-                    {/* Find My Bank: Show in More dropdown when screen < 1380px */}
+                    {/* Find My Bank: Show in More dropdown when screen < 1440px */}
                     <NavLink
                       to="/find-my-bank"
                       onClick={() => setIsMoreDropdownOpen(false)}
                       className={({ isActive }) =>
-                        `min-[1380px]:hidden flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold transition-colors ${
+                        `min-[1440px]:hidden flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold transition-colors ${
                           isActive
                             ? 'text-[#2563EB] dark:text-[#60A5FA] bg-[#EFF6FF] dark:bg-slate-800/60 font-bold'
                             : 'text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] hover:bg-gray-50 dark:hover:bg-slate-800/40'
@@ -425,11 +425,11 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
               <LocationSelectorButton variant="mobile" />
             </div>
 
-            {/* 4. Hamburger Menu Trigger for Mobile & Tablet (< 1200px) */}
+            {/* 4. Hamburger Menu Trigger for Mobile & Tablet (< 1280px) */}
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-2 rounded-xl text-[#4B5563] dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800 min-[1200px]:hidden cursor-pointer shrink-0"
+              className="p-2 rounded-xl text-[#4B5563] dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800 min-[1280px]:hidden cursor-pointer shrink-0"
               aria-label="Toggle Navigation Menu"
               aria-expanded={isMobileMenuOpen}
             >
@@ -444,16 +444,16 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
       {isMobileMenuOpen && (
         <div
           onClick={() => setIsMobileMenuOpen(false)}
-          className="fixed inset-0 bg-black/60 backdrop-blur-xs min-[1200px]:hidden z-[54]"
+          className="fixed inset-0 bg-black/60 backdrop-blur-xs min-[1280px]:hidden z-[54]"
           style={{ top: "100%" }}
         />
       )}
 
       {/* ==================================================
-          3. MOBILE & TABLET DRAWER NAVIGATION (< 1200px)
+          3. MOBILE & TABLET DRAWER NAVIGATION (< 1280px)
          ================================================== */}
       {isMobileMenuOpen && (
-        <div className="absolute top-full left-0 right-0 min-[1200px]:hidden border-b border-[#E5E7EB] dark:border-slate-800 bg-white/98 dark:bg-[#0F172A]/98 backdrop-blur-xl px-4 py-4 space-y-1 text-left shadow-2xl z-[55] max-h-[calc(100vh-120px)] overflow-y-auto">
+        <div className="absolute top-full left-0 right-0 min-[1280px]:hidden border-b border-[#E5E7EB] dark:border-slate-800 bg-white/98 dark:bg-[#0F172A]/98 backdrop-blur-xl px-4 py-4 space-y-1 text-left shadow-2xl z-[55] max-h-[calc(100vh-120px)] overflow-y-auto">
           {/* Mobile Drawer Location Selector */}
           <div className="px-2 pb-2 mb-2 border-b border-gray-100 dark:border-slate-800">
             <LocationSelectorButton variant="desktop" className="w-full justify-between" />

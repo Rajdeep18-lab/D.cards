@@ -473,7 +473,7 @@ function AIChatAssistant({
           id:        `${Date.now()}-error`,
           sender:    'bot',
           type:      'error',
-          text:      "Sorry, I couldn't process that request right now.",
+          text:      "AI Advisor is temporarily unavailable. Please try again.",
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         },
       ]);

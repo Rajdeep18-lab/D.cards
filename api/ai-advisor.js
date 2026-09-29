@@ -319,11 +319,14 @@ export default async function handler(req, res) {
     });
 
     // 8. Invoke Gemini with automatic model fallback
+    const configuredModel = (process.env.GEMINI_MODEL || 'gemini-3.1-flash-lite').trim();
     const candidateModels = [
-      (process.env.GEMINI_MODEL || 'gemini-3.8-flash').trim(),
-      'gemini-3.5-flash',
-      'gemini-3.7-flash',
-      'gemini-flash-latest'
+      configuredModel,
+      'gemini-3.1-flash-lite',
+      'gemini-3.5-flash-lite',
+      'gemini-flash-lite-latest',
+      'gemini-3-flash-preview',
+      'gemini-3.8-flash'
     ];
     const modelsToTry = [...new Set(candidateModels)];
 
@@ -347,16 +350,34 @@ export default async function handler(req, res) {
       }
     }
 
-    if (!response || !response.text) {
-      throw lastModelError || new Error('Empty response received from Gemini.');
+    let cleanAnswer = '';
+    if (response && response.text) {
+      cleanAnswer = cleanVisibleAiText(response.text);
+    } else {
+      // Fallback: If external API is unavailable, generate factual answer grounded in D.CARD database
+      const totalProducts = (relevantProducts.savingsAccounts?.length || 0) + 
+                            (relevantProducts.currentAccounts?.length || 0) + 
+                            (relevantProducts.debitCards?.length || 0);
+      
+      if (totalProducts > 0 || matchedLocations.length > 0) {
+        const parts = [];
+        if (matchedLocations.length > 0) {
+          parts.push(`Found ${matchedLocations.length} verified bank branch/ATM location${matchedLocations.length > 1 ? 's' : ''} in D.CARD's verified database.`);
+        }
+        if (relevantProducts.savingsAccounts?.length > 0) {
+          parts.push(`Found ${relevantProducts.savingsAccounts.length} matching savings account${relevantProducts.savingsAccounts.length > 1 ? 's' : ''}.`);
+        }
+        if (relevantProducts.debitCards?.length > 0) {
+          parts.push(`Found ${relevantProducts.debitCards.length} matching debit card${relevantProducts.debitCards.length > 1 ? 's' : ''}.`);
+        }
+        if (relevantProducts.currentAccounts?.length > 0) {
+          parts.push(`Found ${relevantProducts.currentAccounts.length} matching current account${relevantProducts.currentAccounts.length > 1 ? 's' : ''}.`);
+        }
+        cleanAnswer = parts.join(' ') + ' You can review the verified details, charges, and features below:';
+      } else {
+        cleanAnswer = 'AI Advisor is temporarily unavailable. Please try again.';
+      }
     }
-
-    const aiText = response.text || '';
-    if (!aiText.trim()) {
-      throw new Error('Empty response received from Gemini.');
-    }
-
-    const cleanAnswer = cleanVisibleAiText(aiText);
 
     // Determine high-level response type
     let responseType = 'information_answer';
@@ -399,7 +420,7 @@ export default async function handler(req, res) {
   } catch (err) {
     console.error('[AI Assistance Error] Exception while generating response:', err.message || err);
     res.status(500).json({
-      error: 'AI Assistance is temporarily unavailable. Please try again later.'
+      error: 'AI Advisor is temporarily unavailable. Please try again.'
     });
   }
 }

@@ -24,6 +24,7 @@ import {
 import { useSEO } from '../hooks/useSEO';
 import { useAppLocation } from '../context/LocationContext';
 import MapTilerMap from '../components/MapTilerMap';
+import BranchDetailsModal from '../components/BranchDetailsModal';
 import { 
   findNearbyBranches, 
   fetchNearbyBranchesAsync,
@@ -120,13 +121,14 @@ export default function FindMyBankPage() {
 
   // Map & Card Focus Interaction
   const [focusedBranch, setFocusedBranch] = useState(null);
+  const [selectedBranchForModal, setSelectedBranchForModal] = useState(null);
   const [mobileTab, setMobileTab] = useState('both'); // 'map' | 'list' | 'both'
 
   const searchInputRef = useRef(null);
   const mapSectionRef = useRef(null);
   const dropdownRef = useRef(null);
 
-  const apiKey = import.meta.env.MAPTILER_API_KEY || '';
+  const apiKey = import.meta.env.VITE_MAPTILER_API_KEY || import.meta.env.MAPTILER_API_KEY || '';
 
   // Debounced Autocomplete Suggestion Generator
   useEffect(() => {
@@ -409,9 +411,16 @@ export default function FindMyBankPage() {
     setSearchError(null);
   };
 
-  // 6. View Branch on Map Action
+  // 6. Marker Click: select branch, pan to it, and open details modal
+  const handleMarkerClick = (branch) => {
+    setFocusedBranch(branch);
+    setSelectedBranchForModal(branch);
+  };
+
+  // 7. View Branch on Map Action (from card button or modal button)
   const handleViewOnMap = (branch) => {
     setFocusedBranch(branch);
+    setSelectedBranchForModal(null); // Close modal so user views the map directly
     if (window.innerWidth < 1024) {
       setMobileTab('map');
     }
@@ -848,7 +857,7 @@ export default function FindMyBankPage() {
               userCoords={userCoords}
               branches={nearbyBranches}
               focusedBranch={focusedBranch}
-              onSelectBranch={handleViewOnMap}
+              onSelectBranch={handleMarkerClick}
               radiusKm={radiusKm}
               className="h-[460px] sm:h-[520px] w-full"
             />
@@ -927,6 +936,7 @@ export default function FindMyBankPage() {
                     key={branch.id}
                     branch={branch}
                     onViewOnMap={() => handleViewOnMap(branch)}
+                    onOpenDetails={() => setSelectedBranchForModal(branch)}
                     isFocused={focusedBranch?.id === branch.id}
                   />
                 ))}
@@ -935,6 +945,16 @@ export default function FindMyBankPage() {
           )}
         </section>
       </main>
+
+      {/* ==================================================
+          BRANCH DETAILS MODAL
+         ================================================== */}
+      <BranchDetailsModal
+        branch={selectedBranchForModal}
+        isOpen={Boolean(selectedBranchForModal)}
+        onClose={() => setSelectedBranchForModal(null)}
+        onViewOnMap={handleViewOnMap}
+      />
     </div>
   );
 }
@@ -942,7 +962,7 @@ export default function FindMyBankPage() {
 /**
  * Individual Bank Branch Card Component
  */
-function BranchCard({ branch, onViewOnMap, isFocused }) {
+function BranchCard({ branch, onViewOnMap, onOpenDetails, isFocused }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 14 }}
@@ -950,7 +970,8 @@ function BranchCard({ branch, onViewOnMap, isFocused }) {
       exit={{ opacity: 0, y: -14 }}
       whileHover={{ y: -3 }}
       transition={{ duration: 0.2 }}
-      className={`p-6 rounded-3xl bg-white dark:bg-slate-900 border transition-all flex flex-col justify-between space-y-5 shadow-sm hover:shadow-md ${
+      onClick={onOpenDetails}
+      className={`p-6 rounded-3xl bg-white dark:bg-slate-900 border transition-all flex flex-col justify-between space-y-5 shadow-sm hover:shadow-md cursor-pointer ${
         isFocused
           ? 'border-blue-500 ring-2 ring-blue-500/20 shadow-lg'
           : 'border-slate-200 dark:border-slate-800'
@@ -1030,7 +1051,10 @@ function BranchCard({ branch, onViewOnMap, isFocused }) {
       <div className="grid grid-cols-2 gap-2.5 pt-4 border-t border-slate-100 dark:border-slate-800">
         <button
           type="button"
-          onClick={onViewOnMap}
+          onClick={(e) => {
+            e.stopPropagation();
+            onViewOnMap();
+          }}
           className="py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
         >
           <Navigation className="w-3.5 h-3.5 text-blue-600" />
@@ -1041,6 +1065,7 @@ function BranchCard({ branch, onViewOnMap, isFocused }) {
           href={branch.directionsUrl}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={(e) => e.stopPropagation()}
           className="py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black transition-all flex items-center justify-center gap-1.5 shadow-xs cursor-pointer active:scale-95"
         >
           <span>Get Directions</span>

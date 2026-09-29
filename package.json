@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "node scripts/generate-sitemap.js && vite build",
     "generate:sitemap": "node scripts/generate-sitemap.js",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "node scripts/validate-locations.js && node scripts/geocode-branches.mjs --check"
   },
   "dependencies": {
     "@google/genai": "^2.23.0",
