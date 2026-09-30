@@ -1201,6 +1201,10 @@ function AppContent() {
                 />
               } 
             />
+            <Route 
+              path="/ai-assistance" 
+              element={<Navigate to="/ai-advisor" replace />} 
+            />
 
             {/* Saved & Favorites routes */}
             <Route 
