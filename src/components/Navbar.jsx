@@ -16,7 +16,15 @@ import { useAuth } from "../hooks/useAuth";
 import { useWishlist } from "../context/WishlistContext";
 import TopDisclaimerTicker from "./TopDisclaimerTicker";
 
-function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOpenLegal }) {
+function Navbar({ 
+  isDarkMode, 
+  toggleDarkMode, 
+  onOpenAuth, 
+  compareCount = 0, 
+  onOpenLegal,
+  unreadNotificationCount = 0,
+  unreadCount: propUnreadCount
+}) {
   const { user, profile, logout, openAuthModal } = useAuth();
   const { wishlist } = useWishlist();
   const location = useLocation();
@@ -24,6 +32,23 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
   const [scrolled, setScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+
+  // Unread notifications state - defaults to 0 (no fake/hardcoded badges)
+  const [unreadCount, setUnreadCount] = useState(
+    typeof propUnreadCount === 'number'
+      ? propUnreadCount
+      : (typeof unreadNotificationCount === 'number' ? unreadNotificationCount : 0)
+  );
+
+  useEffect(() => {
+    if (typeof propUnreadCount === 'number') {
+      setUnreadCount(propUnreadCount);
+    } else if (typeof unreadNotificationCount === 'number') {
+      setUnreadCount(unreadNotificationCount);
+    }
+  }, [propUnreadCount, unreadNotificationCount]);
+
+  const favoritesCount = Array.isArray(wishlist) ? wishlist.length : 0;
 
   const profileDropdownRef = useRef(null);
 
@@ -170,7 +195,7 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
           {/* ── RIGHT: CONTROLS (Legal ⚖, Theme, Notification, Rajdeep Profile) ── */}
           <div className="flex items-center gap-1.5 sm:gap-2 xl:gap-2.5 shrink-0 justify-end">
             
-            {/* 1. Legal Button with Scales-of-Justice Symbol & Red Badge "1" (Desktop >= 1280px) */}
+            {/* 1. Legal Button with Scales-of-Justice Symbol (Desktop >= 1280px) */}
             <button
               type="button"
               onClick={() => onOpenLegal ? onOpenLegal('terms') : null}
@@ -183,9 +208,6 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
                 alt="Legal" 
                 className="w-5 h-5 object-contain transition-transform group-hover:scale-110 shrink-0" 
               />
-              <span className="absolute -top-1 -right-1 min-w-[17px] h-[17px] px-1 flex items-center justify-center text-[10px] font-extrabold rounded-full bg-rose-500 text-white leading-none shadow-xs pointer-events-none">
-                1
-              </span>
             </button>
 
             {/* 2. Theme Toggle Button */}
@@ -199,18 +221,18 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
               {isDarkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-[#2563EB]" />}
             </button>
 
-            {/* 3. Notification Button with Attached Badge */}
+            {/* 3. Notification Button (Bell) */}
             <Link
               to="/saved-cards"
               onClick={(e) => handleProtectedClick(e, '/saved-cards', true)}
               className="relative w-9 h-9 flex items-center justify-center rounded-xl text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] hover:bg-[#EFF6FF] dark:hover:bg-slate-800/60 transition-all group shrink-0"
-              title="Notifications & Saved"
+              title="Notifications"
               aria-label="Notifications"
             >
               <Bell className="w-4 h-4 text-[#4B5563] dark:text-slate-300 group-hover:text-[#2563EB] dark:group-hover:text-[#60A5FA] transition-all shrink-0" />
-              {wishlist && wishlist.length > 0 && (
+              {unreadCount > 0 && (
                 <span className="absolute -top-1 -right-1 min-w-[17px] h-[17px] px-1 flex items-center justify-center text-[10px] font-extrabold rounded-full bg-rose-500 text-white leading-none shadow-xs pointer-events-none">
-                  {wishlist.length}
+                  {unreadCount}
                 </span>
               )}
             </Link>
@@ -261,9 +283,9 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
                         <Heart className="w-3.5 h-3.5 text-rose-500" />
                         <span>Saved Favourites</span>
                       </div>
-                      {wishlist && wishlist.length > 0 && (
+                      {favoritesCount > 0 && (
                         <span className="px-1.5 py-0.2 text-[10px] font-extrabold rounded-full bg-rose-500 text-white">
-                          {wishlist.length}
+                          {favoritesCount}
                         </span>
                       )}
                     </Link>
@@ -361,9 +383,6 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
               />
               <span>Legal & Terms</span>
             </div>
-            <span className="min-w-[18px] h-[18px] px-1.5 flex items-center justify-center text-[10px] font-extrabold rounded-full bg-rose-500 text-white leading-none shadow-xs">
-              1
-            </span>
           </button>
 
           <div className="pt-3 mt-2 border-t border-gray-100 dark:border-slate-800 space-y-1">
@@ -405,9 +424,9 @@ function Navbar({ isDarkMode, toggleDarkMode, onOpenAuth, compareCount = 0, onOp
                 <Heart className="w-4 h-4 text-rose-500" />
                 <span>Saved Favourites</span>
               </div>
-              {wishlist && wishlist.length > 0 && (
+              {favoritesCount > 0 && (
                 <span className="px-2 py-0.5 text-[10px] font-extrabold rounded-full bg-rose-500 text-white">
-                  {wishlist.length}
+                  {favoritesCount}
                 </span>
               )}
             </Link>
