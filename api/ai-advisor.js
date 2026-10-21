@@ -164,7 +164,8 @@ export default async function handler(req, res) {
 
   try {
     const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {});
-    const { message, conversationHistory = [], conversationState = {}, userCoords = null } = body;
+    const { message, conversationHistory = [], conversationState = {}, userCoords = null, language = 'en' } = body;
+    const isHindi = language === 'hi';
 
     // 1. Input Validation
     if (!message || typeof message !== 'string' || !message.trim()) {
@@ -301,8 +302,14 @@ export default async function handler(req, res) {
       }
     }
 
+    // Language preference instruction
+    const languageInstruction = isHindi
+      ? `CRITICAL LANGUAGE REQUIREMENT: The user's interface language is Hindi (हिंदी). You MUST respond in natural, fluent, Devanagari Hindi by default. Preserve official bank names, official product names, interest rates, fee figures, and IFSC codes accurately. If the user explicitly asks for English or another language in their message, respect their explicit choice.`
+      : `LANGUAGE REQUIREMENT: The user's interface language is English. Respond in clear, professional English by default unless the user explicitly requests another language.`;
+
     // Current turn with grounded database and location context
     const currentPromptWithContext = [
+      languageInstruction,
       `USER INTENT: ${intentObj.primaryIntent}${intentObj.isCombined ? ' + BANK_LOCATION_SEARCH' : ''}`,
       productRequirements && Object.keys(productRequirements).length > 0 ? `EXTRACTED REQUIREMENTS: ${JSON.stringify(productRequirements)}` : '',
       `==================================================`,
@@ -319,13 +326,11 @@ export default async function handler(req, res) {
     });
 
     // 8. Invoke Gemini with automatic model fallback
-    const configuredModel = (process.env.GEMINI_MODEL && process.env.GEMINI_MODEL !== 'gemini-3.8-flash')
-      ? process.env.GEMINI_MODEL.trim()
-      : 'gemini-3.6-flash';
+    const configuredModel = process.env.GEMINI_MODEL ? process.env.GEMINI_MODEL.trim() : 'gemini-3.8-flash';
     const candidateModels = [
+      'gemini-3.8-flash',
       configuredModel,
-      'gemini-3.6-flash',
-      'gemini-3.5-flash'
+      'gemini-3.7-flash'
     ];
     const modelsToTry = [...new Set(candidateModels)];
 
@@ -353,6 +358,10 @@ export default async function handler(req, res) {
       } catch (err) {
         lastModelError = err;
         console.warn(`[AI Assistance Notice] Model ${currentModel} returned error (${err.message || err}). Attempting fallback...`);
+        // If network/API timed out or is overloaded, do not cascade additional timeouts; drop directly to grounded fallback
+        if (err.message && (err.message.includes('timeout') || err.message.includes('503'))) {
+          break;
+        }
       }
     }
 
@@ -360,25 +369,52 @@ export default async function handler(req, res) {
     if (response && response.text) {
       cleanAnswer = cleanVisibleAiText(response.text);
     } else {
-      // Deterministic D.CARD grounded database fallback
+      // Deterministic D.CARD grounded database fallback (localized)
       const lowerQuery = cleanMessage.toLowerCase();
-      if (relevantProducts.savingsAccounts?.length > 0 && (lowerQuery.includes('zero') || lowerQuery.includes('savings') || lowerQuery.includes('account') || lowerQuery.includes('balance'))) {
+      if (isLocationQuery && matchedLocations.length > 0) {
+        const topLocs = matchedLocations.slice(0, 4);
+        cleanAnswer = isHindi
+          ? `D.CARD के सत्यापित डेटाबेस में ${matchedLocations.length} शाखाएं/एटीएम मिले हैं:\n\n` +
+            topLocs.map(l => `• ${l.branch_name || l.branchName} (${l.bank_name || l.bankId}): ${l.address}, ${l.city} (IFSC: ${l.ifsc || 'N/A'})`).join('\n') +
+            `\n\nआप नीचे इन्हें मैप पर देख सकते हैं और दिशा-निर्देश (Directions) प्राप्त कर सकते हैं।`
+          : `Found ${matchedLocations.length} verified branch(es)/ATM(s) in D.CARD's database:\n\n` +
+            topLocs.map(l => `• ${l.branch_name || l.branchName} (${l.bank_name || l.bankId}): ${l.address}, ${l.city} (IFSC: ${l.ifsc || 'N/A'})`).join('\n') +
+            `\n\nYou can view them on the map and get directions below.`;
+      } else if (isLocationQuery && (!locationResult || !locationResult.locations || locationResult.locations.length === 0)) {
+        cleanAnswer = isHindi
+          ? `D.CARD के वर्तमान डेटाबेस में "${cleanMessage}" से मेल खाती कोई सत्यापित शाखा या एटीएम नहीं मिला। आप शहर के नाम, पिन कोड से खोज सकते हैं या 'बैंक खोजें' में सभी सत्यापित शाखाएं देख सकते हैं।`
+          : `I couldn't find any verified branches or ATMs matching "${cleanMessage}" in D.CARD's current database. You can search by city name, PIN code, or explore all 297 verified branches in Find My Bank.`;
+      } else if (relevantProducts.savingsAccounts?.length > 0 && (lowerQuery.includes('zero') || lowerQuery.includes('savings') || lowerQuery.includes('account') || lowerQuery.includes('balance') || lowerQuery.includes('बचत') || lowerQuery.includes('खाता'))) {
         const topAccounts = relevantProducts.savingsAccounts.slice(0, 4);
-        cleanAnswer = `Based on D.CARD's verified database, here are the top savings accounts matching your requirement:\n\n` +
-          topAccounts.map((a) => `• ${a.accountName || a.name} (${a.bank}): Minimum balance ₹${a.minimumBalanceValue ?? 0}. ${a.tagline || a.features?.[0] || 'Zero balance facility available.'}`).join('\n') +
-          `\n\nYou can review the verified charges, interest rates, and linked debit cards below.`;
+        cleanAnswer = isHindi
+          ? `D.CARD के सत्यापित डेटाबेस के आधार पर, आपकी आवश्यकता से मेल खाते प्रमुख बचत खाते:\n\n` +
+            topAccounts.map((a) => `• ${a.accountName || a.name} (${a.bank}): न्यूनतम शेष राशि ₹${a.minimumBalanceValue ?? 0}. ${a.tagline || a.features?.[0] || 'जीरो बैलेंस सुविधा उपलब्ध।'}`).join('\n') +
+            `\n\nआप नीचे सत्यापित शुल्क, ब्याज दरें और लिंक डेबिट कार्ड देख सकते हैं।`
+          : `Based on D.CARD's verified database, here are the top savings accounts matching your requirement:\n\n` +
+            topAccounts.map((a) => `• ${a.accountName || a.name} (${a.bank}): Minimum balance ₹${a.minimumBalanceValue ?? 0}. ${a.tagline || a.features?.[0] || 'Zero balance facility available.'}`).join('\n') +
+            `\n\nYou can review the verified charges, interest rates, and linked debit cards below.`;
       } else if (relevantProducts.debitCards?.length > 0) {
         const topCards = relevantProducts.debitCards.slice(0, 4);
-        cleanAnswer = `Based on D.CARD's verified database, here are matching debit cards:\n\n` +
-          topCards.map((c) => `• ${c.name || c.card_name} (${c.bank || c.bank_name}): Annual fee ₹${c.annual_fee || c.annualFee || '0'}. ATM limit ₹${c.daily_atm_limit || c.atmLimit || 'N/A'}.`).join('\n') +
-          `\n\nYou can review complete limits and features below.`;
+        cleanAnswer = isHindi
+          ? `D.CARD के सत्यापित डेटाबेस के आधार पर संबंधित डेबिट कार्ड:\n\n` +
+            topCards.map((c) => `• ${c.name || c.card_name} (${c.bank || c.bank_name}): वार्षिक शुल्क ₹${c.annual_fee || c.annualFee || '0'}. एटीएम निकासी सीमा ₹${c.daily_atm_limit || c.atmLimit || 'N/A'}.`).join('\n') +
+            `\n\nआप नीचे संपूर्ण सीमाएं और सुविधाएं देख सकते हैं।`
+          : `Based on D.CARD's verified database, here are matching debit cards:\n\n` +
+            topCards.map((c) => `• ${c.name || c.card_name} (${c.bank || c.bank_name}): Annual fee ₹${c.annual_fee || c.annualFee || '0'}. ATM limit ₹${c.daily_atm_limit || c.atmLimit || 'N/A'}.`).join('\n') +
+            `\n\nYou can review complete limits and features below.`;
       } else if (matchedLocations.length > 0) {
         const topLocs = matchedLocations.slice(0, 3);
-        cleanAnswer = `Found ${matchedLocations.length} verified branches/ATMs in D.CARD's database:\n\n` +
-          topLocs.map(l => `• ${l.branch_name || l.branchName} (${l.bank_name || l.bankId}): ${l.address}, ${l.city} (IFSC: ${l.ifsc || 'N/A'})`).join('\n') +
-          `\n\nClick "View on Map" or "Get Directions" below.`;
+        cleanAnswer = isHindi
+          ? `D.CARD डेटाबेस में ${matchedLocations.length} सत्यापित शाखाएं/एटीएम मिले हैं:\n\n` +
+            topLocs.map(l => `• ${l.branch_name || l.branchName} (${l.bank_name || l.bankId}): ${l.address}, ${l.city} (IFSC: ${l.ifsc || 'N/A'})`).join('\n') +
+            `\n\nनीचे 'मैप पर देखें' या 'दिशा-निर्देश' पर क्लिक करें।`
+          : `Found ${matchedLocations.length} verified branches/ATMs in D.CARD's database:\n\n` +
+            topLocs.map(l => `• ${l.branch_name || l.branchName} (${l.bank_name || l.bankId}): ${l.address}, ${l.city} (IFSC: ${l.ifsc || 'N/A'})`).join('\n') +
+            `\n\nClick "View on Map" or "Get Directions" below.`;
       } else {
-        cleanAnswer = 'Hello! I am D.CARD AI Assistance. You can ask me to compare savings accounts, debit cards, check interest rates, or locate verified bank branches and ATMs across India.';
+        cleanAnswer = isHindi
+          ? 'नमस्ते! मैं D.CARD एआई सहायता हूँ। आप मुझसे बचत खातों, डेबिट कार्डों की तुलना, ब्याज दरों की जांच, या भारत भर में बैंक शाखाओं व एटीएम को खोजने के बारे में पूछ सकते हैं।'
+          : 'Hello! I am D.CARD AI Assistance. You can ask me to compare savings accounts, debit cards, check interest rates, or locate verified bank branches and ATMs across India.';
       }
     }
 

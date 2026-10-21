@@ -11,26 +11,8 @@ import {
   ChevronRight,
   LogOut,
 } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 
-const NAV_ITEMS = [
-  { id: 'overview',        label: 'Overview',          icon: LayoutDashboard },
-  { id: 'saved-accounts',  label: 'Saved Accounts',    icon: Landmark },
-  { id: 'saved-cards',     label: 'Saved Debit Cards', icon: CreditCard },
-  { id: 'comparisons',     label: 'Comparisons',       icon: GitCompare },
-  { id: 'recently-viewed', label: 'Recently Viewed',   icon: Clock },
-  { id: 'preferences',     label: 'Preferences',       icon: SlidersHorizontal },
-  { id: 'settings',        label: 'Settings',          icon: Settings },
-];
-
-/**
- * ProfileSidebar
- * Renders as:
- * - Desktop (lg+): sticky vertical nav panel (left column)
- * - Mobile (<lg): horizontal scrollable tab strip (full width, shown above content)
- *
- * Returns a React fragment so both elements sit as siblings inside the
- * flex-col lg:flex-row parent in UserProfilePage.
- */
 export default function ProfileSidebar({
   activeSection,
   onSelectSection,
@@ -41,8 +23,19 @@ export default function ProfileSidebar({
   wishlistCount,
   onLogout,
 }) {
+  const { t, isHindi } = useLanguage();
+
+  const navItems = [
+    { id: 'overview',        label: t('profile.overviewTab', 'Overview'),                   icon: LayoutDashboard },
+    { id: 'saved-accounts',  label: t('profile.savedAccountsTab', 'Saved Accounts'),         icon: Landmark },
+    { id: 'saved-cards',     label: t('profile.savedCardsTab', 'Saved Debit Cards'),        icon: CreditCard },
+    { id: 'comparisons',     label: t('profile.comparisonsTab', 'Comparisons'),             icon: GitCompare },
+    { id: 'recently-viewed', label: t('profile.recentlyViewedTab', 'Recently Viewed'),      icon: Clock },
+    { id: 'preferences',     label: t('profile.preferencesTab', 'Preferences'),             icon: SlidersHorizontal },
+    { id: 'settings',        label: t('profile.settingsTab', 'Settings'),                   icon: Settings },
+  ];
   const displayName =
-    profile?.full_name || profile?.name || user?.displayName || 'Member';
+    profile?.full_name || profile?.name || user?.displayName || (isHindi ? 'उपयोगकर्ता' : 'Member');
   const email = user?.email || '';
 
   return (
@@ -82,7 +75,7 @@ export default function ProfileSidebar({
                   className="mt-2 flex items-center gap-1 text-[10px] font-bold text-[#2563EB] dark:text-[#60A5FA] hover:underline cursor-pointer"
                 >
                   <Pencil className="w-3 h-3" />
-                  Edit Profile
+                  {isHindi ? 'प्रोफ़ाइल संपादित करें' : 'Edit Profile'}
                 </button>
               </div>
             </div>
@@ -90,7 +83,7 @@ export default function ProfileSidebar({
 
           {/* Navigation items */}
           <nav className="p-3 space-y-0.5">
-            {NAV_ITEMS.map(({ id, label, icon: Icon }) => {
+            {navItems.map(({ id, label, icon: Icon }) => {
               const isActive = activeSection === id;
               return (
                 <button
@@ -126,7 +119,7 @@ export default function ProfileSidebar({
                 className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all cursor-pointer"
               >
                 <LogOut className="w-4 h-4 shrink-0" />
-                Sign Out
+                {t('profile.logoutBtn', 'Sign Out')}
               </button>
             </div>
           </div>
@@ -139,7 +132,7 @@ export default function ProfileSidebar({
       ═══════════════════════════════ */}
       <div className="lg:hidden w-full">
         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2">
-          {NAV_ITEMS.map(({ id, label, icon: Icon }) => {
+          {navItems.map(({ id, label, icon: Icon }) => {
             const isActive = activeSection === id;
             return (
               <button

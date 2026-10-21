@@ -5,16 +5,18 @@ import {
   Bot, User, Send, X, Minus, Maximize2, Trash2,
   ShieldCheck, CreditCard, Plane, CheckCircle2,
   Heart, ChevronRight, Scale, Building2, RefreshCw,
-  MapPin, Navigation, Compass, Mic, MicOff, ExternalLink, Map
+  MapPin, Navigation, Compass, Mic, MicOff, ExternalLink, Map,
+  AlertCircle, Info
 } from 'lucide-react';
 import { aiChatService } from '../services/aiChatService';
 import { useAuth } from '../hooks/useAuth';
 import { useWishlist } from '../context/WishlistContext';
+import { useLanguage } from '../context/LanguageContext';
 import BankLogo from './BankLogo';
 
 /* ─── Static data ──────────────────────────────────────────────────────────── */
 
-const QUICK_ACTIONS = [
+const QUICK_ACTIONS_EN = [
   { label: 'Zero Balance Savings',  query: 'Which savings account has zero minimum balance?'         },
   { label: 'ATM Near Kharar',       query: 'Kharar mein SBI ka nearest ATM batao'                    },
   { label: 'Student Account',       query: 'Which savings account is suitable for a student?'         },
@@ -25,13 +27,33 @@ const QUICK_ACTIONS = [
   { label: 'Banks Near Me',         query: 'banks near me'                                           },
 ];
 
-const STARTER_PROMPTS = [
+const QUICK_ACTIONS_HI = [
+  { label: 'जीरो बैलेंस बचत खाता',  query: 'किस बचत खाते में न्यूनतम बैलेंस शून्य है?'               },
+  { label: 'खरड़ के पास एटीएम',     query: 'खरड़ में एसबीआई का निकटतम एटीएम बताओ'                    },
+  { label: 'छात्र बचत खाता',        query: 'विद्यार्थियों के लिए कौन सा बचत खाता सबसे अच्छा है?'        },
+  { label: 'चंडीगढ़ में एचडीएफसी',  query: 'चंडीगढ़ में एचडीएफसी बैंक शाखा कहां है?'                 },
+  { label: 'एसबीआई बनाम एचडीएफसी',  query: 'एसबीआई और एचडीएफसी बचत खातों की तुलना करें'               },
+  { label: '5 किमी में आईसीआईसीआई', query: '5 किमी के दायरे में आईसीआईसीआई बैंक शाखाएं'             },
+  { label: 'लाउंज एक्सेस कार्ड',    query: 'किन डेबिट कार्डों पर एयरपोर्ट लाउंज एक्सेस मिलता है?'     },
+  { label: 'मेरे पास बैंक',         query: 'मेरे पास बैंक और एटीएम'                                  },
+];
+
+const STARTER_PROMPTS_EN = [
   { label: 'Zero Balance Savings',  query: 'Which savings account has zero minimum balance?'          },
   { label: 'Nearest ATM Kharar',    query: 'Kharar mein SBI ka nearest ATM batao'                    },
   { label: 'SBI vs HDFC',           query: 'Compare SBI and HDFC savings accounts'                    },
   { label: 'HDFC Chandigarh',       query: 'Chandigarh mein HDFC branch'                             },
   { label: 'Lounge Access Cards',   query: 'Which debit cards offer airport lounge access?'            },
   { label: 'ICICI within 5 km',     query: 'ICICI branches within 5 km'                              },
+];
+
+const STARTER_PROMPTS_HI = [
+  { label: 'जीरो बैलेंस खाता',     query: 'किस बचत खाते में न्यूनतम बैलेंस शून्य है?'               },
+  { label: 'खरड़ में निकटतम एटीएम', query: 'खरड़ में एसबीआई का निकटतम एटीएम बताओ'                    },
+  { label: 'एसबीआई बनाम एचडीएफसी',  query: 'एसबीआई और एचडीएफसी बचत खातों की तुलना करें'               },
+  { label: 'चंडीगढ़ एचडीएफसी शाखा', query: 'चंडीगढ़ में एचडीएफसी बैंक शाखा'                           },
+  { label: 'लाउंज एक्सेस कार्ड',    query: 'किन डेबिट कार्डों पर एयरपोर्ट लाउंज एक्सेस मिलता है?'     },
+  { label: '5 किमी में आईसीआईसीआई', query: '5 किमी के दायरे में आईसीआईसीआई बैंक शाखाएं'             },
 ];
 
 /* ─── Sub-components ────────────────────────────────────────────────────────── */
@@ -41,17 +63,18 @@ const STARTER_PROMPTS = [
  * Used for both savings accounts and debit cards.
  */
 function ProductMiniCard({ item, type, onView, onCompare, onSave, wishlisted }) {
+  const { isHindi } = useLanguage();
   const isAccount = type === 'account';
   const name      = isAccount
     ? (item.accountName || item.variant_name || 'Account')
     : (item.cardName    || item.name          || 'Card');
   const bankName  = item.bank_name || item.bank || '';
 
-  const m1Label = isAccount ? 'Interest'    : 'Annual Fee';
+  const m1Label = isAccount ? (isHindi ? 'ब्याज दर' : 'Interest')    : (isHindi ? 'वार्षिक शुल्क' : 'Annual Fee');
   const m1Value = isAccount
     ? (item.interest_rate  || item.interestRate || '—')
     : (item.annualFee      || item.annual_fee   || '—');
-  const m2Label = isAccount ? 'Min Balance' : 'ATM Limit';
+  const m2Label = isAccount ? (isHindi ? 'न्यूनतम बैलेंस' : 'Min Balance') : (isHindi ? 'एटीएम सीमा' : 'ATM Limit');
   const m2Value = isAccount
     ? (item.minimum_balance     || item.minimumBalance    || '—')
     : (item.cashWithdrawalLimit || item.atm_limit         || '—');
@@ -75,12 +98,12 @@ function ProductMiniCard({ item, type, onView, onCompare, onSave, wishlisted }) 
           onClick={onView}
           className="px-2.5 py-1 text-[10px] font-bold text-[#2563EB] bg-blue-50 rounded-lg hover:bg-[#2563EB] hover:text-white transition-all active:scale-95"
         >
-          View
+          {isHindi ? 'देखें' : 'View'}
         </button>
         {onCompare && (
           <button
             onClick={onCompare}
-            title="Add to compare"
+            title={isHindi ? "तुलना में जोड़ें" : "Add to compare"}
             className="p-1 text-gray-300 hover:text-[#2563EB] transition-colors"
           >
             <Scale className="w-3.5 h-3.5" />
@@ -88,7 +111,7 @@ function ProductMiniCard({ item, type, onView, onCompare, onSave, wishlisted }) 
         )}
         <button
           onClick={onSave}
-          title={wishlisted ? 'Remove from saved' : 'Save'}
+          title={wishlisted ? (isHindi ? 'सहेजे गए से हटाएं' : 'Remove from saved') : (isHindi ? 'सहेजें' : 'Save')}
           className="p-1 transition-colors"
         >
           <Heart className={`w-3.5 h-3.5 ${wishlisted ? 'fill-rose-500 text-rose-500' : 'text-gray-300 hover:text-rose-400'}`} />
@@ -102,6 +125,7 @@ function ProductMiniCard({ item, type, onView, onCompare, onSave, wishlisted }) 
  * Verified Branch & ATM Location Card shown in AI response bubbles
  */
 function LocationMiniCard({ location, onNavigate }) {
+  const { isHindi } = useLanguage();
   const isAtm = location.branch_type === 'ATM';
 
   return (
@@ -117,7 +141,7 @@ function LocationMiniCard({ location, onNavigate }) {
         <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0 ${
           isAtm ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-blue-50 text-blue-700 border border-blue-200'
         }`}>
-          {isAtm ? '🏧 ATM' : '🏦 Branch'}
+          {isAtm ? (isHindi ? '🏧 एटीएम' : '🏧 ATM') : (isHindi ? '🏦 शाखा' : '🏦 Branch')}
         </span>
       </div>
 
@@ -139,7 +163,7 @@ function LocationMiniCard({ location, onNavigate }) {
 
       <div className="pt-2 border-t border-gray-100 flex items-center justify-between gap-2 flex-wrap">
         <span className="text-[9px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100">
-          ✓ Verified {location.verified_on || 'Official'}
+          ✓ {isHindi ? 'सत्यापित आधिकारिक' : `Verified ${location.verified_on || 'Official'}`}
         </span>
         <div className="flex items-center gap-1.5">
           <button
@@ -147,7 +171,7 @@ function LocationMiniCard({ location, onNavigate }) {
             onClick={() => onNavigate(`/find-banks?search=${encodeURIComponent(location.city || location.bank_name)}`)}
             className="px-2 py-1 text-[10px] font-bold text-[#2563EB] bg-blue-50 hover:bg-blue-100 rounded-lg transition-all cursor-pointer"
           >
-            View on Map
+            {isHindi ? 'नक्शे पर देखें' : 'View on Map'}
           </button>
           {location.directionsUrl && (
             <a
@@ -156,7 +180,7 @@ function LocationMiniCard({ location, onNavigate }) {
               rel="noopener noreferrer"
               className="px-2 py-1 text-[10px] font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all"
             >
-              Directions ↗
+              {isHindi ? 'दिशा निर्देश ↗' : 'Directions ↗'}
             </a>
           )}
           {location.source_url && (
@@ -166,7 +190,7 @@ function LocationMiniCard({ location, onNavigate }) {
               rel="noopener noreferrer"
               className="px-2 py-1 text-[10px] font-bold text-gray-500 hover:text-blue-600 rounded-lg transition-all"
             >
-              Source 🌐
+              {isHindi ? 'स्रोत 🌐' : 'Source 🌐'}
             </a>
           )}
         </div>
@@ -177,6 +201,7 @@ function LocationMiniCard({ location, onNavigate }) {
 
 /** Animated "Analyzing D.CARD product & location data..." indicator */
 function TypingIndicator() {
+  const { isHindi } = useLanguage();
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
@@ -197,7 +222,7 @@ function TypingIndicator() {
           ))}
         </div>
         <span className="text-xs font-medium text-gray-500">
-          Analyzing D.CARD product & location data...
+          {isHindi ? "D.CARD उत्पाद और बैंकिंग डेटा का विश्लेषण जारी है..." : "Analyzing D.CARD product & location data..."}
         </span>
       </div>
     </motion.div>
@@ -217,6 +242,14 @@ function renderFormattedText(text) {
 
 /** Welcome / empty state shown before first message */
 function WelcomeState({ onPromptClick }) {
+  const { isHindi } = useLanguage();
+  const activePrompts = isHindi ? [
+    { label: 'जीरो बैलेंस बचत खाता', query: 'किस बचत खाते में जीरो न्यूनतम बैलेंस की सुविधा है?' },
+    { label: 'लाउंज एक्सेस कार्ड', query: 'किन डेबिट कार्डों पर एयरपोर्ट लाउंज एक्सेस मिलता है?' },
+    { label: 'SBI बनाम HDFC तुलना', query: 'SBI और HDFC के बचत खातों की तुलना करें' },
+    { label: 'विद्यार्थी खाता', query: 'विद्यार्थियों के लिए सबसे अच्छा बचत खाता कौन सा है?' }
+  ] : STARTER_PROMPTS.slice(0, 4);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -230,15 +263,19 @@ function WelcomeState({ onPromptClick }) {
 
       {/* Heading */}
       <div className="space-y-1.5">
-        <h3 className="text-base font-bold text-gray-900">What banking product are you looking for?</h3>
+        <h3 className="text-base font-bold text-gray-900">
+          {isHindi ? "आप किस बैंकिंग उत्पाद की तलाश कर रहे हैं?" : "What banking product are you looking for?"}
+        </h3>
         <p className="text-xs text-gray-500 leading-relaxed max-w-sm">
-          Ask questions about interest rates, zero-balance accounts, ATM limits, lounge access, or compare products side-by-side.
+          {isHindi 
+            ? "ब्याज दरों, जीरो-बैलेंस खातों, एटीएम सीमाओं, लाउंज एक्सेस के बारे में पूछें या उत्पादों की तुलना करें।"
+            : "Ask questions about interest rates, zero-balance accounts, ATM limits, lounge access, or compare products side-by-side."}
         </p>
       </div>
 
       {/* Starter Prompts Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full text-left pt-2">
-        {STARTER_PROMPTS.slice(0, 4).map((sp, idx) => (
+        {activePrompts.map((sp, idx) => (
           <button
             key={idx}
             onClick={() => onPromptClick(sp.query)}
@@ -272,7 +309,9 @@ function AIChatAssistant({
 }) {
   const { user }                    = useAuth();
   const { isWishlisted, toggleWishlist } = useWishlist();
+  const { language, isHindi, t }    = useLanguage();
   const navigate                    = useNavigate();
+  const quickActions                = isHindi ? QUICK_ACTIONS_HI : QUICK_ACTIONS_EN;
 
   const [isOpen,             setIsOpen]             = useState(embeddedPage);
   const [isMinimized,        setIsMinimized]         = useState(false);
@@ -283,50 +322,200 @@ function AIChatAssistant({
   const [lastQuery,          setLastQuery]           = useState('');
   const [userCoords,         setUserCoords]          = useState(null);
   const [isListening,        setIsListening]         = useState(false);
+  const [voiceState,          setVoiceState]          = useState('idle'); // 'idle' | 'requesting' | 'listening' | 'recognized' | 'denied' | 'error' | 'unsupported'
+  const [voiceLang,           setVoiceLang]           = useState(isHindi ? 'hi-IN' : 'en-IN');
+  const [voiceNotice,         setVoiceNotice]         = useState(null); // { type: 'listening'|'success'|'error'|'info', text: string }
 
   const chatContainerRef  = useRef(null);
   const inputRef          = useRef(null);
   const recognitionRef    = useRef(null);
+  const voiceNoticeTimer  = useRef(null);
+
+  // Sync default voice recognition language with active site language
+  useEffect(() => {
+    setVoiceLang(isHindi ? 'hi-IN' : 'en-IN');
+  }, [isHindi]);
+
+  const showVoiceNotice = useCallback((noticeObj, autoDismissMs = 6000) => {
+    if (voiceNoticeTimer.current) clearTimeout(voiceNoticeTimer.current);
+    setVoiceNotice(noticeObj);
+    if (autoDismissMs > 0) {
+      voiceNoticeTimer.current = setTimeout(() => {
+        setVoiceNotice(null);
+      }, autoDismissMs);
+    }
+  }, []);
+
+  // Cleanup speech recognition and timers on unmount
+  useEffect(() => {
+    return () => {
+      if (voiceNoticeTimer.current) clearTimeout(voiceNoticeTimer.current);
+      if (recognitionRef.current) {
+        try { recognitionRef.current.abort(); } catch (e) {}
+      }
+    };
+  }, []);
 
   /**
    * Toggles browser speech recognition for natural voice queries (English, Hindi, Hinglish)
    */
   const toggleVoiceInput = useCallback(() => {
-    if (isListening) {
-      if (recognitionRef.current) recognitionRef.current.stop();
+    if (isListening || voiceState === 'listening' || voiceState === 'requesting') {
+      if (recognitionRef.current) {
+        try { recognitionRef.current.stop(); } catch (e) {}
+      }
       setIsListening(false);
+      setVoiceState('idle');
+      showVoiceNotice({
+        type: 'info',
+        text: isHindi ? 'वॉयस इनपुट रोक दिया गया।' : 'Voice input stopped.'
+      }, 3500);
       return;
     }
 
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const SpeechRecognition = typeof window !== 'undefined' && (window.SpeechRecognition || window.webkitSpeechRecognition);
     if (!SpeechRecognition) {
-      alert("Voice input isn't supported in this browser. You can type your query instead.");
+      setVoiceState('unsupported');
+      setIsListening(false);
+      showVoiceNotice({
+        type: 'error',
+        text: isHindi
+          ? 'इस ब्राउज़र में वॉयस इनपुट समर्थित नहीं है। कृपया लिखकर प्रश्न पूछें।'
+          : 'Speech recognition is not supported in this browser. Please type your query.'
+      }, 7000);
       return;
     }
 
     try {
+      setVoiceState('requesting');
+      showVoiceNotice({
+        type: 'listening',
+        text: isHindi
+          ? 'माइक्रोफ़ोन अनुमति का अनुरोध किया जा रहा है...'
+          : 'Requesting microphone permission...'
+      }, 0);
+
       const recognition = new SpeechRecognition();
-      recognition.lang = 'en-IN';
-      recognition.interimResults = false;
+      recognition.lang = voiceLang;
+      recognition.interimResults = true;
+      recognition.continuous = false;
       recognition.maxAlternatives = 1;
 
-      recognition.onstart = () => setIsListening(true);
-      recognition.onresult = (event) => {
-        const transcript = event.results?.[0]?.[0]?.transcript;
-        if (transcript) {
-          setInputValue(transcript);
-        }
-        setIsListening(false);
+      recognition.onstart = () => {
+        setIsListening(true);
+        setVoiceState('listening');
+        showVoiceNotice({
+          type: 'listening',
+          text: isHindi
+            ? `सुन रहा है (${voiceLang === 'hi-IN' ? 'हिंदी' : 'अंग्रेजी'})... अब अपना प्रश्न बोलें`
+            : `Listening in ${voiceLang === 'hi-IN' ? 'Hindi (hi-IN)' : 'English (en-IN)'}... Speak your banking question now`
+        }, 0);
       };
-      recognition.onerror = () => setIsListening(false);
-      recognition.onend = () => setIsListening(false);
+
+      recognition.onresult = (event) => {
+        let interimText = '';
+        let finalText = '';
+
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const res = event.results[i];
+          const transcript = res?.[0]?.transcript || '';
+          if (res.isFinal) {
+            finalText += transcript;
+          } else {
+            interimText += transcript;
+          }
+        }
+
+        if (finalText) {
+          const clean = finalText.trim()
+            .replace(/\bfive thousand\b/gi, '₹5,000')
+            .replace(/\bten thousand\b/gi, '₹10,000')
+            .replace(/\btwo thousand\b/gi, '₹2,000');
+
+          setInputValue(clean);
+          setIsListening(false);
+          setVoiceState('recognized');
+          showVoiceNotice({
+            type: 'success',
+            text: isHindi
+              ? 'आवाज़ पहचान ली गई! प्रश्न की समीक्षा करें या संपादित करें, फिर भेजें।'
+              : 'Speech recognized! Review or edit your query, then click Send.'
+          }, 6000);
+        } else if (interimText) {
+          setInputValue(interimText);
+        }
+      };
+
+      recognition.onerror = (event) => {
+        setIsListening(false);
+        const err = event.error;
+
+        if (err === 'not-allowed' || err === 'permission-denied') {
+          setVoiceState('denied');
+          showVoiceNotice({
+            type: 'error',
+            text: isHindi
+              ? 'माइक्रोफ़ोन अनुमति अस्वीकृत। कृपया ब्राउज़र सेटिंग्स में माइक्रोफ़ोन की अनुमति दें या लिखकर खोजें।'
+              : 'Microphone permission denied. Please allow microphone access or type your query.'
+          }, 7000);
+        } else if (err === 'no-speech') {
+          setVoiceState('error');
+          showVoiceNotice({
+            type: 'error',
+            text: isHindi
+              ? 'कोई आवाज़ नहीं सुनी गई। कृपया पुनः बोलें या लिखकर खोजें।'
+              : 'No speech was detected. Please try speaking again or type your query.'
+          }, 6000);
+        } else if (err === 'audio-capture') {
+          setVoiceState('error');
+          showVoiceNotice({
+            type: 'error',
+            text: isHindi
+              ? 'कोई माइक्रोफ़ोन नहीं मिला। सुनिश्चित करें कि माइक्रोफ़ोन कनेक्टेड है।'
+              : 'Microphone not found. Ensure a microphone is connected to your device.'
+          }, 7000);
+        } else if (err === 'network') {
+          setVoiceState('error');
+          showVoiceNotice({
+            type: 'error',
+            text: isHindi
+              ? 'वॉयस सेवा में नेटवर्क त्रुटि। कृपया इंटरनेट कनेक्शन जांचें।'
+              : 'Network error occurred during speech recognition. Please check your connection.'
+          }, 7000);
+        } else if (err === 'aborted') {
+          setVoiceState('idle');
+          setVoiceNotice(null);
+        } else {
+          setVoiceState('error');
+          showVoiceNotice({
+            type: 'error',
+            text: isHindi
+              ? 'वॉयस इनपुट संसाधित नहीं हो सका। कृपया पुनः प्रयास करें या लिखकर खोजें।'
+              : 'Voice recognition encountered an error. Please try again or type your query.'
+          }, 6000);
+        }
+      };
+
+      recognition.onend = () => {
+        setIsListening(false);
+        if (voiceState === 'listening' || voiceState === 'requesting') {
+          setVoiceState('idle');
+        }
+      };
 
       recognitionRef.current = recognition;
       recognition.start();
-    } catch {
+    } catch (err) {
       setIsListening(false);
+      setVoiceState('error');
+      showVoiceNotice({
+        type: 'error',
+        text: isHindi
+          ? 'माइक्रोफ़ोन प्रारंभ नहीं हो सका। कृपया पुनः प्रयास करें या लिखकर खोजें।'
+          : 'Could not start voice recognition. Please try again or type your query.'
+      }, 6000);
     }
-  }, [isListening]);
+  }, [isListening, voiceState, voiceLang, isHindi, showVoiceNotice]);
 
   /**
    * Requests browser geolocation only upon explicit user trigger
@@ -430,7 +619,7 @@ function AIChatAssistant({
 
     try {
       const activeCoords = overrideCoords || userCoords;
-      const context  = { conversationState, conversationHistory: newMessages, userCoords: activeCoords };
+      const context  = { conversationState, conversationHistory: newMessages, userCoords: activeCoords, language };
       const response = await aiChatService.sendMessage(query, user, context);
 
       if (response.conversationState) setConversationState(response.conversationState);
@@ -473,7 +662,9 @@ function AIChatAssistant({
           id:        `${Date.now()}-error`,
           sender:    'bot',
           type:      'error',
-          text:      "AI Advisor is temporarily unavailable. Please try again.",
+          text:      isHindi
+            ? "एआई सलाहकार सेवा अस्थायी रूप से अनुपलब्ध है। कृपया पुनः प्रयास करें।"
+            : "AI Advisor is temporarily unavailable. Please try again.",
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         },
       ]);
@@ -481,7 +672,7 @@ function AIChatAssistant({
       setIsSearching(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inputValue, isSearching, messages, conversationState, userCoords, user, onProductsFound]);
+  }, [inputValue, isSearching, messages, conversationState, userCoords, user, onProductsFound, language, isHindi]);
 
   const handleClearChat = useCallback(async () => {
     setMessages([]);
@@ -552,13 +743,13 @@ function AIChatAssistant({
                       onClick={handleRetry}
                       className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-100 text-amber-700 text-xs font-semibold hover:bg-amber-200 transition-colors active:scale-95"
                     >
-                      <RefreshCw className="w-3 h-3" /> Try Again
+                      <RefreshCw className="w-3 h-3" /> {isHindi ? 'पुनः प्रयास करें' : 'Try Again'}
                     </button>
                     <button
                       onClick={() => navigate('/debit-cards')}
                       className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-amber-200 text-amber-700 text-xs font-semibold hover:bg-amber-50 transition-colors active:scale-95"
                     >
-                      Continue Exploring
+                      {isHindi ? 'अन्य उत्पाद देखें' : 'Continue Exploring'}
                     </button>
                   </div>
                 )}
@@ -568,7 +759,7 @@ function AIChatAssistant({
               {!isUser && (msg.matchedAccounts?.length ?? 0) > 0 && (
                 <div className="w-full space-y-1.5">
                   <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest px-0.5">
-                    Matching Accounts ({msg.matchedAccounts.length})
+                    {isHindi ? `संबंधित खाते (${msg.matchedAccounts.length})` : `Matching Accounts (${msg.matchedAccounts.length})`}
                   </p>
                   {msg.matchedAccounts.slice(0, 3).map(acc => (
                     <ProductMiniCard
@@ -589,7 +780,7 @@ function AIChatAssistant({
                   ))}
                   {msg.matchedAccounts.length > 3 && (
                     <p className="text-[10px] text-gray-400 font-semibold px-0.5">
-                      +{msg.matchedAccounts.length - 3} more accounts match your query
+                      {isHindi ? `+${msg.matchedAccounts.length - 3} और खाते आपकी खोज से मेल खाते हैं` : `+${msg.matchedAccounts.length - 3} more accounts match your query`}
                     </p>
                   )}
                 </div>
@@ -599,7 +790,7 @@ function AIChatAssistant({
               {!isUser && (msg.matchedCards?.length ?? 0) > 0 && (
                 <div className="w-full space-y-1.5">
                   <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest px-0.5">
-                    Matching Debit Cards ({msg.matchedCards.length})
+                    {isHindi ? `संबंधित डेबिट कार्ड (${msg.matchedCards.length})` : `Matching Debit Cards (${msg.matchedCards.length})`}
                   </p>
                   {msg.matchedCards.slice(0, 3).map(card => (
                     <ProductMiniCard
@@ -617,7 +808,7 @@ function AIChatAssistant({
                   ))}
                   {msg.matchedCards.length > 3 && (
                     <p className="text-[10px] text-gray-400 font-semibold px-0.5">
-                      +{msg.matchedCards.length - 3} more cards match your query
+                      {isHindi ? `+${msg.matchedCards.length - 3} और कार्ड आपकी खोज से मेल खाते हैं` : `+${msg.matchedCards.length - 3} more cards match your query`}
                     </p>
                   )}
                 </div>
@@ -628,13 +819,13 @@ function AIChatAssistant({
                 <div className="w-full space-y-1.5">
                   <div className="flex items-center justify-between px-0.5">
                     <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">
-                      Verified Locations ({msg.matchedLocations.length})
+                      {isHindi ? `सत्यापित शाखाएं व एटीएम (${msg.matchedLocations.length})` : `Verified Locations (${msg.matchedLocations.length})`}
                     </p>
                     <button
                       onClick={() => navigate('/find-banks')}
                       className="text-[10px] font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1"
                     >
-                      Open Find Banks <Map className="w-3 h-3" />
+                      {isHindi ? 'बैंक खोजें खोलें' : 'Open Find Banks'} <Map className="w-3 h-3" />
                     </button>
                   </div>
                   {msg.matchedLocations.slice(0, 3).map((loc) => (
@@ -651,7 +842,7 @@ function AIChatAssistant({
                       onClick={() => navigate('/find-banks')}
                       className="text-[10px] text-blue-600 font-semibold px-0.5 hover:underline block text-left"
                     >
-                      +{msg.matchedLocations.length - 3} more verified locations found. View all on Find Banks →
+                      {isHindi ? `+${msg.matchedLocations.length - 3} और सत्यापित शाखाएं मिलीं। सभी देखें →` : `+${msg.matchedLocations.length - 3} more verified locations found. View all on Find Banks →`}
                     </button>
                   )}
                 </div>
@@ -719,7 +910,7 @@ function AIChatAssistant({
   /* ── Shared: quick action chips ── */
   const renderQuickChips = () => (
     <div className="px-4 py-2 border-t border-gray-100 overflow-x-auto flex gap-1.5 shrink-0 bg-white [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-      {QUICK_ACTIONS.map(act => (
+      {quickActions.map(act => (
         <button
           key={act.label}
           onClick={() => handleSendMessage(act.query)}
@@ -734,57 +925,158 @@ function AIChatAssistant({
 
   /* ── Shared: input form ── */
   const renderInput = () => (
-    <form
-      onSubmit={e => { e.preventDefault(); handleSendMessage(); }}
-      className="px-4 py-3 border-t border-gray-200/80 bg-white flex items-center gap-2 shrink-0"
-    >
-      <input
-        ref={inputRef}
-        type="text"
-        value={inputValue}
-        onChange={e => setInputValue(e.target.value)}
-        onKeyDown={e => {
-          if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(); }
-        }}
-        placeholder="Ask about accounts, cards, Kharar SBI ATM, Chandigarh branch..."
-        disabled={isSearching}
-        className="flex-1 rounded-full bg-[#F8FAFC] border border-gray-200 px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 outline-none focus:border-[#2563EB] focus:bg-white transition-all disabled:opacity-60"
-        aria-label="Type your banking question"
-      />
-      <button
-        type="button"
-        onClick={toggleVoiceInput}
-        title={isListening ? 'Listening (English / Hindi / Hinglish)... Click to stop' : 'Voice input (English / Hindi / Hinglish)'}
-        className={`w-9 h-9 rounded-full border flex items-center justify-center transition-all shrink-0 active:scale-95 ${
-          isListening
-            ? 'bg-red-500 border-red-600 text-white animate-pulse'
-            : 'border-gray-200 bg-[#F8FAFC] hover:bg-blue-50 hover:border-blue-200 text-gray-500 hover:text-blue-600'
-        }`}
-        aria-label="Voice input"
+    <div className="border-t border-gray-200/80 bg-white shrink-0">
+      <form
+        onSubmit={e => { e.preventDefault(); handleSendMessage(); }}
+        className="px-4 py-3 flex items-center gap-2"
       >
-        {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
-      </button>
-      {messages.length > 0 && (
+        <input
+          ref={inputRef}
+          type="text"
+          value={inputValue}
+          onChange={e => setInputValue(e.target.value)}
+          onKeyDown={e => {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(); }
+          }}
+          placeholder={isHindi ? "खातों, कार्डों, खरड़ एसबीआई एटीएम या चंडीगढ़ शाखा के बारे में पूछें..." : "Ask about accounts, cards, Kharar SBI ATM, Chandigarh branch..."}
+          disabled={isSearching}
+          className={`flex-1 rounded-full bg-[#F8FAFC] border px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 outline-none transition-all disabled:opacity-60 min-w-0 ${
+            isListening
+              ? 'border-red-400 ring-2 ring-red-400/20 bg-white'
+              : 'border-gray-200 focus:border-[#2563EB] focus:bg-white'
+          }`}
+          aria-label="Type your banking question"
+        />
+
+        {/* Voice language toggle button */}
         <button
           type="button"
-          onClick={handleClearChat}
-          title="Clear conversation"
-          className="w-9 h-9 rounded-full border border-gray-200 bg-[#F8FAFC] hover:bg-red-50 hover:border-red-200 text-gray-400 hover:text-red-400 flex items-center justify-center transition-all shrink-0 active:scale-95"
-          aria-label="Clear conversation"
+          onClick={(e) => {
+            e.preventDefault();
+            const next = voiceLang === 'hi-IN' ? 'en-IN' : 'hi-IN';
+            setVoiceLang(next);
+            if (isListening && recognitionRef.current) {
+              try { recognitionRef.current.stop(); } catch (err) {}
+              setIsListening(false);
+              setVoiceState('idle');
+            }
+            showVoiceNotice({
+              type: 'info',
+              text: next === 'hi-IN'
+                ? (isHindi ? 'वॉयस भाषा: हिंदी (hi-IN) सेट की गई' : 'Voice input language set to Hindi (hi-IN)')
+                : (isHindi ? 'वॉयस भाषा: अंग्रेजी (en-IN) सेट की गई' : 'Voice input language set to English (en-IN)')
+            }, 3500);
+          }}
+          title={voiceLang === 'hi-IN' ? (isHindi ? 'वॉयस भाषा: हिंदी (hi-IN) - अंग्रेजी के लिए क्लिक करें' : 'Voice language: Hindi (Click for English)') : (isHindi ? 'वॉयस भाषा: अंग्रेजी (en-IN) - हिंदी के लिए क्लिक करें' : 'Voice language: English (Click for Hindi)')}
+          className={`px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider transition-colors shrink-0 ${
+            voiceLang === 'hi-IN'
+              ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30'
+              : 'bg-blue-50 text-[#2563EB] border border-blue-200'
+          }`}
+          aria-label="Switch voice recognition language"
         >
-          <Trash2 className="w-3.5 h-3.5" />
+          <span>{voiceLang === 'hi-IN' ? '🇮🇳 HI' : '🌐 EN'}</span>
         </button>
-      )}
-      <button
-        type="submit"
-        disabled={!inputValue.trim() || isSearching}
-        title={isSearching ? 'Thinking…' : 'Send message'}
-        className="w-10 h-10 rounded-full bg-[#2563EB] hover:bg-blue-700 text-white flex items-center justify-center shadow-sm disabled:opacity-40 active:scale-95 transition-all shrink-0"
-        aria-label="Send message"
-      >
-        <Send className="w-4 h-4" />
-      </button>
-    </form>
+
+        {/* Microphone Button */}
+        <button
+          type="button"
+          onClick={toggleVoiceInput}
+          title={
+            isListening
+              ? (isHindi ? 'सुन रहा है... रोकने के लिए क्लिक करें' : 'Listening... Click to stop')
+              : voiceState === 'requesting'
+              ? (isHindi ? 'अनुमति का अनुरोध किया जा रहा है...' : 'Requesting mic permission...')
+              : (isHindi ? `बोलकर पूछें (${voiceLang === 'hi-IN' ? 'हिंदी' : 'अंग्रेजी'})` : `Click to speak (${voiceLang})`)
+          }
+          className={`w-9 h-9 rounded-full border flex items-center justify-center transition-all shrink-0 active:scale-95 relative cursor-pointer ${
+            isListening
+              ? 'bg-red-500 border-red-600 text-white animate-pulse shadow-md shadow-red-500/30 ring-2 ring-red-300'
+              : voiceState === 'recognized'
+              ? 'bg-emerald-50 border-emerald-300 text-emerald-600'
+              : 'border-gray-200 bg-[#F8FAFC] hover:bg-blue-50 hover:border-blue-200 text-gray-500 hover:text-blue-600'
+          }`}
+          aria-label="Voice input"
+        >
+          {isListening ? (
+            <MicOff className="w-4 h-4" />
+          ) : voiceState === 'requesting' ? (
+            <div className="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+          ) : (
+            <Mic className="w-4 h-4" />
+          )}
+          {isListening && (
+            <span className="absolute -top-0.5 -right-0.5 flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-red-600" />
+            </span>
+          )}
+        </button>
+
+        {messages.length > 0 && (
+          <button
+            type="button"
+            onClick={handleClearChat}
+            title={isHindi ? "बातचीत साफ़ करें" : "Clear conversation"}
+            className="w-9 h-9 rounded-full border border-gray-200 bg-[#F8FAFC] hover:bg-red-50 hover:border-red-200 text-gray-400 hover:text-red-400 flex items-center justify-center transition-all shrink-0 active:scale-95 cursor-pointer"
+            aria-label="Clear conversation"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+          </button>
+        )}
+
+        <button
+          type="submit"
+          disabled={!inputValue.trim() || isSearching}
+          title={isSearching ? (isHindi ? 'सोच रहा है...' : 'Thinking…') : (isHindi ? 'संदेश भेजें' : 'Send message')}
+          className="w-10 h-10 rounded-full bg-[#2563EB] hover:bg-blue-700 text-white flex items-center justify-center shadow-sm disabled:opacity-40 active:scale-95 transition-all shrink-0 cursor-pointer"
+          aria-label="Send message"
+        >
+          <Send className="w-4 h-4" />
+        </button>
+      </form>
+
+      {/* Voice status banner notice */}
+      <AnimatePresence>
+        {voiceNotice && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className={`px-4 py-1.5 text-xs font-semibold flex items-center justify-between gap-2 border-t text-left ${
+              voiceNotice.type === 'listening'
+                ? 'bg-red-50 border-red-200 text-red-700'
+                : voiceNotice.type === 'success'
+                ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
+                : voiceNotice.type === 'error'
+                ? 'bg-rose-50 border-rose-200 text-rose-700'
+                : 'bg-blue-50 border-blue-200 text-blue-700'
+            }`}
+          >
+            <div className="flex items-center gap-1.5 min-w-0">
+              {voiceNotice.type === 'listening' && (
+                <span className="flex h-2 w-2 relative shrink-0">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
+                </span>
+              )}
+              {voiceNotice.type === 'success' && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />}
+              {voiceNotice.type === 'error' && <AlertCircle className="w-3.5 h-3.5 text-rose-600 shrink-0" />}
+              {voiceNotice.type === 'info' && <Info className="w-3.5 h-3.5 text-blue-600 shrink-0" />}
+              <span className="break-words leading-tight text-[11px] font-medium">{voiceNotice.text}</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setVoiceNotice(null)}
+              className="p-0.5 rounded hover:bg-black/5 text-gray-400 hover:text-gray-600 shrink-0 cursor-pointer"
+              aria-label="Dismiss notice"
+            >
+              <X className="w-3 h-3" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 
   /* ══════════════════════════════════════════════════════════════════════════
@@ -824,7 +1116,7 @@ function AIChatAssistant({
           className="flex items-center gap-2.5 px-4 py-3 rounded-full bg-[#2563EB] hover:bg-blue-700 text-white font-bold text-xs shadow-lg shadow-blue-500/25 border border-blue-500/30 cursor-pointer transition-all"
         >
           <Bot className="w-4 h-4" />
-          <span>D.CARD AI Assistance</span>
+          <span>{isHindi ? 'D.CARD एआई सहायता' : 'D.CARD AI Assistance'}</span>
           <span className="w-2 h-2 rounded-full bg-emerald-400 border border-white shadow-sm" title="Online" />
         </motion.button>
       )}
@@ -851,10 +1143,12 @@ function AIChatAssistant({
                   <Bot className="w-4 h-4 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-[13px] font-black text-white leading-none">D.CARD AI Assistance</h3>
+                  <h3 className="text-[13px] font-black text-white leading-none">
+                    {isHindi ? 'D.CARD एआई सहायता' : 'D.CARD AI Assistance'}
+                  </h3>
                   <p className="text-[10px] text-blue-200 font-semibold mt-0.5 flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    Banking & Location Discovery
+                    {isHindi ? 'बैंकिंग उत्पाद एवं शाखा खोज' : 'Banking & Location Discovery'}
                   </p>
                 </div>
               </div>

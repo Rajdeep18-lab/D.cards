@@ -1,15 +1,17 @@
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X, Lock, Scale, AlertTriangle } from 'lucide-react';
-
-const TABS = [
-  { id: 'privacy', label: 'Privacy Policy', icon: Lock, emoji: '🔒' },
-  { id: 'terms', label: 'Terms & Conditions', icon: Scale, emoji: '⚖️' },
-  { id: 'disclaimer', label: 'Disclaimer', icon: AlertTriangle, emoji: '⚠️' }
-];
+import { useLanguage } from '../context/LanguageContext';
 
 function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
   const [activeTab, setActiveTab] = useState(initialTab);
+  const { isHindi } = useLanguage();
+
+  const tabs = [
+    { id: 'privacy', label: isHindi ? 'गोपनीयता नीति' : 'Privacy Policy', icon: Lock, emoji: '🔒' },
+    { id: 'terms', label: isHindi ? 'नियम व शर्तें' : 'Terms & Conditions', icon: Scale, emoji: '⚖️' },
+    { id: 'disclaimer', label: isHindi ? 'अस्वीकरण' : 'Disclaimer', icon: AlertTriangle, emoji: '⚠️' }
+  ];
 
   // Sync tab state when modal is opened from different links
   useEffect(() => {
@@ -74,10 +76,10 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
                   </div>
                   <div className="text-left">
                     <h2 className="text-lg sm:text-xl font-black text-[#0B3D91] dark:text-white tracking-tight leading-snug">
-                      D.Card Trust Center
+                      {isHindi ? 'D.Card कानूनी व अनुपालन केंद्र' : 'D.Card Trust Center'}
                     </h2>
                     <p className="text-[11px] sm:text-xs text-slate-600 dark:text-slate-400 font-semibold">
-                      Startup-ready Legal Standards & Data Disclosures
+                      {isHindi ? 'कानूनी मानक और डेटा प्रकटीकरण' : 'Startup-ready Legal Standards & Data Disclosures'}
                     </p>
                   </div>
                 </div>
@@ -92,7 +94,7 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
 
               {/* Tabs Navigation */}
               <div className="px-4 sm:px-6 pt-3.5 sm:pt-4 flex items-center gap-2 overflow-x-auto custom-scrollbar flex-shrink-0 pb-1">
-                {TABS.map((tab) => {
+                {tabs.map((tab) => {
                   const isActive = activeTab === tab.id;
                   return (
                     <button
@@ -278,7 +280,7 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
                   onClick={onClose}
                   className="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:brightness-110 text-white font-bold text-xs sm:text-sm shadow-md shadow-[#2563EB]/25 cursor-pointer transition-all active:scale-95 select-none"
                 >
-                  Close & Accept Terms
+                  {isHindi ? 'स्वीकार करें और बंद करें' : 'Close & Accept Terms'}
                 </button>
               </div>
             </motion.div>

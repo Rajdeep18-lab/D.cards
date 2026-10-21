@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { useSEO } from '../hooks/useSEO';
 import { useAppLocation } from '../context/LocationContext';
+import { useLanguage } from '../context/LanguageContext';
 import MapTilerMap from '../components/MapTilerMap';
 import BranchDetailsModal from '../components/BranchDetailsModal';
 import { 
@@ -60,9 +61,14 @@ const QUICK_TEST_CITIES = [
 ];
 
 export default function FindMyBankPage() {
+  const { language, isHindi, t } = useLanguage();
   useSEO({
-    title: 'Find My Bank — Nearby Bank Branch Finder | D.CARD',
-    description: 'Find verified nearby bank branches of SBI, HDFC, ICICI, Axis and other Indian banks. GPS proximity search, nearest branch first, working hours and directions.',
+    title: isHindi
+      ? 'मेरा बैंक खोजें — निकटतम बैंक शाखा एवं एटीएम | D.CARD'
+      : 'Find My Bank — Nearby Bank Branch Finder | D.CARD',
+    description: isHindi
+      ? 'एसबीआई, एचडीएफसी, आईसीआईसीआई, एक्सिस और अन्य भारतीय बैंकों की निकटतम सत्यापित शाखाएं खोजें। जीपीएस निकटता खोज एवं दिशा-निर्देश।'
+      : 'Find verified nearby bank branches of SBI, HDFC, ICICI, Axis and other Indian banks. GPS proximity search, nearest branch first, working hours and directions.',
     canonical: 'https://www.dcard.website/find-my-bank',
     schema: {
       '@context': 'https://schema.org',
@@ -448,16 +454,16 @@ export default function FindMyBankPage() {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 dark:bg-blue-400/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 text-xs font-black uppercase tracking-wider mb-3">
             <MapPin className="w-3.5 h-3.5" />
-            <span>Interactive MapTiler Branch Locator</span>
+            <span>{t('findBanks.badge', 'Interactive MapTiler Branch Locator')}</span>
           </div>
 
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
             <div>
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-950 dark:text-white">
-                Find My <span className="text-blue-600 dark:text-blue-400">Bank</span>
+                {isHindi ? 'बैंक ' : 'Find My '}<span className="text-blue-600 dark:text-blue-400">{isHindi ? 'खोजें' : 'Bank'}</span>
               </h1>
               <p className="mt-2 text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-2xl font-medium">
-                Locate verified bank branches and ATMs within your preferred radius. Compare real physical branch services, working hours, and get instant turn-by-turn directions.
+                {t('findBanks.subtitle', 'Locate verified bank branches and ATMs within your preferred radius. Compare real physical branch services, working hours, and get instant turn-by-turn directions.')}
               </p>
             </div>
 
@@ -467,7 +473,9 @@ export default function FindMyBankPage() {
                 📍
               </div>
               <div>
-                <p className="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">Active Search Origin</p>
+                <p className="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                  {t('findBanks.activeOrigin', 'Active Search Origin')}
+                </p>
                 <p className="text-xs font-extrabold text-slate-900 dark:text-slate-100 max-w-[220px] truncate" title={locationTitle}>
                   {locationTitle}
                 </p>
@@ -498,7 +506,7 @@ export default function FindMyBankPage() {
                     if (suggestions.length > 0) setIsDropdownOpen(true);
                   }}
                   onKeyDown={handleKeyDown}
-                  placeholder="Search bank, city, PIN code (e.g. SBI Chandigarh, HDFC Kharar, ATM near Mohali)"
+                  placeholder={t('findBanks.searchPlaceholder', 'Search bank, city, PIN code (e.g. SBI Chandigarh, HDFC Kharar, ATM near Mohali)')}
                   className="w-full pl-11 pr-28 py-3.5 text-sm rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 shadow-sm transition-all"
                 />
                 <button
@@ -506,7 +514,7 @@ export default function FindMyBankPage() {
                   disabled={isSearching || !searchQuery.trim()}
                   className="absolute right-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-xs font-black rounded-xl transition-all shadow-sm cursor-pointer"
                 >
-                  {isSearching ? 'Searching...' : 'Search'}
+                  {isSearching ? (isHindi ? 'खोज रहे हैं...' : 'Searching...') : (isHindi ? 'खोजें' : 'Search')}
                 </button>
               </div>
 
@@ -548,7 +556,7 @@ export default function FindMyBankPage() {
                         </div>
                       </div>
                       <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 shrink-0">
-                        {item.category === 'combination' ? 'Smart Match' : item.category}
+                        {item.category === 'combination' ? (isHindi ? 'स्मार्ट मिलान' : 'Smart Match') : item.category}
                       </span>
                     </button>
                   ))}
@@ -564,7 +572,11 @@ export default function FindMyBankPage() {
               className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 active:scale-98 disabled:opacity-60 text-white text-sm font-black shadow-md hover:shadow-lg transition-all cursor-pointer whitespace-nowrap"
             >
               <Compass className={`w-4 h-4 ${isDetectingLocation ? 'animate-spin' : ''}`} />
-              <span>{isDetectingLocation ? 'Detecting your location...' : '📍 Use My Location'}</span>
+              <span>
+                {isDetectingLocation 
+                  ? (isHindi ? 'आपका स्थान खोज रहे हैं...' : 'Detecting your location...') 
+                  : (isHindi ? '📍 मेरा स्थान उपयोग करें' : '📍 Use My Location')}
+              </span>
             </button>
           </div>
 
@@ -576,20 +588,22 @@ export default function FindMyBankPage() {
               className="mt-3 flex items-center flex-wrap gap-2 text-xs font-bold text-slate-600 dark:text-slate-300"
             >
               <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                Active Search Context:
+                {t('findBanks.activeSearchContext', 'Active Search Context:')}
               </span>
               <span className="px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 flex items-center gap-1.5 shadow-xs">
-                <span>🏦 {activeSearchContext.bank || selectedBank}</span>
+                <span>🏦 {activeSearchContext.bank || (selectedBank === 'All Banks' && isHindi ? 'सभी बैंक' : selectedBank)}</span>
               </span>
               <span className="px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 flex items-center gap-1.5 shadow-xs">
                 <span>📍 {activeSearchContext.location}</span>
               </span>
               <span className="px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 shadow-xs">
-                Within {radiusKm} km
+                {isHindi ? `${radiusKm} किमी के दायरे में` : `Within ${radiusKm} km`}
               </span>
               {typeFilter !== 'All' && (
                 <span className="px-2.5 py-1 rounded-lg bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800 shadow-xs">
-                  {typeFilter === 'ATM' ? '🏧 ATMs Only' : '🏢 Branches Only'}
+                  {typeFilter === 'ATM' 
+                    ? (isHindi ? '🏧 केवल एटीएम' : '🏧 ATMs Only') 
+                    : (isHindi ? '🏢 केवल शाखाएं' : '🏢 Branches Only')}
                 </span>
               )}
               <button
@@ -603,7 +617,7 @@ export default function FindMyBankPage() {
                 title="Reset search context"
               >
                 <X className="w-3 h-3" />
-                <span>Reset Filters</span>
+                <span>{t('findBanks.resetFilters', 'Reset Filters')}</span>
               </button>
             </motion.div>
           )}
@@ -611,7 +625,7 @@ export default function FindMyBankPage() {
           {/* Quick Preset Cities for 1-Click Verification */}
           <div className="mt-4 flex flex-wrap items-center gap-2">
             <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mr-1">
-              Popular Hubs:
+              {t('findBanks.popularHubs', 'Popular Hubs:')}
             </span>
             {QUICK_TEST_CITIES.map((c) => (
               <button
@@ -701,7 +715,7 @@ export default function FindMyBankPage() {
               mobileTab === 'both' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 dark:text-slate-400'
             }`}
           >
-            Map & List
+            {t('findBanks.mapAndList', 'Map & List')}
           </button>
           <button
             type="button"
@@ -710,7 +724,7 @@ export default function FindMyBankPage() {
               mobileTab === 'map' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 dark:text-slate-400'
             }`}
           >
-            🗺️ Map View
+            {t('findBanks.mapView', '🗺️ Map View')}
           </button>
           <button
             type="button"
@@ -719,7 +733,7 @@ export default function FindMyBankPage() {
               mobileTab === 'list' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 dark:text-slate-400'
             }`}
           >
-            📋 Branches ({nearbyBranches.length})
+            📋 {t('findBanks.branchesList', 'Branches')} ({nearbyBranches.length})
           </button>
         </div>
 
@@ -731,7 +745,9 @@ export default function FindMyBankPage() {
               <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80 pb-4">
                 <div className="flex items-center gap-2">
                   <SlidersHorizontal className="w-4 h-4 text-blue-600" />
-                  <h2 className="text-base font-extrabold text-slate-900 dark:text-white">Filters & Controls</h2>
+                  <h2 className="text-base font-extrabold text-slate-900 dark:text-white">
+                    {t('findBanks.filtersAndControls', 'Filters & Controls')}
+                  </h2>
                 </div>
                 {(selectedBank !== 'All Banks' || radiusKm !== 10 || typeFilter !== 'All') && (
                   <button
@@ -743,7 +759,7 @@ export default function FindMyBankPage() {
                     }}
                     className="text-xs font-bold text-blue-600 hover:text-blue-700 transition-colors cursor-pointer"
                   >
-                    Reset
+                    {isHindi ? 'रीसेट' : 'Reset'}
                   </button>
                 )}
               </div>
@@ -751,7 +767,10 @@ export default function FindMyBankPage() {
               {/* 1. Distance Radius Control */}
               <div>
                 <label className="block text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2.5">
-                  Search Radius: <span className="text-blue-600 dark:text-blue-400 font-extrabold">{radiusKm} km</span>
+                  {t('findBanks.searchRadius', 'Search Radius:')}{' '}
+                  <span className="text-blue-600 dark:text-blue-400 font-extrabold">
+                    {radiusKm} {isHindi ? 'किमी' : 'km'}
+                  </span>
                 </label>
                 <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
                   {RADIUS_OPTIONS.map((r) => (
@@ -765,7 +784,7 @@ export default function FindMyBankPage() {
                           : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-blue-500'
                       }`}
                     >
-                      {r} km
+                      {r} {isHindi ? 'किमी' : 'km'}
                     </button>
                   ))}
                 </div>
@@ -774,25 +793,25 @@ export default function FindMyBankPage() {
               {/* 2. Branch vs ATM Filter */}
               <div>
                 <label className="block text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2.5">
-                  Type:
+                  {t('findBanks.branchType', 'Type')}:
                 </label>
                 <div className="grid grid-cols-3 gap-2">
                   {[
-                    { id: 'All', label: 'All' },
-                    { id: 'Branch', label: 'Branches' },
-                    { id: 'ATM', label: 'ATMs' }
-                  ].map((t) => (
+                    { id: 'All', label: isHindi ? 'सभी' : 'All' },
+                    { id: 'Branch', label: isHindi ? 'शाखाएं' : 'Branches' },
+                    { id: 'ATM', label: isHindi ? 'एटीएम' : 'ATMs' }
+                  ].map((item) => (
                     <button
-                      key={t.id}
+                      key={item.id}
                       type="button"
-                      onClick={() => setTypeFilter(t.id)}
+                      onClick={() => setTypeFilter(item.id)}
                       className={`py-2 text-xs font-bold rounded-xl border transition-all cursor-pointer ${
-                        typeFilter === t.id
+                        typeFilter === item.id
                           ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
                           : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-blue-500'
                       }`}
                     >
-                      {t.label}
+                      {item.label}
                     </button>
                   ))}
                 </div>
@@ -801,7 +820,7 @@ export default function FindMyBankPage() {
               {/* 3. Bank Selection Filter with Live Branch Counts */}
               <div>
                 <label className="block text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2.5">
-                  Filter By Bank:
+                  {t('findBanks.filterByBank', 'Filter By Bank:')}
                 </label>
                 <div className="space-y-1.5 max-h-[280px] overflow-y-auto pr-1">
                   {bankList.map((b) => {
@@ -823,7 +842,7 @@ export default function FindMyBankPage() {
                             : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-100 dark:border-slate-800 hover:border-slate-300'
                         }`}
                       >
-                        <span className="truncate">{b}</span>
+                        <span className="truncate">{b === 'All Banks' && isHindi ? 'सभी बैंक' : b}</span>
                         <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
                           count > 0 
                             ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' 
@@ -841,9 +860,11 @@ export default function FindMyBankPage() {
               <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-800 dark:text-emerald-300 text-[11px] leading-relaxed font-medium">
                 <span className="font-bold flex items-center gap-1.5 mb-1">
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                  Authoritative D.CARD Database
+                  {isHindi ? 'सत्यापित D.CARD डेटाबेस' : 'Authoritative D.CARD Database'}
                 </span>
-                All 297 branch coordinates, IFSC codes, and addresses are verified against official bank directories and RBI registries.
+                {isHindi
+                  ? 'सभी 297 शाखा निर्देशांक, IFSC कोड और पते आधिकारिक बैंक सूचियों और RBI रजिस्ट्रियों से सत्यापित हैं।'
+                  : 'All 297 branch coordinates, IFSC codes, and addresses are verified against official bank directories and RBI registries.'}
               </div>
             </div>
           </div>
@@ -872,22 +893,28 @@ export default function FindMyBankPage() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4 text-left">
             <div>
               <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
-                <span>Nearby Banks & Branches</span>
+                <span>{t('findBanks.nearbyBanksBranches', 'Nearby Banks & Branches')}</span>
                 <span className="text-xs px-2.5 py-1 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 font-extrabold">
-                  {nearbyBranches.length} {nearbyBranches.length === 1 ? 'branch found' : 'branches found'}
+                  {isHindi 
+                    ? `${nearbyBranches.length} शाखाएं मिलीं` 
+                    : `${nearbyBranches.length} ${nearbyBranches.length === 1 ? 'branch found' : 'branches found'}`}
                 </span>
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 font-medium">
                 {selectedBank === 'All Banks' 
-                  ? `Showing all verified branches within ${radiusKm} km of ${locationTitle}`
-                  : `Showing ${selectedBank} branches within ${radiusKm} km of ${locationTitle}`}
+                  ? (isHindi 
+                      ? `${locationTitle} के ${radiusKm} किमी के दायरे में सभी सत्यापित शाखाएं प्रदर्शित` 
+                      : `Showing all verified branches within ${radiusKm} km of ${locationTitle}`)
+                  : (isHindi 
+                      ? `${locationTitle} के ${radiusKm} किमी के दायरे में ${selectedBank} शाखाएं प्रदर्शित` 
+                      : `Showing ${selectedBank} branches within ${radiusKm} km of ${locationTitle}`)}
               </p>
             </div>
 
             {/* Quick Bank Summary Badge */}
             {selectedBank !== 'All Banks' && (
               <div className="px-3.5 py-1.5 rounded-xl bg-blue-600 text-white text-xs font-black shadow-xs shrink-0 self-start sm:self-auto">
-                {selectedBank}: {nearbyBranches.length} {nearbyBranches.length === 1 ? 'branch' : 'branches'} found near you
+                {selectedBank}: {nearbyBranches.length} {isHindi ? 'शाखाएं उपलब्ध' : (nearbyBranches.length === 1 ? 'branch found near you' : 'branches found near you')}
               </div>
             )}
           </div>
@@ -903,10 +930,14 @@ export default function FindMyBankPage() {
                 🏦
               </div>
               <h3 className="text-xl font-extrabold text-slate-900 dark:text-white">
-                No branches found within {radiusKm} km.
+                {isHindi 
+                  ? `${radiusKm} किमी के दायरे में कोई शाखा नहीं मिली।` 
+                  : `No branches found within ${radiusKm} km.`}
               </h3>
               <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto leading-relaxed">
-                There are no verified {selectedBank !== 'All Banks' ? selectedBank : ''} bank branches or ATMs recorded within {radiusKm} km of this location.
+                {isHindi
+                  ? `इस स्थान के ${radiusKm} किमी के भीतर कोई सत्यापित ${selectedBank !== 'All Banks' ? selectedBank : ''} बैंक शाखा या एटीएम दर्ज नहीं है।`
+                  : `There are no verified ${selectedBank !== 'All Banks' ? selectedBank : ''} bank branches or ATMs recorded within ${radiusKm} km of this location.`}
               </p>
               <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
                 <button
@@ -914,7 +945,7 @@ export default function FindMyBankPage() {
                   onClick={handleIncreaseRadius}
                   className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold rounded-xl transition-all shadow-sm cursor-pointer"
                 >
-                  Increase Radius
+                  {t('findBanks.increaseRadius', 'Increase Radius')}
                 </button>
                 <button
                   type="button"
@@ -923,7 +954,7 @@ export default function FindMyBankPage() {
                   }}
                   className="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-800 dark:text-slate-200 text-xs font-extrabold rounded-xl border border-slate-200 dark:border-slate-700 transition-all cursor-pointer"
                 >
-                  Search Another Location
+                  {t('findBanks.searchAnotherLocation', 'Search Another Location')}
                 </button>
               </div>
             </motion.div>
@@ -963,6 +994,7 @@ export default function FindMyBankPage() {
  * Individual Bank Branch Card Component
  */
 function BranchCard({ branch, onViewOnMap, onOpenDetails, isFocused }) {
+  const { isHindi, t } = useLanguage();
   return (
     <motion.div
       initial={{ opacity: 0, y: 14 }}
@@ -986,7 +1018,7 @@ function BranchCard({ branch, onViewOnMap, onOpenDetails, isFocused }) {
             </div>
             <div>
               <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 block">
-                {branch.branch_type} • IFSC: {branch.ifsc || 'Not available'}
+                {branch.branch_type === 'ATM' ? (isHindi ? 'एटीएम' : 'ATM') : (isHindi ? 'शाखा' : 'Branch')} • IFSC: {branch.ifsc || (isHindi ? 'उपलब्ध नहीं' : 'Not available')}
               </span>
               <h3 className="text-base font-black text-slate-900 dark:text-white leading-tight">
                 {branch.bank_name}
@@ -1016,13 +1048,13 @@ function BranchCard({ branch, onViewOnMap, onOpenDetails, isFocused }) {
           <div className="flex items-center gap-2">
             <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" />
             <span>
-              Phone: <strong className="text-slate-800 dark:text-slate-200">{branch.phone || 'Not available'}</strong>
+              {t('findBanks.phone', 'Phone')}: <strong className="text-slate-800 dark:text-slate-200">{branch.phone || (isHindi ? 'उपलब्ध नहीं' : 'Not available')}</strong>
             </span>
           </div>
           <div className="flex items-start gap-2">
             <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
             <span className="text-[11px] leading-snug">
-              Hours: <strong className="text-slate-800 dark:text-slate-200">{branch.opening_hours || 'Not available'}</strong>
+              {t('findBanks.hours', 'Hours:')} <strong className="text-slate-800 dark:text-slate-200">{branch.opening_hours || (isHindi ? 'उपलब्ध नहीं' : 'Not available')}</strong>
             </span>
           </div>
         </div>
@@ -1031,7 +1063,7 @@ function BranchCard({ branch, onViewOnMap, onOpenDetails, isFocused }) {
         {branch.services && branch.services.length > 0 && (
           <div className="pt-2">
             <p className="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">
-              Available Services:
+              {t('findBanks.availableServices', 'Available Services:')}
             </p>
             <div className="flex flex-wrap gap-1.5">
               {branch.services.map((svc) => (
@@ -1058,7 +1090,7 @@ function BranchCard({ branch, onViewOnMap, onOpenDetails, isFocused }) {
           className="py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
         >
           <Navigation className="w-3.5 h-3.5 text-blue-600" />
-          <span>View on Map</span>
+          <span>{t('findBanks.viewOnMap', 'View on Map')}</span>
         </button>
 
         <a
@@ -1068,7 +1100,7 @@ function BranchCard({ branch, onViewOnMap, onOpenDetails, isFocused }) {
           onClick={(e) => e.stopPropagation()}
           className="py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black transition-all flex items-center justify-center gap-1.5 shadow-xs cursor-pointer active:scale-95"
         >
-          <span>Get Directions</span>
+          <span>{t('findBanks.getDirections', 'Get Directions')}</span>
           <ExternalLink className="w-3 h-3" />
         </a>
       </div>

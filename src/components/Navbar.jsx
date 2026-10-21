@@ -14,7 +14,9 @@ import {
 } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { useWishlist } from "../context/WishlistContext";
+import { useLanguage } from "../context/LanguageContext";
 import TopDisclaimerTicker from "./TopDisclaimerTicker";
+import LanguageSelector from "./LanguageSelector";
 
 function Navbar({ 
   isDarkMode, 
@@ -27,6 +29,7 @@ function Navbar({
 }) {
   const { user, profile, logout, openAuthModal } = useAuth();
   const { wishlist } = useWishlist();
+  const { t, isHindi } = useLanguage();
   const location = useLocation();
 
   const [scrolled, setScrolled] = useState(false);
@@ -80,16 +83,16 @@ function Navbar({
   // Ordered Navigation Links for Desktop & Mobile
   // Desktop Order: Home -> Debit Cards -> Savings Accounts -> Current Accounts -> Compare -> AI Assistance -> Banks -> Find My Bank -> About -> Contact
   const navLinks = [
-    { name: "Home", path: "/", end: true, isProtected: false },
-    { name: "Debit Cards", path: "/cards", isProtected: true },
-    { name: "Savings Accounts", path: "/savings-accounts", isProtected: true },
-    { name: "Current Accounts", path: "/current-accounts", isProtected: true },
-    { name: "Compare", path: "/compare", isProtected: true },
-    { name: "AI Assistance", path: "/ai-advisor", isProtected: true },
-    { name: "Banks", path: "/banks", isProtected: true },
-    { name: "Find My Bank", path: "/find-my-bank", isProtected: false },
-    { name: "About", path: "/about", isProtected: false },
-    { name: "Contact", path: "/contact", isProtected: false },
+    { name: t('nav.home', "Home"), rawName: "Compare", key: "home", path: "/", end: true, isProtected: false },
+    { name: t('nav.debitCards', "Debit Cards"), rawName: "Debit Cards", key: "cards", path: "/cards", isProtected: true },
+    { name: t('nav.savingsAccounts', "Savings Accounts"), rawName: "Savings Accounts", key: "savings", path: "/savings-accounts", isProtected: true },
+    { name: t('nav.currentAccounts', "Current Accounts"), rawName: "Current Accounts", key: "current", path: "/current-accounts", isProtected: true },
+    { name: t('nav.compare', "Compare"), rawName: "Compare", key: "compare", path: "/compare", isProtected: true },
+    { name: t('nav.aiAssistance', "AI Assistance"), rawName: "AI Assistance", key: "ai", path: "/ai-advisor", isProtected: true },
+    { name: t('nav.banks', "Banks"), rawName: "Banks", key: "banks", path: "/banks", isProtected: true },
+    { name: t('nav.findMyBank', "Find My Bank"), rawName: "Find My Bank", key: "find-bank", path: "/find-my-bank", isProtected: false },
+    { name: t('nav.about', "About"), rawName: "About", key: "about", path: "/about", isProtected: false },
+    { name: t('nav.contact', "Contact"), rawName: "Contact", key: "contact", path: "/contact", isProtected: false },
   ];
 
   const handleProtectedClick = (e, path, isProtected) => {
@@ -160,7 +163,7 @@ function Navbar({
                   D.<span className="text-[#2563EB]">CARD</span>
                 </span>
                 <span className="hidden min-[420px]:block text-[8px] sm:text-[9px] font-bold text-[#6B7280] dark:text-slate-400 tracking-wider uppercase mt-0.5 sm:mt-1 leading-tight whitespace-nowrap">
-                  COMPARE. CHOOSE. BENEFIT.
+                  {t('nav.tagline', 'COMPARE. CHOOSE. BENEFIT.')}
                 </span>
               </div>
             </Link>
@@ -170,7 +173,7 @@ function Navbar({
           <nav className="hidden min-[1280px]:flex items-center justify-center gap-0.5 xl:gap-1 2xl:gap-1.5 flex-1 min-w-0 mx-1 xl:mx-2">
             {navLinks.map((link) => (
               <NavLink
-                key={link.name}
+                key={link.path}
                 to={link.path}
                 end={link.end}
                 onClick={(e) => handleProtectedClick(e, link.path, link.isProtected)}
@@ -183,7 +186,7 @@ function Navbar({
                 }
               >
                 <span>{link.name}</span>
-                {link.name === "Compare" && compareCount > 0 && (
+                {link.key === "compare" && compareCount > 0 && (
                   <span className="inline-flex items-center justify-center px-1.5 py-0.2 text-[10px] font-extrabold rounded-full bg-emerald-500 text-white leading-none shadow-xs ml-0.5 shrink-0">
                     {compareCount}
                   </span>
@@ -192,16 +195,19 @@ function Navbar({
             ))}
           </nav>
 
-          {/* ── RIGHT: CONTROLS (Legal ⚖, Theme, Notification, Rajdeep Profile) ── */}
+          {/* ── RIGHT: CONTROLS (Language 🌐, Legal ⚖, Theme, Notification, User Profile) ── */}
           <div className="flex items-center gap-1.5 sm:gap-2 xl:gap-2.5 shrink-0 justify-end">
             
+            {/* 0. Language Selector (English / हिंदी) */}
+            <LanguageSelector variant="dropdown" />
+
             {/* 1. Legal Button with Scales-of-Justice Symbol (Desktop >= 1280px) */}
             <button
               type="button"
               onClick={() => onOpenLegal ? onOpenLegal('terms') : null}
               className="relative hidden min-[1280px]:flex w-9 h-9 items-center justify-center rounded-xl text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] hover:bg-[#EFF6FF] dark:hover:bg-slate-800/60 transition-all cursor-pointer group shrink-0"
-              title="Legal & Terms"
-              aria-label="Legal & Terms"
+              title={t('nav.legalAndTerms', 'Legal & Terms')}
+              aria-label={t('nav.legalAndTerms', 'Legal & Terms')}
             >
               <img 
                 src="/assets/legal-scales.png" 
@@ -215,7 +221,7 @@ function Navbar({
               type="button"
               onClick={toggleDarkMode}
               className="w-9 h-9 flex items-center justify-center rounded-xl text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] hover:bg-[#EFF6FF] dark:hover:bg-slate-800/60 transition-all cursor-pointer shrink-0"
-              title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+              title={isDarkMode ? t('nav.lightMode', "Switch to Light Mode") : t('nav.darkMode', "Switch to Dark Mode")}
               aria-label="Toggle Dark Mode"
             >
               {isDarkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-[#2563EB]" />}
@@ -226,8 +232,8 @@ function Navbar({
               to="/saved-cards"
               onClick={(e) => handleProtectedClick(e, '/saved-cards', true)}
               className="relative w-9 h-9 flex items-center justify-center rounded-xl text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] hover:bg-[#EFF6FF] dark:hover:bg-slate-800/60 transition-all group shrink-0"
-              title="Notifications"
-              aria-label="Notifications"
+              title={t('nav.notifications', 'Notifications')}
+              aria-label={t('nav.notifications', 'Notifications')}
             >
               <Bell className="w-4 h-4 text-[#4B5563] dark:text-slate-300 group-hover:text-[#2563EB] dark:group-hover:text-[#60A5FA] transition-all shrink-0" />
               {unreadCount > 0 && (
@@ -358,7 +364,7 @@ function Navbar({
               }
             >
               <span>{link.name}</span>
-              {link.name === "Compare" && compareCount > 0 && (
+              {link.key === "compare" && compareCount > 0 && (
                 <span className="px-2 py-0.5 text-[10px] font-extrabold rounded-full bg-emerald-500 text-white">
                   {compareCount}
                 </span>
@@ -381,13 +387,23 @@ function Navbar({
                 alt="Legal" 
                 className="w-[22px] h-[22px] object-contain shrink-0" 
               />
-              <span>Legal & Terms</span>
+              <span>{t('nav.legalAndTerms', 'Legal & Terms')}</span>
             </div>
           </button>
 
+          {/* Dedicated Language Switcher Section in Mobile Menu */}
+          <div className="pt-3 mt-2 border-t border-gray-100 dark:border-slate-800 space-y-2">
+            <div className="text-[11px] font-extrabold uppercase tracking-wider text-gray-400 dark:text-slate-500 px-3">
+              {t('nav.selectLanguage', 'Language / भाषा')}
+            </div>
+            <div className="px-1">
+              <LanguageSelector variant="inline" />
+            </div>
+          </div>
+
           <div className="pt-3 mt-2 border-t border-gray-100 dark:border-slate-800 space-y-1">
             <div className="text-[11px] font-extrabold uppercase tracking-wider text-gray-400 dark:text-slate-500 px-3 py-1">
-              Account & Utilities
+              {t('nav.accountAndUtilities', 'Account & Utilities')}
             </div>
 
             <NavLink
@@ -406,7 +422,7 @@ function Navbar({
               }
             >
               <User className="w-4 h-4 text-[#2563EB]" />
-              <span>My Profile</span>
+              <span>{t('nav.myProfile', 'My Profile')}</span>
             </NavLink>
 
             <Link
@@ -422,7 +438,7 @@ function Navbar({
             >
               <div className="flex items-center gap-2.5">
                 <Heart className="w-4 h-4 text-rose-500" />
-                <span>Saved Favourites</span>
+                <span>{t('nav.savedFavourites', 'Saved Favourites')}</span>
               </div>
               {favoritesCount > 0 && (
                 <span className="px-2 py-0.5 text-[10px] font-extrabold rounded-full bg-rose-500 text-white">
@@ -440,7 +456,7 @@ function Navbar({
                 className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 cursor-pointer text-left min-h-[44px]"
               >
                 <LogOut className="w-4 h-4 text-rose-500" />
-                <span>Sign Out ({user.email})</span>
+                <span>{t('nav.signOut', 'Sign Out')} ({user.email})</span>
               </button>
             ) : (
               <button
@@ -451,7 +467,7 @@ function Navbar({
                 className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#2563EB] text-white font-semibold text-xs shadow-md mt-2 cursor-pointer min-h-[44px]"
               >
                 <LogIn className="w-4 h-4" />
-                <span>Sign In / Register</span>
+                <span>{t('nav.signInRegister', 'Sign In / Register')}</span>
               </button>
             )}
           </div>

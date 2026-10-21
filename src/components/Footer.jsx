@@ -1,26 +1,29 @@
 import { Link } from 'react-router-dom';
 import { CreditCard, Mail, Send, ShieldCheck, ArrowRight, Bot, Sparkles, Heart } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 import FooterUserReviews from './FooterUserReviews';
 
 function Footer({ onOpenLegal }) {
+  const { t } = useLanguage();
+
   const footerLinks = {
-    'Quick Links': [
-      { name: 'Home', path: '/' },
-      { name: 'Debit Cards', path: '/cards' },
-      { name: 'Savings Accounts', path: '/savings-accounts' },
-      { name: 'Current Accounts', path: '/current-accounts' },
-      { name: 'Compare Cards', path: '/compare' },
-      { name: 'AI Assistance', path: '/ai-advisor' },
-      { name: 'Top Banks', path: '/banks' },
-      { name: 'Find My Bank', path: '/find-my-bank' },
+    [t('footer.quickLinks', 'Quick Links')]: [
+      { name: t('nav.home', 'Home'), path: '/' },
+      { name: t('nav.debitCards', 'Debit Cards'), path: '/cards' },
+      { name: t('nav.savingsAccounts', 'Savings Accounts'), path: '/savings-accounts' },
+      { name: t('nav.currentAccounts', 'Current Accounts'), path: '/current-accounts' },
+      { name: t('nav.compare', 'Compare Cards'), path: '/compare' },
+      { name: t('nav.aiAssistance', 'AI Assistance'), path: '/ai-advisor' },
+      { name: t('nav.banks', 'Top Banks'), path: '/banks' },
+      { name: t('nav.findMyBank', 'Find My Bank'), path: '/find-my-bank' },
     ],
-    'Company': [
-      { name: 'About Us', path: '/about' },
-      { name: 'Founders & Team', path: '/about#founders' },
-      { name: 'Contact Support', path: '/contact' },
-      { name: 'Privacy Policy', type: 'privacy' },
-      { name: 'Terms & Conditions', type: 'terms' },
-      { name: 'Disclaimer', type: 'disclaimer' },
+    [t('footer.company', 'Company')]: [
+      { name: t('footer.aboutUs', 'About Us'), path: '/about' },
+      { name: t('footer.foundersAndTeam', 'Founders & Team'), path: '/about#founders' },
+      { name: t('footer.contactSupport', 'Contact Support'), path: '/contact' },
+      { name: t('footer.privacyPolicy', 'Privacy Policy'), type: 'privacy' },
+      { name: t('footer.termsAndConditions', 'Terms & Conditions'), type: 'terms' },
+      { name: t('footer.disclaimer', 'Disclaimer'), type: 'disclaimer' },
     ],
   };
 
@@ -45,19 +48,19 @@ function Footer({ onOpenLegal }) {
                 D.<span className="text-[#2563EB]">CARD</span>
               </span>
               <span className="text-[9px] font-bold text-[#2563EB] dark:text-[#60A5FA] tracking-widest uppercase mt-0.5">
-                COMPARE. CHOOSE. BENEFIT.
+                {t('footer.tagline', 'COMPARE. CHOOSE. BENEFIT.')}
               </span>
             </div>
           </Link>
           
           <p className="text-xs leading-relaxed text-[#6B7280] dark:text-slate-400 max-w-[280px] font-normal">
-            Explore and compare savings accounts, current accounts, and debit cards from leading banks in one place. Structured product specs, fee breakdowns, and lounge access rules.
+            {t('footer.description', 'Explore and compare savings accounts, current accounts, and debit cards from leading banks in one place. Structured product specs, fee breakdowns, and lounge access rules.')}
           </p>
 
           {/* Support Email */}
           <div className="pt-1">
             <span className="text-[10px] font-semibold text-[#6B7280] dark:text-slate-400 uppercase tracking-wider block">
-              Support Email
+              {t('footer.supportEmail', 'Support Email')}
             </span>
             <a 
               href="mailto:dcard.website@gmail.com" 
@@ -130,7 +133,7 @@ function Footer({ onOpenLegal }) {
           >
             <div className="flex items-center gap-2">
               <Bot className="w-4 h-4 text-[#60A5FA]" />
-              <span>Ask AI Assistance</span>
+              <span>{t('footer.askAiAssistance', 'Ask AI Assistance')}</span>
             </div>
             <ArrowRight className="w-4 h-4 text-[#60A5FA] group-hover:translate-x-1 transition-transform" />
           </Link>
@@ -141,14 +144,14 @@ function Footer({ onOpenLegal }) {
       <div className="h-px bg-[#E5E7EB] dark:border-slate-800 mb-6 relative z-10" />
       <div className="flex flex-col gap-3 text-center text-[#6B7280] dark:text-slate-500 text-xs relative z-10">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
-          <p>© 2026 D.CARD. Financial Information Platform. All rights reserved.</p>
+          <p>{t('footer.copyright', '© 2026 D.CARD. Financial Information Platform. All rights reserved.')}</p>
           <p className="flex items-center gap-1.5 text-[#2563EB] dark:text-[#60A5FA] font-bold">
             <ShieldCheck className="w-4 h-4" />
-            <span>100% Independent Ratings</span>
+            <span>{t('footer.independentRatings', '100% Independent Ratings')}</span>
           </p>
         </div>
         <p className="leading-relaxed text-[10px] text-justify max-w-7xl mx-auto opacity-85">
-          <strong>Regulatory Disclaimer:</strong> D.CARD is an independent comparison and financial information platform covering Savings Accounts and Debit Cards. We are not a bank or financial institution. Product information may change; always verify current details with the respective bank.
+          {t('footer.regulatoryDisclaimer', 'Regulatory Disclaimer: D.CARD is an independent comparison and financial information platform covering Savings Accounts and Debit Cards. We are not a bank or financial institution. Product information may change; always verify current details with the respective bank.')}
         </p>
       </div>
     </footer>

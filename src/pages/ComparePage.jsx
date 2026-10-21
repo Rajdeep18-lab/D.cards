@@ -6,10 +6,17 @@ import ComparisonTable from '../components/ComparisonTable';
 import SavingsCalculator from '../components/SavingsCalculator';
 import { useSEO } from '../hooks/useSEO';
 
+import { useLanguage } from '../context/LanguageContext';
+
 function ComparePage({ compareQueue, setCompareQueue, setSelectedCard }) {
+  const { isHindi, t } = useLanguage();
   useSEO({
-    title: "Compare Debit Cards Side by Side | D.Card",
-    description: "Compare features, annual charges, daily ATM limits, and rewards across debit cards side by side on D.Card.",
+    title: isHindi 
+      ? "डेबिट कार्ड तुलना — वार्षिक शुल्क, लाउंज व एटीएम सीमा | D.Card"
+      : "Compare Debit Cards Side by Side | D.Card",
+    description: isHindi
+      ? "वार्षिक शुल्क, लाउंज एक्सेस, एटीएम निकासी सीमा और कैश बैक रिवार्ड्स की आमने-सामने तुलना करें।"
+      : "Compare features, annual charges, daily ATM limits, and rewards across debit cards side by side on D.Card.",
     canonicalUrl: "https://www.dcard.website/compare"
   });
 
@@ -21,13 +28,13 @@ function ComparePage({ compareQueue, setCompareQueue, setSelectedCard }) {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#E5E7EB] dark:border-slate-800 pb-6">
         <div>
           <span className="text-xs font-semibold text-[#2563EB] dark:text-[#60A5FA] tracking-widest uppercase block mb-1">
-            FEATURE COMPARISON ENGINE
+            {t('compare.badge', 'FEATURE COMPARISON ENGINE')}
           </span>
           <h1 className="text-3xl font-bold text-[#1F2937] dark:text-white">
-            Side-by-Side Card Comparison
+            {t('compare.title', 'Side-by-Side Card Comparison')}
           </h1>
           <p className="text-xs sm:text-sm text-[#6B7280] dark:text-slate-400 mt-1 font-normal">
-            Detailed matrix comparing annual fees, lounge access, withdrawal limits, forex markup, and rewards
+            {t('compare.subtitle', 'Detailed matrix comparing annual fees, lounge access, withdrawal limits, forex markup, and rewards')}
           </p>
         </div>
 
@@ -37,7 +44,7 @@ function ComparePage({ compareQueue, setCompareQueue, setSelectedCard }) {
             className="px-4 py-2.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 font-semibold text-xs border border-red-500/20 transition-all cursor-pointer flex items-center gap-1.5"
           >
             <Trash2 className="w-4 h-4" />
-            <span>Clear Cards ({compareQueue.length})</span>
+            <span>{t('compare.clearCards', 'Clear Cards ({{count}})', { count: compareQueue.length })}</span>
           </button>
         )}
       </div>
@@ -49,21 +56,21 @@ function ComparePage({ compareQueue, setCompareQueue, setSelectedCard }) {
           className="px-4 py-2 rounded-xl text-xs font-bold bg-[#2563EB] text-white shadow-xs cursor-pointer flex items-center gap-1.5"
         >
           <CreditCard className="w-3.5 h-3.5" />
-          <span>Debit Cards</span>
+          <span>{t('compare.debitCardsTab', 'Debit Cards')}</span>
         </button>
         <button
           onClick={() => navigate('/compare-savings')}
           className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer flex items-center gap-1.5"
         >
           <Building2 className="w-3.5 h-3.5" />
-          <span>Savings Accounts</span>
+          <span>{t('compare.savingsAccountsTab', 'Savings Accounts')}</span>
         </button>
         <button
           onClick={() => navigate('/compare-current')}
           className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer flex items-center gap-1.5"
         >
           <Briefcase className="w-3.5 h-3.5" />
-          <span>Current Accounts</span>
+          <span>{t('compare.currentAccountsTab', 'Current Accounts')}</span>
         </button>
       </div>
 
@@ -75,16 +82,16 @@ function ComparePage({ compareQueue, setCompareQueue, setSelectedCard }) {
               <Scale className="w-8 h-8 text-[#2563EB]" />
             </div>
             <h2 className="text-xl font-bold text-[#1F2937] dark:text-white">
-              No Cards Selected for Comparison
+              {t('compare.noCardsTitle', 'No Cards Selected for Comparison')}
             </h2>
             <p className="text-xs sm:text-sm text-[#6B7280] dark:text-slate-400 leading-relaxed font-normal">
-              You can add up to 3 debit cards to compare their annual fees, daily limits, lounge rules, and hidden charges side by side.
+              {t('compare.noCardsDesc', 'You can add up to 3 debit cards to compare their annual fees, daily limits, lounge rules, and charges side by side.')}
             </p>
             <button
               onClick={() => navigate('/cards')}
               className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:opacity-95 text-white font-semibold text-xs tracking-wide uppercase shadow-md transition-all cursor-pointer inline-flex items-center gap-2"
             >
-              <span>Browse & Select Cards</span>
+              <span>{t('compare.browseCardsBtn', 'Browse & Select Cards')}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -20,6 +20,7 @@ import {
   X,
   Heart,
   Info,
+  AlertCircle,
   HelpCircle,
   MapPin
 } from 'lucide-react';
@@ -31,6 +32,7 @@ import { currentAccounts } from '../data/currentAccounts';
 import { aiChatService } from '../services/aiChatService';
 import { useAuth } from '../hooks/useAuth';
 import { useWishlist } from '../context/WishlistContext';
+import { useLanguage } from '../context/LanguageContext';
 
 const ROTATING_PLACEHOLDERS = [
   "Ask anything about banking products & branches...",
@@ -233,16 +235,36 @@ export default function AIAssistanceSection({
   const { user } = useAuth();
   const { isWishlisted, toggleWishlist } = useWishlist();
 
+  const { isHindi } = useLanguage();
   const [inputValue, setInputValue] = useState('');
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const [isListening, setIsListening] = useState(false);
-  const [speechNotice, setSpeechNotice] = useState(null);
+  const [voiceState, setVoiceState] = useState('idle'); // 'idle' | 'requesting' | 'listening' | 'recognized' | 'denied' | 'error' | 'unsupported'
+  const [voiceLang, setVoiceLang] = useState(isHindi ? 'hi-IN' : 'en-IN');
+  const [speechNotice, setSpeechNotice] = useState(null); // { type: 'listening'|'success'|'error'|'info', text: string }
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [activeTab, setActiveTab] = useState('all');
 
   const recognitionRef = useRef(null);
   const resultsRef = useRef(null);
+  const noticeTimerRef = useRef(null);
+
+  // Sync default voice language with site language unless manually overridden
+  useEffect(() => {
+    setVoiceLang(isHindi ? 'hi-IN' : 'en-IN');
+  }, [isHindi]);
+
+  // Helper to show self-clearing notice
+  const showNotice = useCallback((noticeObj, autoDismissMs = 6000) => {
+    if (noticeTimerRef.current) clearTimeout(noticeTimerRef.current);
+    setSpeechNotice(noticeObj);
+    if (autoDismissMs > 0) {
+      noticeTimerRef.current = setTimeout(() => {
+        setSpeechNotice(null);
+      }, autoDismissMs);
+    }
+  }, []);
 
   // Rotating placeholder
   useEffect(() => {
@@ -252,9 +274,10 @@ export default function AIAssistanceSection({
     return () => clearInterval(timer);
   }, []);
 
-  // Cleanup speech recognition
+  // Cleanup speech recognition and timers on unmount
   useEffect(() => {
     return () => {
+      if (noticeTimerRef.current) clearTimeout(noticeTimerRef.current);
       if (recognitionRef.current) {
         try {
           recognitionRef.current.abort();
@@ -264,70 +287,163 @@ export default function AIAssistanceSection({
   }, []);
 
   const handleVoiceToggle = () => {
-    if (isListening) {
+    // If currently listening or requesting, clicking the button stops recognition
+    if (isListening || voiceState === 'listening' || voiceState === 'requesting') {
       if (recognitionRef.current) {
-        recognitionRef.current.stop();
+        try {
+          recognitionRef.current.stop();
+        } catch (e) {}
       }
       setIsListening(false);
+      setVoiceState('idle');
+      showNotice({
+        type: 'info',
+        text: isHindi ? 'वॉयस इनपुट रोक दिया गया।' : 'Voice input stopped.'
+      }, 4000);
       return;
     }
 
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const SpeechRecognition = typeof window !== 'undefined' && (window.SpeechRecognition || window.webkitSpeechRecognition);
     if (!SpeechRecognition) {
-      setSpeechNotice("Voice input isn't supported in this browser. You can type your question instead.");
-      setTimeout(() => setSpeechNotice(null), 5000);
+      setVoiceState('unsupported');
+      setIsListening(false);
+      showNotice({
+        type: 'error',
+        text: isHindi
+          ? 'इस ब्राउज़र में वॉयस रिकॉग्निशन समर्थित नहीं है। कृपया लिखकर प्रश्न पूछें।'
+          : 'Speech recognition is not supported in this browser. Please type your query.'
+      }, 7000);
       return;
     }
 
     try {
+      setVoiceState('requesting');
+      showNotice({
+        type: 'listening',
+        text: isHindi
+          ? 'माइक्रोफ़ोन अनुमति का अनुरोध किया जा रहा है...'
+          : 'Requesting microphone permission...'
+      }, 0);
+
       const recognition = new SpeechRecognition();
-      recognition.lang = 'en-IN';
-      recognition.interimResults = false;
+      recognition.lang = voiceLang;
+      recognition.interimResults = true;
+      recognition.continuous = false;
       recognition.maxAlternatives = 1;
 
       recognition.onstart = () => {
         setIsListening(true);
-        setSpeechNotice("Listening... speak your question now.");
+        setVoiceState('listening');
+        showNotice({
+          type: 'listening',
+          text: isHindi
+            ? `सुन रहा है (${voiceLang === 'hi-IN' ? 'हिंदी' : 'अंग्रेजी'})... अब अपना प्रश्न बोलें`
+            : `Listening in ${voiceLang === 'hi-IN' ? 'Hindi (hi-IN)' : 'English (en-IN)'}... Speak your banking question now`
+        }, 0);
       };
 
       recognition.onresult = (event) => {
-        const transcript = event.results?.[0]?.[0]?.transcript;
-        if (transcript) {
-          let formattedTranscript = transcript
+        let interimText = '';
+        let finalText = '';
+
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const res = event.results[i];
+          const transcript = res?.[0]?.transcript || '';
+          if (res.isFinal) {
+            finalText += transcript;
+          } else {
+            interimText += transcript;
+          }
+        }
+
+        if (finalText) {
+          let clean = finalText.trim()
             .replace(/\bfive thousand\b/gi, '₹5,000')
             .replace(/\bten thousand\b/gi, '₹10,000')
-            .replace(/\btwo thousand\b/gi, '₹2,000')
-            .replace(/\bzero balance\b/gi, 'zero balance');
+            .replace(/\btwo thousand\b/gi, '₹2,000');
 
-          setInputValue(formattedTranscript);
-          setSpeechNotice("Transcribed! Review or edit your query, then click Search.");
-          setTimeout(() => setSpeechNotice(null), 4000);
+          setInputValue(clean);
+          setIsListening(false);
+          setVoiceState('recognized');
+          showNotice({
+            type: 'success',
+            text: isHindi
+              ? 'आवाज़ पहचान ली गई! प्रश्न की समीक्षा करें या संपादित करें, फिर Search पर क्लिक करें।'
+              : 'Speech recognized! Review or edit your query, then click Search.'
+          }, 6000);
+        } else if (interimText) {
+          setInputValue(interimText);
         }
-        setIsListening(false);
       };
 
       recognition.onerror = (event) => {
         setIsListening(false);
-        if (event.error === 'not-allowed' || event.error === 'permission-denied') {
-          setSpeechNotice("Microphone permission was denied. Please allow microphone access or type your question.");
-        } else if (event.error === 'no-speech') {
-          setSpeechNotice("No speech was detected. Please try speaking again or type your question.");
+        const err = event.error;
+
+        if (err === 'not-allowed' || err === 'permission-denied') {
+          setVoiceState('denied');
+          showNotice({
+            type: 'error',
+            text: isHindi
+              ? 'माइक्रोफ़ोन अनुमति अस्वीकृत। कृपया ब्राउज़र सेटिंग्स में माइक्रोफ़ोन की अनुमति दें या लिखकर खोजें।'
+              : 'Microphone permission denied. Please allow microphone access or type your query.'
+          }, 7000);
+        } else if (err === 'no-speech') {
+          setVoiceState('error');
+          showNotice({
+            type: 'error',
+            text: isHindi
+              ? 'कोई आवाज़ नहीं सुनी गई। कृपया पुनः बोलें या लिखकर खोजें।'
+              : 'No speech was detected. Please try speaking again or type your query.'
+          }, 6000);
+        } else if (err === 'audio-capture') {
+          setVoiceState('error');
+          showNotice({
+            type: 'error',
+            text: isHindi
+              ? 'कोई माइक्रोफ़ोन नहीं मिला। कृपया माइक्रोफ़ोन कनेक्ट करें।'
+              : 'Microphone not found. Ensure a microphone is connected to your device.'
+          }, 7000);
+        } else if (err === 'network') {
+          setVoiceState('error');
+          showNotice({
+            type: 'error',
+            text: isHindi
+              ? 'वॉयस सेवा में नेटवर्क त्रुटि। कृपया इंटरनेट कनेक्शन जांचें।'
+              : 'Network error occurred during speech recognition. Please check your connection.'
+          }, 7000);
+        } else if (err === 'aborted') {
+          setVoiceState('idle');
+          setSpeechNotice(null);
         } else {
-          setSpeechNotice("Voice input wasn't recognized. You can type your question instead.");
+          setVoiceState('error');
+          showNotice({
+            type: 'error',
+            text: isHindi
+              ? 'वॉयस इनपुट संसाधित नहीं हो सका। कृपया पुनः प्रयास करें या लिखकर खोजें।'
+              : 'Voice recognition encountered an error. Please try again or type your query.'
+          }, 6000);
         }
-        setTimeout(() => setSpeechNotice(null), 5000);
       };
 
       recognition.onend = () => {
         setIsListening(false);
+        if (voiceState === 'listening' || voiceState === 'requesting') {
+          setVoiceState('idle');
+        }
       };
 
       recognitionRef.current = recognition;
       recognition.start();
     } catch (err) {
       setIsListening(false);
-      setSpeechNotice("Could not start voice recognition. You can type your question instead.");
-      setTimeout(() => setSpeechNotice(null), 5000);
+      setVoiceState('error');
+      showNotice({
+        type: 'error',
+        text: isHindi
+          ? 'माइक्रोफ़ोन प्रारंभ नहीं हो सका। कृपया पुनः प्रयास करें या लिखकर खोजें।'
+          : 'Could not start voice recognition. Please try again or type your query.'
+      }, 6000);
     }
   };
 
@@ -551,19 +667,69 @@ export default function AIAssistanceSection({
                   </button>
                 )}
 
+                {/* Voice recognition language toggle (EN / HI) */}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const next = voiceLang === 'hi-IN' ? 'en-IN' : 'hi-IN';
+                    setVoiceLang(next);
+                    if (isListening && recognitionRef.current) {
+                      try { recognitionRef.current.stop(); } catch (err) {}
+                      setIsListening(false);
+                      setVoiceState('idle');
+                    }
+                    showNotice({
+                      type: 'info',
+                      text: next === 'hi-IN'
+                        ? (isHindi ? 'वॉयस भाषा: हिंदी (hi-IN) सेट की गई' : 'Voice input language set to Hindi (hi-IN)')
+                        : (isHindi ? 'वॉयस भाषा: अंग्रेजी (en-IN) सेट की गई' : 'Voice input language set to English (en-IN)')
+                    }, 3500);
+                  }}
+                  title={voiceLang === 'hi-IN' ? (isHindi ? 'वॉयस भाषा: हिंदी (hi-IN) - अंग्रेजी के लिए क्लिक करें' : 'Voice language: Hindi (Click for English)') : (isHindi ? 'वॉयस भाषा: अंग्रेजी (en-IN) - हिंदी के लिए क्लिक करें' : 'Voice language: English (Click for Hindi)')}
+                  className={`px-2 py-1.5 rounded-xl font-black text-[10px] tracking-wider transition-all flex items-center gap-1 shrink-0 cursor-pointer ${
+                    voiceLang === 'hi-IN'
+                      ? 'bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 hover:bg-amber-500/20'
+                      : 'bg-blue-50 dark:bg-blue-950/60 text-[#2563EB] dark:text-[#60A5FA] border border-blue-200 dark:border-blue-900 hover:bg-blue-100'
+                  }`}
+                  aria-label="Switch voice recognition language"
+                >
+                  <span>{voiceLang === 'hi-IN' ? '🇮🇳 HI' : '🌐 EN'}</span>
+                </button>
+
                 {/* Microphone / Speech-to-Text Button */}
                 <button
                   type="button"
                   onClick={handleVoiceToggle}
-                  title={isListening ? "Stop listening" : "Click to speak your question"}
-                  className={`p-2.5 rounded-xl font-bold transition-all flex items-center justify-center shrink-0 cursor-pointer active:scale-95 ${
+                  title={
+                    isListening
+                      ? (isHindi ? 'सुन रहा है... रोकने के लिए क्लिक करें' : 'Listening... Click to stop')
+                      : voiceState === 'requesting'
+                      ? (isHindi ? 'अनुमति का अनुरोध किया जा रहा है...' : 'Requesting mic permission...')
+                      : (isHindi ? `बोलकर खोजें (${voiceLang === 'hi-IN' ? 'हिंदी' : 'अंग्रेजी'})` : `Click to speak (${voiceLang})`)
+                  }
+                  className={`p-2.5 rounded-xl font-bold transition-all flex items-center justify-center shrink-0 cursor-pointer active:scale-95 relative ${
                     isListening 
-                      ? 'bg-red-500 text-white animate-pulse shadow-md shadow-red-500/40 ring-2 ring-red-300' 
+                      ? 'bg-red-500 text-white animate-pulse shadow-lg shadow-red-500/40 ring-4 ring-red-400/30' 
+                      : voiceState === 'recognized'
+                      ? 'bg-emerald-50 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 border border-emerald-400'
                       : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-blue-50 hover:text-[#2563EB] dark:hover:bg-blue-950/80 dark:hover:text-[#60A5FA]'
                   }`}
                   aria-label="Voice input button"
                 >
-                  {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+                  {isListening ? (
+                    <MicOff className="w-4 h-4" />
+                  ) : voiceState === 'requesting' ? (
+                    <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <Mic className="w-4 h-4" />
+                  )}
+                  {isListening && (
+                    <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-600" />
+                    </span>
+                  )}
                 </button>
 
                 {/* Send / Search Button */}
@@ -588,17 +754,43 @@ export default function AIAssistanceSection({
                 </button>
               </div>
 
-              {/* Real-time Voice Notice or Feedback */}
+              {/* Real-time Voice Notice or Feedback Banner */}
               <AnimatePresence>
                 {speechNotice && (
                   <motion.div
-                    initial={{ opacity: 0, y: -6 }}
+                    initial={{ opacity: 0, y: -4 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -6 }}
-                    className="absolute -bottom-8 left-2 right-2 text-xs font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-slate-900 border border-blue-200 dark:border-blue-900 px-3 py-1 rounded-lg shadow-sm z-20 flex items-center gap-1.5"
+                    exit={{ opacity: 0, y: -4 }}
+                    className={`mt-2.5 text-xs font-semibold px-3.5 py-2 rounded-xl shadow-xs flex items-center justify-between gap-2 border text-left ${
+                      speechNotice.type === 'listening'
+                        ? 'bg-red-50 dark:bg-red-950/40 border-red-200 dark:border-red-900/60 text-red-700 dark:text-red-300'
+                        : speechNotice.type === 'success'
+                        ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-900/60 text-emerald-700 dark:text-emerald-300'
+                        : speechNotice.type === 'error'
+                        ? 'bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-900/60 text-rose-700 dark:text-rose-300'
+                        : 'bg-blue-50 dark:bg-slate-900 border-blue-200 dark:border-blue-900 text-blue-700 dark:text-blue-300'
+                    }`}
                   >
-                    <Info className="w-3.5 h-3.5 shrink-0" />
-                    <span className="truncate">{speechNotice}</span>
+                    <div className="flex items-center gap-2 min-w-0">
+                      {speechNotice.type === 'listening' && (
+                        <span className="flex h-2.5 w-2.5 relative shrink-0">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+                          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500" />
+                        </span>
+                      )}
+                      {speechNotice.type === 'success' && <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />}
+                      {speechNotice.type === 'error' && <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />}
+                      {speechNotice.type === 'info' && <Info className="w-4 h-4 text-blue-600 shrink-0" />}
+                      <span className="break-words leading-tight text-xs font-medium">{speechNotice.text}</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setSpeechNotice(null)}
+                      className="p-1 rounded-md hover:bg-black/5 dark:hover:bg-white/10 shrink-0 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+                      aria-label="Dismiss notice"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
                   </motion.div>
                 )}
               </AnimatePresence>

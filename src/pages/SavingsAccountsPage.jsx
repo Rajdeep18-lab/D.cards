@@ -35,6 +35,7 @@ import { safeString, safeLower, safeArray, parseNumericValue } from '../utils/sa
 import { useSEO } from '../hooks/useSEO';
 import { useAppLocation } from '../context/LocationContext';
 import { isProductAvailableInLocation } from '../data/locations';
+import { useLanguage } from '../context/LanguageContext';
 
 const BANK_OPTIONS = [
   "HDFC Bank",
@@ -300,9 +301,14 @@ function matchesDebitCardFilter(acc, cardFilter) {
 
 function SavingsAccountsPage({ onSelectDebitCard }) {
   const { selectedLocation } = useAppLocation();
+  const { language, isHindi, t } = useLanguage();
   useSEO({
-    title: "Savings Accounts in India – Compare Interest Rates & Min Balance | D.Card",
-    description: "Explore and compare savings accounts from leading banks in India. Check interest rates, minimum balance requirements, and features on D.Card.",
+    title: isHindi
+      ? "भारत में सर्वश्रेष्ठ बचत खाते – ब्याज दर एवं न्यूनतम बैलेंस तुलना | D.Card"
+      : "Savings Accounts in India – Compare Interest Rates & Min Balance | D.Card",
+    description: isHindi
+      ? "भारत के प्रमुख बैंकों के बचत खातों की खोज और तुलना करें। ब्याज दरें, न्यूनतम बैलेंस आवश्यकताएं और बैंकिंग सुविधाएं देखें।"
+      : "Explore and compare savings accounts from leading banks in India. Check interest rates, minimum balance requirements, and features on D.Card.",
     canonicalUrl: "https://www.dcard.website/savings-accounts"
   });
 
@@ -626,13 +632,13 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
         <div>
           <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] text-xs font-extrabold tracking-widest uppercase rounded-full mb-2">
             <Sparkles className="w-3.5 h-3.5 animate-pulse text-[#2563EB]" />
-            SAVINGS DISCOVERY ENGINE
+            {isHindi ? "बचत खाता खोज इंजन" : "SAVINGS DISCOVERY ENGINE"}
           </span>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1F2937] dark:text-white tracking-tight">
-            Savings Accounts
+            {t('savings.title', 'Savings Accounts')}
           </h1>
           <p className="text-xs sm:text-sm text-[#6B7280] dark:text-slate-400 mt-1 font-normal max-w-3xl">
-            Explore savings accounts based on interest rates, balance requirements, features, charges and eligibility.
+            {t('savings.subtitle', 'Explore savings accounts based on interest rates, balance requirements, features, charges and eligibility.')}
           </p>
         </div>
 
@@ -643,7 +649,7 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
             className="lg:hidden px-4 py-2.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white font-extrabold text-xs flex items-center gap-2 shadow-xs cursor-pointer active:scale-95 transition-all"
           >
             <SlidersHorizontal className="w-4 h-4 text-[#2563EB]" />
-            <span>Filters {activeFiltersCount > 0 && `(${activeFiltersCount})`}</span>
+            <span>{isHindi ? `फ़िल्टर ${activeFiltersCount > 0 ? `(${activeFiltersCount})` : ''}` : `Filters ${activeFiltersCount > 0 ? `(${activeFiltersCount})` : ''}`}</span>
           </button>
 
           <button
@@ -656,7 +662,7 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
             }`}
           >
             <Scale className="w-4 h-4" />
-            <span>Compare Matrix ({compareQueue.length})</span>
+            <span>{isHindi ? `तुलना मैट्रिक्स (${compareQueue.length})` : `Compare Matrix (${compareQueue.length})`}</span>
           </button>
         </div>
       </div>
@@ -669,7 +675,7 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search savings accounts, banks or features..."
+            placeholder={isHindi ? "बचत खाते, बैंक या सुविधाएं खोजें..." : "Search savings accounts, banks or features..."}
             className="w-full pl-12 pr-10 py-3.5 rounded-2xl bg-[#F8FAFC] dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs sm:text-sm outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 transition-all font-medium text-slate-800 dark:text-white"
           />
           {searchQuery && (
@@ -688,7 +694,7 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
       {activeFiltersCount > 0 && (
         <div className="p-4 rounded-2xl bg-blue-50/60 dark:bg-slate-800/60 border border-blue-100 dark:border-slate-700 flex flex-wrap items-center gap-2 text-xs">
           <span className="font-extrabold text-slate-500 uppercase tracking-wider text-[11px] mr-1">
-            Active Filters ({activeFiltersCount}):
+            {isHindi ? `सक्रिय फ़िल्टर (${activeFiltersCount}):` : `Active Filters (${activeFiltersCount}):`}
           </span>
 
           {searchQuery && (

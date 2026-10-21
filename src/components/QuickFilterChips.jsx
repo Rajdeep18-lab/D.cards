@@ -1,8 +1,9 @@
 import React, { memo } from 'react';
 import { motion } from 'framer-motion';
 import { GraduationCap, User, DollarSign, Building2, CreditCard, Plane, Globe, Shield, TrendingUp, Star, Clock, Zap, X } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
-const CHIPS = [
+const CHIPS_EN = [
   { id: 'student', label: 'Student', icon: GraduationCap, filterType: 'userType', value: 'Student' },
   { id: 'women', label: 'Women', icon: User, filterType: 'userType', value: 'Women' },
   { id: 'zero-fee', label: 'Zero Fee', icon: DollarSign, filterType: 'feeTier', value: 'free' },
@@ -14,6 +15,20 @@ const CHIPS = [
   { id: 'trending', label: 'Trending', icon: TrendingUp, filterType: 'sortBy', value: 'most-popular' },
   { id: 'popular', label: 'Most Popular', icon: Star, filterType: 'sortBy', value: 'highest-rated' },
   { id: 'recent', label: 'Recently Added', icon: Clock, filterType: 'sortBy', value: 'newest-cards' }
+];
+
+const CHIPS_HI = [
+  { id: 'student', label: 'विद्यार्थी', icon: GraduationCap, filterType: 'userType', value: 'Student' },
+  { id: 'women', label: 'महिलाएं', icon: User, filterType: 'userType', value: 'Women' },
+  { id: 'zero-fee', label: 'जीरो शुल्क', icon: DollarSign, filterType: 'feeTier', value: 'free' },
+  { id: 'govt', label: 'सरकारी बैंक', icon: Building2, filterType: 'bankType', value: 'Government Banks' },
+  { id: 'rupay', label: 'RuPay', icon: CreditCard, filterType: 'network', value: 'RuPay' },
+  { id: 'lounge', label: 'लाउंज एक्सेस', icon: Plane, filterType: 'feature', value: 'Lounge Access' },
+  { id: 'intl', label: 'अंतरराष्ट्रीय', icon: Globe, filterType: 'feature', value: 'International Usage' },
+  { id: 'premium', label: 'प्रीमियम', icon: Shield, filterType: 'category', value: 'Premium' },
+  { id: 'trending', label: 'ट्रेंडिंग', icon: TrendingUp, filterType: 'sortBy', value: 'most-popular' },
+  { id: 'popular', label: 'सर्वाधिक लोकप्रिय', icon: Star, filterType: 'sortBy', value: 'highest-rated' },
+  { id: 'recent', label: 'हाल ही में जोड़े गए', icon: Clock, filterType: 'sortBy', value: 'newest-cards' }
 ];
 
 function QuickFilterChips({
@@ -83,18 +98,20 @@ function QuickFilterChips({
     }
   };
 
-  const activeChipsCount = CHIPS.filter(isChipActive).length;
+  const { isHindi } = useLanguage();
+  const chips = isHindi ? CHIPS_HI : CHIPS_EN;
+  const activeChipsCount = chips.filter(isChipActive).length;
 
   return (
     <div className="w-full mb-6 select-none">
       <div className="flex items-center justify-between mb-2 px-1">
         <div className="flex items-center gap-2">
           <span className="text-xs font-bold uppercase tracking-wider text-[#1F2937] dark:text-white flex items-center gap-1.5">
-            <Zap className="w-3.5 h-3.5 text-[#2563EB]" /> Quick Discovery Filters
+            <Zap className="w-3.5 h-3.5 text-[#2563EB]" /> {isHindi ? 'त्वरित खोज फ़िल्टर' : 'Quick Discovery Filters'}
           </span>
           {activeChipsCount > 0 && (
             <span className="px-2 py-0.5 rounded-full bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] text-[10px] font-bold border border-[#2563EB]/20">
-              {activeChipsCount} Active
+              {activeChipsCount} {isHindi ? 'सक्रिय' : 'Active'}
             </span>
           )}
         </div>
@@ -105,14 +122,14 @@ function QuickFilterChips({
             onClick={onResetFilters}
             className="text-[11px] font-semibold text-[#2563EB] dark:text-[#60A5FA] hover:underline cursor-pointer flex items-center gap-1"
           >
-            <span>Clear Quick Filters</span>
+            <span>{isHindi ? 'त्वरित फ़िल्टर हटाएं' : 'Clear Quick Filters'}</span>
             <X className="w-3 h-3" />
           </button>
         )}
       </div>
 
       <div className="flex items-center gap-2 overflow-x-auto pb-2 custom-scrollbar no-scrollbar scroll-smooth touch-scroll">
-        {CHIPS.map((chip) => {
+        {chips.map((chip) => {
           const active = isChipActive(chip);
           const IconComp = chip.icon;
           return (

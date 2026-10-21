@@ -1,9 +1,13 @@
 import React from "react";
 import { AlertTriangle } from "lucide-react";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function TopDisclaimerTicker() {
-  const disclaimerText =
-    "This data is provided for informational purposes only. Please verify all account details, fees, charges, eligibility, limits and other information with the respective bank before making any financial decision.";
+  const { t } = useLanguage();
+  const disclaimerText = t(
+    'ticker.disclaimer',
+    "This data is provided for informational purposes only. Please verify all account details, fees, charges, eligibility, limits and other information with the respective bank before making any financial decision."
+  );
 
   // Array of 4 items: items 0-1 represent the first half (50%), items 2-3 represent the second half (50%)
   // When transform reaches -50%, it seamlessly loops back to 0% with no jump or blank gap.
@@ -19,7 +23,7 @@ export default function TopDisclaimerTicker() {
           <div key={idx} className="flex items-center gap-2.5 mx-6 sm:mx-10 shrink-0">
             <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-black/25 text-white border border-white/35 font-extrabold text-[10px] uppercase tracking-wider shadow-2xs">
               <AlertTriangle className="w-3 h-3 text-amber-200 shrink-0" />
-              <span>Important</span>
+              <span>{t('ticker.important', 'Important')}</span>
             </span>
             <span className="font-semibold text-white tracking-normal leading-normal">
               {disclaimerText}

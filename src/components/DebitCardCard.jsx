@@ -5,12 +5,14 @@ import DebitCardVisual from "./DebitCardVisual";
 import { useWishlist } from "../context/WishlistContext";
 import { useAuth } from "../hooks/useAuth";
 import { referralService } from "../services/referralService";
+import { useLanguage } from "../context/LanguageContext";
 
 /* MAIN REDESIGNED PREMIUM DEBIT CARD - FINTECH BLUE ENGINE */
 function DebitCardCard({ card, onCompare, isQueued, onViewDetails, userProfile = "Working Professional", activeFilters = [], rankings }) {
   const [showTooltip, setShowTooltip] = useState(false);
   const { wishlist, toggleWishlist, isWishlisted } = useWishlist();
   const { user, openAuthModal } = useAuth();
+  const { isHindi } = useLanguage();
 
   const isCardSaved = isWishlisted(card.id);
 
@@ -195,17 +197,17 @@ function DebitCardCard({ card, onCompare, isQueued, onViewDetails, userProfile =
         )}
         {card.studentFriendly && (
           <span className="bg-[#2563EB]/10 border border-[#2563EB]/20 text-[#2563EB] dark:text-[#60A5FA] text-[10px] font-semibold px-2.5 py-0.5 rounded-full">
-            Student Friendly
+            {isHindi ? 'विद्यार्थी अनुकूल' : 'Student Friendly'}
           </span>
         )}
         {card.minBalance === 0 && (
           <span className="bg-[#2563EB]/10 border border-[#2563EB]/20 text-[#2563EB] dark:text-[#60A5FA] text-[10px] font-semibold px-2.5 py-0.5 rounded-full">
-            Zero Balance
+            {isHindi ? 'जीरो बैलेंस' : 'Zero Balance'}
           </span>
         )}
         {(card.category === 'Premium' || card.annualFee >= 1000) && (
           <span className="bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 text-[10px] font-semibold px-2.5 py-0.5 rounded-full">
-            Premium
+            {isHindi ? 'प्रीमियम' : 'Premium'}
           </span>
         )}
       </div>
@@ -228,54 +230,54 @@ function DebitCardCard({ card, onCompare, isQueued, onViewDetails, userProfile =
         </div>
 
         <div className="flex items-center justify-between text-[10px] font-semibold text-[#6B7280] dark:text-slate-400">
-          <span>AI Match: <strong className="text-emerald-600 dark:text-emerald-400">{scoreMetrics.aiMatchScore}%</strong></span>
-          <span>Risk: <strong className={scoreMetrics.risk === 'High' ? 'text-rose-500' : 'text-emerald-500'}>{scoreMetrics.risk}</strong></span>
+          <span>{isHindi ? 'एआई मैच' : 'AI Match'}: <strong className="text-emerald-600 dark:text-emerald-400">{scoreMetrics.aiMatchScore}%</strong></span>
+          <span>{isHindi ? 'जोखिम' : 'Risk'}: <strong className={scoreMetrics.risk === 'High' ? 'text-rose-500' : 'text-emerald-500'}>{scoreMetrics.risk === 'Low' ? (isHindi ? 'निम्न' : 'Low') : scoreMetrics.risk === 'High' ? (isHindi ? 'उच्च' : 'High') : (isHindi ? 'मध्यम' : 'Medium')}</strong></span>
         </div>
       </div>
 
       {/* ── SPECIFIED FIELDS DATA TILES ── */}
       <div className="grid grid-cols-2 gap-2 my-3 select-none z-10 relative">
         <div className="p-2 rounded-xl border border-[#E5E7EB] dark:border-slate-800 bg-[#F8FAFC] dark:bg-slate-900">
-          <p className="text-[9px] text-[#6B7280] dark:text-slate-400 font-semibold uppercase tracking-wider">Annual Fee</p>
+          <p className="text-[9px] text-[#6B7280] dark:text-slate-400 font-semibold uppercase tracking-wider">{isHindi ? 'वार्षिक शुल्क' : 'Annual Fee'}</p>
           <p className="text-xs font-bold text-[#1F2937] dark:text-white truncate mt-0.5">{card.annualFee ?? "N/A"}</p>
         </div>
         
         <div className="p-2 rounded-xl border border-[#E5E7EB] dark:border-slate-800 bg-[#F8FAFC] dark:bg-slate-900">
-          <p className="text-[9px] text-[#6B7280] dark:text-slate-400 font-semibold uppercase tracking-wider">Joining Fee</p>
+          <p className="text-[9px] text-[#6B7280] dark:text-slate-400 font-semibold uppercase tracking-wider">{isHindi ? 'प्रारंभिक शुल्क' : 'Joining Fee'}</p>
           <p className="text-xs font-bold text-[#1F2937] dark:text-white truncate mt-0.5">{card.joiningFee ?? "N/A"}</p>
         </div>
 
         <div className="p-2 rounded-xl border border-[#E5E7EB] dark:border-slate-800 bg-[#F8FAFC] dark:bg-slate-900">
-          <p className="text-[9px] text-[#6B7280] dark:text-slate-400 font-semibold uppercase tracking-wider">International</p>
+          <p className="text-[9px] text-[#6B7280] dark:text-slate-400 font-semibold uppercase tracking-wider">{isHindi ? 'अंतरराष्ट्रीय उपयोग' : 'International'}</p>
           <p className="text-xs font-bold text-[#1F2937] dark:text-white truncate mt-0.5">
-            {card.international !== undefined ? (card.international ? "Yes" : "No") : (card.internationalUsage ?? "N/A")}
+            {card.international !== undefined ? (card.international ? (isHindi ? "हाँ" : "Yes") : (isHindi ? "नहीं" : "No")) : (card.internationalUsage ?? "N/A")}
           </p>
         </div>
 
         <div className="p-2 rounded-xl border border-[#E5E7EB] dark:border-slate-800 bg-[#F8FAFC] dark:bg-slate-900">
-          <p className="text-[9px] text-[#6B7280] dark:text-slate-400 font-semibold uppercase tracking-wider">Contactless</p>
+          <p className="text-[9px] text-[#6B7280] dark:text-slate-400 font-semibold uppercase tracking-wider">{isHindi ? 'कॉन्टैक्टलेस' : 'Contactless'}</p>
           <p className="text-xs font-bold text-[#1F2937] dark:text-white truncate mt-0.5">
-            {card.contactless !== undefined ? (card.contactless ? "Yes" : "No") : "N/A"}
+            {card.contactless !== undefined ? (card.contactless ? (isHindi ? "हाँ" : "Yes") : (isHindi ? "नहीं" : "No")) : "N/A"}
           </p>
         </div>
 
         <div className="p-2 rounded-xl border border-[#E5E7EB] dark:border-slate-800 bg-[#F8FAFC] dark:bg-slate-900">
-          <p className="text-[9px] text-[#6B7280] dark:text-slate-400 font-semibold uppercase tracking-wider">Lounge Access</p>
+          <p className="text-[9px] text-[#6B7280] dark:text-slate-400 font-semibold uppercase tracking-wider">{isHindi ? 'लाउंज एक्सेस' : 'Lounge Access'}</p>
           <p className="text-xs font-bold text-[#1F2937] dark:text-white truncate mt-0.5">{card.loungeAccess ?? "N/A"}</p>
         </div>
 
         <div className="p-2 rounded-xl border border-[#E5E7EB] dark:border-slate-800 bg-[#F8FAFC] dark:bg-slate-900">
-          <p className="text-[9px] text-[#6B7280] dark:text-slate-400 font-semibold uppercase tracking-wider">Forex Markup</p>
+          <p className="text-[9px] text-[#6B7280] dark:text-slate-400 font-semibold uppercase tracking-wider">{isHindi ? 'फॉरेक्स मार्कअप' : 'Forex Markup'}</p>
           <p className="text-xs font-bold text-[#1F2937] dark:text-white truncate mt-0.5">{card.forexMarkup ?? "N/A"}</p>
         </div>
 
         <div className="col-span-2 p-2 rounded-xl border border-[#E5E7EB] dark:border-slate-800 bg-[#F8FAFC] dark:bg-slate-900 flex items-center justify-between">
           <div className="min-w-0 pr-2">
-            <p className="text-[9px] text-[#6B7280] dark:text-slate-400 font-semibold uppercase tracking-wider">Best For</p>
+            <p className="text-[9px] text-[#6B7280] dark:text-slate-400 font-semibold uppercase tracking-wider">{isHindi ? 'सर्वोत्तम उपयोग' : 'Best For'}</p>
             <p className="text-xs font-bold text-[#2563EB] dark:text-[#60A5FA] truncate mt-0.5">{card.bestFor ?? "N/A"}</p>
           </div>
           <div className="text-right flex-shrink-0">
-            <p className="text-[9px] text-[#6B7280] dark:text-slate-400 font-semibold uppercase tracking-wider">Rating</p>
+            <p className="text-[9px] text-[#6B7280] dark:text-slate-400 font-semibold uppercase tracking-wider">{isHindi ? 'रेटिंग' : 'Rating'}</p>
             <p className="text-xs font-bold text-amber-500 mt-0.5 flex items-center gap-1">
               <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
               <span>{card.rating ?? "N/A"}</span>
@@ -298,7 +300,7 @@ function DebitCardCard({ card, onCompare, isQueued, onViewDetails, userProfile =
           }}
           className="flex-1 py-2.5 rounded-xl text-xs font-semibold border border-[#E5E7EB] dark:border-slate-700 text-[#1F2937] dark:text-white hover:border-[#2563EB] hover:text-[#2563EB] transition-all cursor-pointer min-h-[44px] flex items-center justify-center"
         >
-          View Specs
+          {isHindi ? 'विवरण देखें' : 'View Specs'}
         </motion.button>
 
         <motion.button
@@ -307,7 +309,7 @@ function DebitCardCard({ card, onCompare, isQueued, onViewDetails, userProfile =
           onClick={handleApplyClick}
           className="flex-1 py-2.5 rounded-xl text-xs font-semibold text-white bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:opacity-95 transition-all shadow-sm cursor-pointer flex items-center justify-center gap-1 min-h-[44px]"
         >
-          <span>Apply Now</span>
+          <span>{isHindi ? 'आवेदन करें' : 'Apply Now'}</span>
           <ExternalLink className="w-3.5 h-3.5" />
         </motion.button>
 

@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useSEO } from '../hooks/useSEO';
 import { useAuth } from '../hooks/useAuth';
+import { useLanguage } from '../context/LanguageContext';
 
 function HomePage({
   query,
@@ -25,9 +26,15 @@ function HomePage({
   savingsCompareQueue = [],
   setSavingsCompareQueue
 }) {
+  const { t, isHindi } = useLanguage();
+
   useSEO({
-    title: "D.Card – Compare Debit Cards, Savings & Current Accounts in India",
-    description: "Compare debit cards, savings accounts and current accounts in India. Explore fees, benefits, eligibility and features with D.Card.",
+    title: isHindi
+      ? "D.Card – भारत में डेबिट कार्ड और बचत खातों की तुलना करें"
+      : "D.Card – Compare Debit Cards, Savings & Current Accounts in India",
+    description: isHindi
+      ? "भारत में डेबिट कार्ड, बचत खाते और चालू खातों की तुलना करें। D.Card पर शुल्क, लाभ और सुविधाओं की जांच करें।"
+      : "Compare debit cards, savings accounts and current accounts in India. Explore fees, benefits, eligibility and features with D.Card.",
     canonicalUrl: "https://www.dcard.website/"
   });
 
@@ -74,13 +81,13 @@ function HomePage({
           <div className="text-center max-w-2xl mx-auto space-y-2.5 mb-10">
             <span className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] text-xs font-bold tracking-widest uppercase rounded-full border border-[#2563EB]/20">
               <Sparkles className="w-3.5 h-3.5 text-[#2563EB]" />
-              BANKING PRODUCT DISCOVERY
+              {t('home.categoriesBadge', 'BANKING PRODUCT DISCOVERY')}
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-[#1F2937] dark:text-white tracking-tight">
-              Explore Banking Products
+              {t('home.categoriesTitle', 'Explore Banking Products')}
             </h2>
             <p className="text-xs sm:text-sm text-[#6B7280] dark:text-slate-400 font-normal">
-              Find products based on the features, benefits and requirements that matter to you.
+              {t('home.categoriesSubtitle', 'Find products based on the features, benefits and requirements that matter to you.')}
             </p>
           </div>
 
@@ -98,39 +105,39 @@ function HomePage({
                 </div>
                 <div>
                   <span className="text-[11px] font-extrabold text-[#2563EB] dark:text-[#60A5FA] uppercase tracking-wider block">
-                    PRIMARY CATEGORY
+                    {t('home.catSavingsTitle', 'Savings Accounts')}
                   </span>
                   <h3 className="text-2xl font-black text-slate-800 dark:text-white mt-0.5">
-                    Savings Accounts
+                    {t('savings.title', 'Savings Accounts')}
                   </h3>
                 </div>
                 <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
-                  Compare account types, balance requirements, benefits, eligibility and more.
+                  {t('home.catSavingsDesc', 'Compare account types, balance requirements, benefits, eligibility and more.')}
                 </p>
 
                 <ul className="grid grid-cols-1 gap-2 pt-2 text-xs text-slate-700 dark:text-slate-300 font-medium">
                   <li className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" />
-                    <span>Account types & interest rates</span>
+                    <span>{t('savings.interestRate', 'Account types & interest rates')}</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" />
-                    <span>Balance & waiver rules</span>
+                    <span>{t('savings.minimumBalance', 'Balance & waiver rules')}</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" />
-                    <span>Linked debit card perks</span>
+                    <span>{t('savings.linkedCard', 'Linked debit card perks')}</span>
                   </li>
                 </ul>
               </div>
 
               <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-400">Verified Banks</span>
+                <span className="text-xs font-bold text-slate-400">150+ Verified</span>
                 <button
                   onClick={(e) => { e.stopPropagation(); handleNavigateProtected('/savings-accounts'); }}
                   className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:from-[#1D4ED8] hover:to-[#2563EB] text-white font-extrabold text-xs transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
                 >
-                  <span>Explore Savings</span>
+                  <span>{t('home.exploreNow', 'Explore Savings')}</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
@@ -149,14 +156,14 @@ function HomePage({
                 </div>
                 <div>
                   <span className="text-[11px] font-extrabold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider block">
-                    BUSINESS CATEGORY
+                    {t('currentAccounts.badge', 'BUSINESS CATEGORY')}
                   </span>
                   <h3 className="text-2xl font-black text-slate-800 dark:text-white mt-0.5">
-                    Current Accounts
+                    {t('currentAccounts.title', 'Current Accounts')}
                   </h3>
                 </div>
                 <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
-                  Compare commercial MAB, cash deposit limits, corporate banking and cheque rules.
+                  {t('home.catCurrentDesc', 'Compare commercial MAB, cash deposit limits, corporate banking and cheque rules.')}
                 </p>
 
                 <ul className="grid grid-cols-1 gap-2 pt-2 text-xs text-slate-700 dark:text-slate-300 font-medium">
@@ -166,11 +173,11 @@ function HomePage({
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                    <span>Cash deposit & withdrawal slabs</span>
+                    <span>{t('currentAccounts.cashDepositLimit', 'Cash deposit & withdrawal slabs')}</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                    <span>Free monthly cheque leaves</span>
+                    <span>{t('currentAccounts.freeChequeLeaves', 'Free monthly cheque leaves')}</span>
                   </li>
                 </ul>
               </div>
@@ -181,7 +188,7 @@ function HomePage({
                   onClick={(e) => { e.stopPropagation(); handleNavigateProtected('/current-accounts'); }}
                   className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-700 hover:to-emerald-600 text-white font-extrabold text-xs transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
                 >
-                  <span>Explore Current</span>
+                  <span>{t('home.exploreNow', 'Explore Current')}</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
@@ -200,39 +207,39 @@ function HomePage({
                 </div>
                 <div>
                   <span className="text-[11px] font-extrabold text-[#2563EB] dark:text-[#60A5FA] uppercase tracking-wider block">
-                    CARD CATEGORY
+                    {t('debitCards.badge', 'CARD CATEGORY')}
                   </span>
                   <h3 className="text-2xl font-black text-slate-800 dark:text-white mt-0.5">
-                    Debit Cards
+                    {t('debitCards.title', 'Debit Cards')}
                   </h3>
                 </div>
                 <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
-                  Compare fees, limits, rewards, lounge access and other card benefits.
+                  {t('home.catCardsDesc', 'Compare fees, limits, rewards, lounge access and other card benefits.')}
                 </p>
 
                 <ul className="grid grid-cols-1 gap-2 pt-2 text-xs text-slate-700 dark:text-slate-300 font-medium">
                   <li className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" />
-                    <span>Annual fees & spend waivers</span>
+                    <span>{t('debitCards.annualFee', 'Annual fees & spend waivers')}</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" />
-                    <span>Daily ATM & POS limits</span>
+                    <span>{t('debitCards.dailyAtmLimit', 'Daily ATM & POS limits')}</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" />
-                    <span>Airport lounge access</span>
+                    <span>{t('debitCards.loungeAccess', 'Airport lounge access')}</span>
                   </li>
                 </ul>
               </div>
 
               <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-400">100+ Cards Lineup</span>
+                <span className="text-xs font-bold text-slate-400">100+ Cards</span>
                 <button
                   onClick={(e) => { e.stopPropagation(); handleNavigateProtected('/cards'); }}
                   className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:from-[#1D4ED8] hover:to-[#2563EB] text-white font-extrabold text-xs transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
                 >
-                  <span>Explore Cards</span>
+                  <span>{t('home.exploreNow', 'Explore Cards')}</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>

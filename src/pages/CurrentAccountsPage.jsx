@@ -27,6 +27,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSEO } from '../hooks/useSEO';
 import { useAppLocation } from '../context/LocationContext';
 import { isProductAvailableInLocation } from '../data/locations';
+import { useLanguage } from '../context/LanguageContext';
 
 const BANK_OPTIONS = [
   "State Bank of India",
@@ -81,6 +82,7 @@ function CurrentAccountsPage({ onSelectDebitCard }) {
 
   const navigate = useNavigate();
   const { selectedLocation } = useAppLocation();
+  const { t, isHindi } = useLanguage();
   const [accounts, setAccounts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedAccountForModal, setSelectedAccountForModal] = useState(null);
@@ -228,19 +230,25 @@ function CurrentAccountsPage({ onSelectDebitCard }) {
         <div className="relative z-10 max-w-3xl space-y-3">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md text-xs font-extrabold border border-white/20">
             <Briefcase className="w-3.5 h-3.5 text-blue-200" />
-            <span>BUSINESS & COMMERCIAL BANKING</span>
+            <span>{isHindi ? 'व्यावसायिक एवं कॉर्पोरेट बैंकिंग' : 'BUSINESS & COMMERCIAL BANKING'}</span>
           </div>
           <h1 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight">
-            Current Accounts Discovery
+            {isHindi ? 'चालू खाते (Current Accounts)' : 'Current Accounts Discovery'}
           </h1>
           <p className="text-sm sm:text-base text-blue-100/90 font-normal leading-relaxed">
-            Compare business accounts, Monthly Average Balance (MAB) rules, free cash deposit thresholds, multi-user net banking, and verified business debit cards.
+            {isHindi
+              ? 'व्यावसायिक चालू खातों, मासिक औसत शेष (MAB) नियमों, नकद जमा सीमाओं और संबंधित व्यावसायिक डेबिट कार्डों की तुलना करें।'
+              : 'Compare business accounts, Monthly Average Balance (MAB) rules, free cash deposit thresholds, multi-user net banking, and verified business debit cards.'}
           </p>
 
           <div className="flex flex-wrap gap-4 pt-4 text-xs font-bold">
             <div className="flex items-center gap-2 bg-black/20 px-3.5 py-2 rounded-xl border border-white/10">
               <Building2 className="w-4 h-4 text-blue-300" />
-              <span>{accounts.length} Commercial Accounts Indexed</span>
+              <span>
+                {isHindi
+                  ? `${accounts.length} व्यावसायिक खाते सूचीबद्ध`
+                  : `${accounts.length} Commercial Accounts Indexed`}
+              </span>
             </div>
           </div>
         </div>
@@ -254,7 +262,7 @@ function CurrentAccountsPage({ onSelectDebitCard }) {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search current accounts by bank, account name, business type, or features..."
+            placeholder={isHindi ? 'बैंक, खाता नाम, व्यापार प्रकार या सुविधाओं द्वारा खोजें...' : 'Search current accounts by bank, account name, business type, or features...'}
             className="w-full bg-transparent border-none text-xs font-normal pl-2.5 py-2.5 outline-none text-[#1F2937] dark:text-white placeholder-[#9CA3AF]"
           />
           {searchQuery && (
@@ -274,7 +282,9 @@ function CurrentAccountsPage({ onSelectDebitCard }) {
             className="sm:hidden px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-bold flex items-center gap-1.5 cursor-pointer"
           >
             <Filter className="w-3.5 h-3.5 text-[#2563EB]" />
-            <span>Filters {activeFilterCount > 0 ? `(${activeFilterCount})` : ''}</span>
+            <span>
+              {isHindi ? 'फ़िल्टर' : 'Filters'} {activeFilterCount > 0 ? `(${activeFilterCount})` : ''}
+            </span>
           </button>
 
           {/* Sort Dropdown */}
@@ -285,11 +295,18 @@ function CurrentAccountsPage({ onSelectDebitCard }) {
               onChange={(e) => setSortBy(e.target.value)}
               className="bg-transparent text-xs font-extrabold text-slate-700 dark:text-slate-200 border-none outline-none cursor-pointer pr-4 py-1"
             >
-              {SORT_OPTIONS.map(opt => (
-                <option key={opt.id} value={opt.id} className="bg-white dark:bg-slate-900">
-                  {opt.label}
-                </option>
-              ))}
+              <option value="recommended" className="bg-white dark:bg-slate-900">
+                {isHindi ? 'अनुशंसित' : 'Recommended'}
+              </option>
+              <option value="balance-asc" className="bg-white dark:bg-slate-900">
+                {isHindi ? 'न्यूनतम शेष (कम से अधिक)' : 'Lowest Minimum Balance'}
+              </option>
+              <option value="balance-desc" className="bg-white dark:bg-slate-900">
+                {isHindi ? 'न्यूनतम शेष (अधिक से कम)' : 'Highest Tier Balance'}
+              </option>
+              <option value="name-asc" className="bg-white dark:bg-slate-900">
+                {isHindi ? 'खाता नाम (A–Z)' : 'Account Name (A–Z)'}
+              </option>
             </select>
           </div>
         </div>

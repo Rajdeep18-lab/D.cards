@@ -23,6 +23,7 @@ import { currentAccounts, getAssociatedDebitCardForCurrentAccount } from '../dat
 import { getCoveredBanksDirectory, canonicalBankName } from '../utils/bankDirectoryUtils';
 import BankLogo from './BankLogo';
 import { formatInterestRate, formatMinimumBalance } from '../utils/bankingDataFormatter';
+import { useLanguage } from '../context/LanguageContext';
 
 const RECENT_SEARCHES_KEY = 'dcard_recent_searches_v1';
 const MAX_RECENT_SEARCHES = 6;
@@ -38,6 +39,7 @@ const DEFAULT_SUGGESTIONS = [
 function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = null, onViewDetails = null }) {
   const navigate = useNavigate();
   const searchContainerRef = useRef(null);
+  const { t } = useLanguage();
 
   const [searchTerm, setSearchTerm] = useState(query);
   const [debouncedTerm, setDebouncedTerm] = useState(query);
@@ -256,7 +258,7 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
                 handleExecuteSearchSubmit();
               }
             }}
-            placeholder="Search banks, savings accounts, debit cards or features..."
+            placeholder={t('search.placeholder', "Search banks, savings accounts, debit cards or features...")}
             className="w-full bg-transparent border-none text-xs font-normal pl-2.5 py-3 outline-none text-[#1F2937] dark:text-white placeholder-[#9CA3AF]"
           />
 
@@ -269,7 +271,7 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
                 if (typeof setQuery === 'function') setQuery('');
               }}
               className="p-1 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors mr-2 cursor-pointer"
-              title="Clear search"
+              title={t('common.clear', "Clear search")}
             >
               <X className="w-4 h-4" />
             </button>
@@ -280,7 +282,7 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
           onClick={handleExecuteSearchSubmit}
           className="px-6 py-3.5 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-bold tracking-wide uppercase shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 shrink-0"
         >
-          <span>Search</span>
+          <span>{t('common.search', "Search")}</span>
           <ArrowRight className="w-4 h-4" />
         </button>
       </div>
@@ -302,13 +304,13 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
                   <div className="space-y-2.5">
                     <div className="flex items-center justify-between">
                       <span className="text-[10.5px] font-extrabold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                        <Clock className="w-3.5 h-3.5 text-[#2563EB]" /> Recent Searches
+                        <Clock className="w-3.5 h-3.5 text-[#2563EB]" /> {t('search.recentSearches', "Recent Searches")}
                       </span>
                       <button
                         onClick={clearAllRecentSearches}
                         className="text-[10.5px] font-bold text-rose-500 hover:underline flex items-center gap-1 cursor-pointer"
                       >
-                        <Trash2 className="w-3 h-3" /> Clear All
+                        <Trash2 className="w-3 h-3" /> {t('search.clearRecent', "Clear All")}
                       </button>
                     </div>
 
@@ -360,7 +362,7 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
                   <div className="space-y-2">
                     <div className="flex items-center justify-between pb-1 border-b border-slate-100 dark:border-slate-800">
                       <span className="text-[10.5px] font-black uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA] flex items-center gap-1.5">
-                        <Building2 className="w-4 h-4 text-[#2563EB]" /> Banks ({searchResults.banks.length})
+                        <Building2 className="w-4 h-4 text-[#2563EB]" /> {t('search.banks', 'Banks')} ({searchResults.banks.length})
                       </span>
                     </div>
 
@@ -378,7 +380,7 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
                                 {b.name}
                               </h4>
                               <span className="text-[10px] text-slate-400 font-bold block">
-                                {b.cardCount} Debit Cards • {b.accountCount || 0} Savings
+                                {b.cardCount} {t('nav.debitCards', 'Debit Cards')} • {b.accountCount || 0} {t('nav.savingsAccounts', 'Savings')}
                               </span>
                             </div>
                           </div>
@@ -394,7 +396,7 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
                   <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
                     <div className="flex items-center justify-between pb-1 border-b border-slate-100 dark:border-slate-800">
                       <span className="text-[10.5px] font-black uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA] flex items-center gap-1.5">
-                        <CreditCard className="w-4 h-4 text-[#2563EB]" /> Debit Cards ({searchResults.cards.length})
+                        <CreditCard className="w-4 h-4 text-[#2563EB]" /> {t('search.debitCards', 'Debit Cards')} ({searchResults.cards.length})
                       </span>
                     </div>
 
@@ -422,13 +424,13 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
                                 </span>
                               </div>
                               <span className="text-[10px] text-slate-400 font-medium block mt-0.5">
-                                {c.bank} • Fee: {c.annualFee === 0 ? 'Free' : `₹${c.annualFee}`} • Lounge: {c.loungeAccess || 'No'}
+                                {c.bank} • {t('debitCards.annualFee', 'Fee')}: {c.annualFee === 0 ? t('common.free', 'Free') : `₹${c.annualFee}`} • {t('debitCards.loungeAccess', 'Lounge')}: {c.loungeAccess || t('common.no', 'No')}
                               </span>
                             </div>
                           </div>
 
                           <span className="text-[11px] font-extrabold text-[#2563EB] dark:text-[#60A5FA] group-hover:underline flex items-center gap-0.5 shrink-0">
-                            Specs <ChevronRight className="w-3.5 h-3.5" />
+                            {t('search.viewSpecs', 'Specs')} <ChevronRight className="w-3.5 h-3.5" />
                           </span>
                         </div>
                       ))}
@@ -441,7 +443,7 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
                   <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
                     <div className="flex items-center justify-between pb-1 border-b border-slate-100 dark:border-slate-800">
                       <span className="text-[10.5px] font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
-                        <Landmark className="w-4 h-4 text-emerald-500" /> Savings Accounts ({searchResults.accounts.length})
+                        <Landmark className="w-4 h-4 text-emerald-500" /> {t('search.savingsAccounts', 'Savings Accounts')} ({searchResults.accounts.length})
                       </span>
                     </div>
 
@@ -556,10 +558,10 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
                 </div>
                 <div className="space-y-1">
                   <h4 className="font-extrabold text-slate-800 dark:text-white text-sm">
-                    No results found for "{debouncedTerm}"
+                    {t('search.noResults', 'No matching results found for')} "{debouncedTerm}"
                   </h4>
                   <p className="text-xs text-slate-500 font-medium">
-                    Try searching for a bank, account type, card feature or benefit.
+                    {t('search.tryAnotherTerm', 'Try searching for a bank, account type, card feature or benefit.')}
                   </p>
                 </div>
 

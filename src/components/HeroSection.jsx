@@ -22,9 +22,11 @@ import {
 } from 'lucide-react';
 import GlobalSearchInput from './GlobalSearchInput';
 import { useAuth } from '../hooks/useAuth';
+import { useLanguage } from '../context/LanguageContext';
 
 const HeroVisual = memo(({ isMobile }) => {
   const shouldReduceMotion = useReducedMotion();
+  const { t } = useLanguage();
 
   return (
     <div className="flex-1 relative w-full mt-8 lg:mt-0 select-none max-w-[620px] lg:max-w-[580px] xl:max-w-[640px] mx-auto flex flex-col items-center justify-center p-2 sm:p-4">
@@ -50,8 +52,8 @@ const HeroVisual = memo(({ isMobile }) => {
       >
         <ShieldCheck className="w-4 h-4 text-[#2563EB] shrink-0" />
         <div className="text-[10.5px] sm:text-xs">
-          <span className="font-bold text-[#1F2937] dark:text-white">100% Independent </span>
-          <span className="text-[#6B7280] dark:text-slate-400 font-medium">Comparison Platform</span>
+          <span className="font-bold text-[#1F2937] dark:text-white">{t('home.independentBadge', '100% Independent')} </span>
+          <span className="text-[#6B7280] dark:text-slate-400 font-medium">{t('home.comparisonPlatform', 'Comparison Platform')}</span>
         </div>
       </motion.div>
 
@@ -166,8 +168,8 @@ const HeroVisual = memo(({ isMobile }) => {
       >
         <Percent className="w-4 h-4 text-emerald-500 shrink-0" />
         <div className="text-[10.5px] sm:text-xs">
-          <span className="font-bold text-[#1F2937] dark:text-white">Side-by-Side </span>
-          <span className="text-[#6B7280] dark:text-slate-400 font-medium">Product Matrix</span>
+          <span className="font-bold text-[#1F2937] dark:text-white">{t('home.sideBySide', 'Side-by-Side')} </span>
+          <span className="text-[#6B7280] dark:text-slate-400 font-medium">{t('home.productMatrix', 'Product Matrix')}</span>
         </div>
       </motion.div>
     </div>
@@ -177,6 +179,7 @@ const HeroVisual = memo(({ isMobile }) => {
 function HeroSection({ query = '', setQuery = () => {}, onSearchSubmit = null, onViewDetails = null }) {
   const navigate = useNavigate();
   const { user, openAuthModal } = useAuth();
+  const { t } = useLanguage();
   const [searchVal, setSearchVal] = useState(query);
   const [isMobile, setIsMobile] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -238,19 +241,19 @@ function HeroSection({ query = '', setQuery = () => {}, onSearchSubmit = null, o
           {/* Badge */}
           <span className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold tracking-widest uppercase border border-[#2563EB]/25 bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] shadow-xs select-none">
             <Sparkles className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#60A5FA] animate-pulse" />
-            BANKING PRODUCT DISCOVERY PLATFORM
+            {t('home.discoveryBadge', 'BANKING PRODUCT DISCOVERY PLATFORM')}
           </span>
 
           {/* Core Headline */}
           <h1 className="w-full text-2xl xs:text-3xl sm:text-5xl lg:text-[56px] font-extrabold leading-[1.15] sm:leading-[1.12] text-[#1F2937] dark:text-white tracking-tight">
-            Compare. Choose. <br className="hidden sm:block" />
+            {t('home.heroTitlePrefix', 'Compare. Choose.')} <br className="hidden sm:block" />
             <span className="text-gradient">
-              Bank Smarter.
+              {t('home.heroTitleGradient', 'Bank Smarter.')}
             </span>
           </h1>
 
           <p className="max-w-xl text-sm sm:text-lg text-[#6B7280] dark:text-slate-300 leading-relaxed font-normal">
-            Explore and compare savings accounts and debit cards from leading banks in one place.
+            {t('home.heroSubtitle', 'Explore and compare savings accounts and debit cards from leading banks in one place.')}
           </p>
 
           {/* Primary & Secondary CTAs */}
@@ -260,7 +263,7 @@ function HeroSection({ query = '', setQuery = () => {}, onSearchSubmit = null, o
               className="flex-1 px-5 py-3.5 rounded-xl bg-gradient-to-r from-[#2563EB] via-[#3B82F6] to-[#2563EB] hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] text-white text-xs font-bold tracking-wide uppercase shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 min-h-[44px]"
             >
               <Landmark className="w-4 h-4" />
-              <span>Explore Savings Accounts</span>
+              <span>{t('home.exploreSavings', 'Explore Savings Accounts')}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
 
@@ -269,7 +272,7 @@ function HeroSection({ query = '', setQuery = () => {}, onSearchSubmit = null, o
               className="flex-1 px-5 py-3.5 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-[#2563EB] dark:text-[#60A5FA] border border-[#2563EB]/30 text-xs font-bold tracking-wide uppercase shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 min-h-[44px]"
             >
               <CreditCard className="w-4 h-4" />
-              <span>Explore Debit Cards</span>
+              <span>{t('home.exploreCards', 'Explore Debit Cards')}</span>
             </button>
           </div>
 

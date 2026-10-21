@@ -7,10 +7,17 @@ import { safeArray } from '../utils/safeUtils';
 import { useSEO } from '../hooks/useSEO';
 import { formatMinimumBalance, formatNonMaintenanceCharge, formatCashDepositLimit } from '../utils/bankingDataFormatter';
 
+import { useLanguage } from '../context/LanguageContext';
+
 function CurrentAccountsComparePage({ compareQueue = [], setCompareQueue, onSelectDebitCard }) {
+  const { isHindi, t } = useLanguage();
   useSEO({
-    title: "Compare Current Accounts Side by Side | D.Card",
-    description: "Compare cash deposit limits, minimum balance, and charges across current accounts side by side on D.Card.",
+    title: isHindi
+      ? "चालू खातों की तुलना — नकद जमा सीमा, MAB व शुल्क | D.Card"
+      : "Compare Current Accounts Side by Side | D.Card",
+    description: isHindi
+      ? "व्यवसायों के लिए चालू खातों की नकद जमा सीमा, न्यूनतम बैलेंस और लिंक डेबिट कार्ड की तुलना करें।"
+      : "Compare cash deposit limits, minimum balance, and charges across current accounts side by side on D.Card.",
     canonicalUrl: "https://www.dcard.website/compare-current"
   });
 
@@ -25,13 +32,15 @@ function CurrentAccountsComparePage({ compareQueue = [], setCompareQueue, onSele
       <div className="flex items-center justify-between border-b border-[#E5E7EB] dark:border-slate-800 pb-6">
         <div>
           <Link to="/current-accounts" className="text-xs font-bold text-[#2563EB] dark:text-[#60A5FA] flex items-center gap-1 mb-2 hover:underline">
-            <ArrowLeft className="w-3.5 h-3.5" /> Back to Current Accounts
+            <ArrowLeft className="w-3.5 h-3.5" /> {isHindi ? '← चालू खातों पर वापस जाएं' : 'Back to Current Accounts'}
           </Link>
           <h1 className="text-3xl font-extrabold text-[#1F2937] dark:text-white tracking-tight">
-            Current Accounts Side-by-Side Comparison
+            {isHindi ? 'चालू खाता (Current Account) आमने-सामने तुलना' : 'Current Accounts Side-by-Side Comparison'}
           </h1>
           <p className="text-xs sm:text-sm text-[#6B7280] dark:text-slate-400 mt-1">
-            Compare business accounts, MAB requirements, cash deposit slabs, cheque leaves, and linked business debit cards.
+            {isHindi 
+              ? 'व्यावसायिक खातों, न्यूनतम बैलेंस, नकद जमा सीमा, चेक लीव्स और लिंक्ड बिजनेस डेबिट कार्ड की तुलना करें।'
+              : 'Compare business accounts, MAB requirements, cash deposit slabs, cheque leaves, and linked business debit cards.'}
           </p>
         </div>
 
@@ -40,7 +49,7 @@ function CurrentAccountsComparePage({ compareQueue = [], setCompareQueue, onSele
             onClick={() => setCompareQueue([])}
             className="px-4 py-2 rounded-xl text-xs font-bold text-rose-600 border border-rose-200 hover:bg-rose-50 cursor-pointer"
           >
-            Clear All
+            {isHindi ? 'सभी हटाएं' : 'Clear All'}
           </button>
         )}
       </div>
@@ -52,36 +61,40 @@ function CurrentAccountsComparePage({ compareQueue = [], setCompareQueue, onSele
           className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer flex items-center gap-1.5"
         >
           <CreditCard className="w-3.5 h-3.5" />
-          <span>Debit Cards</span>
+          <span>{t('compare.debitCardsTab', 'Debit Cards')}</span>
         </button>
         <button
           onClick={() => navigate('/compare-savings')}
           className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer flex items-center gap-1.5"
         >
           <Building2 className="w-3.5 h-3.5" />
-          <span>Savings Accounts</span>
+          <span>{t('compare.savingsAccountsTab', 'Savings Accounts')}</span>
         </button>
         <button
           onClick={() => navigate('/compare-current')}
           className="px-4 py-2 rounded-xl text-xs font-bold bg-[#2563EB] text-white shadow-xs cursor-pointer flex items-center gap-1.5"
         >
           <Briefcase className="w-3.5 h-3.5" />
-          <span>Current Accounts</span>
+          <span>{t('compare.currentAccountsTab', 'Current Accounts')}</span>
         </button>
       </div>
 
       {queue.length === 0 ? (
         <div className="py-20 text-center space-y-4">
           <Briefcase className="w-16 h-16 text-slate-300 dark:text-slate-600 mx-auto" />
-          <h2 className="text-xl font-bold text-slate-800 dark:text-white">No Current Accounts Selected for Comparison</h2>
+          <h2 className="text-xl font-bold text-slate-800 dark:text-white">
+            {isHindi ? 'तुलना के लिए कोई चालू खाता चयनित नहीं है' : 'No Current Accounts Selected for Comparison'}
+          </h2>
           <p className="text-xs text-slate-500 max-w-md mx-auto">
-            Browse current accounts and click "Compare" on up to 3 accounts to view side-by-side matrices.
+            {isHindi
+              ? 'चालू खातों को ब्राउज़ करें और आमने-सामने तुलना के लिए 3 खातों तक "तुलना करें" पर क्लिक करें।'
+              : 'Browse current accounts and click "Compare" on up to 3 accounts to view side-by-side matrices.'}
           </p>
           <Link
             to="/current-accounts"
             className="inline-block px-6 py-2.5 rounded-full bg-[#2563EB] text-white font-bold text-xs shadow-md"
           >
-            Browse Current Accounts
+            {isHindi ? 'चालू खाते देखें' : 'Browse Current Accounts'}
           </Link>
         </div>
       ) : (
@@ -89,7 +102,9 @@ function CurrentAccountsComparePage({ compareQueue = [], setCompareQueue, onSele
           <table className="w-full border-collapse text-left min-w-[700px]">
             <thead>
               <tr className="border-b border-slate-200 dark:border-slate-800">
-                <th className="p-4 w-52 font-bold text-slate-400 dark:text-slate-500 uppercase text-[11px]">Business Parameter</th>
+                <th className="p-4 w-52 font-bold text-slate-400 dark:text-slate-500 uppercase text-[11px]">
+                  {isHindi ? 'व्यावसायिक मापदंड' : 'Business Parameter'}
+                </th>
                 {queue.map(acc => (
                   <th key={acc.id} className="p-4 min-w-[220px] text-center">
                     <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-2 relative">
@@ -114,7 +129,9 @@ function CurrentAccountsComparePage({ compareQueue = [], setCompareQueue, onSele
 
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-xs sm:text-sm">
               <tr>
-                <td className="p-4 font-bold text-slate-700 dark:text-slate-300">Account Type</td>
+                <td className="p-4 font-bold text-slate-700 dark:text-slate-300">
+                  {t('savings.accountType', 'Account Type')}
+                </td>
                 {queue.map(acc => (
                   <td key={acc.id} className="p-4 text-center font-bold text-[#2563EB] dark:text-[#60A5FA]">
                     {acc.accountType}
@@ -123,7 +140,9 @@ function CurrentAccountsComparePage({ compareQueue = [], setCompareQueue, onSele
               </tr>
 
               <tr>
-                <td className="p-4 font-bold text-slate-700 dark:text-slate-300">Minimum Balance (MAB/AQB)</td>
+                <td className="p-4 font-bold text-slate-700 dark:text-slate-300">
+                  {isHindi ? 'न्यूनतम बैलेंस (MAB/AQB)' : 'Minimum Balance (MAB/AQB)'}
+                </td>
                 {queue.map(acc => {
                   const minBal = formatMinimumBalance(acc.minimumBalance, acc);
                   return (
@@ -142,7 +161,9 @@ function CurrentAccountsComparePage({ compareQueue = [], setCompareQueue, onSele
               </tr>
 
               <tr>
-                <td className="p-4 font-bold text-slate-700 dark:text-slate-300">Non-Maintenance Penalty</td>
+                <td className="p-4 font-bold text-slate-700 dark:text-slate-300">
+                  {isHindi ? 'न्यूनतम बैलेंस न रखने पर जुर्माना' : 'Non-Maintenance Penalty'}
+                </td>
                 {queue.map(acc => {
                   const charge = formatNonMaintenanceCharge(acc.nonMaintenanceCharge || acc.nonMaintenanceCharges, acc);
                   return (
@@ -156,7 +177,9 @@ function CurrentAccountsComparePage({ compareQueue = [], setCompareQueue, onSele
               </tr>
 
               <tr>
-                <td className="p-4 font-bold text-slate-700 dark:text-slate-300">Free Cash Deposit Limit</td>
+                <td className="p-4 font-bold text-slate-700 dark:text-slate-300">
+                  {isHindi ? 'मुफ़्त नकद जमा सीमा' : 'Free Cash Deposit Limit'}
+                </td>
                 {queue.map(acc => {
                   const deposit = formatCashDepositLimit(acc.cashDepositLimit, acc);
                   return (
@@ -175,10 +198,12 @@ function CurrentAccountsComparePage({ compareQueue = [], setCompareQueue, onSele
               </tr>
 
               <tr>
-                <td className="p-4 font-bold text-slate-700 dark:text-slate-300">Free Cheque Leaves</td>
+                <td className="p-4 font-bold text-slate-700 dark:text-slate-300">
+                  {isHindi ? 'निःशुल्क चेक बुक पन्ने' : 'Free Cheque Leaves'}
+                </td>
                 {queue.map(acc => (
                   <td key={acc.id} className="p-4 text-center font-bold text-emerald-600">
-                    {acc.freeChequeLeaves || "Included"}
+                    {acc.freeChequeLeaves || (isHindi ? "शामिल" : "Included")}
                   </td>
                 ))}
               </tr>
@@ -187,13 +212,15 @@ function CurrentAccountsComparePage({ compareQueue = [], setCompareQueue, onSele
                 <td className="p-4 font-bold text-slate-700 dark:text-slate-300">NEFT / RTGS</td>
                 {queue.map(acc => (
                   <td key={acc.id} className="p-4 text-center font-bold text-emerald-600">
-                    {acc.neft || "Free Digital"}
+                    {acc.neft || (isHindi ? "निःशुल्क डिजिटल" : "Free Digital")}
                   </td>
                 ))}
               </tr>
 
               <tr>
-                <td className="p-4 font-bold text-slate-700 dark:text-slate-300">Associated Business Debit Card</td>
+                <td className="p-4 font-bold text-slate-700 dark:text-slate-300">
+                  {isHindi ? 'संबंधित बिजनेस डेबिट कार्ड' : 'Associated Business Debit Card'}
+                </td>
                 {queue.map(acc => {
                   const card = getAssociatedDebitCardForCurrentAccount(acc);
                   return (
@@ -201,10 +228,14 @@ function CurrentAccountsComparePage({ compareQueue = [], setCompareQueue, onSele
                       {card ? (
                         <div className="space-y-1">
                           <span className="text-xs text-[#2563EB] dark:text-[#60A5FA] block">{card.name || card.card_name || card.cardName}</span>
-                          <span className="text-[10px] text-slate-400 block font-normal">Fee: {card.annualFee === 0 ? 'Free' : `₹${card.annualFee}`}</span>
+                          <span className="text-[10px] text-slate-400 block font-normal">
+                            {isHindi ? 'शुल्क:' : 'Fee:'} {card.annualFee === 0 ? (isHindi ? 'निःशुल्क (₹0)' : 'Free') : `₹${card.annualFee}`}
+                          </span>
                         </div>
                       ) : (
-                        <span className="text-xs text-slate-400">Debit card association not specified in provided data.</span>
+                        <span className="text-xs text-slate-400">
+                          {isHindi ? 'इस खाते के लिए डेबिट कार्ड का विवरण निर्दिष्ट नहीं है।' : 'Debit card association not specified in provided data.'}
+                        </span>
                       )}
                     </td>
                   );
@@ -212,15 +243,17 @@ function CurrentAccountsComparePage({ compareQueue = [], setCompareQueue, onSele
               </tr>
 
               <tr>
-                <td className="p-4 font-bold text-slate-700 dark:text-slate-300">Verified Source</td>
+                <td className="p-4 font-bold text-slate-700 dark:text-slate-300">
+                  {isHindi ? 'सत्यापित स्रोत' : 'Verified Source'}
+                </td>
                 {queue.map(acc => (
                   <td key={acc.id} className="p-4 text-center text-xs text-slate-500">
                     {acc.officialSource ? (
                       <a href={acc.officialSource} target="_blank" rel="noreferrer" className="text-[#2563EB] underline">
-                        Official Bank Link
+                        {isHindi ? 'आधिकारिक बैंक लिंक' : 'Official Bank Link'}
                       </a>
                     ) : (
-                      "Public Source"
+                      isHindi ? 'सार्वजनिक स्रोत' : "Public Source"
                     )}
                   </td>
                 ))}

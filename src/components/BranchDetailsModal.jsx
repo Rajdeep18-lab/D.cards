@@ -18,8 +18,10 @@ import {
 } from 'lucide-react';
 import { getDirectionsUrl } from '../utils/branchUtils';
 import { getBankById } from '../data/banks';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function BranchDetailsModal({ branch, isOpen, onClose, onViewOnMap }) {
+  const { isHindi, t } = useLanguage();
   const [copiedIfsc, setCopiedIfsc] = useState(false);
   const [copiedShare, setCopiedShare] = useState(false);
 
@@ -105,7 +107,7 @@ export default function BranchDetailsModal({ branch, isOpen, onClose, onViewOnMa
                 <div>
                   <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-200 border border-emerald-400/30 mb-1">
                     <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                    Verified Official Branch
+                    {t('findBanks.verifiedOfficialBranch', 'Verified Official Branch')}
                   </div>
                   <h3 id="branch-modal-title" className="text-xl sm:text-2xl font-bold text-white tracking-tight leading-snug">
                     {branchName}
@@ -130,10 +132,13 @@ export default function BranchDetailsModal({ branch, isOpen, onClose, onViewOnMa
             {(branch.distanceText || branch.distanceFormatted) && (
               <div className="mt-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white/15 text-white text-xs font-semibold backdrop-blur-xs">
                 <MapPin className="w-3.5 h-3.5 text-amber-300" />
-                <span>{branch.distanceText || branch.distanceFormatted} away from your location</span>
+                <span>
+                  {branch.distanceText || branch.distanceFormatted}{' '}
+                  {isHindi ? 'आपकी लोकेशन से दूरी' : 'away from your location'}
+                </span>
                 {branch.isNearest && (
                   <span className="ml-1 px-1.5 py-0.5 bg-amber-400 text-amber-950 text-[10px] font-black rounded-md uppercase">
-                    Nearest
+                    {isHindi ? 'निकटतम' : 'Nearest'}
                   </span>
                 )}
               </div>
@@ -146,7 +151,9 @@ export default function BranchDetailsModal({ branch, isOpen, onClose, onViewOnMa
             <div className="flex items-start gap-3 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
               <MapPin className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
               <div className="text-sm">
-                <div className="font-semibold text-slate-900 dark:text-white">Full Physical Address</div>
+                <div className="font-semibold text-slate-900 dark:text-white">
+                  {t('findBanks.fullPhysicalAddress', 'Full Physical Address')}
+                </div>
                 <div className="text-slate-700 dark:text-slate-300 mt-1 leading-relaxed">
                   {branch.address}
                 </div>
@@ -162,10 +169,10 @@ export default function BranchDetailsModal({ branch, isOpen, onClose, onViewOnMa
             <div className="flex items-center justify-between p-4 rounded-2xl bg-blue-50/80 dark:bg-blue-950/40 border border-blue-200/80 dark:border-blue-900/60">
               <div>
                 <div className="text-xs font-bold text-blue-700 dark:text-blue-300 uppercase tracking-wider">
-                  RBI IFSC CODE
+                  {isHindi ? 'RBI IFSC कोड' : 'RBI IFSC CODE'}
                 </div>
                 <div className="text-lg font-mono font-bold text-slate-900 dark:text-white mt-0.5 tracking-wide">
-                  {branch.ifsc || 'Not available'}
+                  {branch.ifsc || (isHindi ? 'उपलब्ध नहीं' : 'Not available')}
                 </div>
               </div>
               {branch.ifsc && (
@@ -179,12 +186,12 @@ export default function BranchDetailsModal({ branch, isOpen, onClose, onViewOnMa
                   {copiedIfsc ? (
                     <>
                       <Check className="w-3.5 h-3.5 text-white" />
-                      Copied!
+                      {t('findBanks.ifscCopied', 'Copied!')}
                     </>
                   ) : (
                     <>
                       <Copy className="w-3.5 h-3.5 text-white" />
-                      Copy IFSC
+                      {t('findBanks.copyIfsc', 'Copy IFSC')}
                     </>
                   )}
                 </button>
@@ -197,7 +204,9 @@ export default function BranchDetailsModal({ branch, isOpen, onClose, onViewOnMa
                 <div className="flex items-start gap-2.5 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
                   <Clock className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
                   <div>
-                    <div className="font-semibold text-xs text-slate-900 dark:text-white">Operating Hours</div>
+                    <div className="font-semibold text-xs text-slate-900 dark:text-white">
+                      {t('findBanks.operatingHours', 'Operating Hours')}
+                    </div>
                     <div className="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-normal">
                       {openingHours}
                     </div>
@@ -209,7 +218,9 @@ export default function BranchDetailsModal({ branch, isOpen, onClose, onViewOnMa
                 <div className="flex items-start gap-2.5 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
                   <Phone className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0 mt-0.5" />
                   <div>
-                    <div className="font-semibold text-xs text-slate-900 dark:text-white">Phone Support</div>
+                    <div className="font-semibold text-xs text-slate-900 dark:text-white">
+                      {t('findBanks.phoneSupport', 'Phone Support')}
+                    </div>
                     <a 
                       href={`tel:${branch.phone.replace(/[^0-9+]/g, '')}`}
                       className="text-xs text-blue-600 dark:text-blue-400 font-medium hover:underline mt-1 block"
@@ -226,7 +237,7 @@ export default function BranchDetailsModal({ branch, isOpen, onClose, onViewOnMa
               <div className="p-3.5 rounded-2xl bg-slate-100/70 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
                 <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400">
                   <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
-                  <span>Official verification: {branch.verifiedOn || 'Latest Audit'}</span>
+                  <span>{isHindi ? 'आधिकारिक सत्यापन:' : 'Official verification:'} {branch.verifiedOn || (isHindi ? 'नवीनतम ऑडिट' : 'Latest Audit')}</span>
                 </div>
                 <a
                   href={officialSource}
@@ -234,7 +245,7 @@ export default function BranchDetailsModal({ branch, isOpen, onClose, onViewOnMa
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1 font-semibold text-blue-600 dark:text-blue-400 hover:underline"
                 >
-                  <span>Verify on official bank source</span>
+                  <span>{t('findBanks.verifyOfficial', 'Verify on official bank source')}</span>
                   <ExternalLink className="w-3.5 h-3.5" />
                 </a>
               </div>
@@ -243,7 +254,7 @@ export default function BranchDetailsModal({ branch, isOpen, onClose, onViewOnMa
             {/* Product Connection Section (Section 16) */}
             <div className="p-4 rounded-2xl bg-gradient-to-r from-slate-50 to-blue-50/50 dark:from-slate-800/50 dark:to-slate-850 border border-slate-200 dark:border-slate-800">
               <div className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
-                Explore {bankInfo?.shortName || 'Bank'} on D.CARD
+                {t('findBanks.exploreBankOnDCard', 'Explore {{bank}} on D.CARD', { bank: bankInfo?.shortName || (isHindi ? 'बैंक' : 'Bank') })}
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 <Link
@@ -252,7 +263,7 @@ export default function BranchDetailsModal({ branch, isOpen, onClose, onViewOnMa
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors shadow-2xs"
                 >
                   <Building2 className="w-3.5 h-3.5 text-blue-600" />
-                  Bank Profile
+                  {isHindi ? 'बैंक प्रोफ़ाइल' : 'Bank Profile'}
                 </Link>
 
                 <Link
@@ -261,7 +272,7 @@ export default function BranchDetailsModal({ branch, isOpen, onClose, onViewOnMa
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors shadow-2xs"
                 >
                   <CreditCard className="w-3.5 h-3.5 text-indigo-600" />
-                  Debit Cards
+                  {t('debitCards.title', 'Debit Cards')}
                 </Link>
 
                 <Link
@@ -270,7 +281,7 @@ export default function BranchDetailsModal({ branch, isOpen, onClose, onViewOnMa
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors shadow-2xs"
                 >
                   <Percent className="w-3.5 h-3.5 text-emerald-600" />
-                  Savings Accounts
+                  {t('savings.title', 'Savings Accounts')}
                 </Link>
               </div>
             </div>
@@ -284,7 +295,7 @@ export default function BranchDetailsModal({ branch, isOpen, onClose, onViewOnMa
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-sm font-semibold hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors focus:outline-hidden focus:ring-2 focus:ring-blue-500"
             >
               <Share2 className="w-4 h-4" />
-              {copiedShare ? 'Details Copied!' : 'Share Branch'}
+              {copiedShare ? t('findBanks.detailsCopied', 'Details Copied!') : t('findBanks.shareBranch', 'Share Branch')}
             </button>
 
             <div className="flex items-center gap-2.5 w-full sm:w-auto">
@@ -295,7 +306,7 @@ export default function BranchDetailsModal({ branch, isOpen, onClose, onViewOnMa
                   className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl border border-blue-600/30 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 text-sm font-bold hover:bg-blue-100 dark:hover:bg-blue-900/60 transition-colors cursor-pointer"
                 >
                   <MapPin className="w-4 h-4 text-blue-600" />
-                  <span>View on Map</span>
+                  <span>{t('findBanks.viewOnMap', 'View on Map')}</span>
                 </button>
               )}
 
@@ -304,7 +315,7 @@ export default function BranchDetailsModal({ branch, isOpen, onClose, onViewOnMa
                 onClick={onClose}
                 className="flex-1 sm:flex-initial px-5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-sm font-semibold hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors focus:outline-hidden focus:ring-2 focus:ring-slate-400"
               >
-                Close
+                {t('common.close', 'Close')}
               </button>
 
               <a
@@ -314,7 +325,7 @@ export default function BranchDetailsModal({ branch, isOpen, onClose, onViewOnMa
                 className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold shadow-md hover:shadow-lg transition-all focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               >
                 <Navigation className="w-4 h-4" />
-                Get Directions
+                {t('findBanks.getDirections', 'Get Directions')}
               </a>
             </div>
           </div>

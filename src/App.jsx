@@ -53,6 +53,7 @@ function AuthRedirectHandler({ defaultTab = "login" }) {
 }
 
 import { cardService } from "./services/cardService";
+import { LanguageProvider } from "./context/LanguageContext";
 import { ToastProvider, useToast } from "./context/ToastContext";
 import { WishlistProvider, useWishlist } from "./context/WishlistContext";
 import { AuthProvider } from "./context/AuthContext";
@@ -1369,17 +1370,19 @@ function AppContent() {
 function App() {
   return (
     <ErrorBoundary>
-      <ToastProvider>
-        <AuthProvider>
-          <WishlistProvider>
-            <BrowserRouter>
-              <LocationProvider>
-                <AppContent />
-              </LocationProvider>
-            </BrowserRouter>
-          </WishlistProvider>
-        </AuthProvider>
-      </ToastProvider>
+      <LanguageProvider>
+        <ToastProvider>
+          <AuthProvider>
+            <WishlistProvider>
+              <BrowserRouter>
+                <LocationProvider>
+                  <AppContent />
+                </LocationProvider>
+              </BrowserRouter>
+            </WishlistProvider>
+          </AuthProvider>
+        </ToastProvider>
+      </LanguageProvider>
     </ErrorBoundary>
   );
 }

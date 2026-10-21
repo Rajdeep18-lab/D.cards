@@ -97,6 +97,8 @@ const TEAM = [
   }
 ];
 
+import { useLanguage } from '../context/LanguageContext';
+
 const LEADERSHIP_MATTERS = [
   { title: "Innovation", icon: Zap, desc: "Pioneering AI algorithms that translate 60-page PDF fee schedules into simple visual metrics." },
   { title: "Technology", icon: Cpu, desc: "Engineered for bank-grade security, instant data indexing, and sub-100ms response times." },
@@ -105,9 +107,14 @@ const LEADERSHIP_MATTERS = [
 ];
 
 function AboutPage() {
+  const { isHindi, t } = useLanguage();
   useSEO({
-    title: "About D.Card – Independent Financial Information Platform",
-    description: "Learn about D.Card, India's independent platform comparing debit cards, savings accounts, and current accounts.",
+    title: isHindi
+      ? "D.CARD के बारे में — स्वतंत्र बैंकिंग सूचना एवं तुलना मंच"
+      : "About D.Card – Independent Financial Information Platform",
+    description: isHindi
+      ? "D.CARD के बारे में जानें। डेबिट कार्ड, बचत खाते और चालू खातों की स्वतंत्र तुलना और पारदर्शी जानकारी।"
+      : "Learn about D.Card, India's independent platform comparing debit cards, savings accounts, and current accounts.",
     canonicalUrl: "https://www.dcard.website/about"
   });
 
@@ -115,61 +122,69 @@ function AboutPage() {
 
   const whatWeOffer = [
     {
-      title: "Debit Cards Discovery & Specs",
-      desc: "Explore 100+ debit cards across 15+ Indian banks. Compare annual fees, ATM withdrawal limits, airport lounge access, forex markup, and contactless RuPay/Visa features.",
+      title: isHindi ? "डेबिट कार्ड खोज एवं विनिर्देश" : "Debit Cards Discovery & Specs",
+      desc: isHindi
+        ? "15+ भारतीय बैंकों के 100+ डेबिट कार्ड खोजें। वार्षिक शुल्क, एटीएम निकासी सीमा, हवाईअड्डा लाउंज एक्सेस और RuPay/Visa सुविधाओं की तुलना करें।"
+        : "Explore 100+ debit cards across 15+ Indian banks. Compare annual fees, ATM withdrawal limits, airport lounge access, forex markup, and contactless RuPay/Visa features.",
       icon: CreditCard,
-      actionText: "Explore Debit Cards",
+      actionText: isHindi ? "डेबिट कार्ड देखें" : "Explore Debit Cards",
       actionPath: "/cards"
     },
     {
-      title: "High-Yield Savings Accounts",
-      desc: "Compare savings account interest rates (up to 7.50% p.a.), minimum monthly average balance (MAB), online Video KYC opening, and associated debit card perks.",
+      title: isHindi ? "उच्च ब्याज बचत खाते" : "High-Yield Savings Accounts",
+      desc: isHindi
+        ? "बचत खाता ब्याज दरें (वार्षिक 7.50% तक), न्यूनतम औसत बैलेंस (MAB), ऑनलाइन वीडियो KYC और लिंक डेबिट कार्ड लाभों की तुलना करें।"
+        : "Compare savings account interest rates (up to 7.50% p.a.), minimum monthly average balance (MAB), online Video KYC opening, and associated debit card perks.",
       icon: Percent,
-      actionText: "Explore Savings Accounts",
+      actionText: isHindi ? "बचत खाते देखें" : "Explore Savings Accounts",
       actionPath: "/savings-accounts"
     },
     {
-      title: "Banking Product Comparison",
-      desc: "Side-by-side mathematical comparison matrix matching interest rates, annual charges, daily limits, and reward structures across public and private banks.",
+      title: isHindi ? "बैंकिंग उत्पाद तुलना" : "Banking Product Comparison",
+      desc: isHindi
+        ? "सरकारी और निजी बैंकों में ब्याज दरों, वार्षिक शुल्कों, दैनिक सीमाओं और रिवॉर्ड संरचनाओं का सटीक आमने-सामने तुलना मैट्रिक्स।"
+        : "Side-by-side mathematical comparison matrix matching interest rates, annual charges, daily limits, and reward structures across public and private banks.",
       icon: Scale,
-      actionText: "Compare Products",
+      actionText: isHindi ? "उत्पादों की तुलना करें" : "Compare Products",
       actionPath: "/compare"
     },
     {
-      title: "D.CARD AI Assistance",
-      desc: "Ask questions grounded in live database records with zero hallucinated rates. Get instant verified answers tailored to your specific spending patterns.",
+      title: isHindi ? "D.CARD AI सहायक" : "D.CARD AI Assistance",
+      desc: isHindi
+        ? "लाइव सत्यापित डेटाबेस पर आधारित प्रश्न पूछें। अपने खर्चों और जीवनशैली के अनुसार तुरंत निष्पक्ष और सटीक उत्तर प्राप्त करें।"
+        : "Ask questions grounded in live database records with zero hallucinated rates. Get instant verified answers tailored to your specific spending patterns.",
       icon: Bot,
-      actionText: "Ask AI Assistance",
+      actionText: isHindi ? "AI सहायक से पूछें" : "Ask AI Assistance",
       actionPath: "/ai-advisor"
     }
   ];
 
   const coreValues = [
-    { title: "Transparency", desc: "100% clear fee disclosures with zero hidden fine print or ambiguous terms.", icon: Eye },
-    { title: "Innovation", desc: "AI-driven recommendation engines tailored to your unique financial profile.", icon: Zap },
-    { title: "Trust", desc: "Built on verified, publicly audited bank disclosures and independent research.", icon: ShieldCheck },
-    { title: "Security", desc: "Bank-grade data protection standards and non-collection of sensitive credentials.", icon: Lock },
-    { title: "Simplicity", desc: "Complex 60-page bank fee schedules translated into clear visual metrics.", icon: Sparkles },
-    { title: "User First", desc: "Designed entirely around your lifestyle, rewards preferences, and savings goals.", icon: UserCheck },
-    { title: "Financial Inclusion", desc: "Making banking intelligence accessible for students, women, and professionals alike.", icon: Globe },
-    { title: "Continuous Improvement", desc: "Constantly updating card database and lounge policies as banks revise terms.", icon: TrendingUp }
+    { title: isHindi ? "पारदर्शिता" : "Transparency", desc: isHindi ? "बिना किसी छुपे नियम के 100% स्पष्ट शुल्क विवरण।" : "100% clear fee disclosures with zero hidden fine print or ambiguous terms.", icon: Eye },
+    { title: isHindi ? "नवाचार" : "Innovation", desc: isHindi ? "आपकी वित्तीय आवश्यकताओं के अनुकूल AI-संचालित अनुशंसा प्रणाली।" : "AI-driven recommendation engines tailored to your unique financial profile.", icon: Zap },
+    { title: isHindi ? "विश्वास" : "Trust", desc: isHindi ? "सत्यापित और सार्वजनिक रूप से ऑडिट की गई बैंक जानकारी पर आधारित।" : "Built on verified, publicly audited bank disclosures and independent research.", icon: ShieldCheck },
+    { title: isHindi ? "सुरक्षा" : "Security", desc: isHindi ? "बैंक-स्तरीय डेटा सुरक्षा और व्यक्तिगत संवेदनशील डेटा का गैर-संग्रहण।" : "Bank-grade data protection standards and non-collection of sensitive credentials.", icon: Lock },
+    { title: isHindi ? "सरलता" : "Simplicity", desc: isHindi ? "60 पन्नों के जटिल बैंक शुल्क तालिकाओं को सरल विजुअल मैट्रिक्स में बदलना।" : "Complex 60-page bank fee schedules translated into clear visual metrics.", icon: Sparkles },
+    { title: isHindi ? "उपयोगकर्ता प्राथमिकता" : "User First", desc: isHindi ? "पूरी तरह आपकी जीवनशैली, प्राथमिकताओं और बचत लक्ष्यों के इर्द-गिर्द केंद्रित।" : "Designed entirely around your lifestyle, rewards preferences, and savings goals.", icon: UserCheck },
+    { title: isHindi ? "वित्तीय समावेशन" : "Financial Inclusion", desc: isHindi ? "छात्रों, महिलाओं और पेशेवरों सभी के लिए बैंकिंग ज्ञान सुलभ बनाना।" : "Making banking intelligence accessible for students, women, and professionals alike.", icon: Globe },
+    { title: isHindi ? "निरंतर सुधार" : "Continuous Improvement", desc: isHindi ? "बैंकों द्वारा नियम संशोधित होते ही डेटाबेस को निरंतर अपडेट रखना।" : "Constantly updating card database and lounge policies as banks revise terms.", icon: TrendingUp }
   ];
 
   const whyChoose = [
-    { title: "AI Powered Recommendations", desc: "Algorithms match your monthly spend patterns with optimal cashback and lounge cards.", icon: Bot },
-    { title: "Verified Information", desc: "All card specs, MAB rules, and fee structures cross-referenced with official bank schedules.", icon: CheckCircle2 },
-    { title: "Easy Comparisons", desc: "Side-by-side matrices comparing fees, daily limits, forex markup, and lounge access rules.", icon: Scale },
-    { title: "Smart Filters", desc: "Instant segmentation by zero-balance, RuPay UPI, student friendly, and luxury perks.", icon: Filter },
-    { title: "Regular Updates", desc: "Real-time updates whenever banks revise ATM withdrawal limits or lounge rules.", icon: RefreshCw },
-    { title: "Independent Platform", desc: "Zero bank sponsorship or commission arrangements to guarantee unbiased ratings.", icon: Building2 }
+    { title: isHindi ? "AI संचालित अनुशंसाएं" : "AI Powered Recommendations", desc: isHindi ? "एल्गोरिदम आपके खर्चों के अनुकूल सर्वश्रेष्ठ कैशबैक और लाउंज कार्ड ढूंढते हैं।" : "Algorithms match your monthly spend patterns with optimal cashback and lounge cards.", icon: Bot },
+    { title: isHindi ? "सत्यापित जानकारी" : "Verified Information", desc: isHindi ? "सभी कार्ड विवरण, MAB नियम और शुल्क आधिकारिक बैंक सूचियों से सत्यापित हैं।" : "All card specs, MAB rules, and fee structures cross-referenced with official bank schedules.", icon: CheckCircle2 },
+    { title: isHindi ? "सरल तुलना" : "Easy Comparisons", desc: isHindi ? "शुल्क, दैनिक सीमाएं, फॉरेक्स मार्कअप और लाउंज नियमों की आमने-सामने तुलना।" : "Side-by-side matrices comparing fees, daily limits, forex markup, and lounge access rules.", icon: Scale },
+    { title: isHindi ? "स्मार्ट फ़िल्टर" : "Smart Filters", desc: isHindi ? "जीरो बैलेंस, RuPay UPI, विद्यार्थी अनुकूल और प्रीमियम सुविधाओं का त्वरित वर्गीकरण।" : "Instant segmentation by zero-balance, RuPay UPI, student friendly, and luxury perks.", icon: Filter },
+    { title: isHindi ? "नियमित अपडेट" : "Regular Updates", desc: isHindi ? "बैंकों द्वारा एटीएम सीमा या लाउंज नियमों में संशोधन होते ही रियल-टाइम अपडेट।" : "Real-time updates whenever banks revise ATM withdrawal limits or lounge rules.", icon: RefreshCw },
+    { title: isHindi ? "स्वतंत्र मंच" : "Independent Platform", desc: isHindi ? "पूर्णतः निष्पक्ष मूल्यांकन सुनिश्चित करने के लिए शून्य बैंक कमीशन या प्रायोजन।" : "Zero bank sponsorship or commission arrangements to guarantee unbiased ratings.", icon: Building2 }
   ];
 
   const timelineEvents = [
-    { year: "2026", title: "Idea Started", desc: "Conceived to solve the problem of hidden debit card fees and complex bank disclosures in India." },
-    { year: "2026", title: "Platform Development", desc: "Engineered high-performance comparison architecture and real-time fee calculation engines." },
-    { year: "2026", title: "100+ Debit Cards Added", desc: "Indexed comprehensive debit card lineups across India's top public and private sector banks." },
-    { year: "2026", title: "AI Recommendation System", desc: "Launched intelligent AI advisor for instant personalized card matching based on user lifestyle." },
-    { year: "Future", title: "Future Expansion", desc: "Expanding into complete retail banking intelligence, lounge analytics, and reward optimization." }
+    { year: "2026", title: isHindi ? "विचार का जन्म" : "Idea Started", desc: isHindi ? "भारत में जटिल बैंक शुल्कों की समस्या को हल करने की परिकल्पना।" : "Conceived to solve the problem of hidden debit card fees and complex bank disclosures in India." },
+    { year: "2026", title: isHindi ? "मंच का विकास" : "Platform Development", desc: isHindi ? "उच्च प्रदर्शन तुलना प्रणाली और रीयल-टाइम गणना इंजनों का निर्माण।" : "Engineered high-performance comparison architecture and real-time fee calculation engines." },
+    { year: "2026", title: isHindi ? "100+ डेबिट कार्ड जोड़े गए" : "100+ Debit Cards Added", desc: isHindi ? "भारत के शीर्ष सरकारी व निजी बैंकों के व्यापक डेबिट कार्ड अनुक्रमित।" : "Indexed comprehensive debit card lineups across India's top public and private sector banks." },
+    { year: "2026", title: isHindi ? "AI अनुशंसा प्रणाली" : "AI Recommendation System", desc: isHindi ? "जीवनशैली के आधार पर व्यक्तिगत कार्ड मिलान के लिए AI सहायक का शुभारंभ।" : "Launched intelligent AI advisor for instant personalized card matching based on user lifestyle." },
+    { year: isHindi ? "भविष्य" : "Future", title: isHindi ? "आगामी विस्तार" : "Future Expansion", desc: isHindi ? "संपूर्ण खुदरा बैंकिंग, लाउंज विश्लेषण और रिवॉर्ड ऑप्टिमाइजेशन में विस्तार।" : "Expanding into complete retail banking intelligence, lounge analytics, and reward optimization." }
   ];
 
   const futureRoadmap = [

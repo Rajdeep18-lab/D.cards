@@ -5,6 +5,7 @@ import { Heart, Scale, CheckCircle2, CreditCard, ChevronRight, ShieldCheck } fro
 import { useWishlist } from '../context/WishlistContext';
 import { getAssociatedDebitCards, getDebitCardRelationshipStatus } from '../data/mockSavingsAccounts';
 import BankLogo from './BankLogo';
+import { useLanguage } from '../context/LanguageContext';
 import { 
   formatInterestRate, 
   formatMinimumBalance, 
@@ -15,6 +16,7 @@ import {
 
 function SavingsAccountCard({ account, onViewDetails, onToggleCompare, isCompared, onSelectDebitCard }) {
   const { isWishlisted, toggleWishlist } = useWishlist();
+  const { isHindi } = useLanguage();
   if (!account) return null;
 
   const accountId = account.id || account.product_id;
@@ -77,19 +79,19 @@ function SavingsAccountCard({ account, onViewDetails, onToggleCompare, isCompare
         {/* Badges Flow */}
         <div className="flex flex-wrap items-center gap-1.5 mt-2.5">
           <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-extrabold bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] border border-[#2563EB]/20">
-            {account.accountType || "Regular Savings"}
+            {account.accountType || (isHindi ? "नियमित बचत" : "Regular Savings")}
           </span>
 
           {account.isOnlineOpening && (
             <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-extrabold bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
-              Instant Video KYC
+              {isHindi ? 'त्वरित वीडियो केवाईसी' : 'Instant Video KYC'}
             </span>
           )}
 
           {formattedBalance.isZero && (
             <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-extrabold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
-              <CheckCircle2 className="w-3 h-3" />
-              <span>Zero Balance</span>
+              <CheckCircle2 className="w-3 pupil" />
+              <span>{isHindi ? 'जीरो बैलेंस' : 'Zero Balance'}</span>
             </span>
           )}
         </div>
@@ -101,7 +103,7 @@ function SavingsAccountCard({ account, onViewDetails, onToggleCompare, isCompare
         <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/60 shadow-xs text-left min-h-[110px] flex flex-col justify-between overflow-hidden">
           <div>
             <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500 block mb-0.5">
-              MAX INTEREST RATE
+              {isHindi ? 'अधिकतम ब्याज दर' : 'MAX INTEREST RATE'}
             </span>
             <span className="text-base sm:text-lg font-black text-emerald-600 dark:text-emerald-400 tracking-tight block">
               {formattedRate.display}
@@ -111,7 +113,7 @@ function SavingsAccountCard({ account, onViewDetails, onToggleCompare, isCompare
           {formattedRate.rateDetails && formattedRate.rateDetails.length > 0 ? (
             <div className="mt-2 pt-2 border-t border-slate-100 dark:border-slate-700/60 space-y-1">
               <span className="text-[9.5px] font-bold text-slate-500 dark:text-slate-400 block uppercase tracking-wider">
-                Rate Details:
+                {isHindi ? 'दर विवरण:' : 'Rate Details:'}
               </span>
               <ul className="space-y-0.5 text-[10.5px] text-slate-600 dark:text-slate-300 font-medium">
                 {formattedRate.rateDetails.slice(0, 3).map((detail, idx) => (
@@ -133,7 +135,7 @@ function SavingsAccountCard({ account, onViewDetails, onToggleCompare, isCompare
         <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/60 shadow-xs text-left min-h-[110px] flex flex-col justify-between overflow-hidden">
           <div>
             <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500 block mb-0.5">
-              MIN. BALANCE
+              {isHindi ? 'न्यूनतम बैलेंस' : 'MIN. BALANCE'}
             </span>
             {!formattedBalance.hasLocationBreakdown && (
               <span className="text-base sm:text-lg font-black text-[#1F2937] dark:text-white tracking-tight block">
@@ -162,7 +164,7 @@ function SavingsAccountCard({ account, onViewDetails, onToggleCompare, isCompare
       {/* Key Highlights List */}
       <div className="p-5 sm:p-6 py-4 flex-1 space-y-2.5">
         <span className="text-[10.5px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500 block text-left">
-          KEY ACCOUNT HIGHLIGHTS
+          {isHindi ? 'खाता प्रमुख विशेषताएं' : 'KEY ACCOUNT HIGHLIGHTS'}
         </span>
         <ul className="space-y-2 text-xs text-[#1F2937] dark:text-slate-200 font-medium">
           {highlights.map((highlight, i) => (
@@ -195,7 +197,7 @@ function SavingsAccountCard({ account, onViewDetails, onToggleCompare, isCompare
             onClick={(e) => { e.stopPropagation(); onSelectDebitCard(debitRel.primaryCard); }}
             className="text-[10.5px] font-extrabold text-[#2563EB] dark:text-[#60A5FA] hover:underline flex items-center gap-0.5 shrink-0 cursor-pointer"
           >
-            <span>Card Info</span>
+            <span>{isHindi ? 'कार्ड जानकारी' : 'Card Info'}</span>
             <ChevronRight className="w-3 h-3" />
           </button>
         )}
@@ -205,7 +207,7 @@ function SavingsAccountCard({ account, onViewDetails, onToggleCompare, isCompare
       <div className="px-5 sm:px-6 py-2 bg-slate-50/80 dark:bg-slate-900/60 border-b border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[10px] text-slate-400 dark:text-slate-500 gap-2">
         <div className="flex items-center gap-1.5 truncate">
           <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-          <span className="truncate">Verified: <strong className="text-slate-600 dark:text-slate-300 font-semibold">{sourceInfo.verifiedDateFormatted}</strong></span>
+          <span className="truncate">{isHindi ? 'सत्यापित:' : 'Verified:'} <strong className="text-slate-600 dark:text-slate-300 font-semibold">{sourceInfo.verifiedDateFormatted}</strong></span>
         </div>
         {sourceInfo.sourceUrl ? (
           <a
@@ -216,10 +218,10 @@ function SavingsAccountCard({ account, onViewDetails, onToggleCompare, isCompare
             className="text-[#2563EB] dark:text-[#60A5FA] hover:underline font-bold inline-flex items-center gap-0.5 shrink-0"
             title="Open official bank source"
           >
-            <span>Official Source ↗</span>
+            <span>{isHindi ? 'आधिकारिक स्रोत ↗' : 'Official Source ↗'}</span>
           </a>
         ) : (
-          <span className="font-medium text-slate-400 shrink-0">Official Source</span>
+          <span className="font-medium text-slate-400 shrink-0">{isHindi ? 'आधिकारिक स्रोत' : 'Official Source'}</span>
         )}
       </div>
 
@@ -234,7 +236,7 @@ function SavingsAccountCard({ account, onViewDetails, onToggleCompare, isCompare
           }`}
         >
           <Scale className="w-3.5 h-3.5" />
-          <span>{isCompared ? 'Queued' : 'Compare'}</span>
+          <span>{isCompared ? (isHindi ? 'तुलना में' : 'Queued') : (isHindi ? 'तुलना करें' : 'Compare')}</span>
         </button>
 
         <Link
@@ -247,7 +249,7 @@ function SavingsAccountCard({ account, onViewDetails, onToggleCompare, isCompare
           }}
           className="flex-1 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:shadow-lg hover:shadow-[#2563EB]/25 text-white font-extrabold text-xs transition-all shadow cursor-pointer active:scale-95 text-center flex items-center justify-center gap-1.5 min-h-[42px]"
         >
-          <span>View Details</span>
+          <span>{isHindi ? 'विवरण देखें' : 'View Details'}</span>
           <ChevronRight className="w-3.5 h-3.5" />
         </Link>
       </div>

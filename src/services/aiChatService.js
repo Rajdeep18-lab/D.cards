@@ -163,10 +163,14 @@ export const aiChatService = {
   async sendMessage(userMessage, user = null, chatContext = {}) {
     const cleanMsg = (userMessage || "").trim();
     const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const language = chatContext.language || 'en';
+    const isHindi = language === 'hi';
 
     if (!cleanMsg) {
       return {
-        text: "Please type a question or select a suggested prompt below! 💳",
+        text: isHindi
+          ? "कृपया नीचे कोई प्रश्न टाइप करें या सुझाए गए प्रश्नों में से चुनें! 💳"
+          : "Please type a question or select a suggested prompt below! 💳",
         type: "greeting",
         timestamp
       };
@@ -176,10 +180,12 @@ export const aiChatService = {
     const conversationState = chatContext.conversationState || {};
     const conversationHistory = chatContext.conversationHistory || [];
 
-    // Instant local greeting for pure "hi" / "hello"
-    if (["hi", "hello", "hey", "namaste", "greetings", "hallo"].some(w => lowerMsg === w || lowerMsg.startsWith(w + " "))) {
+    // Instant local greeting for pure "hi" / "hello" / "namaste"
+    if (["hi", "hello", "hey", "namaste", "greetings", "hallo", "नमस्ते"].some(w => lowerMsg === w || lowerMsg.startsWith(w + " "))) {
       return {
-        text: "👋 Hello! Welcome to D.CARD AI Assistance.\n\nI can help you explore and compare verified Indian banking products and locate branches & ATMs:\n• Savings Accounts (Zero Balance, High Interest, Student, Salary, Online Video KYC)\n• Current Accounts (Business MAB, Limits, Overdraft & Cheques)\n• Verified Linked Debit Cards (RuPay, Visa, Mastercard, ATM Limits, Lounge Access)\n• Verified Bank Branches & ATMs Near You\n• Factual Side-by-Side Comparisons\n\nWhat would you like to explore or locate today?",
+        text: isHindi
+          ? "👋 नमस्ते! D.CARD एआई सहायता में आपका स्वागत है।\n\nमैं सत्यापित भारतीय बैंकिंग उत्पादों और शाखाओं/एटीएम को खोजने और तुलना करने में आपकी सहायता कर सकता हूँ:\n• बचत खाते (जीरो बैलेंस, उच्च ब्याज, छात्र, वेतन, ऑनलाइन वीडियो केवाईसी)\n• चालू खाते (बिजनेस एमएबी, सीमाएं, ओवरड्राफ्ट व चेक)\n• सत्यापित लिंक डेबिट कार्ड (RuPay, Visa, Mastercard, एटीएम सीमाएं, लाउंज एक्सेस)\n• आपके नजदीकी सत्यापित बैंक शाखाएं व एटीएम\n• तथ्यात्मक आमने-सामने तुलना\n\nआज आप क्या खोजना या तुलना करना चाहते हैं?"
+          : "👋 Hello! Welcome to D.CARD AI Assistance.\n\nI can help you explore and compare verified Indian banking products and locate branches & ATMs:\n• Savings Accounts (Zero Balance, High Interest, Student, Salary, Online Video KYC)\n• Current Accounts (Business MAB, Limits, Overdraft & Cheques)\n• Verified Linked Debit Cards (RuPay, Visa, Mastercard, ATM Limits, Lounge Access)\n• Verified Bank Branches & ATMs Near You\n• Factual Side-by-Side Comparisons\n\nWhat would you like to explore or locate today?",
         type: "greeting",
         timestamp
       };
@@ -195,7 +201,8 @@ export const aiChatService = {
           message: cleanMsg,
           conversationHistory: conversationHistory.slice(-10),
           conversationState,
-          userCoords: chatContext.userCoords || null
+          userCoords: chatContext.userCoords || null,
+          language: language || 'en'
         }),
         signal: typeof AbortSignal !== 'undefined' && AbortSignal.timeout ? AbortSignal.timeout(12000) : undefined
       });
@@ -217,7 +224,9 @@ export const aiChatService = {
         matchedLocations: data.matchedLocations || [],
         extractedRequirements: data.extractedRequirements || {},
         suggestedActions: data.suggestedActions || [],
-        disclaimer: data.disclaimer || "Please verify the latest terms, charges and eligibility on the bank's official website before applying.",
+        disclaimer: data.disclaimer || (isHindi 
+          ? "आवेदन करने से पहले कृपया संबंधित बैंक की आधिकारिक वेबसाइट पर नवीनतम नियमों, शुल्कों और पात्रता की पुष्टि करें।"
+          : "Please verify the latest terms, charges and eligibility on the bank's official website before applying."),
         conversationState: {
           ...conversationState,
           detectedBanks: data.detectedBanks || conversationState.detectedBanks || []
@@ -238,7 +247,9 @@ export const aiChatService = {
       }
 
       return {
-        text: "AI Advisor is temporarily unavailable. Please try again.",
+        text: isHindi
+          ? "एआई सलाहकार सेवा अस्थायी रूप से अनुपलब्ध है। कृपया पुनः प्रयास करें।"
+          : "AI Advisor is temporarily unavailable. Please try again.",
         type: "error",
         timestamp
       };

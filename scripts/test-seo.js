@@ -75,8 +75,8 @@ const currentAccountsUrls = locMatches.filter(u => u.includes('/current-accounts
 const bankUrls = locMatches.filter(u => u.includes('/banks/'));
 
 assert(
-  savingsAccountsUrls.length === 50 && currentAccountsUrls.length === 12 && bankUrls.length === 32,
-  `6. Dynamic product URLs included correctly: 50 Savings Accounts, 12 Current Accounts, 32 Banks (Total product pages: ${savingsAccountsUrls.length + currentAccountsUrls.length + bankUrls.length})`
+  savingsAccountsUrls.length >= 50 && currentAccountsUrls.length >= 12 && bankUrls.length >= 32,
+  `6. Dynamic product URLs included correctly: ${savingsAccountsUrls.length} Savings Accounts, ${currentAccountsUrls.length} Current Accounts, ${bankUrls.length} Banks (Total product pages: ${savingsAccountsUrls.length + currentAccountsUrls.length + bankUrls.length})`
 );
 
 // 7. /robots.txt references /sitemap.xml

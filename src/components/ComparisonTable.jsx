@@ -2,6 +2,7 @@ import { useMemo, memo } from "react";
 import { Scale, CheckCircle2, XCircle, Star, Trophy, Bot, Plane, Globe } from "lucide-react";
 import DebitCardVisual from "./DebitCardVisual";
 import BankLogo from "./BankLogo";
+import { useLanguage } from "../context/LanguageContext";
 import {
   normalizeCard,
   deduplicateCards,
@@ -14,6 +15,8 @@ import {
 } from "../utils/compareUtils";
 
 function ComparisonTable({ cards = [] }) {
+  const { isHindi, t } = useLanguage();
+
   // Normalize & deduplicate cards input
   const normalizedCards = useMemo(() => {
     const rawList = Array.isArray(cards) ? cards.filter(Boolean) : [];
@@ -33,10 +36,12 @@ function ComparisonTable({ cards = [] }) {
           <Scale className="w-6 h-6" />
         </div>
         <h3 className="text-base font-bold text-[#1F2937] dark:text-white mb-1">
-          No Cards Selected for Comparison
+          {t('compare.noCardsTitle', 'No Cards Selected for Comparison')}
         </h3>
         <p className="text-xs text-[#6B7280] dark:text-slate-400 max-w-md mx-auto leading-relaxed font-normal">
-          Select up to 3 debit cards using the "Add to Compare" button to view side-by-side analytics.
+          {isHindi 
+            ? 'आमने-सामने तुलना देखने के लिए "तुलना करें" बटन का उपयोग करके अधिकतम 3 डेबिट कार्ड चुनें।'
+            : 'Select up to 3 debit cards using the "Add to Compare" button to view side-by-side analytics.'}
         </p>
       </div>
     );
@@ -51,15 +56,15 @@ function ComparisonTable({ cards = [] }) {
           <DebitCardVisual mode="mini" card={singleCard} />
           <div className="text-left">
             <span className="text-[10px] font-semibold text-[#2563EB] dark:text-[#60A5FA] uppercase tracking-wider block">
-              {singleCard.bank || "Debit Card"}
+              {singleCard.bank || (isHindi ? 'डेबिट कार्ड' : "Debit Card")}
             </span>
             <span className="text-xs font-bold text-[#1F2937] dark:text-white block">
-              {singleCard.cardName || "Queued Card"}
+              {singleCard.cardName || (isHindi ? 'चयनित कार्ड' : "Queued Card")}
             </span>
           </div>
         </div>
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs font-semibold tracking-wide">
-          <span>💡 Select one more card to compare side by side.</span>
+          <span>{t('compare.selectOneMore', '💡 Select one more product to compare side by side.')}</span>
         </div>
       </div>
     );
@@ -69,7 +74,7 @@ function ComparisonTable({ cards = [] }) {
   const rowDefinitions = [
     {
       key: "bank",
-      label: "Bank",
+      label: t('compare.metricBank', 'Bank'),
       render: (card) => (
         <div className="flex items-center justify-center gap-2">
           <BankLogo bankName={card.bank} size="xs" />
@@ -81,7 +86,7 @@ function ComparisonTable({ cards = [] }) {
     },
     {
       key: "cardName",
-      label: "Card Name",
+      label: t('compare.metricCardName', 'Card Name'),
       render: (card) => (
         <span className="font-bold text-[#1F2937] dark:text-[#60A5FA]">
           {card.cardName || "N/A"}
@@ -90,7 +95,7 @@ function ComparisonTable({ cards = [] }) {
     },
     {
       key: "network",
-      label: "Network",
+      label: t('compare.metricNetwork', 'Network'),
       render: (card) => (
         <span className="inline-block px-2.5 py-1 rounded-md text-[11px] font-semibold bg-[#EFF6FF] dark:bg-slate-800 text-[#2563EB] dark:text-[#60A5FA]">
           {card.network || "N/A"}
@@ -99,16 +104,16 @@ function ComparisonTable({ cards = [] }) {
     },
     {
       key: "joiningFee",
-      label: "Joining Fee",
+      label: isHindi ? 'प्रारंभिक शुल्क' : 'Joining Fee',
       render: (card) => {
-        const text = card.joiningFee || "Free";
+        const text = card.joiningFee || (isHindi ? "मुफ़्त (₹0)" : "Free");
         const isWaived = card.joiningFeeWaived;
         return (
           <div className="flex items-center gap-1.5 flex-wrap justify-center">
             <span className="font-semibold">{text}</span>
             {isWaived && (
               <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                Waived
+                {isHindi ? 'माफ़' : 'Waived'}
               </span>
             )}
           </div>
@@ -117,11 +122,11 @@ function ComparisonTable({ cards = [] }) {
     },
     {
       key: "annualFee",
-      label: "Annual Fee",
+      label: t('compare.metricAnnualFee', 'Annual Fee'),
       render: (card) => {
         const feeVal = parseAnnualFeeVal(card.annualFee);
         const isBestFee = bestMetrics.minFee !== null && feeVal === bestMetrics.minFee;
-        const text = card.annualFee || "Free";
+        const text = card.annualFee || (isHindi ? "मुफ़्त (₹0)" : "Free");
 
         if (isBestFee) {
           return (
@@ -136,7 +141,7 @@ function ComparisonTable({ cards = [] }) {
     },
     {
       key: "cashback",
-      label: "Cashback",
+      label: isHindi ? 'कैशबैक' : 'Cashback',
       render: (card) => {
         const cbVal = parseCashbackVal(card.cashback);
         const isBestCb = bestMetrics.maxCashback !== null && cbVal === bestMetrics.maxCashback && cbVal > 0;
@@ -155,7 +160,7 @@ function ComparisonTable({ cards = [] }) {
     },
     {
       key: "rewards",
-      label: "Rewards",
+      label: t('compare.metricCashback', 'Rewards & Cashback'),
       render: (card) => (
         <span className="text-xs font-normal leading-relaxed text-[#1F2937] dark:text-slate-300">
           {card.rewards || "N/A"}
@@ -164,11 +169,11 @@ function ComparisonTable({ cards = [] }) {
     },
     {
       key: "loungeAccess",
-      label: "Lounge Access",
+      label: t('compare.metricLounge', 'Lounge Access'),
       render: (card) => {
         const visits = card.loungeVisits || 0;
         const isBestLounge = bestMetrics.maxLoungeVisits !== null && visits === bestMetrics.maxLoungeVisits && visits > 0;
-        const text = card.loungeAccess || "Not Available";
+        const text = card.loungeAccess || (isHindi ? "उपलब्ध नहीं" : "Not Available");
 
         if (isBestLounge) {
           return (
@@ -183,11 +188,11 @@ function ComparisonTable({ cards = [] }) {
     },
     {
       key: "forexMarkup",
-      label: "Forex Markup",
+      label: t('compare.metricForex', 'Forex Markup'),
       render: (card) => {
         const fxVal = parseForexVal(card.forexMarkup);
         const isBestFx = bestMetrics.minForex !== null && fxVal === bestMetrics.minForex;
-        const text = card.forexMarkup || "Not Available";
+        const text = card.forexMarkup || (isHindi ? "उपलब्ध नहीं" : "Not Available");
 
         if (isBestFx) {
           return (
@@ -202,33 +207,37 @@ function ComparisonTable({ cards = [] }) {
     },
     {
       key: "contactless",
-      label: "Contactless",
+      label: isHindi ? 'कॉन्टैक्टलेस' : 'Contactless',
       render: (card) => (
         <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase ${
           card.contactless 
             ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20" 
             : "bg-slate-100 dark:bg-slate-800 text-[#6B7280]"
         }`}>
-          {card.contactless ? <><CheckCircle2 className="w-3 h-3 text-emerald-500" /> Supported</> : <><XCircle className="w-3 h-3 text-slate-400" /> Not Supported</>}
+          {card.contactless 
+            ? <><CheckCircle2 className="w-3 h-3 text-emerald-500" /> {isHindi ? 'समर्थित' : 'Supported'}</> 
+            : <><XCircle className="w-3 h-3 text-slate-400" /> {isHindi ? 'समर्थित नहीं' : 'Not Supported'}</>}
         </span>
       )
     },
     {
       key: "internationalUsage",
-      label: "International Usage",
+      label: isHindi ? 'अंतरराष्ट्रीय उपयोग' : 'International Usage',
       render: (card) => (
         <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase ${
           card.internationalUsage 
             ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20" 
             : "bg-slate-100 dark:bg-slate-800 text-[#6B7280]"
         }`}>
-          {card.internationalUsage ? <><CheckCircle2 className="w-3 h-3 text-emerald-500" /> Supported</> : <><XCircle className="w-3 h-3 text-slate-400" /> Domestic Only</>}
+          {card.internationalUsage 
+            ? <><CheckCircle2 className="w-3 h-3 text-emerald-500" /> {isHindi ? 'समर्थित' : 'Supported'}</> 
+            : <><XCircle className="w-3 h-3 text-slate-400" /> {isHindi ? 'केवल घरेलू' : 'Domestic Only'}</>}
         </span>
       )
     },
     {
       key: "bestFor",
-      label: "Best For",
+      label: isHindi ? 'सर्वोत्तम उपयोग' : 'Best For',
       render: (card) => {
         const list = Array.isArray(card.bestFor) ? card.bestFor : [];
         if (list.length === 0) return <span className="text-[#6B7280]">N/A</span>;
@@ -245,7 +254,7 @@ function ComparisonTable({ cards = [] }) {
     },
     {
       key: "aiScore",
-      label: "AI Score",
+      label: isHindi ? 'AI स्कोर' : 'AI Score',
       render: (card) => {
         const score = card.aiScore || 0;
         const isBestAi = bestMetrics.maxAIScore !== null && score === bestMetrics.maxAIScore && score > 0;
@@ -267,7 +276,7 @@ function ComparisonTable({ cards = [] }) {
     },
     {
       key: "rating",
-      label: "Rating",
+      label: isHindi ? 'रेटिंग' : 'Rating',
       render: (card) => (
         <span className="font-bold text-amber-500 text-xs flex items-center gap-1 justify-center">
           <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
@@ -277,16 +286,16 @@ function ComparisonTable({ cards = [] }) {
     },
     {
       key: "eligibility",
-      label: "Eligibility",
+      label: isHindi ? 'पात्रता' : 'Eligibility',
       render: (card) => (
         <span className="text-xs text-[#1F2937] dark:text-slate-300 font-normal">
-          {card.eligibility || "Standard Bank Customer"}
+          {card.eligibility || (isHindi ? "नियमित बैंक खाताधारक" : "Standard Bank Customer")}
         </span>
       )
     },
     {
       key: "features",
-      label: "Features",
+      label: isHindi ? 'मुख्य विशेषताएं' : 'Features',
       render: (card) => {
         const list = Array.isArray(card.features) ? card.features : [];
         if (list.length === 0) return <span className="text-[#6B7280]">N/A</span>;
@@ -310,7 +319,9 @@ function ComparisonTable({ cards = [] }) {
       <div className="block md:hidden space-y-4">
         <div className="text-center pb-2">
           <span className="text-[11px] font-black uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA]">
-            Side-by-Side Mobile Comparison Cards ({normalizedCards.length})
+            {isHindi 
+              ? `आमने-सामने कार्ड तुलना (${normalizedCards.length})` 
+              : `Side-by-Side Mobile Comparison Cards (${normalizedCards.length})`}
           </span>
         </div>
 
@@ -368,7 +379,7 @@ function ComparisonTable({ cards = [] }) {
           <thead>
             <tr className="bg-[#F8FAFC] dark:bg-slate-900 border-b border-[#E5E7EB] dark:border-slate-800">
               <th className="sticky left-0 z-20 bg-[#F8FAFC] dark:bg-slate-900 px-4 py-4 text-[#6B7280] dark:text-slate-400 font-semibold uppercase text-[10px] tracking-wider min-w-[140px]">
-                Features Matrix
+                {isHindi ? 'सुविधा तुलना' : 'Features Matrix'}
               </th>
               {normalizedCards.map((card, idx) => (
                 <th key={card.id || idx} className="px-4 py-4 text-center min-w-[200px] max-w-[260px] align-top">
