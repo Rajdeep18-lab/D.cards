@@ -286,7 +286,7 @@ export default function AIAssistanceSection({
     };
   }, []);
 
-  const handleVoiceToggle = () => {
+  const handleVoiceToggle = async () => {
     // If currently listening or requesting, clicking the button stops recognition
     if (isListening || voiceState === 'listening' || voiceState === 'requesting') {
       if (recognitionRef.current) {
@@ -303,6 +303,7 @@ export default function AIAssistanceSection({
       return;
     }
 
+    // 1. Check if browser supports SpeechRecognition API
     const SpeechRecognition = typeof window !== 'undefined' && (window.SpeechRecognition || window.webkitSpeechRecognition);
     if (!SpeechRecognition) {
       setVoiceState('unsupported');
@@ -316,15 +317,95 @@ export default function AIAssistanceSection({
       return;
     }
 
-    try {
-      setVoiceState('requesting');
+    // 2. Check for Secure Context (HTTPS or localhost required for microphone access)
+    if (typeof window !== 'undefined' && window.isSecureContext === false) {
+      setVoiceState('error');
+      setIsListening(false);
       showNotice({
-        type: 'listening',
+        type: 'error',
         text: isHindi
-          ? 'माइक्रोफ़ोन अनुमति का अनुरोध किया जा रहा है...'
-          : 'Requesting microphone permission...'
-      }, 0);
+          ? 'माइक्रोफ़ोन एक्सेस के लिए सुरक्षित कनेक्शन (HTTPS या localhost) आवश्यक है।'
+          : 'Microphone access requires a secure connection (HTTPS or localhost).'
+      }, 7000);
+      return;
+    }
 
+    // 3. Check existing permission status if supported to fast-fail if blocked
+    if (typeof navigator !== 'undefined' && navigator.permissions?.query) {
+      try {
+        const perm = await navigator.permissions.query({ name: 'microphone' });
+        if (perm.state === 'denied') {
+          setVoiceState('denied');
+          setIsListening(false);
+          showNotice({
+            type: 'error',
+            text: isHindi
+              ? 'माइक्रोफ़ोन अनुमति ब्राउज़र सेटिंग्स में ब्लॉक है। कृपया पता बार में ताले/साइट सेटिंग्स आइकन से अनुमति दें।'
+              : 'Microphone access is blocked in browser settings. Please allow microphone in site settings or type your query.'
+          }, 8000);
+          return;
+        }
+      } catch (e) {
+        // Some browser engines do not support querying 'microphone' permission name; ignore
+      }
+    }
+
+    setVoiceState('requesting');
+    showNotice({
+      type: 'listening',
+      text: isHindi
+        ? 'माइक्रोफ़ोन अनुमति का अनुरोध किया जा रहा है...'
+        : 'Requesting microphone permission...'
+    }, 0);
+
+    // 4. Explicitly trigger browser microphone permission prompt via getUserMedia upon user click
+    if (typeof navigator !== 'undefined' && navigator.mediaDevices?.getUserMedia) {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        // Release tracks immediately so SpeechRecognition has exclusive audio input access
+        stream.getTracks().forEach(track => track.stop());
+      } catch (mediaErr) {
+        setIsListening(false);
+        const errName = mediaErr.name || '';
+        if (errName === 'NotAllowedError' || errName === 'PermissionDeniedError') {
+          setVoiceState('denied');
+          showNotice({
+            type: 'error',
+            text: isHindi
+              ? 'माइक्रोफ़ोन अनुमति अस्वीकृत। कृपया ब्राउज़र सेटिंग्स में माइक्रोफ़ोन की अनुमति दें या लिखकर खोजें।'
+              : 'Microphone permission denied. Please allow microphone access in your browser settings or type your query.'
+          }, 8000);
+        } else if (errName === 'NotFoundError' || errName === 'DevicesNotFoundError') {
+          setVoiceState('error');
+          showNotice({
+            type: 'error',
+            text: isHindi
+              ? 'कोई माइक्रोफ़ोन उपकरण नहीं मिला। कृपया माइक्रोफ़ोन कनेक्ट करें।'
+              : 'No microphone found. Please ensure a microphone is connected to your device.'
+          }, 7000);
+        } else if (errName === 'NotReadableError' || errName === 'TrackStartError') {
+          setVoiceState('error');
+          showNotice({
+            type: 'error',
+            text: isHindi
+              ? 'माइक्रोफ़ोन व्यस्त है या किसी अन्य ऐप द्वारा उपयोग में है।'
+              : 'Microphone is busy or in use by another application.'
+          }, 7000);
+        } else {
+          setVoiceState('error');
+          showNotice({
+            type: 'error',
+            text: isHindi
+              ? `माइक्रोफ़ोन त्रुटि: ${mediaErr.message || errName}`
+              : `Microphone error: ${mediaErr.message || errName}`
+          }, 7000);
+        }
+        return;
+      }
+    }
+
+    // 5. Initialize SpeechRecognition instance and start listening
+    try {
       const recognition = new SpeechRecognition();
       recognition.lang = voiceLang;
       recognition.interimResults = true;
@@ -412,6 +493,14 @@ export default function AIAssistanceSection({
               ? 'वॉयस सेवा में नेटवर्क त्रुटि। कृपया इंटरनेट कनेक्शन जांचें।'
               : 'Network error occurred during speech recognition. Please check your connection.'
           }, 7000);
+        } else if (err === 'service-not-allowed') {
+          setVoiceState('error');
+          showNotice({
+            type: 'error',
+            text: isHindi
+              ? 'ब्राउज़र स्पीच सेवा की अनुमति नहीं है।'
+              : 'Browser speech recognition service is not allowed.'
+          }, 7000);
         } else if (err === 'aborted') {
           setVoiceState('idle');
           setSpeechNotice(null);
@@ -420,8 +509,8 @@ export default function AIAssistanceSection({
           showNotice({
             type: 'error',
             text: isHindi
-              ? 'वॉयस इनपुट संसाधित नहीं हो सका। कृपया पुनः प्रयास करें या लिखकर खोजें।'
-              : 'Voice recognition encountered an error. Please try again or type your query.'
+              ? `वॉयस इनपुट त्रुटि (${err})। कृपया पुनः प्रयास करें या लिखकर खोजें।`
+              : `Voice recognition encountered an error (${err}). Please try again or type your query.`
           }, 6000);
         }
       };

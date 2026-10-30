@@ -89,15 +89,134 @@ const TEAM = [
   }
 ];
 
-const LEADERSHIP_MATTERS = [
-  { title: "Innovation", icon: Zap, desc: "Pioneering AI algorithms that translate 60-page PDF fee schedules into simple visual metrics." },
-  { title: "Technology", icon: Cpu, desc: "Engineered for bank-grade security, instant data indexing, and sub-100ms response times." },
-  { title: "Customer First", icon: UserCheck, desc: "Designing every comparison matrix around real user savings, student perks, and lounge access." },
-  { title: "Transparency", icon: Eye, desc: "Committing to 100% zero-commission independence from banks for completely unbiased ratings." }
+import { useLanguage } from '../context/LanguageContext';
+
+const LEADERSHIP_MATTERS_DATA = (isHindi) => [
+  { 
+    title: isHindi ? "नवाचार" : "Innovation", 
+    icon: Zap, 
+    desc: isHindi 
+      ? "60 पन्नों के जटिल बैंक शुल्क तालिकाओं को सरल विजुअल मैट्रिक्स में बदलने वाले अग्रणी एल्गोरिदम।" 
+      : "Pioneering AI algorithms that translate 60-page PDF fee schedules into simple visual metrics." 
+  },
+  { 
+    title: isHindi ? "प्रौद्योगिकी" : "Technology", 
+    icon: Cpu, 
+    desc: isHindi 
+      ? "बैंक-स्तरीय सुरक्षा, त्वरित डेटा इंडेक्सिंग और 100ms से कम प्रतिक्रिया समय के लिए निर्मित।" 
+      : "Engineered for bank-grade security, instant data indexing, and sub-100ms response times." 
+  },
+  { 
+    title: isHindi ? "ग्राहक प्राथमिकता" : "Customer First", 
+    icon: UserCheck, 
+    desc: isHindi 
+      ? "उपयोगकर्ता की वास्तविक बचत, छात्र लाभ और लाउंज एक्सेस के इर्द-गिर्द केंद्रित मैट्रिक्स।" 
+      : "Designing every comparison matrix around real user savings, student perks, and lounge access." 
+  },
+  { 
+    title: isHindi ? "पारदर्शिता" : "Transparency", 
+    icon: Eye, 
+    desc: isHindi 
+      ? "पूर्णतः निष्पक्ष रेटिंग के लिए बैंकों से 100% शून्य-कमीशन स्वतंत्रता की प्रतिबद्धता।" 
+      : "Committing to 100% zero-commission independence from banks for completely unbiased ratings." 
+  }
 ];
 
 function FoundersPage() {
   const navigate = useNavigate();
+  const { t, language } = useLanguage();
+  const isHindi = language === 'hi';
+
+  const team = [
+    {
+      roleLabel: isHindi ? "संस्थापक" : "Founder",
+      name: "Ritik Raj",
+      title: t('founders.ritikRole'),
+      tag: t('founders.ritikTag'),
+      initials: "RR",
+      profile: t('founders.ritikProfile'),
+      vision: t('founders.ritikVision'),
+      responsibilities: isHindi ? [
+        "कंपनी विजन एवं नेतृत्व",
+        "व्यापार रणनीति",
+        "उत्पाद नवाचार",
+        "विकास एवं विस्तार",
+        "वित्तीय प्रौद्योगिकी विकास"
+      ] : [
+        "Company Vision & Leadership",
+        "Business Strategy",
+        "Product Innovation",
+        "Growth & Expansion",
+        "Financial Technology Development"
+      ]
+    },
+    {
+      roleLabel: isHindi ? "सह-संस्थापक" : "Co-Founder",
+      name: "Rajdeep",
+      title: t('founders.rajdeepRole'),
+      tag: t('founders.rajdeepTag'),
+      initials: "RD",
+      profile: t('founders.rajdeepProfile'),
+      vision: t('founders.rajdeepVision'),
+      responsibilities: isHindi ? [
+        "उत्पाद विकास",
+        "उपयोगकर्ता अनुभव (UX)",
+        "फ़्रंटएंड विकास",
+        "AI सुविधा एकीकरण",
+        "मंच अनुकूलन"
+      ] : [
+        "Product Development",
+        "User Experience (UX)",
+        "Frontend Development",
+        "AI Feature Integration",
+        "Platform Optimization"
+      ]
+    },
+    {
+      roleLabel: isHindi ? "मुख्य प्रौद्योगिकी अधिकारी" : "Chief Technology Officer",
+      name: "Kaushik Kumar Srivastava",
+      title: t('founders.kaushikRole'),
+      tag: t('founders.kaushikTag'),
+      initials: "KS",
+      profile: t('founders.kaushikProfile'),
+      responsibilities: isHindi ? [
+        "तकनीकी वास्तुकला",
+        "बैकएंड विकास",
+        "क्लाउड इंफ्रास्ट्रक्चर",
+        "सुरक्षा एवं प्रदर्शन",
+        "प्रणाली स्केलेबिलिटी"
+      ] : [
+        "Technical Architecture",
+        "Backend Development",
+        "Cloud Infrastructure",
+        "Security & Performance",
+        "System Scalability"
+      ]
+    },
+    {
+      roleLabel: isHindi ? "मुख्य विपणन अधिकारी" : "Chief Marketing Officer",
+      name: "Bipashu Dubey",
+      title: t('founders.bipashuRole'),
+      tag: t('founders.bipashuTag'),
+      initials: "BD",
+      profile: t('founders.bipashuProfile'),
+      responsibilities: isHindi ? [
+        "ब्रांड रणनीति",
+        "डिजिटल मार्केटिंग",
+        "समुदाय विकास",
+        "रणनीतिक साझेदारियां",
+        "उपयोगकर्ता अधिग्रहण"
+      ] : [
+        "Brand Strategy",
+        "Digital Marketing",
+        "Community Growth",
+        "Strategic Partnerships",
+        "User Acquisition"
+      ]
+    }
+  ];
+
+  const leadershipMatters = LEADERSHIP_MATTERS_DATA(isHindi);
 
   return (
     <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 relative z-20 space-y-16 text-left select-none">
@@ -105,19 +224,19 @@ function FoundersPage() {
       {/* ── 1. HERO BANNER ── */}
       <section className="border-b border-[#E5E7EB] dark:border-slate-800 pb-10">
         <span className="text-xs font-semibold text-[#2563EB] dark:text-[#60A5FA] tracking-widest uppercase block mb-2">
-          MEET OUR LEADERSHIP
+          {t('founders.badge')}
         </span>
         <h1 className="text-3xl sm:text-5xl font-bold text-[#1F2937] dark:text-white tracking-tight">
-          Meet the Team Behind <span className="text-gradient">D.CARD</span>
+          {isHindi ? 'D.CARD के पीछे की ' : 'Meet the Team Behind '}<span className="text-gradient">D.CARD</span>
         </h1>
         <p className="text-base sm:text-lg text-[#6B7280] dark:text-slate-300 mt-2 max-w-3xl font-normal leading-relaxed">
-          The passionate founders, engineers, and strategists building India's next-generation AI savings account and debit card discovery platform.
+          {t('founders.subtitle')}
         </p>
       </section>
 
       {/* ── 2. LEADERSHIP CARDS ── */}
       <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {TEAM.map((person, idx) => (
+        {team.map((person, idx) => (
           <motion.div
             key={person.name}
             initial={{ opacity: 0, y: 20 }}
@@ -147,7 +266,7 @@ function FoundersPage() {
 
               <div className="space-y-2">
                 <h3 className="text-xs font-bold text-[#1F2937] dark:text-white uppercase tracking-wider">
-                  Professional Profile
+                  {isHindi ? 'व्यावसायिक प्रोफ़ाइल' : 'Professional Profile'}
                 </h3>
                 <p className="text-xs sm:text-sm text-[#6B7280] dark:text-slate-300 leading-relaxed font-normal">
                   {person.profile}
@@ -156,7 +275,9 @@ function FoundersPage() {
 
               {person.vision && (
                 <div className="p-3.5 rounded-2xl bg-[#EFF6FF] dark:bg-slate-800/80 border border-[#2563EB]/20 text-xs text-[#2563EB] dark:text-[#60A5FA] font-semibold">
-                  <span className="font-bold uppercase tracking-wider block text-[10px] mb-0.5">Executive Vision</span>
+                  <span className="font-bold uppercase tracking-wider block text-[10px] mb-0.5">
+                    {isHindi ? 'कार्यकारी दृष्टिकोण' : 'Executive Vision'}
+                  </span>
                   {person.vision}
                 </div>
               )}
@@ -164,7 +285,7 @@ function FoundersPage() {
 
             <div className="pt-4 border-t border-[#E5E7EB] dark:border-slate-700 space-y-2">
               <h3 className="text-xs font-bold text-[#1F2937] dark:text-white uppercase tracking-wider">
-                Responsibilities
+                {t('founders.responsibilitiesTitle')}
               </h3>
               <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-[#1F2937] dark:text-slate-300 font-normal">
                 {person.responsibilities.map((resp, i) => (
@@ -186,14 +307,18 @@ function FoundersPage() {
             <Lightbulb className="w-5 h-5" />
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold text-[#1F2937] dark:text-white tracking-tight">
-            Our Leadership Philosophy
+            {isHindi ? 'हमारा नेतृत्व दर्शन' : 'Our Leadership Philosophy'}
           </h2>
         </div>
         <p className="text-sm sm:text-base text-[#1F2937] dark:text-slate-200 leading-relaxed font-normal">
-          At D.CARD, our founders firmly believe that breakthrough innovation in financial technology begins with radical transparency and unyielding consumer trust.
+          {isHindi 
+            ? 'D.CARD में, हमारे संस्थापकों का दृढ़ विश्वास है कि वित्तीय प्रौद्योगिकी में क्रांतिकारी नवाचार की शुरुआत पूर्ण पारदर्शिता और अटूट उपभोक्ता विश्वास से होती है।'
+            : 'At D.CARD, our founders firmly believe that breakthrough innovation in financial technology begins with radical transparency and unyielding consumer trust.'}
         </p>
         <p className="text-xs sm:text-sm text-[#6B7280] dark:text-slate-300 leading-relaxed font-normal">
-          By eliminating corporate bias and prioritizing user needs above short-term profit models, our leadership team ensures that every feature, comparison matrix, and AI recommendation is designed to build India's best independent savings account and debit card discovery platform.
+          {isHindi
+            ? 'कॉर्पोरेट पक्षपात को समाप्त करके और उपयोगकर्ताओं की जरूरतों को अल्पकालिक लाभ मॉडल से ऊपर प्राथमिकता देकर, हमारी टीम सुनिश्चित करती है कि हर सुविधा, तुलना मैट्रिक्स और AI अनुशंसा निष्पक्ष रहे।'
+            : "By eliminating corporate bias and prioritizing user needs above short-term profit models, our leadership team ensures that every feature, comparison matrix, and AI recommendation is designed to build India's best independent savings account and debit card discovery platform."}
         </p>
       </section>
 
@@ -204,11 +329,13 @@ function FoundersPage() {
             <Users className="w-5 h-5" />
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold text-[#1F2937] dark:text-white tracking-tight">
-            Meet Our Leadership
+            {isHindi ? 'हमारे नेतृत्व से मिलें' : 'Meet Our Leadership'}
           </h2>
         </div>
         <p className="text-sm sm:text-base text-[#1F2937] dark:text-slate-200 leading-relaxed font-normal">
-          Our executive leadership brings together complementary expertise across product engineering, artificial intelligence, cloud architecture, and digital growth. Working collaboratively, the leadership team holds daily cross-functional syncs to continuously refine D.CARD's data algorithms, expand bank coverage, and deliver world-class financial clarity to users across India.
+          {isHindi
+            ? 'हमारा कार्यकारी नेतृत्व उत्पाद इंजीनियरिंग, कृत्रिम बुद्धिमत्ता (AI), क्लाउड इंफ्रास्ट्रक्चर और डिजिटल विकास में पूरक विशेषज्ञता को एक साथ लाता है। यह टीम D.CARD के डेटा एल्गोरिदम को निरंतर परिष्कृत करने और पूरे भारत के उपयोगकर्ताओं को विश्वस्तरीय वित्तीय स्पष्टता प्रदान करने के लिए प्रतिबद्ध है।'
+            : "Our executive leadership brings together complementary expertise across product engineering, artificial intelligence, cloud architecture, and digital growth. Working collaboratively, the leadership team holds daily cross-functional syncs to continuously refine D.CARD's data algorithms, expand bank coverage, and deliver world-class financial clarity to users across India."}
         </p>
       </section>
 
@@ -220,17 +347,21 @@ function FoundersPage() {
             <Quote className="w-5 h-5" />
           </div>
           <h2 className="text-xl sm:text-2xl font-bold text-[#1F2937] dark:text-white tracking-tight">
-            Founder Message
+            {isHindi ? 'संस्थापक संदेश' : 'Founder Message'}
           </h2>
         </div>
 
         <blockquote className="text-base sm:text-lg text-[#1F2937] dark:text-white font-semibold leading-relaxed max-w-3xl italic">
-          "At D.CARD, our goal is to simplify banking decisions through transparency, technology, and trust. We believe every user deserves clear and unbiased financial information."
+          {isHindi
+            ? '"D.CARD में, हमारा लक्ष्य पारदर्शिता, प्रौद्योगिकी और विश्वास के माध्यम से बैंकिंग निर्णयों को सरल बनाना है। हमारा मानना ​​है कि प्रत्येक उपयोगकर्ता स्पष्ट और निष्पक्ष वित्तीय जानकारी का हकदार है।"'
+            : '"At D.CARD, our goal is to simplify banking decisions through transparency, technology, and trust. We believe every user deserves clear and unbiased financial information."'}
         </blockquote>
 
         <div className="pt-2 border-t border-[#2563EB]/20 max-w-xs">
           <p className="text-sm font-bold text-[#1F2937] dark:text-white">Ritik Raj</p>
-          <p className="text-xs text-[#2563EB] dark:text-[#60A5FA] font-semibold">Founder & CEO, D.CARD</p>
+          <p className="text-xs text-[#2563EB] dark:text-[#60A5FA] font-semibold">
+            {isHindi ? 'संस्थापक एवं सीईओ, D.CARD' : 'Founder & CEO, D.CARD'}
+          </p>
         </div>
       </section>
 
@@ -242,11 +373,13 @@ function FoundersPage() {
               <Users className="w-5 h-5" />
             </div>
             <h2 className="text-xl font-bold text-[#1F2937] dark:text-white">
-              Meet Our Team
+              {isHindi ? 'हमारी टीम' : 'Meet Our Team'}
             </h2>
           </div>
           <p className="text-xs sm:text-sm text-[#6B7280] dark:text-slate-300 leading-relaxed font-normal">
-            D.CARD is continuously growing and actively welcomes talented software developers, UI/UX designers, fintech marketers, and AI enthusiasts who are passionate about democratizing financial intelligence in India.
+            {isHindi
+              ? 'D.CARD लगातार विकसित हो रहा है और प्रतिभाशाली सॉफ्टवेयर डेवलपर्स, UI/UX डिजाइनरों, फिनटेक मार्केटर्स और AI उत्साही लोगों का स्वागत करता है जो भारत में वित्तीय ज्ञान के लोकतंत्रीकरण के प्रति उत्साही हैं।'
+              : 'D.CARD is continuously growing and actively welcomes talented software developers, UI/UX designers, fintech marketers, and AI enthusiasts who are passionate about democratizing financial intelligence in India.'}
           </p>
         </div>
 
@@ -256,11 +389,13 @@ function FoundersPage() {
               <Briefcase className="w-5 h-5" />
             </div>
             <h2 className="text-xl font-bold text-[#1F2937] dark:text-white">
-              Future Team Vision
+              {isHindi ? 'भविष्य का टीम विजन' : 'Future Team Vision'}
             </h2>
           </div>
           <p className="text-xs sm:text-sm text-[#6B7280] dark:text-slate-300 leading-relaxed font-normal">
-            As we scale platform capability, our expansion roadmap includes building dedicated data engineering teams, financial compliance auditors, and machine learning researchers to provide real-time lounge access and rewards tracking.
+            {isHindi
+              ? 'जैसे-जैसे हम मंच की क्षमता बढ़ा रहे हैं, हमारे विस्तार रोडमैप में समर्पित डेटा इंजीनियरिंग टीमें, वित्तीय अनुपालन ऑडिटर और वास्तविक समय में लाउंज व रिवॉर्ड ट्रैकिंग प्रदान करने वाले शोधकर्ता शामिल हैं।'
+              : 'As we scale platform capability, our expansion roadmap includes building dedicated data engineering teams, financial compliance auditors, and machine learning researchers to provide real-time lounge access and rewards tracking.'}
           </p>
         </div>
       </section>
@@ -269,15 +404,15 @@ function FoundersPage() {
       <section className="space-y-8">
         <div>
           <span className="text-xs font-semibold text-[#2563EB] dark:text-[#60A5FA] tracking-widest uppercase block mb-1">
-            EXECUTIVE COMMITMENT
+            {isHindi ? 'कार्यकारी प्रतिबद्धता' : 'EXECUTIVE COMMITMENT'}
           </span>
           <h2 className="text-3xl font-bold text-[#1F2937] dark:text-white tracking-tight">
-            Why Our Leadership Matters
+            {isHindi ? 'हमारा नेतृत्व क्यों मायने रखता है' : 'Why Our Leadership Matters'}
           </h2>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {LEADERSHIP_MATTERS.map((item, idx) => {
+          {leadershipMatters.map((item, idx) => {
             const IconComp = item.icon;
             return (
               <motion.div
@@ -301,10 +436,12 @@ function FoundersPage() {
         <div className="absolute right-0 top-0 w-80 h-80 rounded-full bg-[#2563EB]/20 blur-3xl pointer-events-none" />
         <div className="relative z-10 space-y-4 max-w-2xl mx-auto">
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
-            Join Our Journey
+            {isHindi ? 'हमारी यात्रा में शामिल हों' : 'Join Our Journey'}
           </h2>
           <p className="text-xs sm:text-sm text-slate-300 font-normal leading-relaxed">
-            Experience India's most transparent savings account and debit card comparison platform or get in touch with our team.
+            {isHindi
+              ? 'भारत के सबसे पारदर्शी बचत खाता और डेबिट कार्ड तुलना मंच का अनुभव करें या हमारी टीम से संपर्क करें।'
+              : "Experience India's most transparent savings account and debit card comparison platform or get in touch with our team."}
           </p>
           <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
@@ -312,14 +449,14 @@ function FoundersPage() {
               className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:opacity-95 text-white font-semibold text-xs uppercase tracking-wider shadow-lg shadow-[#2563EB]/30 border border-white/20 cursor-pointer transition-all flex items-center justify-center gap-2"
             >
               <CreditCard className="w-4 h-4" />
-              <span>Explore Debit Cards</span>
+              <span>{isHindi ? 'डेबिट कार्ड देखें' : 'Explore Debit Cards'}</span>
             </button>
             <button
               onClick={() => navigate('/contact')}
               className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs uppercase tracking-wider border border-slate-700 cursor-pointer transition-all flex items-center justify-center gap-2"
             >
               <Mail className="w-4 h-4" />
-              <span>Contact Us</span>
+              <span>{isHindi ? 'हमसे संपर्क करें' : 'Contact Us'}</span>
             </button>
           </div>
         </div>

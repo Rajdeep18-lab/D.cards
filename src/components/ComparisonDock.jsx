@@ -1,10 +1,13 @@
 import React, { useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { normalizeCard, safeMap } from '../utils/compareUtils';
+import { useLanguage } from '../context/LanguageContext';
 
 function ComparisonDock({ compareQueue = [], onRemove, onCompareNow, onClear, onHeightChange }) {
   const queueList = safeMap(Array.isArray(compareQueue) ? compareQueue : [], normalizeCard);
   const dockRef = useRef(null);
+  const { t, language } = useLanguage();
+  const isHindi = language === 'hi';
 
   useEffect(() => {
     if (queueList.length === 0) {
@@ -42,7 +45,7 @@ function ComparisonDock({ compareQueue = [], onRemove, onCompareNow, onClear, on
 
   if (queueList.length === 0) return null;
 
-  const potentialSavings = queueList.length >= 2 ? "₹1,800/year" : null;
+  const potentialSavings = queueList.length >= 2 ? (isHindi ? "₹1,800/वर्ष" : "₹1,800/year") : null;
 
   return (
     <AnimatePresence>
@@ -61,13 +64,13 @@ function ComparisonDock({ compareQueue = [], onRemove, onCompareNow, onClear, on
           <div className="flex flex-wrap items-center gap-2">
             {/* Count Chip */}
             <div className="px-3 py-1 rounded-full text-xs font-black text-white bg-gradient-to-r from-primary to-secondary shadow-sm flex-shrink-0">
-              {queueList.length} / 3 QUEUED
+              {isHindi ? `${queueList.length} / 3 चयनित` : `${queueList.length} / 3 QUEUED`}
             </div>
 
             {/* Potential Savings Badge */}
             {potentialSavings && (
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-[9px] font-black border border-white/20 shadow-[0_4px_12px_rgba(16,185,129,0.25)] animate-pulse tracking-wider leading-none flex-shrink-0">
-                💰 EST. SAVINGS: {potentialSavings}
+                {isHindi ? `💰 अनुमानित बचत: ${potentialSavings}` : `💰 EST. SAVINGS: ${potentialSavings}`}
               </span>
             )}
 
@@ -76,12 +79,12 @@ function ComparisonDock({ compareQueue = [], onRemove, onCompareNow, onClear, on
               <div key={card.id || i} className="relative group flex-shrink-0">
                 <div className="rounded-xl px-2.5 py-1.5 text-xs font-bold flex items-center gap-1.5 bg-[#2563EB]/10 border border-[#2563EB]/20 text-[#2563EB] dark:text-[#60A5FA] shadow-sm max-w-[150px] sm:max-w-[200px]">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#2563EB] flex-shrink-0" />
-                  <span className="truncate">{card.cardName || "Debit Card"}</span>
+                  <span className="truncate">{card.cardName || (isHindi ? "डेबिट कार्ड" : "Debit Card")}</span>
                 </div>
                 <button
                   onClick={() => onRemove && onRemove(card.id)}
                   className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full flex items-center justify-center text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity shadow-md cursor-pointer bg-gradient-to-r from-[#2563EB] to-[#3B82F6] border border-white/10"
-                  title="Remove card"
+                  title={isHindi ? "कार्ड हटाएं" : "Remove card"}
                 >
                   ×
                 </button>
@@ -95,7 +98,7 @@ function ComparisonDock({ compareQueue = [], onRemove, onCompareNow, onClear, on
               onClick={onClear}
               className="text-xs font-black text-slate-400 dark:text-slate-500 hover:text-secondary dark:hover:text-roseGold transition-colors cursor-pointer uppercase tracking-wider px-2 py-1"
             >
-              Clear
+              {t('dock.clearAll')}
             </button>
             <button
               onClick={onCompareNow}
@@ -106,7 +109,7 @@ function ComparisonDock({ compareQueue = [], onRemove, onCompareNow, onClear, on
                   : 'bg-slate-100 dark:bg-secondary/5 border border-slate-200 dark:border-secondary/10 text-slate-400 dark:text-slate-500 cursor-not-allowed shadow-none'
               }`}
             >
-              Compare Now
+              {t('dock.compareNow')}
             </button>
           </div>
         </div>

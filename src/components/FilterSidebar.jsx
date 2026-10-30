@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BANKS } from "../data/mockData";
+import { useLanguage } from "../context/LanguageContext";
 
 /* Categorized Institutional Bank Mapping */
 const BANK_CATEGORIES = {
@@ -28,7 +29,7 @@ const BANK_CATEGORIES = {
 };
 
 /* Collapsible Filter Section Component */
-function FilterSection({ title, icon, children, activeCount = 0, defaultOpen = true }) {
+function FilterSection({ title, icon, children, activeCount = 0, defaultOpen = true, isHindi = false }) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
@@ -45,7 +46,7 @@ function FilterSection({ title, icon, children, activeCount = 0, defaultOpen = t
           </span>
           {activeCount > 0 && (
             <span className="text-[10px] font-black text-secondary dark:text-roseGold bg-secondary/10 dark:bg-secondary/20 px-2 py-0.5 rounded-full border border-secondary/20">
-              {activeCount} active
+              {activeCount} {isHindi ? 'सक्रिय' : 'active'}
             </span>
           )}
         </div>
@@ -183,6 +184,8 @@ function FilterSidebar({
 }) {
   const [bankSearch, setBankSearch] = useState("");
   const [showAllBanks, setShowAllBanks] = useState(false);
+  const { t, language } = useLanguage();
+  const isHindi = language === 'hi';
 
   useEffect(() => {
     if (isMobile) {
@@ -234,19 +237,19 @@ function FilterSidebar({
     <div className="space-y-4 w-full">
 
       {/* ── 1. USER CATEGORY FILTERS (Expanded) ── */}
-      <FilterSection title="User Category" icon="🎓" activeCount={selectedUserTypes.length} defaultOpen={true}>
+      <FilterSection title={isHindi ? "उपयोगकर्ता श्रेणी" : "User Category"} icon="🎓" activeCount={selectedUserTypes.length} defaultOpen={true} isHindi={isHindi}>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
           {[
-            { label: "Student", icon: "🎓", sub: "College & School" },
-            { label: "Women", icon: "👩", sub: "Savings & Rewards" },
-            { label: "Salaried", icon: "👨‍💼", sub: "Professional perks" },
-            { label: "Business Owner", icon: "💼", sub: "High limit accounts" },
-            { label: "Freelancer", icon: "🧑‍💻", sub: "Digital & zero forex" },
-            { label: "Senior Citizen", icon: "👴", sub: "High yield savings" },
-            { label: "NRI Customer", icon: "🌍", sub: "Overseas accounts" },
-            { label: "Joint Account", icon: "👨‍👩‍👧", sub: "Family banking" },
-            { label: "Minor Account", icon: "👶", sub: "Junior & youth" },
-            { label: "Premium Banking", icon: "💎", sub: "Elite & Wealth" }
+            { label: "Student", display: isHindi ? "विद्यार्थी" : "Student", icon: "🎓", sub: isHindi ? "कॉलेज और स्कूल" : "College & School" },
+            { label: "Women", display: isHindi ? "महिलाएं" : "Women", icon: "👩", sub: isHindi ? "बचत और पुरस्कार" : "Savings & Rewards" },
+            { label: "Salaried", display: isHindi ? "वेतनभोगी" : "Salaried", icon: "👨‍💼", sub: isHindi ? "पेशेवर लाभ" : "Professional perks" },
+            { label: "Business Owner", display: isHindi ? "व्यापारी" : "Business Owner", icon: "💼", sub: isHindi ? "उच्च सीमा खाते" : "High limit accounts" },
+            { label: "Freelancer", display: isHindi ? "फ्रीलांसर" : "Freelancer", icon: "🧑‍💻", sub: isHindi ? "डिजिटल एवं जीरो फॉरेक्स" : "Digital & zero forex" },
+            { label: "Senior Citizen", display: isHindi ? "वरिष्ठ नागरिक" : "Senior Citizen", icon: "👴", sub: isHindi ? "उच्च ब्याज बचत" : "High yield savings" },
+            { label: "NRI Customer", display: isHindi ? "एनआरआई ग्राहक" : "NRI Customer", icon: "🌍", sub: isHindi ? "प्रवासी खाते" : "Overseas accounts" },
+            { label: "Joint Account", display: isHindi ? "संयुक्त खाता" : "Joint Account", icon: "👨‍👩‍👧", sub: isHindi ? "पारिवारिक बैंकिंग" : "Family banking" },
+            { label: "Minor Account", display: isHindi ? "नाबालिग खाता" : "Minor Account", icon: "👶", sub: isHindi ? "जूनियर एवं युवा" : "Junior & youth" },
+            { label: "Premium Banking", display: isHindi ? "प्रीमियम बैंकिंग" : "Premium Banking", icon: "💎", sub: isHindi ? "एलीट एवं वेल्थ" : "Elite & Wealth" }
           ].map(ut => {
             const active = Array.isArray(selectedUserTypes) && selectedUserTypes.includes(ut.label);
             return (
@@ -265,7 +268,7 @@ function FilterSidebar({
                 <div className="flex items-center gap-2 truncate">
                   <span className="text-base">{ut.icon}</span>
                   <div className="truncate">
-                    <p className="text-xs font-black leading-tight truncate">{ut.label}</p>
+                    <p className="text-xs font-black leading-tight truncate">{ut.display}</p>
                     <p className="text-[9px] text-gray-400 font-semibold truncate">{ut.sub}</p>
                   </div>
                 </div>
@@ -277,27 +280,27 @@ function FilterSidebar({
       </FilterSection>
 
       {/* ── 2. SMART FEATURE FILTERS (18 Features) ── */}
-      <FilterSection title="Features & Perks" icon="✨" activeCount={selectedFeatures?.length || 0} defaultOpen={true}>
+      <FilterSection title={isHindi ? "विशेषताएं एवं लाभ" : "Features & Perks"} icon="✨" activeCount={selectedFeatures?.length || 0} defaultOpen={true} isHindi={isHindi}>
         <div className="grid grid-cols-2 gap-2 pt-1">
           {[
-            { label: "Zero Annual Fee", icon: "💰" },
-            { label: "Low Annual Fee", icon: "🏷️" },
-            { label: "High ATM Limit", icon: "🏧" },
-            { label: "High POS Limit", icon: "🛍️" },
-            { label: "Contactless", icon: "📶" },
-            { label: "NFC", icon: "📲" },
-            { label: "Virtual Card", icon: "💳" },
-            { label: "Lounge Access", icon: "✈️" },
-            { label: "Cashback", icon: "💵" },
-            { label: "Reward Points", icon: "🎁" },
-            { label: "Insurance Coverage", icon: "🛡️" },
-            { label: "Fuel Benefits", icon: "⛽" },
-            { label: "Dining Benefits", icon: "🍽️" },
-            { label: "Shopping Benefits", icon: "🛒" },
-            { label: "Entertainment Benefits", icon: "🎬" },
-            { label: "EMI Support", icon: "🏦" },
-            { label: "International Usage", icon: "🌍" },
-            { label: "Domestic Only", icon: "🇮🇳" }
+            { label: "Zero Annual Fee", display: isHindi ? "शून्य वार्षिक शुल्क" : "Zero Annual Fee", icon: "💰" },
+            { label: "Low Annual Fee", display: isHindi ? "कम वार्षिक शुल्क" : "Low Annual Fee", icon: "🏷️" },
+            { label: "High ATM Limit", display: isHindi ? "उच्च एटीएम सीमा" : "High ATM Limit", icon: "🏧" },
+            { label: "High POS Limit", display: isHindi ? "उच्च खरीदारी सीमा" : "High POS Limit", icon: "🛍️" },
+            { label: "Contactless", display: isHindi ? "कॉन्टैक्टलेस" : "Contactless", icon: "📶" },
+            { label: "NFC", display: isHindi ? "एनएफसी (NFC)" : "NFC", icon: "📲" },
+            { label: "Virtual Card", display: isHindi ? "वर्चुअल कार्ड" : "Virtual Card", icon: "💳" },
+            { label: "Lounge Access", display: isHindi ? "लाउंज एक्सेस" : "Lounge Access", icon: "✈️" },
+            { label: "Cashback", display: isHindi ? "कैशबैक" : "Cashback", icon: "💵" },
+            { label: "Reward Points", display: isHindi ? "रिवॉर्ड पॉइंट्स" : "Reward Points", icon: "🎁" },
+            { label: "Insurance Coverage", display: isHindi ? "बीमा कवरेज" : "Insurance Coverage", icon: "🛡️" },
+            { label: "Fuel Benefits", display: isHindi ? "ईंधन लाभ" : "Fuel Benefits", icon: "⛽" },
+            { label: "Dining Benefits", display: isHindi ? "डाइनिंग लाभ" : "Dining Benefits", icon: "🍽️" },
+            { label: "Shopping Benefits", display: isHindi ? "शॉपिंग लाभ" : "Shopping Benefits", icon: "🛒" },
+            { label: "Entertainment Benefits", display: isHindi ? "मनोरंजन लाभ" : "Entertainment Benefits", icon: "🎬" },
+            { label: "EMI Support", display: isHindi ? "ईएमआई सुविधा" : "EMI Support", icon: "🏦" },
+            { label: "International Usage", display: isHindi ? "अंतरराष्ट्रीय उपयोग" : "International Usage", icon: "🌍" },
+            { label: "Domestic Only", display: isHindi ? "केवल घरेलू" : "Domestic Only", icon: "🇮🇳" }
           ].map(feat => {
             const active = Array.isArray(selectedFeatures) && selectedFeatures.includes(feat.label);
             return (
@@ -315,7 +318,7 @@ function FilterSidebar({
               >
                 <div className="flex items-center gap-1.5 truncate">
                   <span>{feat.icon}</span>
-                  <span className="truncate">{feat.label}</span>
+                  <span className="truncate">{feat.display}</span>
                 </div>
                 {active && <span className="text-[10px] font-black text-secondary dark:text-roseGold">✓</span>}
               </motion.button>
@@ -325,15 +328,15 @@ function FilterSidebar({
       </FilterSection>
 
       {/* ── 3. CATEGORIZED BANK FILTERS ── */}
-      <FilterSection title="Bank Categories" icon="🏦" activeCount={selectedBankTypes?.length || 0} defaultOpen={true}>
+      <FilterSection title={isHindi ? "बैंक श्रेणियां" : "Bank Categories"} icon="🏦" activeCount={selectedBankTypes?.length || 0} defaultOpen={true} isHindi={isHindi}>
         <div className="grid grid-cols-2 gap-2 pt-1">
           {[
-            { label: "Government Banks", icon: "🏛️" },
-            { label: "Private Banks", icon: "🏢" },
-            { label: "Small Finance Banks", icon: "🚀" },
-            { label: "Payments Banks", icon: "⚡" },
-            { label: "Regional Rural Banks", icon: "🌾" },
-            { label: "Co-operative Banks", icon: "🤝" }
+            { label: "Government Banks", display: isHindi ? "सरकारी बैंक" : "Government Banks", icon: "🏛️" },
+            { label: "Private Banks", display: isHindi ? "निजी बैंक" : "Private Banks", icon: "🏢" },
+            { label: "Small Finance Banks", display: isHindi ? "स्मॉल फाइनेंस बैंक" : "Small Finance Banks", icon: "🚀" },
+            { label: "Payments Banks", display: isHindi ? "पेमेंट्स बैंक" : "Payments Banks", icon: "⚡" },
+            { label: "Regional Rural Banks", display: isHindi ? "क्षेत्रीय ग्रामीण बैंक" : "Regional Rural Banks", icon: "🌾" },
+            { label: "Co-operative Banks", display: isHindi ? "सहकारी बैंक" : "Co-operative Banks", icon: "🤝" }
           ].map(bt => {
             const active = Array.isArray(selectedBankTypes) && selectedBankTypes.includes(bt.label);
             return (
@@ -351,7 +354,7 @@ function FilterSidebar({
               >
                 <div className="flex items-center gap-1.5 truncate">
                   <span>{bt.icon}</span>
-                  <span className="truncate">{bt.label}</span>
+                  <span className="truncate">{bt.display}</span>
                 </div>
                 {active && <span className="text-[10px] font-black text-secondary dark:text-roseGold">✓</span>}
               </motion.button>
@@ -365,7 +368,7 @@ function FilterSidebar({
             type="text"
             value={bankSearch}
             onChange={(e) => setBankSearch(e.target.value)}
-            placeholder="Search specific bank name..."
+            placeholder={isHindi ? "विशिष्ट बैंक खोजें..." : "Search specific bank name..."}
             className="w-full px-3 py-2 text-xs rounded-xl bg-white/70 dark:bg-black/40 border border-slate-200 dark:border-secondary/20 text-slate-900 dark:text-white outline-none focus:border-secondary"
           />
 
@@ -394,14 +397,14 @@ function FilterSidebar({
               onClick={() => setShowAllBanks(!showAllBanks)}
               className="mt-2 text-[10px] font-black text-secondary dark:text-roseGold hover:underline cursor-pointer"
             >
-              {showAllBanks ? "Show Less Banks ▲" : `+ Show All ${filteredBanks.length} Banks ▼`}
+              {showAllBanks ? (isHindi ? "कम बैंक दिखाएं ▲" : "Show Less Banks ▲") : (isHindi ? `+ सभी ${filteredBanks.length} बैंक देखें ▼` : `+ Show All ${filteredBanks.length} Banks ▼`)}
             </button>
           )}
         </div>
       </FilterSection>
 
       {/* ── 4. CARD NETWORK ── */}
-      <FilterSection title="Card Network" icon="💳" activeCount={selectedNetworks?.length || 0} defaultOpen={true}>
+      <FilterSection title={isHindi ? "कार्ड नेटवर्क" : "Card Network"} icon="💳" activeCount={selectedNetworks?.length || 0} defaultOpen={true} isHindi={isHindi}>
         <div className="flex gap-2 w-full pt-1">
           {[
             { label: "RuPay", icon: "🇮🇳", color: "border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10" },
@@ -432,7 +435,7 @@ function FilterSidebar({
       </FilterSection>
 
       {/* ── 5. CARD CATEGORY & TIER ── */}
-      <FilterSection title="Card Category" icon="🏷️" activeCount={selectedCategories?.length || 0} defaultOpen={true}>
+      <FilterSection title={isHindi ? "कार्ड श्रेणी एवं प्रकार" : "Card Category"} icon="🏷️" activeCount={selectedCategories?.length || 0} defaultOpen={true} isHindi={isHindi}>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 pt-1">
           {[
             { label: "Classic", icon: "⭐" },
@@ -467,29 +470,29 @@ function FilterSidebar({
       </FilterSection>
 
       {/* ── 6. DUAL RANGE SLIDERS ── */}
-      <FilterSection title="Limits & Balances" icon="📊" defaultOpen={false}>
+      <FilterSection title={isHindi ? "सीमाएं एवं शेष राशि" : "Limits & Balances"} icon="📊" defaultOpen={false} isHindi={isHindi}>
         <MinimalSlider
-          label="Max Annual Fee"
+          label={isHindi ? "अधिकतम वार्षिक शुल्क" : "Max Annual Fee"}
           min={0}
           max={2000}
           step={50}
           value={[0, feeRange]}
           onChange={([, max]) => setFeeRange(max)}
-          format={(v) => v === 0 ? "Free" : `₹${v}`}
+          format={(v) => v === 0 ? (isHindi ? "निःशुल्क" : "Free") : `₹${v}`}
         />
 
         <MinimalSlider
-          label="Min Balance Requirement"
+          label={isHindi ? "न्यूनतम शेष आवश्यकता" : "Min Balance Requirement"}
           min={0}
           max={500000}
           step={5000}
           value={[0, balanceRange]}
           onChange={([, max]) => setBalanceRange(max)}
-          format={(v) => v === 0 ? "Zero" : `₹${(v / 1000).toFixed(0)}k`}
+          format={(v) => v === 0 ? (isHindi ? "शून्य" : "Zero") : `₹${(v / 1000).toFixed(0)}k`}
         />
 
         <MinimalSlider
-          label="ATM Withdrawal Limit"
+          label={isHindi ? "एटीएम निकासी सीमा" : "ATM Withdrawal Limit"}
           min={0}
           max={1000000}
           step={10000}
@@ -499,7 +502,7 @@ function FilterSidebar({
         />
 
         <MinimalSlider
-          label="Daily Purchase (POS) Limit"
+          label={isHindi ? "दैनिक खरीदारी (POS) सीमा" : "Daily Purchase (POS) Limit"}
           min={0}
           max={1500000}
           step={25000}
@@ -537,10 +540,10 @@ function FilterSidebar({
             <div className="flex justify-between items-center">
               <div>
                 <h3 className="text-lg font-black text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                  <span>🎯</span> Smart Card Filters
+                  <span>🎯</span> {isHindi ? 'स्मार्ट कार्ड फिल्टर' : 'Smart Card Filters'}
                 </h3>
                 <p className="text-xs text-textSoft dark:text-gray-400 font-medium">
-                  Showing {resultCount} matching debit cards
+                  {isHindi ? `${resultCount} डेबिट कार्ड उपलब्ध` : `Showing ${resultCount} matching debit cards`}
                 </p>
               </div>
 
@@ -566,14 +569,14 @@ function FilterSidebar({
               onClick={handleClearAll}
               className="py-3 px-4 rounded-2xl border border-slate-300 dark:border-white/20 text-slate-700 dark:text-slate-200 font-bold text-xs uppercase tracking-wider hover:bg-slate-100 dark:hover:bg-white/10 transition-all cursor-pointer"
             >
-              Reset Filters
+              {isHindi ? 'फ़िल्टर रीसेट करें' : 'Reset Filters'}
             </button>
             <button
               type="button"
               onClick={onCloseMobile}
               className="flex-1 py-3 px-5 rounded-2xl bg-gradient-to-r from-secondary to-primary text-white font-black text-xs uppercase tracking-widest shadow-lg active:scale-95 transition-all cursor-pointer text-center"
             >
-              Apply ({resultCount} Cards)
+              {isHindi ? `लागू करें (${resultCount} कार्ड)` : `Apply (${resultCount} Cards)`}
             </button>
           </div>
         </motion.div>
@@ -588,10 +591,10 @@ function FilterSidebar({
       <div className="p-4 rounded-3xl bg-white/60 dark:bg-black/35 backdrop-blur-xl border border-slate-200/90 dark:border-secondary/20 shadow-soft flex items-center justify-between">
         <div>
           <h3 className="text-sm font-black text-slate-900 dark:text-slate-100 tracking-tight flex items-center gap-1.5">
-            <span>🎯</span> Smart Filters
+            <span>🎯</span> {isHindi ? 'स्मार्ट फ़िल्टर' : 'Smart Filters'}
           </h3>
           <p className="text-[11px] text-textSoft dark:text-gray-400 font-semibold mt-0.5">
-            {resultCount} Cards Match
+            {isHindi ? `${resultCount} कार्ड मेल खाते हैं` : `${resultCount} Cards Match`}
           </p>
         </div>
 
@@ -601,7 +604,7 @@ function FilterSidebar({
             onClick={handleClearAll}
             className="text-[10px] font-black text-secondary dark:text-roseGold hover:underline cursor-pointer"
           >
-            Reset All ({totalActiveCount})
+            {isHindi ? `सभी रीसेट करें (${totalActiveCount})` : `Reset All (${totalActiveCount})`}
           </button>
         )}
       </div>

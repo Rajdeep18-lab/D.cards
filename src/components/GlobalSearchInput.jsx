@@ -336,7 +336,7 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
 
                 <div className="space-y-2.5 pt-2 border-t border-slate-100 dark:border-slate-800">
                   <span className="text-[10.5px] font-extrabold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Suggested Features
+                    <Sparkles className="w-3.5 h-3.5 text-amber-500" /> {t('search.suggestedFeatures', 'Suggested Features')}
                   </span>
                   <div className="flex flex-wrap gap-2">
                     {DEFAULT_SUGGESTIONS.map((sug, idx) => (
@@ -479,13 +479,13 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
                                   )}
                                 </div>
                                 <span className="text-[10px] text-slate-400 font-medium block mt-0.5">
-                                  {s.bank} • Rate: {formatInterestRate(s.interestRate, s).display} • Min: {formatMinimumBalance(s.minimumBalance, s).display} • Linked: {cardName}
+                                  {s.bank} • {t('compare.metricInterest', 'Rate')}: {formatInterestRate(s.interestRate, s).display} • {t('accountDetail.minBalance', 'Min')}: {formatMinimumBalance(s.minimumBalance, s).display} • {t('accountDetail.linkedCard', 'Linked')}: {cardName}
                                 </span>
                               </div>
                             </div>
 
                             <span className="text-[11px] font-extrabold text-emerald-600 dark:text-emerald-400 group-hover:underline flex items-center gap-0.5 shrink-0">
-                              View <ChevronRight className="w-3.5 h-3.5" />
+                              {t('common.view', 'View')} <ChevronRight className="w-3.5 h-3.5" />
                             </span>
                           </div>
                         );
@@ -499,7 +499,7 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
                   <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
                     <div className="flex items-center justify-between pb-1 border-b border-slate-100 dark:border-slate-800">
                       <span className="text-[10.5px] font-black uppercase tracking-wider text-blue-600 dark:text-blue-400 flex items-center gap-1.5">
-                        <Briefcase className="w-4 h-4 text-blue-500" /> Current Accounts ({searchResults.currentAccounts.length})
+                        <Briefcase className="w-4 h-4 text-blue-500" /> {t('search.currentAccounts', 'Current Accounts')} ({searchResults.currentAccounts.length})
                       </span>
                     </div>
 
@@ -529,17 +529,17 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
                                     {c.accountName}
                                   </h4>
                                   <span className="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-blue-500/10 text-blue-600 border border-blue-500/20">
-                                    Current Account
+                                    {t('nav.currentAccounts', 'Current Account')}
                                   </span>
                                 </div>
                                 <span className="text-[10px] text-slate-400 font-medium block mt-0.5">
-                                  {c.bankName || c.bank} • MAB: {formatMinimumBalance(c.minimumBalance, c).display} • Cheques: {c.freeChequeLeaves || 'Included'} • Linked: {cardName}
+                                  {c.bankName || c.bank} • MAB: {formatMinimumBalance(c.minimumBalance, c).display} • {t('currentDetail.freeCheques', 'Cheques')}: {c.freeChequeLeaves || 'Included'} • {t('currentDetail.linkedCard', 'Linked')}: {cardName}
                                 </span>
                               </div>
                             </div>
 
                             <span className="text-[11px] font-extrabold text-blue-600 dark:text-blue-400 group-hover:underline flex items-center gap-0.5 shrink-0">
-                              View <ChevronRight className="w-3.5 h-3.5" />
+                              {t('common.view', 'View')} <ChevronRight className="w-3.5 h-3.5" />
                             </span>
                           </div>
                         );

@@ -45,6 +45,7 @@ import IDFCTierEligibilityCalculator from '../components/IDFCTierEligibilityCalc
 import IDFCTierBenefitsComparison from '../components/IDFCTierBenefitsComparison';
 import ICICIBSavingsDetailView from '../components/ICICIBSavingsDetailView';
 import { useSEO } from '../hooks/useSEO';
+import { useLanguage } from '../context/LanguageContext';
 
 function BanksPage({ 
   activeCardsList = null, 
@@ -59,6 +60,7 @@ function BanksPage({
   const { id } = useParams();
   const navigate = useNavigate();
   const { isWishlisted, toggleWishlist } = useWishlist();
+  const { t, isHindi } = useLanguage();
 
   // Load all covered banks dynamically from JSON & dataset
   const coveredBanks = useMemo(() => {
@@ -279,10 +281,10 @@ function BanksPage({
       <div className="p-4 rounded-3xl glass-card-premium border border-slate-200 dark:border-slate-800 shadow-soft space-y-3">
         <div className="flex items-center justify-between">
           <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA] flex items-center gap-1.5">
-            <Building2 className="w-4 h-4" /> Select Bank Institution:
+            <Building2 className="w-4 h-4" /> {t('banks.selectInstitution', 'Select Bank Institution:')}
           </span>
           <span className="text-xs font-bold text-slate-400">
-            {coveredBanks.length} Banks Listed
+            {t('banks.banksListed', `${coveredBanks.length} Banks Listed`, { count: coveredBanks.length })}
           </span>
         </div>
 
@@ -324,14 +326,16 @@ function BanksPage({
                   {profile.ownershipType}
                 </span>
                 <span className="px-3 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10.5px] font-black uppercase tracking-widest border border-emerald-400/30 flex items-center gap-1">
-                  <CheckCircle2 className="w-3 h-3" /> Verified Institution
+                  <CheckCircle2 className="w-3 h-3" /> {isHindi ? 'सत्यापित संस्थान' : 'Verified Institution'}
                 </span>
               </div>
               <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
-                {canonicalName} Banking Products
+                {canonicalName} {isHindi ? 'बैंकिंग उत्पाद' : 'Banking Products'}
               </h1>
               <p className="text-xs sm:text-sm text-white/80 font-medium max-w-2xl leading-relaxed">
-                Explore savings accounts, current accounts, and debit cards offered by {canonicalName} and compare their key features.
+                {isHindi 
+                  ? `${canonicalName} द्वारा पेश किए गए बचत खाते, चालू खाते और डेबिट कार्ड देखें और उनकी प्रमुख विशेषताओं की तुलना करें।`
+                  : `Explore savings accounts, current accounts, and debit cards offered by ${canonicalName} and compare their key features.`}
               </p>
             </div>
           </div>
@@ -342,7 +346,7 @@ function BanksPage({
               className="px-5 py-3 rounded-2xl bg-white/20 hover:bg-white/30 backdrop-blur-md text-white font-extrabold text-xs transition-all shadow-md flex items-center gap-2 shrink-0 cursor-pointer active:scale-95 border border-white/30"
             >
               <MapPin className="w-4 h-4 text-white" />
-              <span>Find Branches Near You</span>
+              <span>{t('findBanks.nearbyBanksBranches', 'Find Branches Near You')}</span>
             </Link>
 
             {profile.officialWebsite && (
@@ -352,7 +356,7 @@ function BanksPage({
                 rel="noopener noreferrer"
                 className="px-6 py-3 rounded-2xl bg-white text-[#0B3D91] hover:bg-slate-100 font-extrabold text-xs transition-all shadow-lg flex items-center gap-2 shrink-0 cursor-pointer active:scale-95"
               >
-                <span>Visit Official Website</span>
+                <span>{t('common.applyNow', 'Visit Official Website')}</span>
                 <ExternalLink className="w-4 h-4 text-[#2563EB]" />
               </a>
             )}
@@ -362,27 +366,27 @@ function BanksPage({
         {/* ── 6. BANK PRODUCT SUMMARY (Dynamic Numbers) ── */}
         <div className="pt-4 border-t border-white/20 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 relative z-10 text-xs">
           <div className="p-3.5 rounded-2xl bg-black/25 backdrop-blur-xl border border-white/15">
-            <span className="text-[10px] font-bold text-white/70 uppercase tracking-wider block">Debit Cards</span>
-            <span className="text-xl sm:text-2xl font-black text-white mt-0.5 block">{bankCards.length} Available</span>
+            <span className="text-[10px] font-bold text-white/70 uppercase tracking-wider block">{t('banks.debitCardsTab', 'Debit Cards')}</span>
+            <span className="text-xl sm:text-2xl font-black text-white mt-0.5 block">{bankCards.length} {isHindi ? 'उपलब्ध' : 'Available'}</span>
           </div>
 
           <div className="p-3.5 rounded-2xl bg-black/25 backdrop-blur-xl border border-white/15">
-            <span className="text-[10px] font-bold text-white/70 uppercase tracking-wider block">Savings Accounts</span>
-            <span className="text-xl sm:text-2xl font-black text-emerald-300 mt-0.5 block">{bankAccounts.length} Available</span>
+            <span className="text-[10px] font-bold text-white/70 uppercase tracking-wider block">{t('banks.savingsAccountsTab', 'Savings Accounts')}</span>
+            <span className="text-xl sm:text-2xl font-black text-emerald-300 mt-0.5 block">{bankAccounts.length} {isHindi ? 'उपलब्ध' : 'Available'}</span>
           </div>
 
           <div className="p-3.5 rounded-2xl bg-black/25 backdrop-blur-xl border border-white/15">
-            <span className="text-[10px] font-bold text-white/70 uppercase tracking-wider block">Current Accounts</span>
-            <span className="text-xl sm:text-2xl font-black text-amber-300 mt-0.5 block">{bankCurrentAccounts.length} Available</span>
+            <span className="text-[10px] font-bold text-white/70 uppercase tracking-wider block">{t('banks.currentAccountsTab', 'Current Accounts')}</span>
+            <span className="text-xl sm:text-2xl font-black text-amber-300 mt-0.5 block">{bankCurrentAccounts.length} {isHindi ? 'उपलब्ध' : 'Available'}</span>
           </div>
 
           <div className="p-3.5 rounded-2xl bg-black/25 backdrop-blur-xl border border-white/15">
-            <span className="text-[10px] font-bold text-white/70 uppercase tracking-wider block">Trust Score</span>
+            <span className="text-[10px] font-bold text-white/70 uppercase tracking-wider block">{t('banks.trustScore', 'Trust Score')}</span>
             <span className="text-xl sm:text-2xl font-black text-white mt-0.5 block">{profile.trustScore}</span>
           </div>
 
           <div className="p-3.5 rounded-2xl bg-black/25 backdrop-blur-xl border border-white/15 col-span-2 sm:col-span-1">
-            <span className="text-[10px] font-bold text-white/70 uppercase tracking-wider block">Max Savings Yield</span>
+            <span className="text-[10px] font-bold text-white/70 uppercase tracking-wider block">{isHindi ? 'अधिकतम ब्याज दर' : 'Max Savings Yield'}</span>
             <span className="text-xl sm:text-2xl font-black text-cyan-300 mt-0.5 block">{profile.stats.interestRate}</span>
           </div>
         </div>
@@ -392,24 +396,24 @@ function BanksPage({
       <div className="sticky top-20 z-30 p-2.5 rounded-2xl glass-card-premium border border-slate-200 dark:border-slate-800 shadow-soft flex items-center justify-between gap-2 overflow-x-auto">
         <div className="flex items-center gap-2">
           {[
-            { id: 'bank-overview', tab: 'overview', label: 'Overview', icon: Building2 },
-            { id: 'debit-cards-section', tab: 'debitCards', label: `Debit Cards (${bankCards.length})`, icon: CreditCard },
-            { id: 'savings-accounts-section', tab: 'savingsAccounts', label: `Savings Accounts (${bankAccounts.length})`, icon: Percent },
-            { id: 'current-accounts-section', tab: 'currentAccounts', label: `Current Accounts (${bankCurrentAccounts.length})`, icon: Briefcase }
-          ].map(t => {
-            const Icon = t.icon;
+            { id: 'bank-overview', tab: 'overview', label: t('banks.overview', 'Overview'), icon: Building2 },
+            { id: 'debit-cards-section', tab: 'debitCards', label: `${t('banks.debitCardsTab', 'Debit Cards')} (${bankCards.length})`, icon: CreditCard },
+            { id: 'savings-accounts-section', tab: 'savingsAccounts', label: `${t('banks.savingsAccountsTab', 'Savings Accounts')} (${bankAccounts.length})`, icon: Percent },
+            { id: 'current-accounts-section', tab: 'currentAccounts', label: `${t('banks.currentAccountsTab', 'Current Accounts')} (${bankCurrentAccounts.length})`, icon: Briefcase }
+          ].map(tItem => {
+            const Icon = tItem.icon;
             return (
               <button
-                key={t.tab}
-                onClick={() => scrollToSection(t.id, t.tab)}
+                key={tItem.tab}
+                onClick={() => scrollToSection(tItem.id, tItem.tab)}
                 className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap ${
-                  activeTab === t.tab
+                  activeTab === tItem.tab
                     ? 'bg-[#2563EB] text-white shadow-md shadow-[#2563EB]/25'
                     : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />
-                <span>{t.label}</span>
+                <span>{tItem.label}</span>
               </button>
             );
           })}
@@ -423,7 +427,7 @@ function BanksPage({
             rel="noopener noreferrer"
             className="text-xs font-extrabold text-[#2563EB] dark:text-[#60A5FA] hover:underline flex items-center gap-1 shrink-0 px-3 py-1.5"
           >
-            <span>{canonicalName} Site</span>
+            <span>{canonicalName} {isHindi ? 'पोर्टल' : 'Site'}</span>
             <ExternalLink className="w-3 h-3" />
           </a>
         )}
@@ -433,27 +437,27 @@ function BanksPage({
       <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-6">
         <h2 className="text-xl font-black text-slate-800 dark:text-white flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
           <ShieldCheck className="w-5 h-5 text-[#2563EB]" />
-          <span>Institutional Overview & Key Parameters</span>
+          <span>{isHindi ? 'संस्थागत अवलोकन और मुख्य पैरामीटर' : 'Institutional Overview & Key Parameters'}</span>
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
           <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Headquarters</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">{isHindi ? 'मुख्यालय' : 'Headquarters'}</span>
             <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mt-0.5 block">{profile.headquarters}</span>
           </div>
 
           <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Founded Year</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">{isHindi ? 'स्थापना वर्ष' : 'Founded Year'}</span>
             <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mt-0.5 block">{profile.foundedYear}</span>
           </div>
 
           <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Banking Category</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">{t('banks.segment', 'Banking Category')}</span>
             <span className="font-extrabold text-[#2563EB] dark:text-[#60A5FA] text-sm mt-0.5 block">{profile.ownershipType}</span>
           </div>
 
           <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Official Portal</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">{t('banks.viewOfficialPortal', 'Official Portal')}</span>
             <a href={profile.officialWebsite} target="_blank" rel="noopener noreferrer" className="font-extrabold text-[#2563EB] dark:text-[#60A5FA] text-xs mt-0.5 block truncate hover:underline">
               {profile.officialWebsite.replace("https://", "")}
             </a>
@@ -462,17 +466,17 @@ function BanksPage({
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
           <div className="p-4 rounded-2xl bg-blue-50/50 dark:bg-slate-900/60 border border-blue-100 dark:border-slate-800 space-y-1">
-            <span className="text-[10.5px] font-bold text-[#2563EB] dark:text-[#60A5FA] uppercase tracking-wider block">Customer Base & Network</span>
+            <span className="text-[10.5px] font-bold text-[#2563EB] dark:text-[#60A5FA] uppercase tracking-wider block">{isHindi ? 'ग्राहक आधार और नेटवर्क' : 'Customer Base & Network'}</span>
             <p className="text-xs text-slate-700 dark:text-slate-300 font-medium">{profile.overviewCustomerBase}</p>
           </div>
 
           <div className="p-4 rounded-2xl bg-emerald-50/50 dark:bg-slate-900/60 border border-emerald-100 dark:border-slate-800 space-y-1">
-            <span className="text-[10.5px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider block">Digital Banking Infrastructure</span>
+            <span className="text-[10.5px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider block">{isHindi ? 'डिजिटल बैंकिंग बुनियादी ढांचा' : 'Digital Banking Infrastructure'}</span>
             <p className="text-xs text-slate-700 dark:text-slate-300 font-medium">{profile.overviewDigital}</p>
           </div>
 
           <div className="p-4 rounded-2xl bg-purple-50/50 dark:bg-slate-900/60 border border-purple-100 dark:border-slate-800 space-y-1">
-            <span className="text-[10.5px] font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider block">Security & Financial Reputation</span>
+            <span className="text-[10.5px] font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider block">{isHindi ? 'सुरक्षा और वित्तीय विश्वसनीयता' : 'Security & Financial Reputation'}</span>
             <p className="text-xs text-slate-700 dark:text-slate-300 font-medium">{profile.overviewReputation}</p>
           </div>
         </div>
@@ -481,17 +485,22 @@ function BanksPage({
       {/* ── 7. SEARCH & FILTER WITHIN BANK PRODUCTS ── */}
       <div className="p-5 rounded-3xl glass-card-premium border border-slate-200 dark:border-slate-800 shadow-soft flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-2 w-full md:w-auto">
-          {['All', 'Debit Cards', 'Savings Accounts', 'Current Accounts'].map(cat => (
+          {[
+            { key: 'All', label: t('common.all', 'All') },
+            { key: 'Debit Cards', label: t('banks.debitCardsTab', 'Debit Cards') },
+            { key: 'Savings Accounts', label: t('banks.savingsAccountsTab', 'Savings Accounts') },
+            { key: 'Current Accounts', label: t('banks.currentAccountsTab', 'Current Accounts') }
+          ].map(catItem => (
             <button
-              key={cat}
-              onClick={() => setProductCategoryFilter(cat)}
+              key={catItem.key}
+              onClick={() => setProductCategoryFilter(catItem.key)}
               className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
-                productCategoryFilter === cat
+                productCategoryFilter === catItem.key
                   ? 'bg-[#2563EB] text-white shadow-xs'
                   : 'bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:border-[#2563EB]'
               }`}
             >
-              {cat}
+              {catItem.label}
             </button>
           ))}
         </div>
@@ -502,7 +511,7 @@ function BanksPage({
             type="text"
             value={bankSearchQuery}
             onChange={(e) => setBankSearchQuery(e.target.value)}
-            placeholder={`Search ${canonicalName} products (e.g. "student", "RuPay", "lounge")...`}
+            placeholder={isHindi ? `${canonicalName} के कार्ड और खाते खोजें...` : t('banks.searchPlaceholder', `Search within this bank's cards & accounts...`)}
             className="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs text-slate-800 dark:text-white outline-none focus:border-[#2563EB]"
           />
         </div>
@@ -514,23 +523,23 @@ function BanksPage({
           <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
             <div>
               <span className="text-[10px] font-black uppercase tracking-widest text-[#2563EB] dark:text-[#60A5FA]">
-                VERIFIED LINEUP
+                {isHindi ? 'सत्यापित लाइनअप' : 'VERIFIED LINEUP'}
               </span>
               <h2 className="text-2xl font-black text-slate-800 dark:text-white flex items-center gap-2">
                 <CreditCard className="w-6 h-6 text-[#2563EB]" />
-                <span>Debit Cards ({filteredDebitCards.length})</span>
+                <span>{t('banks.debitCardsTab', 'Debit Cards')} ({filteredDebitCards.length})</span>
               </h2>
             </div>
 
             <p className="text-xs text-slate-400 font-bold">
-              Official debit card variants issued by {canonicalName}
+              {isHindi ? `${canonicalName} द्वारा जारी आधिकारिक डेबिट कार्ड वेरिएंट` : `Official debit card variants issued by ${canonicalName}`}
             </p>
           </div>
 
           {filteredDebitCards.length === 0 ? (
             <div className="py-12 text-center rounded-3xl glass-card-premium border border-slate-200 dark:border-slate-800 text-xs text-slate-500 space-y-2">
               <CreditCard className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto" />
-              <p className="font-bold">No debit cards match your search criteria for {canonicalName}.</p>
+              <p className="font-bold">{t('banks.noProductsFound', `No debit cards match your search criteria for ${canonicalName}.`, { bank: canonicalName })}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -554,23 +563,23 @@ function BanksPage({
           <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
             <div>
               <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400">
-                HIGH-YIELD SAVINGS
+                {isHindi ? 'उच्च-ब्याज बचत' : 'HIGH-YIELD SAVINGS'}
               </span>
               <h2 className="text-2xl font-black text-slate-800 dark:text-white flex items-center gap-2">
                 <Percent className="w-6 h-6 text-emerald-500" />
-                <span>Savings Accounts ({filteredSavingsAccounts.length})</span>
+                <span>{t('banks.savingsAccountsTab', 'Savings Accounts')} ({filteredSavingsAccounts.length})</span>
               </h2>
             </div>
 
             <p className="text-xs text-slate-400 font-bold">
-              Verified savings schemes & account tiers for {canonicalName}
+              {isHindi ? `${canonicalName} के लिए सत्यापित बचत योजनाएं और खाता स्तर` : `Verified savings schemes & account tiers for ${canonicalName}`}
             </p>
           </div>
 
           {filteredSavingsAccounts.length === 0 ? (
             <div className="py-12 text-center rounded-3xl glass-card-premium border border-slate-200 dark:border-slate-800 text-xs text-slate-500 space-y-2">
               <Percent className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto" />
-              <p className="font-bold">No savings accounts match your search criteria for {canonicalName}.</p>
+              <p className="font-bold">{t('banks.noProductsFound', `No savings accounts match your search criteria for ${canonicalName}.`, { bank: canonicalName })}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -620,12 +629,12 @@ function BanksPage({
                         </span>
                         {account.isZeroBalance && (
                           <span className="px-2.5 py-0.5 rounded-full font-extrabold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
-                            <CheckCircle2 className="w-3 h-3" /> Zero Balance
+                            <CheckCircle2 className="w-3 h-3" /> {t('accountDetail.zeroBalance', 'Zero Balance')}
                           </span>
                         )}
                         {account.isOnlineOpening && (
                           <span className="px-2.5 py-0.5 rounded-full font-bold bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
-                            ⚡ Instant Video KYC
+                            ⚡ {t('accountDetail.digitalKyc', 'Instant Video KYC')}
                           </span>
                         )}
                       </div>
@@ -633,11 +642,11 @@ function BanksPage({
                       {/* Key Account Stats */}
                       <div className="grid grid-cols-2 gap-3 pt-1">
                         <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
-                          <span className="text-[10px] font-extrabold text-slate-400 uppercase block">Max Interest Rate</span>
+                          <span className="text-[10px] font-extrabold text-slate-400 uppercase block">{t('accountDetail.interestRate', 'Max Interest Rate')}</span>
                           <span className="text-lg font-black text-emerald-600 dark:text-emerald-400">{account.interestRate}</span>
                         </div>
                         <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
-                          <span className="text-[10px] font-extrabold text-slate-400 uppercase block">Min. Balance</span>
+                          <span className="text-[10px] font-extrabold text-slate-400 uppercase block">{t('accountDetail.minimumBalance', 'Min. Balance')}</span>
                           <span className="text-lg font-black text-slate-800 dark:text-white">{account.minimumBalance}</span>
                         </div>
                       </div>
@@ -645,7 +654,7 @@ function BanksPage({
                       {/* Account Key Benefits */}
                       {account.keyBenefits && (
                         <div className="space-y-1.5 text-xs text-slate-700 dark:text-slate-300 font-medium">
-                          <span className="text-[10.5px] font-extrabold text-slate-400 uppercase block">Key Account Highlights:</span>
+                          <span className="text-[10.5px] font-extrabold text-slate-400 uppercase block">{isHindi ? 'मुख्य खाता विशेषताएं:' : 'Key Account Highlights:'}</span>
                           {account.keyBenefits.slice(0, 2).map((b, i) => (
                             <div key={i} className="flex items-start gap-1.5">
                               <CheckCircle2 className="w-3.5 h-3.5 text-[#2563EB] shrink-0 mt-0.5" />
@@ -661,11 +670,11 @@ function BanksPage({
                       <div className="flex items-center justify-between">
                         <span className="text-[10.5px] font-black uppercase tracking-wider text-[#0B3D91] dark:text-[#60A5FA] flex items-center gap-1.5">
                           <CreditCard className="w-3.5 h-3.5 text-[#2563EB]" />
-                          <span>Debit Card with this Account</span>
+                          <span>{t('accountDetail.linkedCards', 'Debit Card with this Account')}</span>
                         </span>
                         {linkedCard && (
                           <span className="px-2 py-0.5 rounded-full text-[9.5px] font-extrabold bg-[#2563EB] text-white">
-                            Linked Debit Card
+                            {t('accountDetail.linkedCardTitle', 'Linked Debit Card')}
                           </span>
                         )}
                       </div>
@@ -687,21 +696,21 @@ function BanksPage({
                                 onClick={() => onSelectDebitCard(linkedCard)}
                                 className="px-3 py-1 rounded-lg bg-[#2563EB] text-white font-bold text-[11px] hover:bg-blue-700 transition-colors shrink-0 cursor-pointer"
                               >
-                                View Specs →
+                                {isHindi ? 'विवरण देखें →' : 'View Specs →'}
                               </button>
                             )}
                           </div>
 
                           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] pt-1.5 border-t border-slate-100 dark:border-slate-700 text-slate-600 dark:text-slate-300">
-                            <div><strong className="block text-[9.5px] text-slate-400 uppercase">ATM Limit</strong> ₹{(linkedCard.atmLimit || 50000).toLocaleString('en-IN')}/day</div>
-                            <div><strong className="block text-[9.5px] text-slate-400 uppercase">POS Limit</strong> ₹{(linkedCard.posLimit || 100000).toLocaleString('en-IN')}/day</div>
-                            <div><strong className="block text-[9.5px] text-slate-400 uppercase">Annual Fee</strong> {linkedCard.annualFee || 'Free'}</div>
-                            <div><strong className="block text-[9.5px] text-slate-400 uppercase">Lounge</strong> {linkedCard.loungeAccess || 'No'}</div>
+                            <div><strong className="block text-[9.5px] text-slate-400 uppercase">{t('debitCards.dailyAtmLimit', 'ATM Limit')}</strong> ₹{(linkedCard.atmLimit || 50000).toLocaleString('en-IN')}/day</div>
+                            <div><strong className="block text-[9.5px] text-slate-400 uppercase">{t('debitCards.dailyPosLimit', 'POS Limit')}</strong> ₹{(linkedCard.posLimit || 100000).toLocaleString('en-IN')}/day</div>
+                            <div><strong className="block text-[9.5px] text-slate-400 uppercase">{t('debitCards.annualFee', 'Annual Fee')}</strong> {linkedCard.annualFee || (isHindi ? 'निःशुल्क' : 'Free')}</div>
+                            <div><strong className="block text-[9.5px] text-slate-400 uppercase">{t('debitCards.loungeAccess', 'Lounge')}</strong> {linkedCard.loungeAccess || (isHindi ? 'नहीं' : 'No')}</div>
                           </div>
                         </div>
                       ) : (
                         <div className="p-3 bg-white/80 dark:bg-slate-800/80 rounded-xl text-xs font-semibold text-slate-500">
-                          Debit card information not available for this account.
+                          {isHindi ? 'इस खाते के लिए डेबिट कार्ड की जानकारी उपलब्ध नहीं है।' : 'Debit card information not available for this account.'}
                         </div>
                       )}
                     </div>
@@ -712,7 +721,7 @@ function BanksPage({
                         to={`/savings-accounts/${account.id}`}
                         className="px-4 py-2 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white font-extrabold text-xs transition-all shadow-xs flex items-center gap-1"
                       >
-                        <span>View Details</span>
+                        <span>{t('common.viewDetails', 'View Details')}</span>
                         <ChevronRight className="w-3.5 h-3.5" />
                       </Link>
 
@@ -725,7 +734,7 @@ function BanksPage({
                         }`}
                       >
                         <Scale className="w-3.5 h-3.5" />
-                        <span>{savingsCompareQueue.some(a => String(a.id) === String(account.id)) ? 'Queued' : 'Compare'}</span>
+                        <span>{savingsCompareQueue.some(a => String(a.id) === String(account.id)) ? t('debitCards.inCompare', 'Queued') : t('debitCards.addToCompare', 'Compare')}</span>
                       </button>
                     </div>
                   </div>
@@ -760,23 +769,23 @@ function BanksPage({
           <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
             <div>
               <span className="text-[10px] font-black uppercase tracking-widest text-amber-600 dark:text-amber-400">
-                COMMERCIAL & BUSINESS BANKING
+                {isHindi ? 'वाणिज्यिक एवं व्यावसायिक बैंकिंग' : 'COMMERCIAL & BUSINESS BANKING'}
               </span>
               <h2 className="text-2xl font-black text-slate-800 dark:text-white flex items-center gap-2">
                 <Briefcase className="w-6 h-6 text-amber-500" />
-                <span>Current Accounts ({filteredCurrentAccounts.length})</span>
+                <span>{t('banks.currentAccountsTab', 'Current Accounts')} ({filteredCurrentAccounts.length})</span>
               </h2>
             </div>
 
             <p className="text-xs text-slate-400 font-bold">
-              Commercial accounts, MAB tiers & cash deposit limits for {canonicalName}
+              {isHindi ? `${canonicalName} के लिए चालू खाते, एमएबी स्तर और नकद जमा सीमाएं` : `Commercial accounts, MAB tiers & cash deposit limits for ${canonicalName}`}
             </p>
           </div>
 
           {filteredCurrentAccounts.length === 0 ? (
             <div className="py-12 text-center rounded-3xl glass-card-premium border border-slate-200 dark:border-slate-800 text-xs text-slate-500 space-y-2">
               <Briefcase className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto" />
-              <p className="font-bold">No current accounts match your search criteria for {canonicalName}.</p>
+              <p className="font-bold">{t('banks.noProductsFound', `No current accounts match your search criteria for ${canonicalName}.`, { bank: canonicalName })}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -799,14 +808,16 @@ function BanksPage({
       <div className="p-5 sm:p-6 rounded-3xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/60 space-y-3 text-amber-900 dark:text-amber-200 text-xs sm:text-sm">
         <div className="flex items-center gap-2 font-black uppercase tracking-wider text-amber-800 dark:text-amber-300">
           <Info className="w-4 h-4 shrink-0" />
-          <span>Statutory Bank Information & Verification Disclaimer</span>
+          <span>{isHindi ? 'वैधानिक बैंक जानकारी और सत्यापन अस्वीकरण' : 'Statutory Bank Information & Verification Disclaimer'}</span>
         </div>
         <p className="leading-relaxed font-normal">
-          Information shown is for comparison and informational purposes only. Savings Account, Current Account, and Debit Card features, interest rates, fees, charges, eligibility requirements, limits, and benefits may change over time. Please verify the latest details directly on {canonicalName}'s official website before making a decision.
+          {isHindi 
+            ? `दिखाई गई जानकारी केवल तुलना और सूचनात्मक उद्देश्यों के लिए है। बचत खाता, चालू खाता और डेबिट कार्ड की विशेषताएं, ब्याज दरें, शुल्क, पात्रता आवश्यकताएं, सीमाएं और लाभ समय के साथ बदल सकते हैं। निर्णय लेने से पहले कृपया सीधे ${canonicalName} की आधिकारिक वेबसाइट पर नवीनतम विवरण सत्यापित करें।`
+            : `Information shown is for comparison and informational purposes only. Savings Account, Current Account, and Debit Card features, interest rates, fees, charges, eligibility requirements, limits, and benefits may change over time. Please verify the latest details directly on ${canonicalName}'s official website before making a decision.`}
         </p>
         <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-amber-200/60 dark:border-amber-900/40 text-xs font-semibold">
-          <span>Source: Official {canonicalName} Portal</span>
-          <span>Last Verified: August 2026</span>
+          <span>{isHindi ? `स्रोत: आधिकारिक ${canonicalName} पोर्टल` : `Source: Official ${canonicalName} Portal`}</span>
+          <span>{isHindi ? 'अंतिम सत्यापन: अगस्त 2026' : 'Last Verified: August 2026'}</span>
         </div>
       </div>
     </main>

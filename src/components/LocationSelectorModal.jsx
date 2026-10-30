@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { useAppLocation } from '../context/LocationContext';
 import { ALL_INDIA_LOCATION } from '../data/locations';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function LocationSelectorModal({ isOpen, onClose }) {
   const {
@@ -29,6 +30,7 @@ export default function LocationSelectorModal({ isOpen, onClose }) {
     getCityDisplayName,
     getFormattedLocation
   } = useAppLocation();
+  const { t } = useLanguage();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStateFilter, setSelectedStateFilter] = useState('');
@@ -166,10 +168,10 @@ export default function LocationSelectorModal({ isOpen, onClose }) {
                     id="location-modal-title"
                     className="text-lg sm:text-xl font-extrabold text-gray-900 dark:text-white tracking-tight"
                   >
-                    Select Location
+                    {t('locationModal.title', 'Select Location')}
                   </h2>
                   <p className="text-[11px] sm:text-xs text-gray-500 dark:text-slate-400 font-medium">
-                    Discover banking products & branch availability in your city
+                    {t('locationModal.subtitle', 'Discover banking products & branch availability in your city')}
                   </p>
                 </div>
               </div>
@@ -178,7 +180,7 @@ export default function LocationSelectorModal({ isOpen, onClose }) {
                 type="button"
                 onClick={onClose}
                 className="p-2 rounded-xl text-gray-400 hover:text-gray-600 dark:hover:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800 transition-all cursor-pointer"
-                aria-label="Close location selector"
+                aria-label={t('common.cancel', 'Close location selector')}
               >
                 <X className="w-5 h-5" />
               </button>
@@ -201,7 +203,7 @@ export default function LocationSelectorModal({ isOpen, onClose }) {
                   setSearchQuery(e.target.value);
                   if (selectedStateFilter) setSelectedStateFilter('');
                 }}
-                placeholder="Search by city, alias, or state (e.g. Haridwar, Daltonganj, MP)..."
+                placeholder={t('locationModal.searchPlaceholder', 'Search by city, alias, or state (e.g. Haridwar, Daltonganj, MP)...')}
                 className="w-full pl-10 pr-9 py-2.5 bg-gray-50 dark:bg-[#1E293B] border border-gray-200 dark:border-slate-700/80 rounded-2xl text-xs sm:text-sm font-medium text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#2563EB]/40 focus:border-[#2563EB] transition-all shadow-xs"
               />
               {searchQuery && (
@@ -209,7 +211,7 @@ export default function LocationSelectorModal({ isOpen, onClose }) {
                   type="button"
                   onClick={() => setSearchQuery('')}
                   className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-slate-200 cursor-pointer"
-                  aria-label="Clear search"
+                  aria-label={t('common.clear', 'Clear search')}
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -223,17 +225,17 @@ export default function LocationSelectorModal({ isOpen, onClose }) {
             {searchQuery.trim() ? (
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-xs text-gray-500 dark:text-slate-400 font-semibold px-1">
-                  <span>Matching Locations ({searchResults.length})</span>
-                  <span>Press item to select</span>
+                  <span>{t('locationModal.matchingLocations', 'Matching Locations')} ({searchResults.length})</span>
+                  <span>{t('locationModal.pressItemToSelect', 'Press item to select')}</span>
                 </div>
 
                 {searchResults.length === 0 ? (
                   <div className="py-12 text-center space-y-2">
                     <p className="text-sm font-bold text-gray-800 dark:text-slate-200">
-                      No locations found
+                      {t('locationModal.noLocationsFound', 'No locations found')}
                     </p>
                     <p className="text-xs text-gray-500 dark:text-slate-400">
-                      Try searching by city, state, or alternate name.
+                      {t('locationModal.trySearchingBy', 'Try searching by city, state, or alternate name.')}
                     </p>
                     <button
                       type="button"
@@ -241,7 +243,7 @@ export default function LocationSelectorModal({ isOpen, onClose }) {
                       className="mt-3 px-4 py-2 rounded-xl bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] font-bold text-xs hover:bg-[#2563EB]/20 transition-all cursor-pointer inline-flex items-center gap-1.5"
                     >
                       <Globe className="w-3.5 h-3.5" />
-                      <span>Browse All India Instead</span>
+                      <span>{t('locationModal.browseAllIndiaInstead', 'Browse All India Instead')}</span>
                     </button>
                   </div>
                 ) : (
@@ -321,14 +323,14 @@ export default function LocationSelectorModal({ isOpen, onClose }) {
                       <div className="text-left">
                         <div className="flex items-center gap-2">
                           <span className="text-sm font-extrabold text-gray-900 dark:text-white">
-                            All India
+                            {t('locationModal.allIndia', 'All India')}
                           </span>
                           <span className="text-[10px] font-bold text-[#2563EB] dark:text-[#60A5FA] bg-[#2563EB]/10 px-2 py-0.5 rounded-full uppercase tracking-wider">
-                            Global
+                            {t('locationModal.globalTag', 'Global')}
                           </span>
                         </div>
                         <p className="text-[11px] text-gray-500 dark:text-slate-400 font-medium">
-                          Show all nationwide financial products, accounts & cards
+                          {t('locationModal.allIndiaDesc', 'Show all nationwide financial products, accounts & cards')}
                         </p>
                       </div>
                     </div>
@@ -336,7 +338,7 @@ export default function LocationSelectorModal({ isOpen, onClose }) {
                     {(selectedLocation?.slug === 'all-india' || !selectedLocation) && (
                       <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#2563EB] text-white text-[11px] font-bold shadow-xs">
                         <Check className="w-3.5 h-3.5" />
-                        <span>Active</span>
+                        <span>{t('locationModal.active', 'Active')}</span>
                       </span>
                     )}
                   </button>
@@ -348,14 +350,14 @@ export default function LocationSelectorModal({ isOpen, onClose }) {
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
                         <Clock className="w-3.5 h-3.5 text-[#2563EB]" />
-                        Recent Locations
+                        {t('locationModal.recentLocations', 'Recent Locations')}
                       </span>
                       <button
                         type="button"
                         onClick={clearRecentLocations}
                         className="text-[11px] text-gray-400 hover:text-gray-600 dark:hover:text-slate-300 cursor-pointer font-medium"
                       >
-                        Clear
+                        {t('locationModal.clear', 'Clear')}
                       </button>
                     </div>
 
@@ -389,7 +391,7 @@ export default function LocationSelectorModal({ isOpen, onClose }) {
                 <div className="space-y-2.5">
                   <span className="text-xs font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
                     <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                    Popular Cities
+                    {t('locationModal.popularCities', 'Popular Cities')}
                   </span>
 
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
@@ -425,7 +427,7 @@ export default function LocationSelectorModal({ isOpen, onClose }) {
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
                       <Building2 className="w-3.5 h-3.5 text-[#2563EB]" />
-                      Browse by State & Union Territory
+                      {t('locationModal.browseByState', 'Browse by State & Union Territory')}
                     </span>
                     {selectedStateFilter && (
                       <button
@@ -433,7 +435,7 @@ export default function LocationSelectorModal({ isOpen, onClose }) {
                         onClick={() => setSelectedStateFilter('')}
                         className="text-[11px] text-[#2563EB] dark:text-[#60A5FA] hover:underline font-bold cursor-pointer"
                       >
-                        Reset State
+                        {t('locationModal.resetState', 'Reset State')}
                       </button>
                     )}
                   </div>
@@ -445,10 +447,10 @@ export default function LocationSelectorModal({ isOpen, onClose }) {
                       onChange={(e) => setSelectedStateFilter(e.target.value)}
                       className="w-full appearance-none px-3.5 py-2.5 bg-gray-50 dark:bg-[#1E293B] border border-gray-200 dark:border-slate-700 rounded-2xl text-xs sm:text-sm font-semibold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#2563EB]/40 cursor-pointer pr-10"
                     >
-                      <option value="">Select a State or Union Territory ({allStates.length} available)...</option>
+                      <option value="">{t('locationModal.selectStatePlaceholder', 'Select a State or Union Territory ({{count}} available)...', { count: allStates.length })}</option>
                       {allStates.map((s) => (
                         <option key={s.state} value={s.state}>
-                          {s.state} ({s.cityCount} cities)
+                          {s.state} ({s.cityCount})
                         </option>
                       ))}
                     </select>
@@ -463,8 +465,8 @@ export default function LocationSelectorModal({ isOpen, onClose }) {
                       className="p-3.5 rounded-2xl bg-gray-50 dark:bg-slate-900/60 border border-gray-200/80 dark:border-slate-800 space-y-2.5"
                     >
                       <div className="flex items-center justify-between text-xs font-bold text-gray-700 dark:text-slate-300">
-                        <span>Cities in {selectedStateFilter} ({stateCities.length})</span>
-                        <span className="text-[10px] text-gray-400">Click to select</span>
+                        <span>{selectedStateFilter} ({stateCities.length})</span>
+                        <span className="text-[10px] text-gray-400">{t('locationModal.pressItemToSelect', 'Click to select')}</span>
                       </div>
 
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-56 overflow-y-auto pr-1">
@@ -499,7 +501,7 @@ export default function LocationSelectorModal({ isOpen, onClose }) {
           {/* ── FOOTER ── */}
           <div className="px-5 sm:px-6 py-3 bg-gray-50 dark:bg-[#1E293B]/90 border-t border-gray-100 dark:border-slate-800 flex items-center justify-between text-xs text-gray-500 dark:text-slate-400 shrink-0">
             <div className="flex items-center gap-1.5 truncate">
-              <span className="font-semibold text-gray-700 dark:text-slate-300">Active:</span>
+              <span className="font-semibold text-gray-700 dark:text-slate-300">{t('locationModal.active', 'Active')}:</span>
               <span className="font-bold text-[#2563EB] dark:text-[#60A5FA] truncate">
                 {getFormattedLocation(selectedLocation)}
               </span>
@@ -510,7 +512,7 @@ export default function LocationSelectorModal({ isOpen, onClose }) {
               onClick={onClose}
               className="px-3.5 py-1.5 rounded-xl bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600 text-gray-800 dark:text-white font-bold text-xs transition-all cursor-pointer"
             >
-              Done
+              {t('locationModal.close', 'Done')}
             </button>
           </div>
         </motion.div>

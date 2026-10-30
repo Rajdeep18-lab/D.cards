@@ -18,6 +18,7 @@ import {
   Briefcase
 } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
+import { useLanguage } from '../context/LanguageContext';
 import DebitCardCard from '../components/DebitCardCard';
 import SavingsAccountCard from '../components/SavingsAccountCard';
 import CurrentAccountCard from '../components/CurrentAccountCard';
@@ -48,6 +49,8 @@ function isDebitCardItem(item) {
 
 function SavedCardsPage({ setSelectedCard, toggleCompareQueue, compareQueue, userProfile, STATIC_RANKINGS }) {
   const { wishlist, removeFromWishlist, clearWishlist } = useWishlist();
+  const { t, language } = useLanguage();
+  const isHindi = language === 'hi';
   const navigate = useNavigate();
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -88,6 +91,13 @@ function SavedCardsPage({ setSelectedCard, toggleCompareQueue, compareQueue, use
     });
   }, [wishlist, searchTerm, selectedProductType, selectedNetworkFilter]);
 
+  const productTabs = [
+    { key: 'All', label: t('saved.allTab') },
+    { key: 'Debit Cards', label: t('saved.cardsTab') },
+    { key: 'Savings Accounts', label: t('saved.savingsTab') },
+    { key: 'Current Accounts', label: t('saved.currentTab') }
+  ];
+
   return (
     <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 relative z-20 space-y-8 text-left select-none">
       
@@ -96,13 +106,13 @@ function SavedCardsPage({ setSelectedCard, toggleCompareQueue, compareQueue, use
         <div>
           <span className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-rose-500/10 text-rose-600 dark:text-rose-400 text-xs font-extrabold tracking-widest uppercase rounded-full mb-2 border border-rose-500/20">
             <Heart className="w-3.5 h-3.5 fill-rose-500 text-rose-500" />
-            BOOKMARKED COLLECTION
+            {isHindi ? 'सहेजा गया संग्रह' : 'BOOKMARKED COLLECTION'}
           </span>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1F2937] dark:text-white tracking-tight flex items-center gap-3">
-            ❤️ Saved Products
+            ❤️ {t('saved.title')}
           </h1>
           <p className="text-xs sm:text-sm text-[#6B7280] dark:text-slate-400 mt-1 font-normal max-w-2xl leading-relaxed">
-            Keep your preferred banking products in one place.
+            {t('saved.subtitle')}
           </p>
         </div>
 
@@ -114,7 +124,7 @@ function SavedCardsPage({ setSelectedCard, toggleCompareQueue, compareQueue, use
               className="px-4 py-2.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 font-bold text-xs border border-red-500/20 transition-all cursor-pointer flex items-center gap-1.5"
             >
               <Trash2 className="w-3.5 h-3.5" />
-              <span>Clear All</span>
+              <span>{t('saved.clearAll')}</span>
             </button>
           )}
 
@@ -122,7 +132,7 @@ function SavedCardsPage({ setSelectedCard, toggleCompareQueue, compareQueue, use
             to="/cards"
             className="px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-xs hover:bg-slate-200 transition-all"
           >
-            Explore Cards
+            {t('saved.exploreCards')}
           </Link>
         </div>
       </div>
@@ -138,7 +148,7 @@ function SavedCardsPage({ setSelectedCard, toggleCompareQueue, compareQueue, use
               {stats.totalItems}
             </span>
             <span className="text-[10.5px] font-bold text-[#6B7280] dark:text-slate-400 uppercase tracking-wider">
-              Total Saved
+              {t('saved.totalSaved')}
             </span>
           </div>
         </div>
@@ -152,7 +162,7 @@ function SavedCardsPage({ setSelectedCard, toggleCompareQueue, compareQueue, use
               {stats.debitCardsCount}
             </span>
             <span className="text-[10.5px] font-bold text-[#6B7280] dark:text-slate-400 uppercase tracking-wider">
-              Debit Cards
+              {t('saved.cardsTab')}
             </span>
           </div>
         </div>
@@ -166,7 +176,7 @@ function SavedCardsPage({ setSelectedCard, toggleCompareQueue, compareQueue, use
               {stats.savingsAccountsCount}
             </span>
             <span className="text-[10.5px] font-bold text-[#6B7280] dark:text-slate-400 uppercase tracking-wider">
-              Savings Accounts
+              {t('saved.savingsTab')}
             </span>
           </div>
         </div>
@@ -180,7 +190,7 @@ function SavedCardsPage({ setSelectedCard, toggleCompareQueue, compareQueue, use
               {stats.currentAccountsCount}
             </span>
             <span className="text-[10.5px] font-bold text-[#6B7280] dark:text-slate-400 uppercase tracking-wider">
-              Current Accounts
+              {t('saved.currentTab')}
             </span>
           </div>
         </div>
@@ -194,7 +204,7 @@ function SavedCardsPage({ setSelectedCard, toggleCompareQueue, compareQueue, use
               {stats.uniqueBanks}
             </span>
             <span className="text-[10.5px] font-bold text-[#6B7280] dark:text-slate-400 uppercase tracking-wider">
-              Banks Covered
+              {isHindi ? 'बैंक शामिल' : 'Banks Covered'}
             </span>
           </div>
         </div>
@@ -209,23 +219,23 @@ function SavedCardsPage({ setSelectedCard, toggleCompareQueue, compareQueue, use
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search saved cards or accounts..."
+              placeholder={t('saved.searchPlaceholder')}
               className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-[#F8FAFC] dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs outline-none focus:border-[#2563EB] font-medium text-[#1F2937] dark:text-white"
             />
           </div>
 
           <div className="flex flex-wrap items-center gap-2 text-xs font-bold w-full md:w-auto">
-            {['All', 'Debit Cards', 'Savings Accounts', 'Current Accounts'].map(pt => (
+            {productTabs.map(pt => (
               <button
-                key={pt}
-                onClick={() => setSelectedProductType(pt)}
+                key={pt.key}
+                onClick={() => setSelectedProductType(pt.key)}
                 className={`px-3.5 py-2 rounded-xl transition-all cursor-pointer ${
-                  selectedProductType === pt
+                  selectedProductType === pt.key
                     ? 'bg-[#2563EB] text-white shadow-xs'
                     : 'bg-slate-100 dark:bg-slate-900 text-[#6B7280] hover:text-[#1F2937] dark:hover:text-white'
                 }`}
               >
-                {pt}
+                {pt.label}
               </button>
             ))}
           </div>
@@ -245,10 +255,10 @@ function SavedCardsPage({ setSelectedCard, toggleCompareQueue, compareQueue, use
 
           <div className="space-y-2">
             <h2 className="text-xl font-extrabold text-[#1F2937] dark:text-white">
-              You haven't saved any products yet.
+              {t('saved.emptyTitle')}
             </h2>
             <p className="text-xs text-[#6B7280] dark:text-slate-400 leading-relaxed font-normal">
-              Tap the heart icon to save a banking product.
+              {t('saved.emptyDesc')}
             </p>
           </div>
 
@@ -257,25 +267,25 @@ function SavedCardsPage({ setSelectedCard, toggleCompareQueue, compareQueue, use
               onClick={() => navigate('/cards')}
               className="px-5 py-3 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white font-bold text-xs uppercase shadow-md transition-all cursor-pointer"
             >
-              Debit Cards
+              {t('saved.exploreCards')}
             </button>
             <button
               onClick={() => navigate('/savings-accounts')}
               className="px-5 py-3 rounded-xl bg-emerald-600 text-white font-bold text-xs uppercase shadow-md transition-all cursor-pointer"
             >
-              Savings Accounts
+              {t('saved.exploreSavings')}
             </button>
             <button
               onClick={() => navigate('/current-accounts')}
               className="px-5 py-3 rounded-xl bg-amber-600 text-white font-bold text-xs uppercase shadow-md transition-all cursor-pointer"
             >
-              Current Accounts
+              {t('saved.exploreCurrent')}
             </button>
           </div>
         </motion.div>
       ) : filteredWishlist.length === 0 ? (
         <div className="py-12 text-center text-xs text-[#6B7280] dark:text-slate-400">
-          No saved products match your search criteria.
+          {isHindi ? 'कोई सहेजा गया उत्पाद आपकी खोज से मेल नहीं खाता।' : 'No saved products match your search criteria.'}
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">

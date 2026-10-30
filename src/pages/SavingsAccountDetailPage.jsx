@@ -32,11 +32,13 @@ import { useSEO } from '../hooks/useSEO';
 
 import ICICIBSavingsDetailView from '../components/ICICIBSavingsDetailView';
 import BankLogo from '../components/BankLogo';
+import { useLanguage } from '../context/LanguageContext';
 
 function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompared }) {
   const { id } = useParams();
   const navigate = useNavigate();
   const { isWishlisted, toggleWishlist } = useWishlist();
+  const { t, isHindi } = useLanguage();
 
   const [account, setAccount] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -110,13 +112,13 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
     return (
       <div className="mx-auto max-w-3xl px-4 py-16 text-center space-y-4">
         <AlertCircle className="w-16 h-16 text-amber-500 mx-auto" />
-        <h2 className="text-2xl font-bold text-slate-800 dark:text-white">Account Not Found</h2>
-        <p className="text-sm text-slate-500">{error || "The requested savings account could not be found."}</p>
+        <h2 className="text-2xl font-bold text-slate-800 dark:text-white">{isHindi ? 'बचत खाता नहीं मिला' : 'Account Not Found'}</h2>
+        <p className="text-sm text-slate-500">{error || (isHindi ? 'अनुरोधित बचत खाता नहीं मिला।' : 'The requested savings account could not be found.')}</p>
         <Link
           to="/savings-accounts"
           className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#2563EB] text-white text-xs font-bold shadow-md hover:bg-blue-700"
         >
-          <ArrowLeft className="w-4 h-4" /> Return to Savings Discovery
+          <ArrowLeft className="w-4 h-4" /> {t('accountDetail.backToAccounts', 'Return to Savings Discovery')}
         </Link>
       </div>
     );
@@ -140,13 +142,13 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
   const getRelationshipBadge = (rel) => {
     switch (rel) {
       case 'provided':
-        return { label: 'Provided with account', color: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/30' };
+        return { label: isHindi ? 'खाते के साथ प्रदान किया गया' : 'Provided with account', color: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/30' };
       case 'optional':
-        return { label: 'Available as an option', color: 'bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/30' };
+        return { label: isHindi ? 'विकल्प के रूप में उपलब्ध' : 'Available as an option', color: 'bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/30' };
       case 'upgrade':
-        return { label: 'Upgrade option', color: 'bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-500/30' };
+        return { label: isHindi ? 'अपग्रेड विकल्प' : 'Upgrade option', color: 'bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-500/30' };
       default:
-        return { label: 'Provided with account', color: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/30' };
+        return { label: isHindi ? 'खाते के साथ प्रदान किया गया' : 'Provided with account', color: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/30' };
     }
   };
 
@@ -158,7 +160,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
           to="/savings-accounts"
           className="text-xs font-bold text-[#2563EB] dark:text-[#60A5FA] flex items-center gap-1.5 hover:underline"
         >
-          <ArrowLeft className="w-4 h-4" /> Back to Savings Accounts
+          <ArrowLeft className="w-4 h-4" /> {t('accountDetail.backToAccounts', 'Back to Savings Accounts')}
         </Link>
 
         <div className="flex items-center gap-2">
@@ -171,7 +173,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
             }`}
           >
             <Heart className={`w-4 h-4 ${wishlisted ? 'fill-rose-500' : ''}`} />
-            <span>{wishlisted ? 'Saved' : 'Save'}</span>
+            <span>{wishlisted ? t('accountDetail.saved', 'Saved') : t('accountDetail.saveAccount', 'Save')}</span>
           </button>
 
           <button
@@ -183,7 +185,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
             }`}
           >
             <Scale className="w-4 h-4" />
-            <span>{isCompared ? 'Queued' : 'Compare'}</span>
+            <span>{isCompared ? t('debitCards.inCompare', 'Queued') : t('debitCards.addToCompare', 'Compare')}</span>
           </button>
         </div>
       </div>
@@ -198,7 +200,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
                 🏦 {bankName}
               </span>
               <h1 className="text-2xl sm:text-3xl font-black text-[#1F2937] dark:text-white tracking-tight mt-0.5">
-                Savings Account Details
+                {isHindi ? 'बचत खाता विवरण' : 'Savings Account Details'}
               </h1>
               <h2 className="text-base sm:text-lg font-bold text-slate-700 dark:text-slate-300">
                 {accountName}
@@ -213,7 +215,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
               rel="noopener noreferrer"
               className="px-6 py-3 rounded-2xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:shadow-lg hover:shadow-[#2563EB]/25 text-white font-extrabold text-xs transition-all shadow cursor-pointer active:scale-95 flex items-center gap-2"
             >
-              <span>Apply / Open Account</span>
+              <span>{t('accountDetail.applyNow', 'Apply / Open Account')}</span>
               <ExternalLink className="w-4 h-4" />
             </a>
           )}
@@ -222,20 +224,20 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
         {/* Badges Row */}
         <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
           <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] border border-[#2563EB]/20">
-            Category: {account.account_type || account.accountType || "Savings"}
+            {isHindi ? 'श्रेणी' : 'Category'}: {account.account_type || account.accountType || (isHindi ? 'बचत' : 'Savings')}
           </span>
           {account.isZeroBalance && (
             <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
-              <CheckCircle2 className="w-3.5 h-3.5" /> Zero Minimum Balance
+              <CheckCircle2 className="w-3.5 h-3.5" /> {t('accountDetail.zeroBalance', 'Zero Minimum Balance')}
             </span>
           )}
           {account.isOnlineOpening && (
             <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
-              Instant Video KYC
+              ⚡ {t('accountDetail.digitalKyc', 'Instant Video KYC')}
             </span>
           )}
           <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
-            <ShieldCheck className="w-3.5 h-3.5" /> Verified: {sourceInfo.verifiedDateFormatted}
+            <ShieldCheck className="w-3.5 h-3.5" /> {isHindi ? 'सत्यापित' : 'Verified'}: {sourceInfo.verifiedDateFormatted}
           </span>
           {account.accountTypeBadges && account.accountTypeBadges.map((b, i) => (
             <span key={i} className="px-3 py-1 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
@@ -253,7 +255,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
       <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-4">
         <h3 className="text-base font-black text-slate-800 dark:text-white flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
           <UserCheck className="w-5 h-5 text-[#2563EB]" />
-          <span>Eligibility Criteria & Target Segment</span>
+          <span>{isHindi ? 'पात्रता मानदंड और लक्षित वर्ग' : 'Eligibility Criteria & Target Segment'}</span>
         </h3>
         {account.eligibility && (Array.isArray(account.eligibility) ? account.eligibility : [account.eligibility]).length > 0 ? (
           <div className="space-y-2">
@@ -265,7 +267,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
             ))}
           </div>
         ) : (
-          <p className="text-xs text-slate-500 font-medium">Resident Indians and eligible entities per bank policy.</p>
+          <p className="text-xs text-slate-500 font-medium">{isHindi ? 'निवासी भारतीय और बैंक नीति के अनुसार पात्र संस्थाएं।' : 'Resident Indians and eligible entities per bank policy.'}</p>
         )}
       </div>
 
@@ -273,13 +275,13 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
       <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-5">
         <h2 className="text-lg font-black text-[#1F2937] dark:text-white flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
           <Sliders className="w-5 h-5 text-[#2563EB]" />
-          <span>Balance Requirements & Maintenance Rules</span>
+          <span>{isHindi ? 'न्यूनतम शेष आवश्यकताएं और रखरखाव नियम' : 'Balance Requirements & Maintenance Rules'}</span>
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="p-5 rounded-2xl bg-blue-50/50 dark:bg-blue-950/20 border border-blue-200/80 dark:border-blue-900/50 space-y-1">
             <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA] block">
-              Minimum Balance Requirement
+              {t('accountDetail.minimumBalance', 'Minimum Balance Requirement')}
             </span>
             <span className="text-2xl font-black text-[#1F2937] dark:text-white mt-1 block">
               {formattedBalance.display}
@@ -293,7 +295,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
 
           <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 space-y-1">
             <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 block">
-              Non-Maintenance Penalty
+              {t('accountDetail.penalty', 'Non-Maintenance Penalty')}
             </span>
             <span className={`text-2xl font-black block mt-1 ${formattedPenalty.isWaived ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-800 dark:text-white'}`}>
               {formattedPenalty.display}
@@ -309,7 +311,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
         {/* Location-Specific Balance Breakdown if applicable */}
         {formattedBalance.breakdown && (
           <div className="pt-2 space-y-2">
-            <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-400">Branch Location Breakdown:</h4>
+            <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-400">{isHindi ? 'शाखा स्थान अनुसार विवरण:' : 'Branch Location Breakdown:'}</h4>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {formattedBalance.breakdown.map((item, idx) => (
                 <div key={idx} className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
@@ -326,13 +328,13 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
       <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-5">
         <h2 className="text-lg font-black text-[#1F2937] dark:text-white flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
           <Percent className="w-5 h-5 text-[#2563EB]" />
-          <span>Interest Rates & Credit Slabs</span>
+          <span>{isHindi ? 'ब्याज दरें और स्लैब' : 'Interest Rates & Credit Slabs'}</span>
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="p-5 rounded-2xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200/80 dark:border-emerald-900/50 space-y-1">
             <span className="text-[11px] font-extrabold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 block">
-              Max Interest Rate
+              {t('accountDetail.interestRate', 'Max Interest Rate')}
             </span>
             <span className="text-2xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400 mt-1 block">
               {formattedRate.display}
@@ -346,13 +348,13 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
 
           <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 space-y-1">
             <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 block">
-              Calculation & Credit Cycle
+              {isHindi ? 'गणना और क्रेडिट चक्र' : 'Calculation & Credit Cycle'}
             </span>
             <span className="text-base font-black text-slate-800 dark:text-white mt-1 block leading-snug">
-              {account.interest_credit_frequency || "Daily Product Basis • Quarterly Credit"}
+              {account.interest_credit_frequency || (isHindi ? 'दैनिक शेष आधार • त्रैमासिक क्रेडिट' : 'Daily Product Basis • Quarterly Credit')}
             </span>
             <p className="text-xs text-slate-500 font-medium pt-1">
-              Interest calculated on end-of-day balances and credited per RBI regulations.
+              {isHindi ? 'दिन के अंत में शेष राशि पर गणना और आरबीआई नियमों के अनुसार त्रैमासिक क्रेडिट।' : 'Interest calculated on end-of-day balances and credited per RBI regulations.'}
             </p>
           </div>
         </div>
@@ -360,22 +362,24 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
         {/* Detailed Slabs Note */}
         {formattedRate.hasSlabNote && (
           <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-300 space-y-1.5">
-            <div className="font-bold text-slate-800 dark:text-white">Tier Slab Information:</div>
+            <div className="font-bold text-slate-800 dark:text-white">{isHindi ? 'टियर स्लैब जानकारी:' : 'Tier Slab Information:'}</div>
             <p className="leading-relaxed">
-              Standard savings bank interest rate applies to lower balance tiers. Higher interest rates may apply on higher deposit tiers according to official bank rate schedules.
+              {isHindi 
+                ? 'निचले शेष स्तरों पर मानक बचत बैंक ब्याज दर लागू होती है। बैंक दर अनुसूची के अनुसार उच्च जमा स्तरों पर उच्च ब्याज दरें लागू हो सकती हैं।'
+                : 'Standard savings bank interest rate applies to lower balance tiers. Higher interest rates may apply on higher deposit tiers according to official bank rate schedules.'}
             </p>
           </div>
         )}
 
         {formattedRate.slabs && formattedRate.slabs.length > 0 ? (
           <div className="space-y-3 pt-2">
-            <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-400">Official Interest Slabs:</h4>
+            <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-400">{isHindi ? 'आधिकारिक ब्याज स्लैब:' : 'Official Interest Slabs:'}</h4>
             <div className="rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
               <table className="w-full text-left text-xs sm:text-sm">
                 <thead className="bg-slate-50 dark:bg-slate-900 text-[11px] uppercase font-bold text-slate-500">
                   <tr>
-                    <th className="px-4 py-3">Balance Slab</th>
-                    <th className="px-4 py-3 text-right">Rate</th>
+                    <th className="px-4 py-3">{isHindi ? 'शेष राशि स्लैब' : 'Balance Slab'}</th>
+                    <th className="px-4 py-3 text-right">{isHindi ? 'दर' : 'Rate'}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-900/40">
@@ -390,13 +394,13 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
             </div>
             {formattedRate.variantSpecificNote && (
               <p className="text-xs text-slate-500 italic">
-                Variant-specific rate: {formattedRate.variantSpecificNote}
+                {isHindi ? 'वेरिएंट-विशिष्ट दर:' : 'Variant-specific rate:'} {formattedRate.variantSpecificNote}
               </p>
             )}
           </div>
         ) : account.interestSlabs && account.interestSlabs.length > 0 ? (
           <div className="space-y-2 pt-2">
-            <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-400">Official Interest Slabs:</h4>
+            <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-400">{isHindi ? 'आधिकारिक ब्याज स्लैब:' : 'Official Interest Slabs:'}</h4>
             <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 space-y-2 text-xs sm:text-sm">
               {account.interestSlabs.map((slab, i) => (
                 <div key={i} className="flex items-center gap-2 text-slate-700 dark:text-slate-300 font-medium">
@@ -413,35 +417,35 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
       <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-5">
         <h2 className="text-lg font-black text-[#1F2937] dark:text-white flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
           <Building2 className="w-5 h-5 text-[#2563EB]" />
-          <span>Banking Facilities & Services</span>
+          <span>{isHindi ? 'बैंकिंग सुविधाएं और सेवाएं' : 'Banking Facilities & Services'}</span>
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
           <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
-            <span className="text-[10px] font-bold text-slate-400 uppercase block">Cheque Book</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase block">{isHindi ? 'चेक बुक' : 'Cheque Book'}</span>
             <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mt-1 block">
-              {account.cheque_book || account.chequeBook || "Available on request"}
+              {account.cheque_book || account.chequeBook || (isHindi ? 'अनुरोध पर उपलब्ध' : 'Available on request')}
             </span>
           </div>
 
           <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
-            <span className="text-[10px] font-bold text-slate-400 uppercase block">Passbook</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase block">{isHindi ? 'पासबुक' : 'Passbook'}</span>
             <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mt-1 block">
-              Physical & E-Passbook
+              {isHindi ? 'भौतिक और ई-पासबुक' : 'Physical & E-Passbook'}
             </span>
           </div>
 
           <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
-            <span className="text-[10px] font-bold text-slate-400 uppercase block">Net & Mobile Banking</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase block">{isHindi ? 'नेट और मोबाइल बैंकिंग' : 'Net & Mobile Banking'}</span>
             <span className="font-extrabold text-emerald-600 dark:text-emerald-400 text-sm mt-1 block">
-              Available 24x7
+              {isHindi ? '24x7 उपलब्ध' : 'Available 24x7'}
             </span>
           </div>
 
           <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
-            <span className="text-[10px] font-bold text-slate-400 uppercase block">Nomination & SI</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase block">{isHindi ? 'नामांकन और स्थायी निर्देश' : 'Nomination & SI'}</span>
             <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mt-1 block">
-              Available
+              {isHindi ? 'उपलब्ध' : 'Available'}
             </span>
           </div>
         </div>
@@ -451,28 +455,28 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
       <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-5">
         <h2 className="text-lg font-black text-[#1F2937] dark:text-white flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
           <Zap className="w-5 h-5 text-[#2563EB]" />
-          <span>Transaction Limits & Digital Transfer Rules</span>
+          <span>{isHindi ? 'लेनदेन सीमा और डिजिटल ट्रांसफर नियम' : 'Transaction Limits & Digital Transfer Rules'}</span>
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
           <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
-            <span className="text-[10px] font-bold text-slate-400 uppercase block">ATM Withdrawal Limit</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase block">{t('debitCards.dailyAtmLimit', 'ATM Withdrawal Limit')}</span>
             <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mt-1 block">
-              {account.atm_limits || account.atmLimits || "Per issued debit card variant"}
+              {account.atm_limits || account.atmLimits || (isHindi ? 'जारी किए गए डेबिट कार्ड वेरिएंट के अनुसार' : 'Per issued debit card variant')}
             </span>
           </div>
 
           <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
-            <span className="text-[10px] font-bold text-slate-400 uppercase block">UPI & Digital Payments</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase block">{isHindi ? 'यूपीआई और डिजिटल भुगतान' : 'UPI & Digital Payments'}</span>
             <span className="font-extrabold text-emerald-600 dark:text-emerald-400 text-sm mt-1 block">
-              Supported (NPCI Standard)
+              {isHindi ? 'समर्थित (एनपीसीआई मानक)' : 'Supported (NPCI Standard)'}
             </span>
           </div>
 
           <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
             <span className="text-[10px] font-bold text-slate-400 uppercase block">NEFT / RTGS / IMPS</span>
             <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mt-1 block">
-              Free via Internet Banking
+              {isHindi ? 'इंटरनेट बैंकिंग के माध्यम से निःशुल्क' : 'Free via Internet Banking'}
             </span>
           </div>
         </div>
@@ -482,7 +486,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
       <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-4">
         <h3 className="text-base font-black text-slate-800 dark:text-white flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
           <Gift className="w-5 h-5 text-[#2563EB]" />
-          <span>Account Benefits & Key Highlights</span>
+          <span>{isHindi ? 'खाते के प्रमुख लाभ एवं मुख्य विशेषताएं' : 'Account Benefits & Key Highlights'}</span>
         </h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -500,18 +504,18 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-[#2563EB]/20 pb-4">
           <div>
             <span className="inline-flex items-center gap-1.5 px-3 py-0.5 bg-[#2563EB] text-white text-[10px] font-black uppercase tracking-widest rounded-full mb-1">
-              SAME-BANK VERIFIED DEBIT LINK
+              {isHindi ? 'सत्यापित बैंक डेबिट कार्ड लिंकेज' : 'SAME-BANK VERIFIED DEBIT LINK'}
             </span>
             <h2 className="text-xl sm:text-2xl font-black text-[#0B3D91] dark:text-[#60A5FA] flex items-center gap-2">
               <CreditCard className="w-6 h-6 text-[#2563EB]" />
-              <span>Debit Card(s) Available With This Account</span>
+              <span>{isHindi ? 'इस खाते के साथ उपलब्ध डेबिट कार्ड' : 'Debit Card(s) Available With This Account'}</span>
             </h2>
           </div>
 
           <p className="text-xs text-[#2563EB] dark:text-[#60A5FA] font-bold">
             {associatedCards.length > 0
-              ? `${associatedCards.length} verified debit card option(s)`
-              : "Debit card relationship status"}
+              ? (isHindi ? `${associatedCards.length} सत्यापित डेबिट कार्ड विकल्प` : `${associatedCards.length} verified debit card option(s)`)
+              : (isHindi ? 'डेबिट कार्ड संबद्धता स्थिति' : 'Debit card relationship status')}
           </p>
         </div>
 
@@ -520,10 +524,10 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
           <div className="p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-center space-y-3">
             <AlertCircle className="w-12 h-12 text-slate-400 mx-auto" />
             <h3 className="text-lg font-bold text-slate-700 dark:text-slate-200">
-              Linked Debit Card: Not specified on official source
+              {isHindi ? 'संबद्ध डेबिट कार्ड: आधिकारिक स्रोत पर निर्दिष्ट नहीं है' : 'Linked Debit Card: Not specified on official source'}
             </h3>
             <p className="text-xs text-slate-500 max-w-md mx-auto">
-              The official source does not specify a linked debit card variant for this account. No generic debit card has been arbitrarily attached.
+              {isHindi ? 'आधिकारिक स्रोत इस खाते के लिए किसी विशिष्ट डेबिट कार्ड संस्करण का उल्लेख नहीं करता है। कोई भी सामान्य डेबिट कार्ड जबरन नहीं जोड़ा गया है।' : 'The official source does not specify a linked debit card variant for this account. No generic debit card has been arbitrarily attached.'}
             </p>
           </div>
         ) : (
@@ -556,19 +560,20 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
               if (!card) return null;
 
               const relBadge = getRelationshipBadge(card.relationship);
-              const cardName = card.name || card.card_name || card.cardName || "Information not available";
-              const network = card.network || "Information not available";
-              const annualFee = card.annual_fee || card.annualFee || "Information not available";
-              const atmLimit = card.atm_limit || card.cashWithdrawalLimit || "Information not available";
-              const posLimit = card.pos_limit || card.purchaseLimit || "Information not available";
-              const loungeAccess = card.lounge_access || card.loungeAccess || "Information not available";
-              const insurance = card.insurance || "Information not available";
-              const rewards = card.rewards || card.rewardPoints || "Information not available";
+              const notAvailable = isHindi ? 'जानकारी उपलब्ध नहीं' : 'Information not available';
+              const cardName = card.name || card.card_name || card.cardName || notAvailable;
+              const network = card.network || notAvailable;
+              const annualFee = card.annual_fee || card.annualFee || notAvailable;
+              const atmLimit = card.atm_limit || card.cashWithdrawalLimit || notAvailable;
+              const posLimit = card.pos_limit || card.purchaseLimit || notAvailable;
+              const loungeAccess = card.lounge_access || card.loungeAccess || notAvailable;
+              const insurance = card.insurance || notAvailable;
+              const rewards = card.rewards || card.rewardPoints || notAvailable;
               const keyBenefits = card.key_benefits || card.bestFor || card.benefits || [];
               const eligibilityText = card.eligibility 
                 ? (Array.isArray(card.eligibility) ? card.eligibility.join(', ') : card.eligibility)
-                : (card.salary_account ? "Salary Account Required" : "Provided with Savings Account");
-              const verificationInfo = card.verification_info || card.officialWebsite || "Information not available";
+                : (card.salary_account ? (isHindi ? 'वेतन खाता आवश्यक' : 'Salary Account Required') : (isHindi ? 'बचत खाते के साथ प्रदत्त' : 'Provided with Savings Account'));
+              const verificationInfo = card.verification_info || card.officialWebsite || notAvailable;
 
               return (
                 <div className="space-y-6">
@@ -586,7 +591,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
                             {relBadge.label}
                           </span>
                           <span className="px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-bold text-[10px]">
-                            ✓ Verified Card Linkage
+                            {isHindi ? '✓ सत्यापित कार्ड लिंकेज' : '✓ Verified Card Linkage'}
                           </span>
                         </div>
                         <h3 className="text-xl font-black text-slate-800 dark:text-white tracking-tight">
@@ -600,7 +605,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
                         onClick={() => onSelectDebitCard(card)}
                         className="px-5 py-2.5 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-extrabold transition-all flex items-center gap-1.5 shadow-md cursor-pointer active:scale-95"
                       >
-                        <span>View Full Card Profile →</span>
+                        <span>{isHindi ? 'पूरा कार्ड प्रोफाइल देखें →' : 'View Full Card Profile →'}</span>
                         <ChevronRight className="w-4 h-4" />
                       </button>
                     )}
@@ -610,15 +615,15 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
                     {/* 1. Card Name & Variant */}
                     <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase block">Card Name & Variant</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase block">{isHindi ? 'कार्ड का नाम और प्रकार' : 'Card Name & Variant'}</span>
                       <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mt-1 block">
-                        {cardName} ({card.cardVariant || "Standard"})
+                        {cardName} ({card.cardVariant || (isHindi ? 'मानक' : 'Standard')})
                       </span>
                     </div>
 
                     {/* 2. Network */}
                     <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase block">Card Network</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase block">{isHindi ? 'कार्ड नेटवर्क' : 'Card Network'}</span>
                       <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mt-1 block">
                         {network}
                       </span>
@@ -626,7 +631,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
 
                     {/* 3. Annual/Maintenance Fee */}
                     <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase block">Annual / Maintenance Fee</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase block">{isHindi ? 'वार्षिक / रखरखाव शुल्क' : 'Annual / Maintenance Fee'}</span>
                       <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mt-1 block">
                         {annualFee}
                       </span>
@@ -634,7 +639,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
 
                     {/* 4. ATM Limit */}
                     <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase block">ATM Withdrawal Limit</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase block">{isHindi ? 'एटीएम निकासी सीमा' : 'ATM Withdrawal Limit'}</span>
                       <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mt-1 block">
                         {atmLimit}
                       </span>
@@ -642,7 +647,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
 
                     {/* 5. POS Limit */}
                     <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase block">POS / Shopping Limit</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase block">{isHindi ? 'पीओएस / ऑनलाइन खरीदारी सीमा' : 'POS / Shopping Limit'}</span>
                       <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mt-1 block">
                         {posLimit}
                       </span>
@@ -650,7 +655,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
 
                     {/* 6. Lounge Access */}
                     <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase block">Airport Lounge Access</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase block">{isHindi ? 'एयरपोर्ट लाउंज एक्सेस' : 'Airport Lounge Access'}</span>
                       <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mt-1 block">
                         {loungeAccess}
                       </span>
@@ -659,7 +664,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
                     {/* 7. Insurance */}
                     <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
                       <span className="text-[10px] font-bold text-slate-400 uppercase block flex items-center gap-1">
-                        <Shield className="w-3 h-3 text-emerald-500" /> Insurance Protection
+                        <Shield className="w-3 h-3 text-emerald-500" /> {isHindi ? 'बीमा सुरक्षा' : 'Insurance Protection'}
                       </span>
                       <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mt-1 block">
                         {insurance}
@@ -669,7 +674,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
                     {/* 8. Rewards */}
                     <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
                       <span className="text-[10px] font-bold text-slate-400 uppercase block flex items-center gap-1">
-                        <Award className="w-3 h-3 text-amber-500" /> Rewards & Points
+                        <Award className="w-3 h-3 text-amber-500" /> {isHindi ? 'रिवॉर्ड्स और पॉइंट्स' : 'Rewards & Points'}
                       </span>
                       <span className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mt-1 block">
                         {rewards}
@@ -678,7 +683,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
 
                     {/* 9. Eligibility / Account Relationship */}
                     <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase block">Eligibility & Relationship</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase block">{isHindi ? 'पात्रता एवं खाता संबंध' : 'Eligibility & Relationship'}</span>
                       <span className="font-extrabold text-[#2563EB] dark:text-[#60A5FA] text-sm mt-1 block">
                         {eligibilityText}
                       </span>
@@ -689,7 +694,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
                   <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3">
                     <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA] flex items-center gap-1.5">
                       <Gift className="w-4 h-4 text-[#2563EB]" />
-                      <span>Card Key Benefits & Best For</span>
+                      <span>{isHindi ? 'कार्ड के प्रमुख लाभ' : 'Card Key Benefits & Best For'}</span>
                     </h4>
                     {keyBenefits && (Array.isArray(keyBenefits) ? keyBenefits : [keyBenefits]).length > 0 ? (
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
@@ -701,7 +706,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
                         ))}
                       </div>
                     ) : (
-                      <p className="text-xs text-slate-500 font-medium">Information not available</p>
+                      <p className="text-xs text-slate-500 font-medium">{notAvailable}</p>
                     )}
                   </div>
 
@@ -709,7 +714,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
                   <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
                     <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
                       <Globe className="w-4 h-4 text-[#2563EB]" />
-                      <span className="font-medium">Card Verification Status:</span>
+                      <span className="font-medium">{isHindi ? 'कार्ड सत्यापन स्थिति:' : 'Card Verification Status:'}</span>
                       <span className="font-bold text-slate-700 dark:text-slate-200">{verificationInfo}</span>
                     </div>
                   </div>
@@ -724,13 +729,13 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
       <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-5">
         <h2 className="text-lg font-black text-[#1F2937] dark:text-white flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
           <FileText className="w-5 h-5 text-[#2563EB]" />
-          <span>Fees, Penalties & Standard Service Charges</span>
+          <span>{isHindi ? 'शुल्क, जुर्माना और मानक सेवा प्रभार' : 'Fees, Penalties & Standard Service Charges'}</span>
         </h2>
 
         <div className="space-y-4 text-xs sm:text-sm">
           <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 space-y-1.5">
             <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 block">
-              Non-Maintenance Penalty Details
+              {isHindi ? 'न्यूनतम शेष न रखने पर जुर्माना विवरण' : 'Non-Maintenance Penalty Details'}
             </span>
             <p className="font-semibold text-slate-800 dark:text-slate-200 leading-relaxed">
               {formattedPenalty.fullText}
@@ -739,16 +744,16 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
             <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
-              <span className="text-[10px] font-bold text-slate-400 uppercase block">Cheque Book Charges</span>
+              <span className="text-[10px] font-bold text-slate-400 uppercase block">{isHindi ? 'चेक बुक शुल्क' : 'Cheque Book Charges'}</span>
               <span className="font-bold text-slate-700 dark:text-slate-300 mt-1 block">
-                Standard issued leaves free; subsequent at bank schedule.
+                {isHindi ? 'प्रारंभिक चेक पन्ने निःशुल्क; बाद के बैंक अनुसूची अनुसार।' : 'Standard issued leaves free; subsequent at bank schedule.'}
               </span>
             </div>
 
             <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
-              <span className="text-[10px] font-bold text-slate-400 uppercase block">SMS Alert Charges</span>
+              <span className="text-[10px] font-bold text-slate-400 uppercase block">{isHindi ? 'एसएमएस अलर्ट शुल्क' : 'SMS Alert Charges'}</span>
               <span className="font-bold text-slate-700 dark:text-slate-300 mt-1 block">
-                Nominal quarterly SMS charges as per RBI guidelines.
+                {isHindi ? 'आरबीआई दिशानिर्देशों के अनुसार मामूली त्रैमासिक एसएमएस शुल्क।' : 'Nominal quarterly SMS charges as per RBI guidelines.'}
               </span>
             </div>
           </div>
@@ -761,17 +766,17 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-5 h-5 text-emerald-500" />
             <h2 className="text-lg font-black text-slate-800 dark:text-white">
-              Official Source & Verification Audit
+              {isHindi ? 'आधिकारिक स्रोत एवं सत्यापन ऑडिट' : 'Official Source & Verification Audit'}
             </h2>
           </div>
           <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-extrabold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-            ✓ Verified Information
+            {isHindi ? '✓ सत्यापित जानकारी' : '✓ Verified Information'}
           </span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
           <div className="p-4 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
-            <span className="text-[10px] font-bold text-slate-400 uppercase block">Official Bank Source</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase block">{isHindi ? 'आधिकारिक बैंक स्रोत' : 'Official Bank Source'}</span>
             <span className="font-bold text-slate-800 dark:text-white text-sm mt-1 block truncate">
               {sourceInfo.sourceName}
             </span>
@@ -782,26 +787,26 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
                 rel="noopener noreferrer"
                 className="text-[#2563EB] dark:text-[#60A5FA] font-extrabold hover:underline inline-flex items-center gap-1 mt-1 text-xs"
               >
-                <span>Visit Official Bank Page</span>
+                <span>{isHindi ? 'आधिकारिक बैंक पेज देखें' : 'Visit Official Bank Page'}</span>
                 <ExternalLink className="w-3 h-3" />
               </a>
             )}
           </div>
 
           <div className="p-4 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
-            <span className="text-[10px] font-bold text-slate-400 uppercase block">Last Verified Date</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase block">{isHindi ? 'अंतिम सत्यापन तिथि' : 'Last Verified Date'}</span>
             <span className="font-bold text-slate-800 dark:text-white text-sm mt-1 block">
               {sourceInfo.verifiedDateFormatted}
             </span>
             {sourceInfo.effectiveDateFormatted && (
               <span className="text-[10px] text-slate-500 block mt-0.5">
-                Effective: {sourceInfo.effectiveDateFormatted}
+                {isHindi ? `प्रभावी: ${sourceInfo.effectiveDateFormatted}` : `Effective: ${sourceInfo.effectiveDateFormatted}`}
               </span>
             )}
           </div>
 
           <div className="p-4 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
-            <span className="text-[10px] font-bold text-slate-400 uppercase block">Audit & Reference Status</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase block">{isHindi ? 'ऑडिट और संदर्भ स्थिति' : 'Audit & Reference Status'}</span>
             <span className="font-bold text-emerald-600 dark:text-emerald-400 text-sm mt-1 block">
               {sourceInfo.statusNote}
             </span>

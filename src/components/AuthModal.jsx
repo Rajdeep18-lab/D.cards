@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useScrollLock } from '../hooks/useScrollLock';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
   const { 
@@ -23,6 +24,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
     forgotPassword,
     redirectTarget
   } = useAuth();
+  const { t } = useLanguage();
 
   const [activeTab, setActiveTab] = useState('login'); // 'login' | 'signup' | 'forgot'
 
@@ -158,7 +160,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
   const handleSignInSubmit = async (e) => {
     e.preventDefault();
     if (!signInEmail || !signInPassword) {
-      setErrorMsg('Please enter both your email address and password.');
+      setErrorMsg(t('auth.errFillFields', 'Please enter both your email address and password.'));
       return;
     }
 
@@ -173,13 +175,13 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
         localStorage.removeItem('dcard_remember_email');
       }
 
-      setSuccessMsg('Signed in successfully!');
+      setSuccessMsg(t('auth.loginSuccess', 'Signed in successfully!'));
       setTimeout(() => {
         onClose();
         if (onSuccessAction) onSuccessAction();
       }, 300);
     } catch (err) {
-      setErrorMsg(err.message || 'Invalid credentials. Please check your details and try again.');
+      setErrorMsg(err.message || t('auth.errInvalidCreds', 'Invalid credentials. Please check your details and try again.'));
     } finally {
       setLoading(false);
     }
@@ -188,19 +190,19 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
   const handleSignUpSubmit = async (e) => {
     e.preventDefault();
     if (!signUpName.trim()) {
-      setErrorMsg('Please enter your full name.');
+      setErrorMsg(t('auth.errFullName', 'Please enter your full name.'));
       return;
     }
     if (!signUpEmail.trim() || !signUpEmail.includes('@')) {
-      setErrorMsg('Please enter a valid email address.');
+      setErrorMsg(t('auth.errValidEmail', 'Please enter a valid email address.'));
       return;
     }
     if (signUpPassword.length < 6) {
-      setErrorMsg('Password must be at least 6 characters long.');
+      setErrorMsg(t('auth.errPasswordLen', 'Password must be at least 6 characters long.'));
       return;
     }
     if (signUpPassword !== signUpConfirmPassword) {
-      setErrorMsg('Passwords do not match. Please re-enter.');
+      setErrorMsg(t('auth.errPasswordMatch', 'Passwords do not match. Please re-enter.'));
       return;
     }
 
@@ -214,13 +216,13 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
         password: signUpPassword
       });
 
-      setSuccessMsg('Account created successfully!');
+      setSuccessMsg(t('auth.signupSuccess', 'Account created successfully!'));
       setTimeout(() => {
         onClose();
         if (onSuccessAction) onSuccessAction();
       }, 300);
     } catch (err) {
-      setErrorMsg(err.message || 'Unable to create account. Please try again.');
+      setErrorMsg(err.message || t('auth.errSignupFailed', 'Unable to create account. Please try again.'));
     } finally {
       setLoading(false);
     }
@@ -229,7 +231,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
   const handleForgotSubmit = async (e) => {
     e.preventDefault();
     if (!forgotEmail.trim() || !forgotEmail.includes('@')) {
-      setErrorMsg('Please enter a valid registered email address.');
+      setErrorMsg(t('auth.errResetEmail', 'Please enter a valid registered email address.'));
       return;
     }
 
@@ -240,7 +242,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
       await forgotPassword(forgotEmail.trim());
       setForgotSent(true);
     } catch (err) {
-      setErrorMsg(err.message || 'Failed to send reset link. Please check your email.');
+      setErrorMsg(err.message || t('auth.errFailedReset', 'Failed to send reset link. Please check your email.'));
     } finally {
       setLoading(false);
     }
@@ -277,7 +279,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
         <button
           onClick={onClose}
           type="button"
-          aria-label="Close modal"
+          aria-label={t('common.cancel', 'Close modal')}
           className="absolute right-4 top-4 sm:right-5 sm:top-5 w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white flex items-center justify-center transition-all cursor-pointer z-10"
         >
           <X className="w-4 h-4" />
@@ -292,7 +294,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
             D.<span className="text-[#2563EB]">CARD</span>
           </h2>
           <p className="text-[9.5px] sm:text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-1">
-            Compare. Choose. Benefit.
+            {t('nav.tagline', 'COMPARE. CHOOSE. BENEFIT.')}
           </p>
         </div>
 
@@ -311,7 +313,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
-              Sign In
+              {t('auth.signIn', 'Sign In')}
             </button>
             <button
               type="button"
@@ -325,7 +327,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
-              Create Account
+              {t('auth.createAccount', 'Create Account')}
             </button>
           </div>
         )}
@@ -363,7 +365,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
                 htmlFor="modal-signin-email" 
                 className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5"
               >
-                Email Address
+                {t('auth.email', 'Email Address')}
               </label>
               <div className="relative">
                 <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -385,7 +387,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
                 htmlFor="modal-signin-password" 
                 className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5"
               >
-                Password
+                {t('auth.password', 'Password')}
               </label>
               <div className="relative">
                 <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -418,7 +420,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
                   onChange={(e) => setSignInRemember(e.target.checked)}
                   className="w-3.5 h-3.5 rounded border-slate-300 text-[#2563EB] focus:ring-[#2563EB] cursor-pointer"
                 />
-                <span>Remember Me</span>
+                <span>{t('auth.rememberMe', 'Remember Me')}</span>
               </label>
               <button
                 type="button"
@@ -429,7 +431,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
                 }}
                 className="font-bold text-[#2563EB] dark:text-[#60A5FA] hover:underline cursor-pointer"
               >
-                Forgot Password?
+                {t('auth.forgotPassword', 'Forgot password?')}
               </button>
             </div>
 
@@ -442,11 +444,11 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
               {loading ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  <span>Signing In...</span>
+                  <span>{t('auth.signingIn', 'Signing In...')}</span>
                 </>
               ) : (
                 <>
-                  <span>Sign In</span>
+                  <span>{t('auth.signIn', 'Sign In')}</span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
@@ -454,7 +456,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
 
             {/* Bottom Switcher */}
             <div className="pt-3 border-t border-slate-100 dark:border-slate-800 text-center text-xs text-slate-600 dark:text-slate-400">
-              Don't have an account?{' '}
+              {t('auth.dontHaveAccount', "Don't have an account?")}{' '}
               <button
                 type="button"
                 onClick={() => {
@@ -463,7 +465,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
                 }}
                 className="font-bold text-[#2563EB] dark:text-[#60A5FA] hover:underline cursor-pointer"
               >
-                Create an account
+                {t('auth.createAnAccount', 'Create an account')}
               </button>
             </div>
           </form>
@@ -478,7 +480,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
                 htmlFor="modal-signup-name" 
                 className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1"
               >
-                Name
+                {t('auth.name', 'Name')}
               </label>
               <div className="relative">
                 <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -488,7 +490,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
                   required
                   value={signUpName}
                   onChange={(e) => setSignUpName(e.target.value)}
-                  placeholder="Your Full Name"
+                  placeholder={t('auth.namePlaceholder', 'Your Full Name')}
                   className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 pl-10 pr-4 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 outline-none focus:border-[#2563EB] focus:ring-3 focus:ring-[#2563EB]/15 transition-all"
                 />
               </div>
@@ -500,7 +502,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
                 htmlFor="modal-signup-email" 
                 className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1"
               >
-                Email Address
+                {t('auth.email', 'Email Address')}
               </label>
               <div className="relative">
                 <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -522,7 +524,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
                 htmlFor="modal-signup-password" 
                 className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1"
               >
-                Password
+                {t('auth.password', 'Password')}
               </label>
               <div className="relative">
                 <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -532,7 +534,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
                   required
                   value={signUpPassword}
                   onChange={(e) => setSignUpPassword(e.target.value)}
-                  placeholder="At least 6 characters"
+                  placeholder={t('auth.min6Chars', 'At least 6 characters')}
                   className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 pl-10 pr-10 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 outline-none focus:border-[#2563EB] focus:ring-3 focus:ring-[#2563EB]/15 transition-all"
                 />
                 <button
@@ -552,7 +554,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
                 htmlFor="modal-signup-confirm" 
                 className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1"
               >
-                Confirm Password
+                {t('auth.confirmPassword', 'Confirm Password')}
               </label>
               <div className="relative">
                 <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -562,7 +564,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
                   required
                   value={signUpConfirmPassword}
                   onChange={(e) => setSignUpConfirmPassword(e.target.value)}
-                  placeholder="Repeat your password"
+                  placeholder={t('auth.repeatPassword', 'Repeat your password')}
                   className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 pl-10 pr-10 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 outline-none focus:border-[#2563EB] focus:ring-3 focus:ring-[#2563EB]/15 transition-all"
                 />
                 <button
@@ -585,11 +587,11 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
               {loading ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  <span>Creating Account...</span>
+                  <span>{t('auth.creatingAccount', 'Creating Account...')}</span>
                 </>
               ) : (
                 <>
-                  <span>Create Account</span>
+                  <span>{t('auth.createAccount', 'Create Account')}</span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
@@ -597,7 +599,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
 
             {/* Bottom Switcher */}
             <div className="pt-3 border-t border-slate-100 dark:border-slate-800 text-center text-xs text-slate-600 dark:text-slate-400">
-              Already have an account?{' '}
+              {t('auth.alreadyHaveAccount', 'Already have an account?')}{' '}
               <button
                 type="button"
                 onClick={() => {
@@ -606,7 +608,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
                 }}
                 className="font-bold text-[#2563EB] dark:text-[#60A5FA] hover:underline cursor-pointer"
               >
-                Sign In
+                {t('auth.signIn', 'Sign In')}
               </button>
             </div>
           </form>
@@ -625,15 +627,15 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
               className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-[#2563EB] transition-colors cursor-pointer mb-1"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Back to Sign In</span>
+              <span>{t('auth.backToLogin', 'Back to Sign In')}</span>
             </button>
 
             <div>
               <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
-                Reset Password
+                {t('auth.forgotPasswordTitle', 'Reset Password')}
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                Enter your registered email address and we'll send a link to reset your password.
+                {t('auth.forgotPasswordSubtitle', "Enter your registered email address and we'll send a link to reset your password.")}
               </p>
             </div>
 
@@ -641,17 +643,17 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
               <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/60 text-center space-y-2">
                 <CheckCircle2 className="w-8 h-8 text-emerald-500 mx-auto" />
                 <p className="text-xs font-bold text-emerald-700 dark:text-emerald-300">
-                  Password reset link sent!
+                  {t('auth.resetSentTitle', 'Password reset link sent!')}
                 </p>
                 <p className="text-[11px] text-slate-600 dark:text-slate-400">
-                  Please check your inbox at <span className="font-semibold">{forgotEmail}</span> to complete the reset.
+                  {t('auth.resetSentDesc', 'Please check your inbox at {{email}} to complete the reset.', { email: forgotEmail })}
                 </p>
                 <button
                   type="button"
                   onClick={() => setActiveTab('login')}
                   className="mt-2 text-xs font-bold text-[#2563EB] dark:text-[#60A5FA] underline cursor-pointer"
                 >
-                  Return to Sign In
+                  {t('auth.returnToSignIn', 'Return to Sign In')}
                 </button>
               </div>
             ) : (
@@ -661,7 +663,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
                     htmlFor="modal-forgot-email" 
                     className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5"
                   >
-                    Email Address
+                    {t('auth.email', 'Email Address')}
                   </label>
                   <div className="relative">
                     <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -685,11 +687,11 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
                   {loading ? (
                     <>
                       <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      <span>Sending Link...</span>
+                      <span>{t('auth.sendingLink', 'Sending Link...')}</span>
                     </>
                   ) : (
                     <>
-                      <span>Send Reset Link</span>
+                      <span>{t('auth.sendResetLink', 'Send Reset Link')}</span>
                       <ArrowRight className="w-4 h-4" />
                     </>
                   )}

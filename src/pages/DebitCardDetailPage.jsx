@@ -42,6 +42,7 @@ import { useSEO } from '../hooks/useSEO';
 import { referralService } from '../services/referralService';
 import DebitCardVisual from '../components/DebitCardVisual';
 import BankLogo from '../components/BankLogo';
+import { useLanguage } from '../context/LanguageContext';
 
 /* ─── constants ─────────────────────────────────────────────────────────────── */
 
@@ -251,12 +252,23 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
   const navigate = useNavigate();
   const { toggleWishlist, isWishlisted } = useWishlist();
   const { user, openAuthModal } = useAuth();
+  const { t, isHindi } = useLanguage();
 
   const [activeTab, setActiveTab]         = useState('overview');
   const [shareCopied, setShareCopied]     = useState(false);
   const [showAllCharges, setShowAllCharges] = useState(false);
   const [showAllLimits, setShowAllLimits] = useState(false);
   const [mounted, setMounted]             = useState(false);
+
+  const tabs = useMemo(() => [
+    { id: 'overview',     label: t('cardDetail.overview', 'Overview') },
+    { id: 'benefits',     label: t('cardDetail.benefits', 'Benefits') },
+    { id: 'charges',      label: t('cardDetail.charges', 'Charges') },
+    { id: 'limits',       label: t('cardDetail.limits', 'Limits') },
+    { id: 'eligibility',  label: t('cardDetail.eligibility', 'Eligibility') },
+    { id: 'accounts',     label: t('cardDetail.relatedAccounts', 'Related Accounts') },
+    { id: 'bank',         label: t('cardDetail.bankInfo', 'Bank Info') },
+  ], [t]);
 
   const tabsRef      = useRef(null);
   const sectionRefs  = useRef({});
@@ -445,9 +457,11 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
             <AlertCircle className="w-10 h-10 text-amber-400" />
           </div>
           <div className="space-y-2">
-            <h2 className="text-xl font-black text-white">Debit Card Not Found</h2>
+            <h2 className="text-xl font-black text-white">{isHindi ? 'डेबिट कार्ड नहीं मिला' : 'Debit Card Not Found'}</h2>
             <p className="text-sm text-slate-400 leading-relaxed">
-              The requested debit card could not be found in our database, or the URL may be incorrect.
+              {isHindi 
+                ? 'अनुरोधित डेबिट कार्ड हमारे डेटाबेस में नहीं मिला, या URL गलत हो सकता है।'
+                : 'The requested debit card could not be found in our database, or the URL may be incorrect.'}
             </p>
           </div>
           <button
@@ -455,7 +469,7 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-600 text-white text-sm font-bold hover:bg-blue-500 transition-all active:scale-95 shadow-lg shadow-blue-500/25"
           >
             <ArrowLeft className="w-4 h-4" />
-            Back to Debit Cards
+            {t('cardDetail.backToCards', 'Back to Debit Cards')}
           </button>
         </motion.div>
       </main>
@@ -464,14 +478,14 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
 
   /* ─── Feature badge list (left panel) ──────────────────────────────────────── */
   const featureBadges = [];
-  if (categoryBadge)               featureBadges.push({ icon: <Layers className="w-3.5 h-3.5" />,   label: `${categoryBadge} Card`   });
-  if (international)               featureBadges.push({ icon: <Globe className="w-3.5 h-3.5" />,    label: 'International Usage'     });
-  if (contactless)                 featureBadges.push({ icon: <Wifi className="w-3.5 h-3.5" />,     label: 'Contactless'             });
-  if (isAvailable(loungeAccess))   featureBadges.push({ icon: <Plane className="w-3.5 h-3.5" />,   label: 'Lounge Access'           });
-  if (isAvailable(fuelWaiver))     featureBadges.push({ icon: <Fuel className="w-3.5 h-3.5" />,    label: 'Fuel Waiver'             });
-  if (isAvailable(rewardPoints))   featureBadges.push({ icon: <Star className="w-3.5 h-3.5" />,    label: 'Reward Points'           });
-  if (isAvailable(cashback))       featureBadges.push({ icon: <Gift className="w-3.5 h-3.5" />,    label: 'Cashback'                });
-  if (isAvailable(insurance))      featureBadges.push({ icon: <ShieldCheck className="w-3.5 h-3.5" />, label: 'Insurance Cover'     });
+  if (categoryBadge)               featureBadges.push({ icon: <Layers className="w-3.5 h-3.5" />,   label: isHindi ? `${categoryBadge} कार्ड` : `${categoryBadge} Card`   });
+  if (international)               featureBadges.push({ icon: <Globe className="w-3.5 h-3.5" />,    label: t('cardDetail.internationalUsage', 'International Usage')     });
+  if (contactless)                 featureBadges.push({ icon: <Wifi className="w-3.5 h-3.5" />,     label: t('cardDetail.contactless', 'Contactless')             });
+  if (isAvailable(loungeAccess))   featureBadges.push({ icon: <Plane className="w-3.5 h-3.5" />,   label: t('cardDetail.loungeAccess', 'Lounge Access')           });
+  if (isAvailable(fuelWaiver))     featureBadges.push({ icon: <Fuel className="w-3.5 h-3.5" />,    label: isHindi ? 'ईंधन अधिभार छूट' : 'Fuel Waiver'             });
+  if (isAvailable(rewardPoints))   featureBadges.push({ icon: <Star className="w-3.5 h-3.5" />,    label: isHindi ? 'रिवॉर्ड पॉइंट्स' : 'Reward Points'           });
+  if (isAvailable(cashback))       featureBadges.push({ icon: <Gift className="w-3.5 h-3.5" />,    label: isHindi ? 'कैशबैक' : 'Cashback'                });
+  if (isAvailable(insurance))      featureBadges.push({ icon: <ShieldCheck className="w-3.5 h-3.5" />, label: isHindi ? 'बीमा कवर' : 'Insurance Cover'     });
 
   /* ─── Main render ─────────────────────────────────────────────────────────── */
   return (
@@ -504,7 +518,7 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
                 </span>
                 <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[9px] font-black tracking-wide shrink-0">
                   <CheckCircle2 className="w-2.5 h-2.5" aria-hidden />
-                  VERIFIED OFFICIAL DATA
+                  {isHindi ? 'सत्यापित आधिकारिक डेटा' : 'VERIFIED OFFICIAL DATA'}
                 </span>
               </div>
               {/* Card name + category badge */}
@@ -536,7 +550,7 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
               className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-black transition-all shadow-lg hover:shadow-blue-500/30 active:scale-95"
               aria-label={`Apply for ${cardName}`}
             >
-              Apply Now <ExternalLink className="w-3 h-3" aria-hidden />
+              {t('cardDetail.applyNow', 'Apply Now')} <ExternalLink className="w-3 h-3" aria-hidden />
             </a>
 
             <button
@@ -549,7 +563,7 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
               }`}
             >
               <Heart className={`w-3.5 h-3.5 ${isWishlisted_ ? 'fill-rose-400' : ''}`} aria-hidden />
-              <span className="hidden sm:inline">{isWishlisted_ ? 'Saved' : 'Save'}</span>
+              <span className="hidden sm:inline">{isWishlisted_ ? t('cardDetail.saved', 'Saved') : t('cardDetail.saveCard', 'Save')}</span>
             </button>
 
             <button
@@ -562,7 +576,7 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
               }`}
             >
               <Scale className="w-3.5 h-3.5" aria-hidden />
-              <span className="hidden sm:inline">{isInCompare ? 'In Compare' : 'Compare'}</span>
+              <span className="hidden sm:inline">{isInCompare ? t('cardDetail.inCompare', 'In Compare') : t('cardDetail.addToCompare', 'Compare')}</span>
             </button>
 
             <button
@@ -576,7 +590,7 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
                   : <motion.span key="share"  initial={{ scale: 0.7 }} animate={{ scale: 1 }}><Share2 className="w-3.5 h-3.5" /></motion.span>
                 }
               </AnimatePresence>
-              <span className="hidden sm:inline">{shareCopied ? 'Copied!' : 'Share'}</span>
+              <span className="hidden sm:inline">{shareCopied ? t('cardDetail.shareCopied', 'Copied!') : t('cardDetail.share', 'Share')}</span>
             </button>
           </div>
         </div>
@@ -585,8 +599,9 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
       {/* ═══ DISCLAIMER BANNER ════════════════════════════════════════════════ */}
       <div className="bg-amber-500/5 border-b border-amber-500/10 px-4 py-2">
         <p className="max-w-[1440px] mx-auto text-[10px] text-amber-400/80 text-center font-medium">
-          D.CARD is an independent information platform. We do not process bank applications.
-          Clicking &ldquo;Apply Now&rdquo; takes you to the official bank website.
+          {isHindi 
+            ? 'D.CARD एक स्वतंत्र सूचना मंच है। हम बैंक आवेदनों को संसाधित नहीं करते हैं। "अभी आवेदन करें" पर क्लिक करने पर आप आधिकारिक बैंक वेबसाइट पर पहुंच जाएंगे।'
+            : 'D.CARD is an independent information platform. We do not process bank applications. Clicking "Apply Now" takes you to the official bank website.'}
         </p>
       </div>
 
@@ -609,7 +624,7 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
                 <DebitCardVisual mode="details" card={card} finish="classic" />
               </div>
               <p className="text-[9px] text-slate-600 font-bold uppercase tracking-wider text-center">
-                Illustrative card mockup — not an actual card image
+                {isHindi ? 'चित्रात्मक कार्ड मॉकअप — वास्तविक कार्ड छवि नहीं' : 'Illustrative card mockup — not an actual card image'}
               </p>
             </motion.div>
 
@@ -641,19 +656,19 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
               className="rounded-2xl bg-white/[0.025] border border-blue-900/25 p-5 space-y-4 shadow-lg shadow-black/10"
             >
               <div className="flex items-center justify-between">
-                <h2 className="text-xs font-black text-slate-300 uppercase tracking-widest">Quick Overview</h2>
+                <h2 className="text-xs font-black text-slate-300 uppercase tracking-widest">{isHindi ? 'त्वरित अवलोकन' : 'Quick Overview'}</h2>
                 <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[9px] font-black">
-                  <Check className="w-2.5 h-2.5" aria-hidden /> Verified
+                  <Check className="w-2.5 h-2.5" aria-hidden /> {isHindi ? 'सत्यापित' : 'Verified'}
                 </span>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 {[
-                  { icon: <Banknote className="w-3.5 h-3.5" />,  label: 'Annual Fee',   value: annualFee  },
-                  { icon: <Gift className="w-3.5 h-3.5" />,      label: 'Joining Fee',  value: joiningFee },
-                  { icon: <CreditCard className="w-3.5 h-3.5" />,label: 'Card Type',    value: safeStr(card?.cardVariant || card?.category) },
-                  { icon: <Globe className="w-3.5 h-3.5" />,     label: 'Network',      value: network    },
-                  { icon: <Wallet className="w-3.5 h-3.5" />,    label: 'ATM Limit',    value: atmLimit   },
-                  { icon: <BarChart3 className="w-3.5 h-3.5" />, label: 'POS Limit',    value: posLimit   },
+                  { icon: <Banknote className="w-3.5 h-3.5" />,  label: t('cardDetail.annualFee', 'Annual Fee'),   value: annualFee  },
+                  { icon: <Gift className="w-3.5 h-3.5" />,      label: t('cardDetail.joiningFee', 'Joining Fee'),  value: joiningFee },
+                  { icon: <CreditCard className="w-3.5 h-3.5" />,label: t('cardDetail.cardCategory', 'Card Type'),    value: safeStr(card?.cardVariant || card?.category) },
+                  { icon: <Globe className="w-3.5 h-3.5" />,     label: t('cardDetail.cardNetwork', 'Network'),      value: network    },
+                  { icon: <Wallet className="w-3.5 h-3.5" />,    label: t('cardDetail.dailyAtmLimit', 'ATM Limit'),    value: atmLimit   },
+                  { icon: <BarChart3 className="w-3.5 h-3.5" />, label: t('cardDetail.dailyPosLimit', 'POS Limit'),    value: posLimit   },
                 ].map((item, i) => (
                   <div key={i} className="space-y-0.5">
                     <div className="flex items-center gap-1.5 text-slate-500">
@@ -678,26 +693,26 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
                   <ShieldCheck className="w-5 h-5 text-emerald-400" aria-hidden />
                 </div>
                 <div className="space-y-0.5">
-                  <h3 className="text-xs font-black text-emerald-400">Verified Data</h3>
+                  <h3 className="text-xs font-black text-emerald-400">{isHindi ? 'सत्यापित डेटा' : 'Verified Data'}</h3>
                   <p className="text-[10px] text-slate-400 leading-snug">
                     {verificationInfo !== NA
                       ? verificationInfo
-                      : 'Information sourced from official bank website and regulatory documentation.'}
+                      : (isHindi ? 'आधिकारिक बैंक वेबसाइट और विनियामक दस्तावेजों से प्राप्त जानकारी।' : 'Information sourced from official bank website and regulatory documentation.')}
                   </p>
                 </div>
               </div>
               <div className="border-t border-emerald-500/10 pt-3 space-y-1.5 text-[10px]">
                 <div className="flex justify-between">
-                  <span className="text-slate-500 font-semibold">Status</span>
+                  <span className="text-slate-500 font-semibold">{isHindi ? 'स्थिति' : 'Status'}</span>
                   <span className="text-emerald-400 font-bold">{verificationStatus}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500 font-semibold">Last verified</span>
+                  <span className="text-slate-500 font-semibold">{isHindi ? 'अंतिम सत्यापन' : 'Last verified'}</span>
                   <span className="text-slate-300 font-bold">{lastVerified}</span>
                 </div>
                 {officialWebsite !== NA && (
                   <div className="flex justify-between items-center">
-                    <span className="text-slate-500 font-semibold">Source</span>
+                    <span className="text-slate-500 font-semibold">{isHindi ? 'स्रोत' : 'Source'}</span>
                     <a
                       href={officialWebsite}
                       target="_blank"
@@ -705,7 +720,7 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
                       className="text-blue-400 font-bold flex items-center gap-0.5 hover:text-blue-300 transition-colors"
                       aria-label="Official bank source"
                     >
-                      Official Site <ExternalLink className="w-2.5 h-2.5" aria-hidden />
+                      {isHindi ? 'आधिकारिक पोर्टल' : 'Official Site'} <ExternalLink className="w-2.5 h-2.5" aria-hidden />
                     </a>
                   </div>
                 )}
@@ -723,7 +738,7 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
               className="sticky top-[88px] z-30 bg-[#04020c]/96 backdrop-blur-xl rounded-t-2xl border border-b-0 border-blue-900/20 overflow-hidden"
             >
               <div className="flex overflow-x-auto scrollbar-hide" role="tablist" aria-label="Product details tabs">
-                {TABS.map(tab => (
+                {tabs.map(tab => (
                   <button
                     key={tab.id}
                     role="tab"
@@ -800,15 +815,15 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
 
                 {/* Key Specs Grid */}
                 <div className="space-y-2.5">
-                  <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Key Specifications</h4>
+                  <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{isHindi ? 'मुख्य विनिर्देश' : 'Key Specifications'}</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {[
-                      { label: 'Annual Fee',    value: annualFee,  icon: <Banknote className="w-3.5 h-3.5" />   },
-                      { label: 'Joining Fee',   value: joiningFee, icon: <Gift className="w-3.5 h-3.5" />       },
-                      { label: 'Card Network',  value: network,    icon: <Globe className="w-3.5 h-3.5" />      },
-                      { label: 'Card Variant',  value: safeStr(card?.cardVariant || card?.category), icon: <CreditCard className="w-3.5 h-3.5" /> },
-                      { label: 'ATM Limit',     value: atmLimit,   icon: <Wallet className="w-3.5 h-3.5" />     },
-                      { label: 'POS Limit',     value: posLimit,   icon: <BarChart3 className="w-3.5 h-3.5" />  },
+                      { label: t('cardDetail.annualFee', 'Annual Fee'),    value: annualFee,  icon: <Banknote className="w-3.5 h-3.5" />   },
+                      { label: t('cardDetail.joiningFee', 'Joining Fee'),   value: joiningFee, icon: <Gift className="w-3.5 h-3.5" />       },
+                      { label: t('cardDetail.cardNetwork', 'Card Network'),  value: network,    icon: <Globe className="w-3.5 h-3.5" />      },
+                      { label: t('cardDetail.cardCategory', 'Card Variant'),  value: safeStr(card?.cardVariant || card?.category), icon: <CreditCard className="w-3.5 h-3.5" /> },
+                      { label: t('cardDetail.dailyAtmLimit', 'ATM Limit'),     value: atmLimit,   icon: <Wallet className="w-3.5 h-3.5" />     },
+                      { label: t('cardDetail.dailyPosLimit', 'POS Limit'),     value: posLimit,   icon: <BarChart3 className="w-3.5 h-3.5" />  },
                     ].map((item, i) => (
                       <div key={i} className="flex items-center gap-3 p-3.5 rounded-xl bg-white/[0.03] border border-blue-900/15 hover:border-blue-700/25 transition-colors">
                         <span style={{ color: `${accentColor}90` }} className="shrink-0" aria-hidden>{item.icon}</span>
@@ -827,7 +842,7 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
                     {pros.length > 0 && (
                       <div className="p-4 rounded-xl bg-emerald-500/[0.03] border border-emerald-500/15 space-y-2">
                         <h4 className="text-[10px] font-black text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
-                          <Check className="w-3 h-3" aria-hidden /> Advantages
+                          <Check className="w-3 h-3" aria-hidden /> {isHindi ? 'प्रमुख लाभ' : 'Advantages'}
                         </h4>
                         <ul className="space-y-1.5">
                           {pros.map((p, i) => (
@@ -841,7 +856,7 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
                     {cons.length > 0 && (
                       <div className="p-4 rounded-xl bg-rose-500/[0.03] border border-rose-500/15 space-y-2">
                         <h4 className="text-[10px] font-black text-rose-400 uppercase tracking-wider flex items-center gap-1.5">
-                          <AlertCircle className="w-3 h-3" aria-hidden /> Limitations
+                          <AlertCircle className="w-3 h-3" aria-hidden /> {isHindi ? 'सीमाएं' : 'Limitations'}
                         </h4>
                         <ul className="space-y-1.5">
                           {cons.map((c, i) => (
@@ -866,20 +881,20 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
               >
                 <h3 className="text-sm font-black text-white flex items-center gap-2">
                   <TrendingUp className="w-4 h-4 text-blue-400" aria-hidden />
-                  Key Features &amp; Benefits
+                  {t('cardDetail.keyHighlights', 'Key Features & Benefits')}
                 </h3>
 
                 <div className="space-y-2.5">
                   {[
-                    { key: 'Lounge Access',          value: loungeAccess,    icon: <Plane className="w-4 h-4" />,       available: isAvailable(loungeAccess)    },
-                    { key: 'Cashback / Rewards',     value: cashback,        icon: <Gift className="w-4 h-4" />,        available: isAvailable(cashback)        },
-                    { key: 'Reward Points',          value: rewardPoints,    icon: <Star className="w-4 h-4" />,        available: isAvailable(rewardPoints)    },
-                    { key: 'Insurance Cover',        value: insurance,       icon: <ShieldCheck className="w-4 h-4" />, available: isAvailable(insurance)       },
-                    { key: 'Fuel Surcharge Waiver',  value: fuelWaiver,      icon: <Fuel className="w-4 h-4" />,        available: isAvailable(fuelWaiver)      },
-                    { key: 'Airport Benefits',       value: airportBenefits, icon: <Plane className="w-4 h-4" />,       available: isAvailable(airportBenefits) },
-                    { key: 'International Usage',    value: international ? 'Supported globally' : NA, icon: <Globe className="w-4 h-4" />, available: international },
-                    { key: 'Contactless Payments',   value: contactless  ? 'Tap & Pay supported' : NA, icon: <Wifi className="w-4 h-4" />,  available: contactless  },
-                    { key: 'EMI Facility',           value: emi,             icon: <Banknote className="w-4 h-4" />,    available: isAvailable(emi)             },
+                    { key: t('cardDetail.loungeAccess', 'Lounge Access'),          value: loungeAccess,    icon: <Plane className="w-4 h-4" />,       available: isAvailable(loungeAccess)    },
+                    { key: isHindi ? 'कैशबैक / रिवॉर्ड' : 'Cashback / Rewards',     value: cashback,        icon: <Gift className="w-4 h-4" />,        available: isAvailable(cashback)        },
+                    { key: isHindi ? 'रिवॉर्ड पॉइंट्स' : 'Reward Points',          value: rewardPoints,    icon: <Star className="w-4 h-4" />,        available: isAvailable(rewardPoints)    },
+                    { key: isHindi ? 'बीमा कवर' : 'Insurance Cover',        value: insurance,       icon: <ShieldCheck className="w-4 h-4" />, available: isAvailable(insurance)       },
+                    { key: isHindi ? 'ईंधन अधिभार छूट' : 'Fuel Surcharge Waiver',  value: fuelWaiver,      icon: <Fuel className="w-4 h-4" />,        available: isAvailable(fuelWaiver)      },
+                    { key: isHindi ? 'हवाई अड्डा लाभ' : 'Airport Benefits',       value: airportBenefits, icon: <Plane className="w-4 h-4" />,       available: isAvailable(airportBenefits) },
+                    { key: t('cardDetail.internationalUsage', 'International Usage'),    value: international ? (isHindi ? 'विश्व स्तर पर समर्थित' : 'Supported globally') : NA, icon: <Globe className="w-4 h-4" />, available: international },
+                    { key: t('cardDetail.contactless', 'Contactless Payments'),   value: contactless  ? (isHindi ? 'टैप एंड पे समर्थित' : 'Tap & Pay supported') : NA, icon: <Wifi className="w-4 h-4" />,  available: contactless  },
+                    { key: isHindi ? 'ईएमआई सुविधा' : 'EMI Facility',           value: emi,             icon: <Banknote className="w-4 h-4" />,    available: isAvailable(emi)             },
                   ].map((item, i) => (
                     <div
                       key={i}
@@ -903,7 +918,7 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
                           ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
                           : 'bg-white/5 border-white/10 text-slate-700'
                       }`}>
-                        {item.available ? '✓ Active' : '✕ N/A'}
+                        {item.available ? (isHindi ? '✓ सक्रिय' : '✓ Active') : '✕ N/A'}
                       </span>
                     </div>
                   ))}
@@ -920,22 +935,22 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
               >
                 <h3 className="text-sm font-black text-white flex items-center gap-2">
                   <Banknote className="w-4 h-4 text-blue-400" aria-hidden />
-                  Charges &amp; Fees
+                  {t('cardDetail.charges', 'Charges & Fees')}
                 </h3>
 
                 {(() => {
                   const rows = [
-                    { label: 'Annual Fee',                value: annualFee      },
-                    { label: 'Joining / Issuance Fee',    value: joiningFee     },
-                    { label: 'Forex / International Fee', value: forexMarkup    },
-                    { label: 'Card Replacement Fee',      value: replacementFee },
-                    { label: 'Other / Hidden Charges',    value: hiddenCharges  },
+                    { label: t('cardDetail.annualFee', 'Annual Fee'),                value: annualFee      },
+                    { label: t('cardDetail.joiningFee', 'Joining / Issuance Fee'),    value: joiningFee     },
+                    { label: t('cardDetail.forexMarkup', 'Forex / International Fee'), value: forexMarkup    },
+                    { label: isHindi ? 'कार्ड प्रतिस्थापन शुल्क' : 'Card Replacement Fee',      value: replacementFee },
+                    { label: isHindi ? 'अन्य / अप्रत्यक्ष शुल्क' : 'Other / Hidden Charges',    value: hiddenCharges  },
                   ].filter(r => r.value !== NA);
 
                   if (rows.length === 0) {
                     return (
                       <p className="text-xs text-slate-500 font-medium py-6 text-center bg-white/[0.02] rounded-xl border border-blue-900/10">
-                        Charges information not available for this card.
+                        {isHindi ? 'इस कार्ड के लिए शुल्क की जानकारी उपलब्ध नहीं है।' : 'Charges information not available for this card.'}
                       </p>
                     );
                   }
@@ -945,8 +960,8 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
                     <>
                       <div className="rounded-xl border border-blue-900/20 overflow-hidden">
                         <div className="grid grid-cols-2 bg-white/[0.04] border-b border-blue-900/10 px-4 py-2.5">
-                          <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Fee Type</span>
-                          <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Amount</span>
+                          <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">{isHindi ? 'शुल्क प्रकार' : 'Fee Type'}</span>
+                          <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">{isHindi ? 'राशि' : 'Amount'}</span>
                         </div>
                         {visible.map((row, i) => (
                           <div key={i} className="grid grid-cols-2 px-4 py-3 border-b border-blue-900/[0.08] last:border-0 hover:bg-white/[0.02] transition-colors">
@@ -960,7 +975,7 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
                           onClick={() => setShowAllCharges(v => !v)}
                           className="text-xs text-blue-400 font-bold hover:text-blue-300 transition-colors"
                         >
-                          {showAllCharges ? '↑ Show Less' : `↓ View All (${rows.length} charges)`}
+                          {showAllCharges ? (isHindi ? '↑ कम दिखाएं' : '↑ Show Less') : (isHindi ? `↓ सभी देखें (${rows.length} शुल्क)` : `↓ View All (${rows.length} charges)`)}
                         </button>
                       )}
                     </>
@@ -971,8 +986,7 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
                 <div className="p-3.5 rounded-xl bg-amber-500/[0.04] border border-amber-500/15 flex gap-3 items-start">
                   <Info className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" aria-hidden />
                   <p className="text-[10px] text-amber-300/80 leading-relaxed font-medium">
-                    Standard bank charges may apply even when not listed — including ATM decline fees and SMS alert charges.
-                    Always verify the Schedule of Charges on the official bank website.
+                    {t('cardDetail.disclaimer', 'Standard bank charges may apply even when not listed — including ATM decline fees and SMS alert charges. Always verify the Schedule of Charges on the official bank website.')}
                   </p>
                 </div>
               </section>
@@ -987,22 +1001,22 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
               >
                 <h3 className="text-sm font-black text-white flex items-center gap-2">
                   <BarChart3 className="w-4 h-4 text-blue-400" aria-hidden />
-                  Transaction Limits
+                  {t('cardDetail.limits', 'Transaction Limits')}
                 </h3>
 
                 {(() => {
                   const rows = [
-                    { label: 'ATM Withdrawal Limit',      value: atmLimit         },
-                    { label: 'POS / Shopping Limit',      value: posLimit         },
-                    { label: 'Contactless Limit',         value: contactlessLimit },
-                    { label: 'Online Transaction Limit',  value: onlineLimit      },
+                    { label: t('cardDetail.dailyAtmLimit', 'ATM Withdrawal Limit'),      value: atmLimit         },
+                    { label: t('cardDetail.dailyPosLimit', 'POS / Shopping Limit'),      value: posLimit         },
+                    { label: isHindi ? 'कॉन्टैक्टलेस सीमा' : 'Contactless Limit',         value: contactlessLimit },
+                    { label: isHindi ? 'ऑनलाइन लेनदेन सीमा' : 'Online Transaction Limit',  value: onlineLimit      },
                     {
-                      label: 'International Usage',
-                      value: international ? 'Supported — refer bank for international limit' : NA,
+                      label: t('cardDetail.internationalUsage', 'International Usage'),
+                      value: international ? (isHindi ? 'समर्थित — अंतरराष्ट्रीय सीमा के लिए बैंक से परामर्श लें' : 'Supported — refer bank for international limit') : NA,
                     },
                     ...(
                       (card?.dailyLimit || card?.maxLimit)
-                        ? [{ label: 'Daily Transaction Limit', value: `Up to ₹${Number(card.dailyLimit || card.maxLimit || 0).toLocaleString('en-IN')}` }]
+                        ? [{ label: isHindi ? 'दैनिक लेनदेन सीमा' : 'Daily Transaction Limit', value: `Up to ₹${Number(card.dailyLimit || card.maxLimit || 0).toLocaleString('en-IN')}` }]
                         : []
                     ),
                   ].filter(r => r.value !== NA);
@@ -1021,7 +1035,7 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
                         </div>
                       ) : (
                         <p className="text-xs text-slate-500 font-medium py-6 text-center bg-white/[0.02] rounded-xl border border-blue-900/10">
-                          Limit information not available for this card.
+                          {isHindi ? 'इस कार्ड के लिए सीमा की जानकारी उपलब्ध नहीं है।' : 'Limit information not available for this card.'}
                         </p>
                       )}
                       {rows.length > 4 && (
@@ -1029,7 +1043,7 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
                           onClick={() => setShowAllLimits(v => !v)}
                           className="text-xs text-blue-400 font-bold hover:text-blue-300 transition-colors"
                         >
-                          {showAllLimits ? '↑ Show Less' : `↓ View All (${rows.length} limits)`}
+                          {showAllLimits ? (isHindi ? '↑ कम दिखाएं' : '↑ Show Less') : (isHindi ? `↓ सभी देखें (${rows.length} सीमाएं)` : `↓ View All (${rows.length} limits)`)}
                         </button>
                       )}
                     </>
@@ -1047,50 +1061,50 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
               >
                 <h3 className="text-sm font-black text-white flex items-center gap-2">
                   <UserCheck className="w-4 h-4 text-blue-400" aria-hidden />
-                  Eligibility
+                  {t('cardDetail.eligibility', 'Eligibility')}
                 </h3>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {/* Age requirement — standard regulatory across all Indian banks */}
                   <div className="p-4 rounded-xl bg-white/[0.03] border border-blue-900/20">
-                    <span className="block text-[9px] font-black text-slate-500 uppercase tracking-wider mb-1">Age Requirement</span>
+                    <span className="block text-[9px] font-black text-slate-500 uppercase tracking-wider mb-1">{isHindi ? 'आयु आवश्यकता' : 'Age Requirement'}</span>
                     <span className="text-xs font-semibold text-slate-200 leading-snug">
-                      18 years and above (Minor accounts require parental supervision)
+                      {isHindi ? '18 वर्ष और उससे अधिक (नाबालिग खातों के लिए माता-पिता की देखरेख आवश्यक)' : '18 years and above (Minor accounts require parental supervision)'}
                     </span>
                   </div>
 
                   {/* Residency — standard across all Indian banks */}
                   <div className="p-4 rounded-xl bg-white/[0.03] border border-blue-900/20">
-                    <span className="block text-[9px] font-black text-slate-500 uppercase tracking-wider mb-1">Residency</span>
+                    <span className="block text-[9px] font-black text-slate-500 uppercase tracking-wider mb-1">{isHindi ? 'नागरिकता / निवास' : 'Residency'}</span>
                     <span className="text-xs font-semibold text-slate-200 leading-snug">
-                      Resident Indian Individual
+                      {isHindi ? 'निवासी भारतीय नागरिक' : 'Resident Indian Individual'}
                     </span>
                   </div>
 
                   {/* Account requirement — from actual card data */}
                   <div className="p-4 rounded-xl bg-white/[0.03] border border-blue-900/20">
-                    <span className="block text-[9px] font-black text-slate-500 uppercase tracking-wider mb-1">Account Requirement</span>
+                    <span className="block text-[9px] font-black text-slate-500 uppercase tracking-wider mb-1">{isHindi ? 'खाता आवश्यकता' : 'Account Requirement'}</span>
                     <span className="text-xs font-semibold text-slate-200 leading-snug">
                       {eligibilityRaw !== NA
                         ? eligibilityRaw
-                        : `Valid savings / current account with ${bankName}`}
+                        : (isHindi ? `${bankName} के साथ वैध बचत / चालू खाता` : `Valid savings / current account with ${bankName}`)}
                     </span>
                   </div>
 
                   {/* KYC — standard regulatory across all Indian banks */}
                   <div className="p-4 rounded-xl bg-white/[0.03] border border-blue-900/20">
-                    <span className="block text-[9px] font-black text-slate-500 uppercase tracking-wider mb-1">KYC Documents</span>
+                    <span className="block text-[9px] font-black text-slate-500 uppercase tracking-wider mb-1">{isHindi ? 'केवाईसी दस्तावेज' : 'KYC Documents'}</span>
                     <span className="text-xs font-semibold text-slate-200 leading-snug">
-                      Aadhaar Card, PAN Card &amp; KYC as per RBI guidelines
+                      {isHindi ? 'आरबीआई दिशानिर्देशों के अनुसार आधार कार्ड, पैन कार्ड और केवाईसी' : 'Aadhaar Card, PAN Card & KYC as per RBI guidelines'}
                     </span>
                   </div>
 
                   {/* Student friendly — if flagged in dataset */}
                   {card?.studentFriendly === true && (
                     <div className="p-4 rounded-xl bg-emerald-500/[0.04] border border-emerald-500/15">
-                      <span className="block text-[9px] font-black text-emerald-500 uppercase tracking-wider mb-1">Student Eligible</span>
+                      <span className="block text-[9px] font-black text-emerald-500 uppercase tracking-wider mb-1">{isHindi ? 'छात्र पात्र' : 'Student Eligible'}</span>
                       <span className="text-xs font-semibold text-slate-200 leading-snug">
-                        Specifically eligible for student account holders
+                        {isHindi ? 'विशेष रूप से छात्र खाताधारकों के लिए पात्र' : 'Specifically eligible for student account holders'}
                       </span>
                     </div>
                   )}
@@ -1098,9 +1112,9 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
                   {/* Salary account — if flagged */}
                   {card?.salary_account === true && (
                     <div className="p-4 rounded-xl bg-blue-500/[0.04] border border-blue-500/15">
-                      <span className="block text-[9px] font-black text-blue-400 uppercase tracking-wider mb-1">Salary Account</span>
+                      <span className="block text-[9px] font-black text-blue-400 uppercase tracking-wider mb-1">{isHindi ? 'वेतन खाता' : 'Salary Account'}</span>
                       <span className="text-xs font-semibold text-slate-200 leading-snug">
-                        Available to corporate / salary account holders
+                        {isHindi ? 'कॉर्पोरेट / वेतन खाताधारकों के लिए उपलब्ध' : 'Available to corporate / salary account holders'}
                       </span>
                     </div>
                   )}
@@ -1109,7 +1123,9 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
                 <div className="p-3.5 rounded-xl bg-blue-500/[0.04] border border-blue-500/15 flex gap-3 items-start">
                   <Info className="w-3.5 h-3.5 text-blue-400 shrink-0 mt-0.5" aria-hidden />
                   <p className="text-[10px] text-blue-300/80 leading-relaxed font-medium">
-                    Eligibility conditions vary by account type and bank policy. Please verify with {bankName} before applying.
+                    {isHindi 
+                      ? `पात्रता की शर्तें खाते के प्रकार और बैंक नीति के अनुसार भिन्न होती हैं। कृपया आवेदन करने से पहले ${bankName} से पुष्टि करें।`
+                      : `Eligibility conditions vary by account type and bank policy. Please verify with ${bankName} before applying.`}
                   </p>
                 </div>
               </section>
@@ -1124,18 +1140,16 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
               >
                 <h3 className="text-sm font-black text-white flex items-center gap-2">
                   <Building2 className="w-4 h-4 text-blue-400" aria-hidden />
-                  Related Savings Accounts
+                  {t('cardDetail.associatedAccountsTitle', 'Related Savings Accounts')}
                 </h3>
 
                 {linkedAccounts.length > 0 ? (
                   <div className="space-y-3">
                     {linkedAccounts.map((acc, i) => {
-                      // Find the relationship for this card in the account's relationships
                       const relFromAccount = (acc.debit_card_relationships || []).find(r => {
                         const rid = String(r.card_id || '');
                         return rid === String(cardSlug || '') || rid === String(cardId || '');
                       });
-                      // Also check explicit mappings
                       const relFromMappings = accountDebitCardMappings.find(m => {
                         const mid = String(m.card_id || '');
                         const accPid = String(acc.product_id || '');
@@ -1165,12 +1179,12 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
                             <div className="flex items-center gap-3 mt-1">
                               {acc.interest_rate && (
                                 <span className="text-[9px] text-slate-400 font-semibold">
-                                  Interest: <strong className="text-slate-200">{acc.interest_rate}</strong>
+                                  {isHindi ? 'ब्याज' : 'Interest'}: <strong className="text-slate-200">{acc.interest_rate}</strong>
                                 </span>
                               )}
                               {acc.minimum_balance && (
                                 <span className="text-[9px] text-slate-400 font-semibold">
-                                  Min Bal: <strong className="text-slate-200">{acc.minimum_balance}</strong>
+                                  {isHindi ? 'न्यूनतम शेष' : 'Min Bal'}: <strong className="text-slate-200">{acc.minimum_balance}</strong>
                                 </span>
                               )}
                             </div>
@@ -1184,7 +1198,7 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
                               className="flex items-center gap-1 text-[10px] text-blue-400 font-bold hover:text-blue-300 transition-colors group-hover:gap-1.5"
                               aria-label={`View ${acc.variant_name || acc.accountName} details`}
                             >
-                              View Account <ChevronRight className="w-3 h-3" aria-hidden />
+                              {isHindi ? 'खाता देखें' : 'View Account'} <ChevronRight className="w-3 h-3" aria-hidden />
                             </Link>
                           </div>
                         </motion.div>
@@ -1194,8 +1208,8 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
                 ) : (
                   <div className="py-10 text-center bg-white/[0.02] rounded-xl border border-blue-900/10 space-y-2">
                     <Building2 className="w-8 h-8 text-slate-700 mx-auto" />
-                    <p className="text-sm text-slate-500 font-semibold">Linked account information not available</p>
-                    <p className="text-xs text-slate-600">No verified savings account relationship found for this card.</p>
+                    <p className="text-sm text-slate-500 font-semibold">{isHindi ? 'संबद्ध खाते की जानकारी उपलब्ध नहीं है' : 'Linked account information not available'}</p>
+                    <p className="text-xs text-slate-600">{isHindi ? 'इस कार्ड के लिए कोई सत्यापित बचत खाता संबंध नहीं मिला।' : 'No verified savings account relationship found for this card.'}</p>
                   </div>
                 )}
               </section>
@@ -1210,7 +1224,7 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
               >
                 <h3 className="text-sm font-black text-white flex items-center gap-2">
                   <Landmark className="w-4 h-4 text-blue-400" aria-hidden />
-                  Bank Information
+                  {t('cardDetail.bankProfileTitle', 'Bank Information')}
                 </h3>
 
                 <div className="rounded-2xl bg-white/[0.03] border border-blue-900/20 p-5 space-y-4">
@@ -1228,7 +1242,7 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
                           aria-label={`Visit ${bankName} official website`}
                         >
                           <ExternalLink className="w-3 h-3" aria-hidden />
-                          Official Website
+                          {isHindi ? 'आधिकारिक वेबसाइट' : 'Official Website'}
                         </a>
                       )}
                     </div>
@@ -1237,10 +1251,10 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
                   {/* Info grid */}
                   <div className="grid grid-cols-2 gap-3 border-t border-blue-900/10 pt-4">
                     {[
-                      { label: 'Verification Status', value: verificationStatus },
-                      { label: 'Data Verified On',    value: lastVerified       },
-                      { label: 'Card Network',         value: network            },
-                      { label: 'Official Source',      value: officialWebsite !== NA ? 'Available' : NA },
+                      { label: isHindi ? 'सत्यापन स्थिति' : 'Verification Status', value: verificationStatus },
+                      { label: isHindi ? 'डेटा सत्यापित तिथि' : 'Data Verified On',    value: lastVerified       },
+                      { label: t('cardDetail.cardNetwork', 'Card Network'),         value: network            },
+                      { label: isHindi ? 'आधिकारिक स्रोत' : 'Official Source',      value: officialWebsite !== NA ? (isHindi ? 'उपलब्ध' : 'Available') : NA },
                     ].map((item, i) => (
                       <div key={i}>
                         <span className="block text-[9px] font-black text-slate-500 uppercase tracking-wider">{item.label}</span>
@@ -1259,7 +1273,7 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
                       aria-label={`Visit ${bankName} official website`}
                     >
                       <ExternalLink className="w-3.5 h-3.5" aria-hidden />
-                      Visit Official Bank Website
+                      {isHindi ? 'आधिकारिक बैंक वेबसाइट पर जाएं' : 'Visit Official Bank Website'}
                     </a>
                   )}
                 </div>
@@ -1276,14 +1290,14 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
           <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-5">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-sm font-black text-white uppercase tracking-widest">Similar Debit Cards</h2>
-                <p className="text-[10px] text-slate-500 font-medium mt-0.5">Based on bank, network &amp; category</p>
+                <h2 className="text-sm font-black text-white uppercase tracking-widest">{isHindi ? 'समान डेबिट कार्ड' : 'Similar Debit Cards'}</h2>
+                <p className="text-[10px] text-slate-500 font-medium mt-0.5">{isHindi ? 'बैंक, नेटवर्क और श्रेणी के आधार पर' : 'Based on bank, network & category'}</p>
               </div>
               <Link
                 to="/debit-cards"
                 className="text-xs text-blue-400 font-bold hover:text-blue-300 transition-colors flex items-center gap-1"
               >
-                View All <ChevronRight className="w-3 h-3" aria-hidden />
+                {isHindi ? 'सभी देखें' : 'View All'} <ChevronRight className="w-3 h-3" aria-hidden />
               </Link>
             </div>
 
@@ -1323,7 +1337,7 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
                         style={{ background: `linear-gradient(135deg, ${scAccent.light}, ${scAccent.glow})`, border: `1px solid ${scAccent.color}20` }}
                       >
                         <span className="text-[9px] font-black truncate" style={{ color: scAccent.color }}>
-                          {scFee !== NA ? scFee : 'Annual Fee N/A'}
+                          {scFee !== NA ? scFee : (isHindi ? 'वार्षिक शुल्क उपलब्ध नहीं' : 'Annual Fee N/A')}
                         </span>
                       </div>
 
@@ -1334,7 +1348,7 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
                           </span>
                         )}
                         <span className="flex items-center gap-0.5 text-[10px] text-slate-400 font-semibold group-hover:text-blue-400 transition-colors ml-auto">
-                          View <ChevronRight className="w-3 h-3" aria-hidden />
+                          {isHindi ? 'देखें' : 'View'} <ChevronRight className="w-3 h-3" aria-hidden />
                         </span>
                       </div>
                     </Link>
@@ -1356,7 +1370,7 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
           className="flex-1 py-3 text-center rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-black transition-all active:scale-95 shadow-lg shadow-blue-500/20"
           aria-label={`Apply for ${cardName}`}
         >
-          Apply Now ↗
+          {t('cardDetail.applyNow', 'Apply Now')} ↗
         </a>
         <button
           onClick={handleSave}
@@ -1368,7 +1382,7 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
           }`}
         >
           <Heart className={`w-3.5 h-3.5 ${isWishlisted_ ? 'fill-rose-400' : ''}`} aria-hidden />
-          {isWishlisted_ ? 'Saved' : 'Save'}
+          {isWishlisted_ ? t('cardDetail.saved', 'Saved') : t('cardDetail.saveCard', 'Save')}
         </button>
         <button
           onClick={handleCompare}
@@ -1380,7 +1394,7 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
           }`}
         >
           <Scale className="w-3.5 h-3.5" aria-hidden />
-          {isInCompare ? 'Selected' : 'Compare'}
+          {isInCompare ? t('cardDetail.inCompare', 'Selected') : t('cardDetail.addToCompare', 'Compare')}
         </button>
       </div>
 
