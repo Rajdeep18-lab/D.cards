@@ -165,20 +165,52 @@ Allow: /
 Sitemap: ${SITE_URL}/sitemap.xml
 `;
 
+  // Helper for safe atomic file writing (avoids Windows Node.js v24 OneDrive O_TRUNC file lock)
+  function safeWriteFile(filePath, content) {
+    if (fs.existsSync(filePath)) {
+      try {
+        const existing = fs.readFileSync(filePath, 'utf8');
+        if (existing === content) {
+          return;
+        }
+      } catch {
+        // Proceed with writing
+      }
+    }
+
+    const tempPath = `${filePath}.tmp.${Date.now()}`;
+    try {
+      fs.writeFileSync(tempPath, content, 'utf8');
+      fs.renameSync(tempPath, filePath);
+    } catch {
+      try {
+        if (fs.existsSync(filePath)) {
+          fs.writeFileSync(filePath, content, { flag: 'r+', encoding: 'utf8' });
+        } else {
+          fs.writeFileSync(filePath, content, 'utf8');
+        }
+      } finally {
+        if (fs.existsSync(tempPath)) {
+          try { fs.unlinkSync(tempPath); } catch {}
+        }
+      }
+    }
+  }
+
   // Write outputs to public/
   const publicDir = path.resolve(rootDir, 'public');
   if (!fs.existsSync(publicDir)) {
     fs.mkdirSync(publicDir, { recursive: true });
   }
 
-  fs.writeFileSync(path.join(publicDir, 'sitemap.xml'), xml, 'utf8');
-  fs.writeFileSync(path.join(publicDir, 'robots.txt'), robotsTxt, 'utf8');
+  safeWriteFile(path.join(publicDir, 'sitemap.xml'), xml);
+  safeWriteFile(path.join(publicDir, 'robots.txt'), robotsTxt);
 
   // Also write to dist/ if it exists (for immediate preview / build sync)
   const distDir = path.resolve(rootDir, 'dist');
   if (fs.existsSync(distDir)) {
-    fs.writeFileSync(path.join(distDir, 'sitemap.xml'), xml, 'utf8');
-    fs.writeFileSync(path.join(distDir, 'robots.txt'), robotsTxt, 'utf8');
+    safeWriteFile(path.join(distDir, 'sitemap.xml'), xml);
+    safeWriteFile(path.join(distDir, 'robots.txt'), robotsTxt);
   }
 
   console.log(`[Sitemap Generator] Successfully generated sitemap.xml with ${urlEntries.length} canonical URLs.`);

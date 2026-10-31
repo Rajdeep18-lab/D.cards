@@ -14,12 +14,16 @@ export function useSEO({
   title,
   description,
   canonicalUrl,
+  canonical, // Alias for canonicalUrl
   robots = "index, follow",
   ogType = "website",
   ogImage = "https://www.dcard.website/logo.png",
-  schema = null
+  schema = null,
+  enabled = true
 } = {}) {
   useEffect(() => {
+    if (!enabled) return;
+
     // 1. Document Title
     const finalTitle = title ? title.trim() : DEFAULT_TITLE;
     document.title = finalTitle;
@@ -54,8 +58,25 @@ export function useSEO({
     setMeta('name', 'author', 'D.Card');
     setMeta('name', 'language', 'English');
 
-    // 3. Canonical URL
-    const finalCanonical = canonicalUrl || `${BASE_URL}/`;
+    // 3. Determine robust canonical URL
+    const rawCanonical = canonicalUrl || canonical;
+    let finalCanonical;
+    if (rawCanonical) {
+      // Strip any query strings, hashes, or trailing whitespace
+      try {
+        const parsed = new URL(rawCanonical, BASE_URL);
+        finalCanonical = `${BASE_URL}${parsed.pathname === '/' ? '/' : parsed.pathname.replace(/\/+$/, '')}`;
+      } catch {
+        finalCanonical = rawCanonical.split('?')[0].split('#')[0];
+      }
+    } else if (typeof window !== 'undefined') {
+      // Intelligently infer canonical from the current pathname, NEVER blindly defaulting to homepage
+      const cleanPath = window.location.pathname.replace(/\/+$/, '') || '/';
+      finalCanonical = cleanPath === '/' ? `${BASE_URL}/` : `${BASE_URL}${cleanPath}`;
+    } else {
+      finalCanonical = `${BASE_URL}/`;
+    }
+
     setCanonical(finalCanonical);
 
     // 4. Open Graph
@@ -85,7 +106,7 @@ export function useSEO({
     } else if (schemaScript) {
       schemaScript.remove();
     }
-  }, [title, description, canonicalUrl, robots, ogType, ogImage, schema]);
+  }, [title, description, canonicalUrl, canonical, robots, ogType, ogImage, schema, enabled]);
 }
 
 export default useSEO;

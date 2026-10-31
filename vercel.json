@@ -31,7 +31,52 @@
   "redirects": [
     {
       "source": "/banks-near-you",
-      "destination": "/find-banks",
+      "destination": "/find-my-bank",
+      "permanent": true
+    },
+    {
+      "source": "/find-banks",
+      "destination": "/find-my-bank",
+      "permanent": true
+    },
+    {
+      "source": "/debit-cards",
+      "destination": "/cards",
+      "permanent": true
+    },
+    {
+      "source": "/savings",
+      "destination": "/savings-accounts",
+      "permanent": true
+    },
+    {
+      "source": "/current",
+      "destination": "/current-accounts",
+      "permanent": true
+    },
+    {
+      "source": "/current-account",
+      "destination": "/current-accounts",
+      "permanent": true
+    },
+    {
+      "source": "/favorites",
+      "destination": "/saved-cards",
+      "permanent": true
+    },
+    {
+      "source": "/founders",
+      "destination": "/about",
+      "permanent": true
+    },
+    {
+      "source": "/team",
+      "destination": "/about",
+      "permanent": true
+    },
+    {
+      "source": "/ai-assistance",
+      "destination": "/ai-advisor",
       "permanent": true
     }
   ],

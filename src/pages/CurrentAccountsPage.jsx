@@ -74,15 +74,39 @@ const SORT_OPTIONS = [
 ];
 
 function CurrentAccountsPage({ onSelectDebitCard }) {
-  useSEO({
-    title: "Current Accounts in India – Compare Limits & Charges | D.Card",
-    description: "Compare business and commercial current accounts from top banks in India. Check average monthly balance and cash transaction limits on D.Card.",
-    canonicalUrl: "https://www.dcard.website/current-accounts"
-  });
-
   const navigate = useNavigate();
   const { selectedLocation } = useAppLocation();
   const { t, isHindi } = useLanguage();
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://www.dcard.website/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Current Accounts",
+        "item": "https://www.dcard.website/current-accounts"
+      }
+    ]
+  };
+
+  useSEO({
+    title: isHindi
+      ? "भारत में चालू खाते – व्यवसाय सीमा एवं शुल्क की तुलना | D.Card"
+      : "Current Accounts in India – Compare Business Limits & Charges | D.Card",
+    description: isHindi
+      ? "भारत के प्रमुख बैंकों के व्यावसायिक और वाणिज्यिक चालू खातों की तुलना करें। मासिक औसत शेष (MAB) और नकद लेनदेन सीमा की जांच करें।"
+      : "Compare business and commercial current accounts from top banks in India. Check average monthly balance and cash transaction limits on D.Card.",
+    canonicalUrl: "https://www.dcard.website/current-accounts",
+    schema: breadcrumbSchema
+  });
   const [accounts, setAccounts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedAccountForModal, setSelectedAccountForModal] = useState(null);

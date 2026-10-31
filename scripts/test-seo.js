@@ -89,4 +89,44 @@ assert(
   '7. /robots.txt properly references Sitemap: https://www.dcard.website/sitemap.xml'
 );
 
+// 8. Canonical Tags Verification in prerendered dist/ files
+const distDir = path.join(rootDir, 'dist');
+if (fs.existsSync(distDir)) {
+  totalTests += 4;
+
+  // Cards canonical check
+  const cardsHtmlPath = path.join(distDir, 'cards', 'index.html');
+  const cardsHtml = fs.existsSync(cardsHtmlPath) ? fs.readFileSync(cardsHtmlPath, 'utf8') : '';
+  const cardsHasExactCanonical = cardsHtml.includes('<link rel="canonical" href="https://www.dcard.website/cards" />');
+  const cardsDoesNotHaveHomeCanonical = !cardsHtml.includes('<link rel="canonical" href="https://www.dcard.website/" />');
+  assert(
+    cardsHasExactCanonical && cardsDoesNotHaveHomeCanonical,
+    '8. /cards dist entry has exact route canonical (https://www.dcard.website/cards) with NO homepage fallback'
+  );
+
+  // Compare canonical check
+  const compareHtmlPath = path.join(distDir, 'compare', 'index.html');
+  const compareHtml = fs.existsSync(compareHtmlPath) ? fs.readFileSync(compareHtmlPath, 'utf8') : '';
+  assert(
+    compareHtml.includes('<link rel="canonical" href="https://www.dcard.website/compare" />'),
+    '9. /compare dist entry has exact route canonical (https://www.dcard.website/compare)'
+  );
+
+  // Savings accounts canonical check
+  const savingsHtmlPath = path.join(distDir, 'savings-accounts', 'index.html');
+  const savingsHtml = fs.existsSync(savingsHtmlPath) ? fs.readFileSync(savingsHtmlPath, 'utf8') : '';
+  assert(
+    savingsHtml.includes('<link rel="canonical" href="https://www.dcard.website/savings-accounts" />'),
+    '10. /savings-accounts dist entry has exact route canonical (https://www.dcard.website/savings-accounts)'
+  );
+
+  // Current accounts canonical check
+  const currentHtmlPath = path.join(distDir, 'current-accounts', 'index.html');
+  const currentHtml = fs.existsSync(currentHtmlPath) ? fs.readFileSync(currentHtmlPath, 'utf8') : '';
+  assert(
+    currentHtml.includes('<link rel="canonical" href="https://www.dcard.website/current-accounts" />'),
+    '11. /current-accounts dist entry has exact route canonical (https://www.dcard.website/current-accounts)'
+  );
+}
+
 console.log(`\nVerification Result: ${passedTests}/${totalTests} Tests Passed successfully!`);

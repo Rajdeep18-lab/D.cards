@@ -360,11 +360,23 @@ export default function DebitCardDetailPage({ toggleCompareQueue, compareQueue }
     robots: card ? 'index, follow' : 'noindex, follow',
     schema: card ? {
       '@context': 'https://schema.org',
-      '@type': 'FinancialProduct',
-      name: `${bankName} ${cardName}`,
-      description: description !== NA ? description : undefined,
-      provider: { '@type': 'BankOrCreditUnion', name: bankName },
-      url: `https://www.dcard.website/debit-cards/${id}`,
+      '@graph': [
+        {
+          '@type': 'BreadcrumbList',
+          'itemListElement': [
+            { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://www.dcard.website/' },
+            { '@type': 'ListItem', 'position': 2, 'name': 'Debit Cards', 'item': 'https://www.dcard.website/cards' },
+            { '@type': 'ListItem', 'position': 3, 'name': `${bankName} ${cardName}`, 'item': `https://www.dcard.website/debit-cards/${id}` }
+          ]
+        },
+        {
+          '@type': 'FinancialProduct',
+          name: `${bankName} ${cardName}`,
+          description: description !== NA ? description : undefined,
+          provider: { '@type': 'BankOrCreditUnion', name: bankName },
+          url: `https://www.dcard.website/debit-cards/${id}`,
+        }
+      ]
     } : null,
   });
 

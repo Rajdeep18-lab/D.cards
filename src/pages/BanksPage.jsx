@@ -95,15 +95,44 @@ function BanksPage({
     ? `https://www.dcard.website/banks/${id}`
     : "https://www.dcard.website/banks";
 
-  const seoSchema = id && activeBankObj
-    ? {
-        "@context": "https://schema.org",
+  const breadcrumbElements = [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://www.dcard.website/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Banks Directory",
+      "item": "https://www.dcard.website/banks"
+    }
+  ];
+  if (id && activeBankObj) {
+    breadcrumbElements.push({
+      "@type": "ListItem",
+      "position": 3,
+      "name": activeBankObj.name,
+      "item": seoCanonical
+    });
+  }
+
+  const seoSchema = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": breadcrumbElements
+      },
+      ...(id && activeBankObj ? [{
         "@type": "BankOrCreditUnion",
         "name": activeBankObj.name,
         "url": seoCanonical,
         "description": seoDescription
-      }
-    : null;
+      }] : [])
+    ]
+  };
 
   useSEO({
     title: seoTitle,

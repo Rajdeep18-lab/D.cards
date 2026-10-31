@@ -11,6 +11,32 @@ import { useLanguage } from '../context/LanguageContext';
 
 function CurrentAccountsComparePage({ compareQueue = [], setCompareQueue, onSelectDebitCard }) {
   const { isHindi, t } = useLanguage();
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://www.dcard.website/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Current Accounts",
+        "item": "https://www.dcard.website/current-accounts"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Compare Current Accounts",
+        "item": "https://www.dcard.website/compare-current"
+      }
+    ]
+  };
+
   useSEO({
     title: isHindi
       ? "चालू खातों की तुलना — नकद जमा सीमा, MAB व शुल्क | D.Card"
@@ -18,7 +44,8 @@ function CurrentAccountsComparePage({ compareQueue = [], setCompareQueue, onSele
     description: isHindi
       ? "व्यवसायों के लिए चालू खातों की नकद जमा सीमा, न्यूनतम बैलेंस और लिंक डेबिट कार्ड की तुलना करें।"
       : "Compare cash deposit limits, minimum balance, and charges across current accounts side by side on D.Card.",
-    canonicalUrl: "https://www.dcard.website/compare-current"
+    canonicalUrl: "https://www.dcard.website/compare-current",
+    schema: breadcrumbSchema
   });
 
   const navigate = useNavigate();

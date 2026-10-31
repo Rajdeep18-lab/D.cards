@@ -68,14 +68,26 @@ function CurrentAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
   const seoSchema = account
     ? {
         "@context": "https://schema.org",
-        "@type": "FinancialProduct",
-        "name": `${bankName} ${accountName} Current Account`,
-        "description": seoDescription,
-        "provider": {
-          "@type": "BankOrCreditUnion",
-          "name": bankName
-        },
-        "url": `https://www.dcard.website/current-accounts/${id}`
+        "@graph": [
+          {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.dcard.website/" },
+              { "@type": "ListItem", "position": 2, "name": "Current Accounts", "item": "https://www.dcard.website/current-accounts" },
+              { "@type": "ListItem", "position": 3, "name": `${bankName} ${accountName}`, "item": `https://www.dcard.website/current-accounts/${id}` }
+            ]
+          },
+          {
+            "@type": "FinancialProduct",
+            "name": `${bankName} ${accountName} Current Account`,
+            "description": seoDescription,
+            "provider": {
+              "@type": "BankOrCreditUnion",
+              "name": bankName
+            },
+            "url": `https://www.dcard.website/current-accounts/${id}`
+          }
+        ]
       }
     : null;
 

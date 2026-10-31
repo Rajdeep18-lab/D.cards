@@ -8,6 +8,26 @@ import { useLanguage } from '../context/LanguageContext';
 
 function ContactPage() {
   const { isHindi, t } = useLanguage();
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://www.dcard.website/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Contact Support",
+        "item": "https://www.dcard.website/contact"
+      }
+    ]
+  };
+
   useSEO({
     title: isHindi
       ? "सहायता संपर्क — D.CARD ग्राहक सहायता"
@@ -15,7 +35,8 @@ function ContactPage() {
     description: isHindi
       ? "बैंकिंग उत्पादों, शुल्कों या तुलना मंच से संबंधित प्रश्नों और प्रतिक्रिया के लिए D.CARD टीम से संपर्क करें।"
       : "Get in touch with the D.Card team for queries, feedback, or assistance regarding our banking comparison platform.",
-    canonicalUrl: "https://www.dcard.website/contact"
+    canonicalUrl: "https://www.dcard.website/contact",
+    schema: breadcrumbSchema
   });
 
   const toast = useToast();

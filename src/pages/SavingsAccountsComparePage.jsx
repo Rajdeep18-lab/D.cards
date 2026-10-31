@@ -10,6 +10,32 @@ import { useLanguage } from '../context/LanguageContext';
 
 function SavingsAccountsComparePage({ compareQueue = [], setCompareQueue, onSelectDebitCard }) {
   const { isHindi, t } = useLanguage();
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://www.dcard.website/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Savings Accounts",
+        "item": "https://www.dcard.website/savings-accounts"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Compare Savings Accounts",
+        "item": "https://www.dcard.website/compare-savings"
+      }
+    ]
+  };
+
   useSEO({
     title: isHindi 
       ? "बचत खातों की तुलना — ब्याज दर, न्यूनतम बैलेंस व शुल्क | D.Card"
@@ -17,7 +43,8 @@ function SavingsAccountsComparePage({ compareQueue = [], setCompareQueue, onSele
     description: isHindi
       ? "भारतीय बैंकों के बचत खातों की ब्याज दरों, न्यूनतम बैलेंस और लिंक डेबिट कार्ड की तुलना करें।"
       : "Compare interest rates, minimum balance requirements, and perks across savings accounts side by side on D.Card.",
-    canonicalUrl: "https://www.dcard.website/compare-savings"
+    canonicalUrl: "https://www.dcard.website/compare-savings",
+    schema: breadcrumbSchema
   });
 
   const navigate = useNavigate();

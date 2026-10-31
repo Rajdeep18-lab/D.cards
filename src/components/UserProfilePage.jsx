@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth';
 import { useWishlist } from '../context/WishlistContext';
 import { useToast } from '../context/ToastContext';
+import { useSEO } from '../hooks/useSEO';
 import { compareService } from '../services/compareService';
 import { debitCards } from '../data/mockData';
 import { savingsAccounts } from '../data/mockSavingsAccounts';
@@ -74,6 +75,13 @@ function UserProfilePage({ activeTab = 'overview', onSelectCard, onCompareCards,
   const { user, profile, updateProfile, logout } = useAuth();
   const { wishlist, removeFromWishlist } = useWishlist();
   const toast = useToast();
+
+  useSEO({
+    title: "User Profile & Dashboard | D.Card",
+    description: "Manage your personal D.Card profile, saved banking products, and comparison preferences.",
+    canonicalUrl: "https://www.dcard.website/profile",
+    robots: "noindex, nofollow"
+  });
 
   // ── Active section state ──
   const [activeSection, setActiveSection] = useState(activeTab || 'overview');

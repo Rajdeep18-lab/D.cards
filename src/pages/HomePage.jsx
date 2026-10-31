@@ -28,6 +28,34 @@ function HomePage({
 }) {
   const { t, isHindi } = useLanguage();
 
+  const homeSchema = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://www.dcard.website/#organization",
+        "name": "D.Card",
+        "url": "https://www.dcard.website/",
+        "logo": "https://www.dcard.website/logo.png",
+        "description": "Independent banking information and comparison platform for debit cards, savings accounts, and current accounts in India."
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://www.dcard.website/#website",
+        "name": "D.Card",
+        "url": "https://www.dcard.website/",
+        "publisher": {
+          "@id": "https://www.dcard.website/#organization"
+        },
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://www.dcard.website/cards?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      }
+    ]
+  };
+
   useSEO({
     title: isHindi
       ? "D.Card – भारत में डेबिट कार्ड और बचत खातों की तुलना करें"
@@ -35,7 +63,8 @@ function HomePage({
     description: isHindi
       ? "भारत में डेबिट कार्ड, बचत खाते और चालू खातों की तुलना करें। D.Card पर शुल्क, लाभ और सुविधाओं की जांच करें।"
       : "Compare debit cards, savings accounts and current accounts in India. Explore fees, benefits, eligibility and features with D.Card.",
-    canonicalUrl: "https://www.dcard.website/"
+    canonicalUrl: "https://www.dcard.website/",
+    schema: homeSchema
   });
 
   const navigate = useNavigate();
