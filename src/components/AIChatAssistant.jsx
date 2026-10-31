@@ -712,7 +712,8 @@ function AIChatAssistant({
 
     try {
       const activeCoords = overrideCoords || userCoords;
-      const context  = { conversationState, conversationHistory: newMessages, userCoords: activeCoords, language };
+      // Pass previous turns (messages before userMsg) to avoid duplicate user turns
+      const context  = { conversationState, conversationHistory: messages, userCoords: activeCoords, language };
       const response = await aiChatService.sendMessage(query, user, context);
 
       if (response.conversationState) setConversationState(response.conversationState);
@@ -743,8 +744,12 @@ function AIChatAssistant({
       setMessages(updatedHistory);
 
       // Lift matched products to parent (for right-side insights panel)
-      if (onProductsFound && (matchedAccounts.length > 0 || matchedCards.length > 0 || matchedLocations.length > 0)) {
-        onProductsFound({ accounts: matchedAccounts, cards: matchedCards, locations: matchedLocations, query });
+      if (onProductsFound) {
+        if (response.type === 'error') {
+          onProductsFound({ accounts: [], cards: [], locations: [], query });
+        } else if (matchedAccounts.length > 0 || matchedCards.length > 0 || matchedLocations.length > 0) {
+          onProductsFound({ accounts: matchedAccounts, cards: matchedCards, locations: matchedLocations, query });
+        }
       }
 
       if (user?.uid) aiChatService.saveUserChatHistory(user.uid, updatedHistory);
@@ -761,6 +766,9 @@ function AIChatAssistant({
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         },
       ]);
+      if (onProductsFound) {
+        onProductsFound({ accounts: [], cards: [], locations: [], query });
+      }
     } finally {
       setIsSearching(false);
     }

@@ -122,7 +122,8 @@ function AdminDashboardModal({ isOpen, onClose, currentUser }) {
       }).catch(err => {
         if (isMounted) {
           setCheckingAuth(false);
-          setIsAuthorized(true); // Fallback to authorized for verified admin session
+          setIsAuthorized(false); // Fail closed on verification error
+          toast("Admin authorization check failed. Access denied.", "error");
         }
       });
     }

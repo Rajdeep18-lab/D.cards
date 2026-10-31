@@ -14,6 +14,25 @@ const BANK_COLORS = {
   'Punjab National Bank': '#a20a1d'
 };
 
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+function sanitizeUrl(url) {
+  if (!url) return '#';
+  const clean = String(url).trim();
+  if (clean.startsWith('https://') || clean.startsWith('http://')) {
+    return clean.replace(/["'<>]/g, '');
+  }
+  return '#';
+}
+
 function getBankColor(bankName) {
   const norm = String(bankName || '').trim();
   for (const [key, color] of Object.entries(BANK_COLORS)) {
@@ -226,26 +245,27 @@ function MapTilerMap({
 
       const markerEl = document.createElement('div');
       markerEl.className = 'relative cursor-pointer transition-transform hover:scale-110 active:scale-95';
-      markerEl.id = `map-marker-${branchId}`;
+      markerEl.id = `map-marker-${escapeHtml(branchId)}`;
       markerEl.innerHTML = `
         <div style="background-color: ${color};" class="px-2 py-1 rounded-lg text-white font-black text-[10px] shadow-md border-2 border-white flex items-center gap-1">
           <span>${branchType === 'ATM' ? '🏧' : '🏦'}</span>
-          <span class="max-w-[80px] truncate">${bankName}</span>
+          <span class="max-w-[80px] truncate">${escapeHtml(bankName)}</span>
         </div>
       `;
 
+      const safeDirectionsUrl = sanitizeUrl(directionsUrl);
       const popupContent = `
         <div class="p-3 text-xs font-sans max-w-[240px] text-left">
           <div class="flex items-center gap-1.5 font-black text-slate-900 mb-1">
             <span class="text-sm">${branchType === 'ATM' ? '🏧' : '🏦'}</span>
-            <span>${bankName}</span>
+            <span>${escapeHtml(bankName)}</span>
           </div>
-          <p class="font-bold text-slate-800 text-[11px]">${branchName}</p>
-          <p class="text-slate-600 text-[10px] mt-1 leading-snug">${branch.address}, ${branch.city} - ${branch.pincode}</p>
+          <p class="font-bold text-slate-800 text-[11px]">${escapeHtml(branchName)}</p>
+          <p class="text-slate-600 text-[10px] mt-1 leading-snug">${escapeHtml(branch.address || '')}, ${escapeHtml(branch.city || '')} - ${escapeHtml(branch.pincode || '')}</p>
           <div class="mt-2 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
-            <span class="font-extrabold text-emerald-600">${branch.distanceFormatted || ''}</span>
+            <span class="font-extrabold text-emerald-600">${escapeHtml(branch.distanceFormatted || '')}</span>
             <a 
-              href="${directionsUrl}" 
+              href="${safeDirectionsUrl}" 
               target="_blank" 
               rel="noopener noreferrer" 
               class="inline-flex items-center gap-1 px-2 py-1 bg-blue-600 text-white rounded text-[10px] font-bold hover:bg-blue-700 transition-colors"

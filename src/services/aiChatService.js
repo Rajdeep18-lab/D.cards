@@ -180,8 +180,15 @@ export const aiChatService = {
     const conversationState = chatContext.conversationState || {};
     const conversationHistory = chatContext.conversationHistory || [];
 
-    // Instant local greeting for pure "hi" / "hello" / "namaste"
-    if (["hi", "hello", "hey", "namaste", "greetings", "hallo", "नमस्ते"].some(w => lowerMsg === w || lowerMsg.startsWith(w + " "))) {
+    // Instant local greeting only for pure standalone greetings (e.g. "hi", "hello", "namaste")
+    // Never hijack questions that simply start with a greeting like "hello what is zero balance account"
+    const normalizedGreeting = lowerMsg.replace(/[^a-z\u0900-\u097F\s]/g, '').trim();
+    const PURE_GREETINGS = new Set([
+      'hi', 'hello', 'hey', 'namaste', 'greetings', 'hallo', 'नमस्ते', 'namaskar', 'नमस्कार',
+      'hi there', 'hello there', 'hey there'
+    ]);
+
+    if (PURE_GREETINGS.has(normalizedGreeting)) {
       return {
         text: isHindi
           ? "👋 नमस्ते! D.CARD एआई सहायता में आपका स्वागत है।\n\nमैं सत्यापित भारतीय बैंकिंग उत्पादों और शाखाओं/एटीएम को खोजने और तुलना करने में आपकी सहायता कर सकता हूँ:\n• बचत खाते (जीरो बैलेंस, उच्च ब्याज, छात्र, वेतन, ऑनलाइन वीडियो केवाईसी)\n• चालू खाते (बिजनेस एमएबी, सीमाएं, ओवरड्राफ्ट व चेक)\n• सत्यापित लिंक डेबिट कार्ड (RuPay, Visa, Mastercard, एटीएम सीमाएं, लाउंज एक्सेस)\n• आपके नजदीकी सत्यापित बैंक शाखाएं व एटीएम\n• तथ्यात्मक आमने-सामने तुलना\n\nआज आप क्या खोजना या तुलना करना चाहते हैं?"
@@ -204,7 +211,7 @@ export const aiChatService = {
           userCoords: chatContext.userCoords || null,
           language: language || 'en'
         }),
-        signal: typeof AbortSignal !== 'undefined' && AbortSignal.timeout ? AbortSignal.timeout(12000) : undefined
+        signal: typeof AbortSignal !== 'undefined' && AbortSignal.timeout ? AbortSignal.timeout(15000) : undefined
       });
 
       if (!response.ok) {
@@ -229,7 +236,8 @@ export const aiChatService = {
           : "Please verify the latest terms, charges and eligibility on the bank's official website before applying."),
         conversationState: {
           ...conversationState,
-          detectedBanks: data.detectedBanks || conversationState.detectedBanks || []
+          ...(data.conversationState || {}),
+          detectedBanks: data.detectedBanks || (data.conversationState && data.conversationState.detectedBanks) || conversationState.detectedBanks || []
         },
         timestamp
       };
@@ -242,6 +250,11 @@ export const aiChatService = {
         return {
           text: fallback,
           type: "fallback",
+          matchedAccounts: [],
+          matchedCurrentAccounts: [],
+          matchedCards: [],
+          matchedLocations: [],
+          conversationState,
           timestamp
         };
       }
@@ -251,6 +264,11 @@ export const aiChatService = {
           ? "एआई सलाहकार सेवा अस्थायी रूप से अनुपलब्ध है। कृपया पुनः प्रयास करें।"
           : "AI Advisor is temporarily unavailable. Please try again.",
         type: "error",
+        matchedAccounts: [],
+        matchedCurrentAccounts: [],
+        matchedCards: [],
+        matchedLocations: [],
+        conversationState,
         timestamp
       };
     }

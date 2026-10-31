@@ -77,18 +77,7 @@ export const adminAuthService = {
         }
       }
 
-      // 4. Check Firestore `users` collection for role === 'admin'
-      const userDocRef = doc(db, 'users', uid);
-      const userDoc = await getDoc(userDocRef);
-      if (userDoc.exists()) {
-        const data = userDoc.data() || {};
-        if (data.role === 'admin') {
-          adminStatusCache[uid] = true;
-          return true;
-        }
-      }
-
-      // Explicitly return FALSE for all normal users
+      // Normal users are not in admins or admin_users collections
       adminStatusCache[uid] = false;
       return false;
     } catch (err) {

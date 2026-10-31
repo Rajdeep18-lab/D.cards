@@ -105,11 +105,15 @@ export async function fetchAllVerifiedRecords() {
     return cachedAllRecords;
   }
 
-  // Attempt to load from Firestore collection "bank_branches"
+  // Attempt to load from Firestore collection "bank_branches" with a 1500ms timeout
   if (db) {
     try {
-      const snap = await getDocs(collection(db, 'bank_branches'));
-      if (!snap.empty) {
+      const getDocsPromise = getDocs(collection(db, 'bank_branches'));
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Firestore timeout')), 1500)
+      );
+      const snap = await Promise.race([getDocsPromise, timeoutPromise]);
+      if (snap && !snap.empty) {
         const firestoreList = snap.docs.map(docSnap => ({
           ...docSnap.data(),
           id: docSnap.id
@@ -122,8 +126,8 @@ export async function fetchAllVerifiedRecords() {
         }
       }
     } catch (err) {
-      // Graceful fallback during migration or if Firestore permissions are admin-only
-      console.warn('[BankService] Firestore read notice, using verified local dataset:', err.message);
+      // Graceful fallback during migration, offline, or timeout
+      console.warn('[BankService] Using verified local baseline dataset:', err.message);
     }
   }
 
@@ -242,10 +246,15 @@ export async function getBranches({
   if (type && type !== 'All') {
     const qType = String(type).toLowerCase().trim();
     if (qType === 'atm') {
-      filtered = filtered.filter(b => 
+      const atmMatches = filtered.filter(b => 
         (b.branch_type && b.branch_type.toLowerCase() === 'atm') ||
-        (Array.isArray(b.services) && b.services.some(s => s.toLowerCase().includes('atm')))
+        (Array.isArray(b.services) && b.services.some(s => {
+          const sLower = String(s).toLowerCase();
+          return sLower.includes('atm') || sLower.includes('cash deposit') || sLower.includes('cdm') || sLower.includes('dispenser');
+        }))
       );
+      // If bank has no standalone ATM kiosk in this location, preserve branches offering cash/banking services
+      filtered = atmMatches.length > 0 ? atmMatches : filtered;
     } else {
       filtered = filtered.filter(b => 
         b.branch_type && b.branch_type.toLowerCase() === qType
@@ -328,8 +337,12 @@ export async function getNearbyBranches({
     // Type check
     if (qType) {
       const isAtm = qType === 'atm';
-      const matchesType = (branch.branch_type && branch.branch_type.toLowerCase() === qType) ||
-        (isAtm && Array.isArray(branch.services) && branch.services.some(s => String(s).toLowerCase().includes('atm')));
+      const bType = String(branch.branch_type || '').toLowerCase();
+      const matchesType = bType === qType ||
+        (isAtm && (bType.includes('atm') || (Array.isArray(branch.services) && branch.services.some(s => {
+          const sLower = String(s).toLowerCase();
+          return sLower.includes('atm') || sLower.includes('cash deposit') || sLower.includes('cdm');
+        }))));
       if (!matchesType) {
         continue;
       }

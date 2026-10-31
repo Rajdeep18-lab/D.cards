@@ -67,182 +67,259 @@ export function getRelevantProductsForAI(query = '', conversationState = {}) {
     ? queryBanks 
     : (conversationState.lastMentionedBank ? [conversationState.lastMentionedBank] : []);
 
-  // Intent flags
-  const wantsZeroBalance = lower.includes('zero balance') || lower.includes('zero min') || lower.includes('0 balance') || lower.includes('no minimum balance') || lower.includes('zero mab') || lower.includes('zero amb');
-  const wantsLowBalance = lower.includes('low minimum') || lower.includes('low balance') || lower.includes('lowest balance');
-  const wantsStudent = lower.includes('student') || lower.includes('college') || lower.includes('youth');
-  const wantsSalary = lower.includes('salary') || lower.includes('payroll') || lower.includes('corporate');
-  const wantsSenior = lower.includes('senior') || lower.includes('pension') || lower.includes('elderly');
-  const wantsWomen = lower.includes('women') || lower.includes('woman') || lower.includes('female');
-  const wantsOnlineKYC = lower.includes('online') || lower.includes('video kyc') || lower.includes('digital') || lower.includes('instant open');
-  const wantsLounge = lower.includes('lounge') || lower.includes('airport');
-  const wantsZeroFeeCard = lower.includes('zero fee') || lower.includes('free card') || lower.includes('no annual fee');
-  const wantsHighLimits = lower.includes('atm limit') || lower.includes('withdrawal limit') || lower.includes('high limit') || lower.includes('pos limit');
-  const wantsCurrentAccount = lower.includes('current account') || lower.includes('current accounts') || lower.includes('business account') || lower.includes('overdraft') || lower.includes('cheque');
-  const wantsDebitCard = lower.includes('debit card') || lower.includes('debit cards') || lower.includes('card') || lower.includes('visa') || lower.includes('rupay') || lower.includes('mastercard') || wantsLounge || wantsZeroFeeCard;
-  const isComparison = lower.includes('compare') || lower.includes('vs') || lower.includes('versus') || lower.includes('difference between');
+  // Intent flags (English, Hindi, Hinglish)
+  const wantsZeroBalance = lower.includes('zero balance') || lower.includes('zero min') || lower.includes('0 balance') || lower.includes('no minimum balance') || lower.includes('zero mab') || lower.includes('zero amb') || lower.includes('जीरो बैलेंस') || lower.includes('शून्य बैलेंस') || lower.includes('जीरो') || lower.includes('शून्य');
+  const wantsLowBalance = lower.includes('low minimum') || lower.includes('low balance') || lower.includes('lowest balance') || lower.includes('कम बैलेंस');
+  const wantsStudent = lower.includes('student') || lower.includes('college') || lower.includes('youth') || lower.includes('छात्र') || lower.includes('विद्यार्थी');
+  const wantsSalary = lower.includes('salary') || lower.includes('payroll') || lower.includes('corporate') || lower.includes('वेतन') || lower.includes('सैलरी');
+  const wantsSenior = lower.includes('senior') || lower.includes('pension') || lower.includes('elderly') || lower.includes('वरिष्ठ') || lower.includes('पेंशन');
+  const wantsWomen = lower.includes('women') || lower.includes('woman') || lower.includes('female') || lower.includes('महिला');
+  const wantsOnlineKYC = lower.includes('online') || lower.includes('video kyc') || lower.includes('digital') || lower.includes('instant open') || lower.includes('ऑनलाइन');
+  const wantsLounge = lower.includes('lounge') || lower.includes('airport') || lower.includes('लाउंज');
+  const wantsZeroFeeCard = lower.includes('zero fee') || lower.includes('free card') || lower.includes('no annual fee') || lower.includes('मुफ्त') || lower.includes('फ्री');
+  const wantsHighLimits = lower.includes('atm limit') || lower.includes('withdrawal limit') || lower.includes('high limit') || lower.includes('pos limit') || lower.includes('सीमा');
+  const wantsCurrentAccount = lower.includes('current account') || lower.includes('current accounts') || lower.includes('business account') || lower.includes('overdraft') || lower.includes('cheque') || lower.includes('चालू खाता') || lower.includes('व्यापार');
+  const wantsDebitCard = lower.includes('debit card') || lower.includes('debit cards') || lower.includes('card') || lower.includes('visa') || lower.includes('rupay') || lower.includes('mastercard') || wantsLounge || wantsZeroFeeCard || lower.includes('डेबिट कार्ड') || lower.includes('कार्ड');
+  const isComparison = lower.includes('compare') || lower.includes('vs') || lower.includes('versus') || lower.includes('difference between') || lower.includes('तुलना') || lower.includes('बनाम');
 
   // --- 1. Filter Savings Accounts ---
-  let matchingSavings = (savingsAccounts || []).map(acc => {
-    let score = 0;
-    const accNameLower = String(acc.accountName || '').toLowerCase();
-    const bankLower = String(acc.bank || '').toLowerCase();
-    const typeLower = String(acc.accountType || '').toLowerCase();
+  let matchingSavings = [];
+  const queryExplicitlyWantsCurrent = wantsCurrentAccount && !lower.includes('saving') && !lower.includes('bachat') && !lower.includes('बचत');
 
-    // Bank match
-    if (targetBanks.length > 0) {
-      if (targetBanks.some(b => bankLower.includes(b.toLowerCase()) || b.toLowerCase().includes(bankLower))) {
-        score += 25;
-      } else {
-        // Strict penalty if explicit banks were asked and this account does not match
-        score -= 100;
+  if (!queryExplicitlyWantsCurrent) {
+    if (targetBanks.length > 1) {
+      // Comparison across multiple banks: pick top matching accounts from EACH bank
+      const perBankLimit = Math.max(1, Math.floor(4 / targetBanks.length));
+      for (const bank of targetBanks) {
+        const bankAccounts = (savingsAccounts || [])
+          .filter(acc => String(acc.bank || '').toLowerCase().includes(bank.toLowerCase()) || bank.toLowerCase().includes(String(acc.bank || '').toLowerCase()))
+          .map(acc => {
+            let score = 25;
+            const accNameLower = String(acc.accountName || '').toLowerCase();
+            const typeLower = String(acc.accountType || '').toLowerCase();
+            if (lower.includes(accNameLower)) score += 20;
+            if (wantsZeroBalance && (acc.isZeroBalance || acc.minimumBalanceValue === 0)) score += 20;
+            if (wantsStudent && (acc.isStudent || typeLower.includes('student'))) score += 15;
+            if (wantsSalary && (acc.isSalary || typeLower.includes('salary'))) score += 15;
+            if (acc.isPopular) score += 5;
+            return { account: acc, score };
+          })
+          .sort((a, b) => b.score - a.score)
+          .slice(0, perBankLimit)
+          .map(item => item.account);
+        matchingSavings.push(...bankAccounts);
+      }
+    } else {
+      matchingSavings = (savingsAccounts || []).map(acc => {
+        let score = 0;
+        const accNameLower = String(acc.accountName || '').toLowerCase();
+        const bankLower = String(acc.bank || '').toLowerCase();
+        const typeLower = String(acc.accountType || '').toLowerCase();
+
+        // Bank match
+        if (targetBanks.length === 1) {
+          const tb = targetBanks[0].toLowerCase();
+          if (bankLower.includes(tb) || tb.includes(bankLower)) {
+            score += 30;
+          } else {
+            score -= 100;
+          }
+        }
+
+        // Exact account name full match vs partial word match
+        if (accNameLower && lower.includes(accNameLower)) {
+          score += 45;
+        } else if (accNameLower && accNameLower.split(' ').filter(w => w.length > 3).some(w => lower.includes(w))) {
+          score += 15;
+        }
+
+        // Zero balance match
+        if (wantsZeroBalance) {
+          if (acc.isZeroBalance || acc.minimumBalanceValue === 0 || String(acc.minimumBalance || '').toLowerCase().includes('zero')) {
+            score += 25;
+          } else {
+            score -= 15;
+          }
+        }
+
+        // Low balance match
+        if (wantsLowBalance) {
+          if (acc.minimumBalanceValue !== undefined && acc.minimumBalanceValue <= 2500) {
+            score += 15;
+          }
+        }
+
+        // Specific category match
+        if (wantsStudent && (acc.isStudent || typeLower.includes('student') || accNameLower.includes('student'))) score += 20;
+        if (wantsSalary && (acc.isSalary || typeLower.includes('salary') || accNameLower.includes('salary'))) score += 20;
+        if (wantsSenior && (acc.isSeniorCitizen || typeLower.includes('senior') || accNameLower.includes('senior'))) score += 20;
+        if (wantsWomen && (acc.isWomenSpecial || typeLower.includes('women') || accNameLower.includes('women'))) score += 20;
+        if (wantsOnlineKYC && (acc.isOnlineOpening || acc.isDigital)) score += 12;
+
+        return {
+          account: acc,
+          score
+        };
+      })
+      .filter(item => item.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, isComparison ? 4 : 5)
+      .map(item => item.account);
+
+      // If no specific filters matched but query asked about savings
+      if (matchingSavings.length === 0 && (lower.includes('saving') || lower.includes('bachat') || lower.includes('बचत') || lower.includes('खाता') || (targetBanks.length > 0 && !wantsDebitCard && !wantsCurrentAccount))) {
+        matchingSavings = (savingsAccounts || []).filter(acc => {
+          if (targetBanks.length > 0) {
+            return targetBanks.some(b => String(acc.bank).toLowerCase().includes(b.toLowerCase()));
+          }
+          return true;
+        }).slice(0, 4);
       }
     }
-
-    // Direct account name match
-    if (lower.includes(accNameLower) || accNameLower.split(' ').some(w => w.length > 3 && lower.includes(w))) {
-      score += 20;
-    }
-
-    // Zero balance match
-    if (wantsZeroBalance) {
-      if (acc.isZeroBalance || acc.minimumBalanceValue === 0 || String(acc.minimumBalance || '').toLowerCase().includes('zero')) {
-        score += 25;
-      } else {
-        score -= 15;
-      }
-    }
-
-    // Low balance match
-    if (wantsLowBalance) {
-      if (acc.minimumBalanceValue !== undefined && acc.minimumBalanceValue <= 2500) {
-        score += 15;
-      }
-    }
-
-    // Specific category match
-    if (wantsStudent && (acc.isStudent || typeLower.includes('student') || accNameLower.includes('student'))) score += 20;
-    if (wantsSalary && (acc.isSalary || typeLower.includes('salary') || accNameLower.includes('salary'))) score += 20;
-    if (wantsSenior && (acc.isSeniorCitizen || typeLower.includes('senior') || accNameLower.includes('senior'))) score += 20;
-    if (wantsWomen && (acc.isWomenSpecial || typeLower.includes('women') || accNameLower.includes('women'))) score += 20;
-    if (wantsOnlineKYC && (acc.isOnlineOpening || acc.isDigital)) score += 12;
-
-    // Attached verified debit cards
-    const verifiedCards = getAssociatedDebitCards(acc);
-
-    return {
-      account: acc,
-      verifiedCards,
-      score
-    };
-  })
-  .filter(item => item.score > 0)
-  .sort((a, b) => b.score - a.score)
-  .slice(0, isComparison ? 4 : 5)
-  .map(item => item.account);
-
-  // If no specific filters matched but query asked about savings
-  if (matchingSavings.length === 0 && (lower.includes('saving') || lower.includes('account') || targetBanks.length > 0)) {
-    matchingSavings = (savingsAccounts || []).filter(acc => {
-      if (targetBanks.length > 0) {
-        return targetBanks.some(b => String(acc.bank).toLowerCase().includes(b.toLowerCase()));
-      }
-      return true;
-    }).slice(0, 4);
   }
 
   // --- 2. Filter Current Accounts ---
   let matchingCurrent = [];
-  if (wantsCurrentAccount || (targetBanks.length > 0 && !wantsDebitCard)) {
-    matchingCurrent = (currentAccounts || []).map(acc => {
-      let score = 0;
-      const accNameLower = String(acc.accountName || '').toLowerCase();
-      const bankLower = String(acc.bank || '').toLowerCase();
+  if (wantsCurrentAccount || (targetBanks.length > 0 && !wantsDebitCard && !lower.includes('saving'))) {
+    if (targetBanks.length > 1) {
+      const perBankLimit = Math.max(1, Math.floor(4 / targetBanks.length));
+      for (const bank of targetBanks) {
+        const bankCurrent = (currentAccounts || [])
+          .filter(acc => String(acc.bank || '').toLowerCase().includes(bank.toLowerCase()) || bank.toLowerCase().includes(String(acc.bank || '').toLowerCase()))
+          .slice(0, perBankLimit);
+        matchingCurrent.push(...bankCurrent);
+      }
+    } else {
+      matchingCurrent = (currentAccounts || []).map(acc => {
+        let score = 0;
+        const accNameLower = String(acc.accountName || '').toLowerCase();
+        const bankLower = String(acc.bank || '').toLowerCase();
 
-      if (targetBanks.length > 0) {
-        if (targetBanks.some(b => bankLower.includes(b.toLowerCase()) || b.toLowerCase().includes(bankLower))) {
-          score += 25;
-        } else {
-          score -= 100;
+        if (targetBanks.length > 0) {
+          if (targetBanks.some(b => bankLower.includes(b.toLowerCase()) || b.toLowerCase().includes(bankLower))) {
+            score += 25;
+          } else {
+            score -= 100;
+          }
         }
-      }
 
-      if (lower.includes(accNameLower) || accNameLower.split(' ').some(w => w.length > 3 && lower.includes(w))) {
-        score += 20;
-      }
+        if (lower.includes(accNameLower) || accNameLower.split(' ').some(w => w.length > 3 && lower.includes(w))) {
+          score += 20;
+        }
 
-      if (wantsCurrentAccount) score += 10;
+        if (wantsCurrentAccount) score += 15;
 
-      return {
-        account: acc,
-        verifiedCards: getAssociatedDebitCardsForCurrentAccount(acc),
-        score
-      };
-    })
-    .filter(item => item.score > 0)
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 3)
-    .map(item => item.account);
+        return {
+          account: acc,
+          score
+        };
+      })
+      .filter(item => item.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 3)
+      .map(item => item.account);
+    }
   }
 
   // --- 3. Filter Debit Cards ---
-  let matchingDebitCards = (allMasterDebitCards || []).map(card => {
-    let score = 0;
-    const cardNameLower = String(card.cardName || '').toLowerCase();
-    const bankLower = String(card.bank || '').toLowerCase();
-    const networkLower = String(card.network || '').toLowerCase();
-    const loungeLower = String(card.loungeAccess || '').toLowerCase();
+  let matchingDebitCards = [];
 
-    if (targetBanks.length > 0) {
-      if (targetBanks.some(b => bankLower.includes(b.toLowerCase()) || b.toLowerCase().includes(bankLower))) {
-        score += 25;
-      } else {
-        score -= 100;
+  // If specific savings accounts were matched, prioritize their strictly verified associated debit cards
+  if (matchingSavings.length > 0 && !wantsCurrentAccount) {
+    const linkedMap = new Map();
+    // Prioritize the top matched account's linked debit cards
+    for (const acc of matchingSavings.slice(0, 2)) {
+      const linkedCards = getAssociatedDebitCards(acc) || [];
+      for (const card of linkedCards) {
+        if (!linkedMap.has(card.cardName || card.id)) {
+          linkedMap.set(card.cardName || card.id, card);
+        }
       }
     }
-
-    if (lower.includes(cardNameLower) || cardNameLower.split(' ').some(w => w.length > 3 && lower.includes(w))) {
-      score += 20;
+    if (linkedMap.size > 0) {
+      matchingDebitCards = Array.from(linkedMap.values()).slice(0, 4);
     }
+  }
 
-    if (wantsLounge) {
-      if (loungeLower.includes('lounge') || loungeLower.includes('quarter') || loungeLower.includes('yes') || loungeLower.includes('complimentary')) {
-        score += 25;
-      } else {
-        score -= 20;
+  // If still empty or query was explicitly comparing cards across multiple banks
+  if (matchingDebitCards.length === 0 || (isComparison && targetBanks.length > 1)) {
+    if (targetBanks.length > 1) {
+      const perBankLimit = Math.max(1, Math.floor(4 / targetBanks.length));
+      for (const bank of targetBanks) {
+        const bankCards = (allMasterDebitCards || [])
+          .filter(c => String(c.bank || '').toLowerCase().includes(bank.toLowerCase()) || bank.toLowerCase().includes(String(c.bank || '').toLowerCase()))
+          .map(card => {
+            let score = 25;
+            const loungeLower = String(card.loungeAccess || '').toLowerCase();
+            if (wantsLounge && (loungeLower.includes('lounge') || loungeLower.includes('yes') || loungeLower.includes('quarter'))) score += 20;
+            if (wantsZeroFeeCard && (card.annualFee === 0 || String(card.annualFee).toLowerCase().includes('free'))) score += 20;
+            return { card, score };
+          })
+          .sort((a, b) => b.score - a.score)
+          .slice(0, perBankLimit)
+          .map(item => item.card);
+        matchingDebitCards.push(...bankCards);
+      }
+    } else {
+      matchingDebitCards = (allMasterDebitCards || []).map(card => {
+        let score = 0;
+        const cardNameLower = String(card.cardName || '').toLowerCase();
+        const bankLower = String(card.bank || '').toLowerCase();
+        const networkLower = String(card.network || '').toLowerCase();
+        const loungeLower = String(card.loungeAccess || '').toLowerCase();
+
+        if (targetBanks.length > 0) {
+          if (targetBanks.some(b => bankLower.includes(b.toLowerCase()) || b.toLowerCase().includes(bankLower))) {
+            score += 25;
+          } else {
+            score -= 100;
+          }
+        }
+
+        if (lower.includes(cardNameLower) || cardNameLower.split(' ').some(w => w.length > 3 && lower.includes(w))) {
+          score += 20;
+        }
+
+        if (wantsLounge) {
+          if (loungeLower.includes('lounge') || loungeLower.includes('quarter') || loungeLower.includes('yes') || loungeLower.includes('complimentary')) {
+            score += 25;
+          } else {
+            score -= 20;
+          }
+        }
+
+        if (wantsZeroFeeCard) {
+          if (card.annualFee === 0 || String(card.annualFee).toLowerCase().includes('free')) {
+            score += 20;
+          }
+        }
+
+        if (lower.includes('rupay') && networkLower.includes('rupay')) score += 15;
+        if (lower.includes('visa') && networkLower.includes('visa')) score += 15;
+        if (lower.includes('mastercard') && networkLower.includes('mastercard')) score += 15;
+
+        if (wantsHighLimits) {
+          const atm = card.limits?.atmLimit || card.atmLimit || 0;
+          if (Number(atm) >= 100000) score += 15;
+        }
+
+        return { card, score };
+      })
+      .filter(item => item.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 5)
+      .map(item => item.card);
+
+      // Fallback for target banks if no direct card matches
+      if (matchingDebitCards.length === 0 && (wantsDebitCard || targetBanks.length > 0)) {
+        matchingDebitCards = (allMasterDebitCards || []).filter(c => {
+          if (targetBanks.length > 0) {
+            return targetBanks.some(b => String(c.bank).toLowerCase().includes(b.toLowerCase()));
+          }
+          return true;
+        }).slice(0, 4);
       }
     }
-
-    if (wantsZeroFeeCard) {
-      if (card.annualFee === 0 || String(card.annualFee).toLowerCase().includes('free')) {
-        score += 20;
-      }
-    }
-
-    if (lower.includes('rupay') && networkLower.includes('rupay')) score += 15;
-    if (lower.includes('visa') && networkLower.includes('visa')) score += 15;
-    if (lower.includes('mastercard') && networkLower.includes('mastercard')) score += 15;
-
-    if (wantsHighLimits) {
-      const atm = card.limits?.atmLimit || card.atmLimit || 0;
-      if (Number(atm) >= 100000) score += 15;
-    }
-
-    return { card, score };
-  })
-  .filter(item => item.score > 0)
-  .sort((a, b) => b.score - a.score)
-  .slice(0, 5)
-  .map(item => item.card);
-
-  // If no debit cards matched directly but user asked about cards from target banks
-  if (matchingDebitCards.length === 0 && (wantsDebitCard || targetBanks.length > 0)) {
-    matchingDebitCards = (allMasterDebitCards || []).filter(c => {
-      if (targetBanks.length > 0) {
-        return targetBanks.some(b => String(c.bank).toLowerCase().includes(b.toLowerCase()));
-      }
-      return true;
-    }).slice(0, 4);
   }
 
   // --- 4. Matching Banks ---
@@ -253,12 +330,22 @@ export function getRelevantProductsForAI(query = '', conversationState = {}) {
     return false;
   }).slice(0, 2);
 
+  // Build updated conversation state for follow-up conversational context
+  const updatedConversationState = {
+    ...conversationState,
+    detectedBanks: targetBanks,
+    lastMentionedBank: targetBanks[0] || conversationState.lastMentionedBank || null,
+    lastMentionedAccount: matchingSavings[0]?.accountName || conversationState.lastMentionedAccount || null,
+    lastMentionedCard: matchingDebitCards[0]?.cardName || conversationState.lastMentionedCard || null
+  };
+
   return {
     savingsAccounts: matchingSavings,
     currentAccounts: matchingCurrent,
     debitCards: matchingDebitCards,
     banks: matchingBanks,
-    detectedBanks: targetBanks
+    detectedBanks: targetBanks,
+    conversationState: updatedConversationState
   };
 }
 

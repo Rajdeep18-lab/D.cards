@@ -65,7 +65,13 @@ const KNOWN_HUBS = {
   'vadodara': { lat: 22.3106, lng: 73.1812, city: 'Vadodara', state: 'Gujarat' },
   'baroda': { lat: 22.3106, lng: 73.1812, city: 'Vadodara', state: 'Gujarat' },
   'coimbatore': { lat: 11.0084, lng: 76.9498, city: 'Coimbatore', state: 'Tamil Nadu' },
-  'nagpur': { lat: 21.1441, lng: 79.0628, city: 'Nagpur', state: 'Maharashtra' }
+  'nagpur': { lat: 21.1441, lng: 79.0628, city: 'Nagpur', state: 'Maharashtra' },
+  'haridwar': { lat: 29.9457, lng: 78.1642, city: 'Haridwar', state: 'Uttarakhand' },
+  'patiala': { lat: 30.3398, lng: 76.3869, city: 'Patiala', state: 'Punjab' },
+  'jamshedpur': { lat: 22.8046, lng: 86.2029, city: 'Jamshedpur', state: 'Jharkhand' },
+  'ghaziabad': { lat: 28.6692, lng: 77.4538, city: 'Ghaziabad', state: 'Uttar Pradesh' },
+  'asansol': { lat: 23.6739, lng: 86.9524, city: 'Asansol', state: 'West Bengal' },
+  'medininagar': { lat: 24.0375, lng: 84.0722, city: 'Medininagar', state: 'Jharkhand' }
 };
 
 export const KNOWN_STATES = {
@@ -287,13 +293,28 @@ export function extractLocationParameters(rawMessage = '', conversationState = {
   const unknownBankList = [
     'barclays', 'citibank', 'citi', 'standard chartered', 'stanbic', 'hsbc', 
     'deutsche bank', 'deutsche', 'chase', 'jpmorgan', 'silicon valley bank', 'svb',
-    'wells fargo', 'bank of america', 'bofa', 'dbs', 'mizuho', 'bnp paribas', 'santander', 'xyz bank'
+    'wells fargo', 'bank of america', 'bofa', 'dbs', 'mizuho', 'bnp paribas', 'santander', 'xyz bank',
+    'wakanda', 'bank of wakanda'
   ];
   for (const ub of unknownBankList) {
     if (new RegExp(`\\b${ub}\\b`, 'i').test(lower)) {
       isUnknownBank = true;
-      unknownBankName = ub.toUpperCase();
+      unknownBankName = ub.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
       break;
+    }
+  }
+
+  // Generic unknown "bank of [xyz]" or "[xyz] bank" pattern
+  if (!isUnknownBank) {
+    const genericBankMatch = lower.match(/\b(?:bank of ([a-z]+)|([a-z]+) bank)\b/i);
+    if (genericBankMatch) {
+      const candidate = (genericBankMatch[1] || genericBankMatch[2]).toLowerCase();
+      const knownBankRoots = ['sbi', 'state', 'hdfc', 'icici', 'axis', 'kotak', 'idfc', 'indusind', 'pnb', 'punjab', 'bob', 'baroda', 'canara', 'union', 'indian', 'india', 'federal', 'rbl', 'yes', 'au', 'equitas', 'ujjivan', 'fi', 'jupiter', 'niyo', 'freo', 'airtel', 'post'];
+      const isKnown = knownBankRoots.some(k => candidate === k || candidate.includes(k) || k.includes(candidate));
+      if (!isKnown && !['all', 'my', 'any', 'nearest', 'local', 'nearby', 'this', 'the'].includes(candidate)) {
+        isUnknownBank = true;
+        unknownBankName = genericBankMatch[0].split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+      }
     }
   }
 
@@ -537,6 +558,18 @@ export async function find_bank_locations({
           let locs = nearbyRes.data;
           if (Array.isArray(services) && services.length > 0) {
             locs = locs.filter(l => Array.isArray(l.services) && services.some(s => l.services.includes(s)));
+          }
+          if (locs.length === 0 && safeType === 'ATM') {
+            const fallbackRes = await getBranches({
+              city: knownHub.city,
+              bank: safeBank,
+              type: 'All',
+              page: 1,
+              limit: 5
+            });
+            if (fallbackRes && fallbackRes.success && Array.isArray(fallbackRes.data)) {
+              locs = fallbackRes.data.slice(0, 5);
+            }
           }
           locs = locs.slice(0, 5);
           return {
