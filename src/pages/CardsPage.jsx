@@ -63,15 +63,34 @@ function CardsPage({
   query,
   setQuery
 }) {
-  const { language, isHindi, t } = useLanguage();
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://www.dcard.website/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Debit Cards",
+        "item": "https://www.dcard.website/cards"
+      }
+    ]
+  };
+
   useSEO({
     title: isHindi
       ? "भारत में सर्वश्रेष्ठ डेबिट कार्ड – शुल्क, एटीएम सीमा एवं लाभ की तुलना | D.Card"
-      : "Debit Cards in India – Compare Fees, ATM Limits & Benefits | D.Card",
+      : "Best Debit Cards in India – Compare Fees, ATM Limits & Benefits | D.Card",
     description: isHindi
       ? "शीर्ष भारतीय बैंकों के डेबिट कार्डों की तुलना करें। वार्षिक शुल्क, दैनिक एटीएम निकासी सीमा, लाउंज एक्सेस और रिवॉर्ड्स के आधार पर फ़िल्टर करें।"
       : "Compare debit cards across top Indian banks. Filter by annual fee, daily ATM withdrawal limits, airport lounge access, and rewards on D.Card.",
-    canonicalUrl: "https://www.dcard.website/cards"
+    canonicalUrl: "https://www.dcard.website/cards",
+    schema: breadcrumbSchema
   });
 
   const { selectedLocation, isAllIndia, selectLocation } = useAppLocation();

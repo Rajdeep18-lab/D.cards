@@ -64,14 +64,26 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
   const seoSchema = account
     ? {
         "@context": "https://schema.org",
-        "@type": "FinancialProduct",
-        "name": `${bankName} ${accountName} Savings Account`,
-        "description": seoDescription,
-        "provider": {
-          "@type": "BankOrCreditUnion",
-          "name": bankName
-        },
-        "url": `https://www.dcard.website/savings-accounts/${id}`
+        "@graph": [
+          {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.dcard.website/" },
+              { "@type": "ListItem", "position": 2, "name": "Savings Accounts", "item": "https://www.dcard.website/savings-accounts" },
+              { "@type": "ListItem", "position": 3, "name": `${bankName} ${accountName}`, "item": `https://www.dcard.website/savings-accounts/${id}` }
+            ]
+          },
+          {
+            "@type": "FinancialProduct",
+            "name": `${bankName} ${accountName} Savings Account`,
+            "description": seoDescription,
+            "provider": {
+              "@type": "BankOrCreditUnion",
+              "name": bankName
+            },
+            "url": `https://www.dcard.website/savings-accounts/${id}`
+          }
+        ]
       }
     : null;
 

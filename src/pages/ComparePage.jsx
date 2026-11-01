@@ -10,14 +10,35 @@ import { useLanguage } from '../context/LanguageContext';
 
 function ComparePage({ compareQueue, setCompareQueue, setSelectedCard }) {
   const { isHindi, t } = useLanguage();
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://www.dcard.website/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Compare Debit Cards",
+        "item": "https://www.dcard.website/compare"
+      }
+    ]
+  };
+
   useSEO({
     title: isHindi 
       ? "डेबिट कार्ड तुलना — वार्षिक शुल्क, लाउंज व एटीएम सीमा | D.Card"
-      : "Compare Debit Cards Side by Side | D.Card",
+      : "Compare Debit Cards Side by Side – Fees, Limits & Benefits | D.Card",
     description: isHindi
       ? "वार्षिक शुल्क, लाउंज एक्सेस, एटीएम निकासी सीमा और कैश बैक रिवार्ड्स की आमने-सामने तुलना करें।"
-      : "Compare features, annual charges, daily ATM limits, and rewards across debit cards side by side on D.Card.",
-    canonicalUrl: "https://www.dcard.website/compare"
+      : "Compare features, annual charges, daily ATM limits, and rewards across top Indian debit cards side by side on D.Card.",
+    canonicalUrl: "https://www.dcard.website/compare",
+    schema: breadcrumbSchema
   });
 
   const navigate = useNavigate();

@@ -342,6 +342,26 @@ function ProductInsightsPanel({ insights, navigate, toggleWishlist, isWishlisted
 
 function AIAdvisorPage({ onOpenContact, onSelectDebitCard, toggleCompareQueue, setSavingsCompareQueue }) {
   const { language, isHindi, t }      = useLanguage();
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://www.dcard.website/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "AI Advisor",
+        "item": "https://www.dcard.website/ai-advisor"
+      }
+    ]
+  };
+
   useSEO({
     title:        isHindi
       ? 'D.CARD एआई सहायता – खाते, डेबिट कार्ड, बैंक शाखाएं और एटीएम खोजें'
@@ -350,6 +370,7 @@ function AIAdvisorPage({ onOpenContact, onSelectDebitCard, toggleCompareQueue, s
       ? 'सत्यापित भारतीय बैंकिंग डेटा का उपयोग करके बचत खातों, चालू खातों, डेबिट कार्डों और एटीएम के बारे में प्रश्न पूछें।'
       : 'Ask D.CARD AI Assistance about savings accounts, current accounts, debit cards, bank branches, and ATMs using verified Indian banking data.',
     canonicalUrl: 'https://www.dcard.website/ai-advisor',
+    schema:       breadcrumbSchema
   });
 
   const navigate                      = useNavigate();

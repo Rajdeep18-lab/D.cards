@@ -69,7 +69,7 @@ export default function FindMyBankPage() {
     description: isHindi
       ? 'एसबीआई, एचडीएफसी, आईसीआईसीआई, एक्सिस और अन्य भारतीय बैंकों की निकटतम सत्यापित शाखाएं खोजें। जीपीएस निकटता खोज एवं दिशा-निर्देश।'
       : 'Find verified nearby bank branches of SBI, HDFC, ICICI, Axis and other Indian banks. GPS proximity search, nearest branch first, working hours and directions.',
-    canonical: 'https://www.dcard.website/find-my-bank',
+    canonicalUrl: 'https://www.dcard.website/find-my-bank',
     schema: {
       '@context': 'https://schema.org',
       '@type': 'WebApplication',

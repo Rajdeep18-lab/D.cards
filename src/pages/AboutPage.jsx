@@ -108,6 +108,26 @@ const LEADERSHIP_MATTERS = [
 
 function AboutPage() {
   const { isHindi, t } = useLanguage();
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://www.dcard.website/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "About D.Card",
+        "item": "https://www.dcard.website/about"
+      }
+    ]
+  };
+
   useSEO({
     title: isHindi
       ? "D.CARD के बारे में — स्वतंत्र बैंकिंग सूचना एवं तुलना मंच"
@@ -115,7 +135,8 @@ function AboutPage() {
     description: isHindi
       ? "D.CARD के बारे में जानें। डेबिट कार्ड, बचत खाते और चालू खातों की स्वतंत्र तुलना और पारदर्शी जानकारी।"
       : "Learn about D.Card, India's independent platform comparing debit cards, savings accounts, and current accounts.",
-    canonicalUrl: "https://www.dcard.website/about"
+    canonicalUrl: "https://www.dcard.website/about",
+    schema: breadcrumbSchema
   });
 
   const navigate = useNavigate();

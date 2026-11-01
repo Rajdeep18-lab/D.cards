@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
 import { useLanguage } from '../context/LanguageContext';
+import { useSEO } from '../hooks/useSEO';
 import DebitCardCard from '../components/DebitCardCard';
 import SavingsAccountCard from '../components/SavingsAccountCard';
 import CurrentAccountCard from '../components/CurrentAccountCard';
@@ -52,6 +53,13 @@ function SavedCardsPage({ setSelectedCard, toggleCompareQueue, compareQueue, use
   const { t, language } = useLanguage();
   const isHindi = language === 'hi';
   const navigate = useNavigate();
+
+  useSEO({
+    title: isHindi ? "सहेजे गए कार्ड एवं खाते | D.Card" : "Saved Cards & Accounts | D.Card",
+    description: isHindi ? "आपके सहेजे गए पसंदीदा डेबिट कार्ड और बैंक खाते।" : "View and manage your saved debit cards and bank accounts on D.Card.",
+    canonicalUrl: "https://www.dcard.website/saved-cards",
+    robots: "noindex, nofollow"
+  });
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProductType, setSelectedProductType] = useState('All');

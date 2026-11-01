@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, useCallback, lazy, Suspense } from "react";
-import { BrowserRouter, Routes, Route, useLocation, useNavigate, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation, useNavigate, Navigate, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import ErrorBoundary from "./components/ErrorBoundary";
 import Navbar from "./components/Navbar";
@@ -50,6 +50,11 @@ function AuthRedirectHandler({ defaultTab = "login" }) {
     }
   }, [defaultTab, openAuthModal]);
   return <Navigate to="/" replace />;
+}
+
+function RedirectToCanonicalParam({ basePath }) {
+  const { id } = useParams();
+  return <Navigate to={`${basePath}/${id}`} replace />;
 }
 
 import { cardService } from "./services/cardService";
@@ -1000,11 +1005,11 @@ function AppContent() {
           />
           <Route 
             path="/find-banks" 
-            element={<FindBanksPage />} 
+            element={<Navigate to="/find-my-bank" replace />}
           />
           <Route 
             path="/banks-near-you" 
-            element={<Navigate to="/find-my-bank" replace />} 
+            element={<Navigate to="/find-my-bank" replace />}
           />
 
           {/* Public Informational pages */}
@@ -1029,7 +1034,7 @@ function AppContent() {
           <Route element={<ProtectedRoute />}>
             {/* Debit Cards routes */}
             <Route path="/cards" element={cardsPageContent} />
-            <Route path="/debit-cards" element={cardsPageContent} />
+            <Route path="/debit-cards" element={<Navigate to="/cards" replace />} />
             {/* Debit Card Product Detail Pages — premium full-page redesign */}
             <Route path="/debit-cards/:id" element={
               <DebitCardDetailPage
@@ -1037,18 +1042,8 @@ function AppContent() {
                 compareQueue={compareQueue}
               />
             } />
-            <Route path="/debit-card/:id" element={
-              <DebitCardDetailPage
-                toggleCompareQueue={toggleCompareQueue}
-                compareQueue={compareQueue}
-              />
-            } />
-            <Route path="/product/:id" element={
-              <DebitCardDetailPage
-                toggleCompareQueue={toggleCompareQueue}
-                compareQueue={compareQueue}
-              />
-            } />
+            <Route path="/debit-card/:id" element={<RedirectToCanonicalParam basePath="/debit-cards" />} />
+            <Route path="/product/:id" element={<RedirectToCanonicalParam basePath="/debit-cards" />} />
 
             {/* Savings Accounts routes */}
             <Route 
@@ -1061,11 +1056,7 @@ function AppContent() {
             />
             <Route 
               path="/savings" 
-              element={
-                <SavingsAccountsPage
-                  onSelectDebitCard={(card) => setSelectedCard(card)}
-                />
-              } 
+              element={<Navigate to="/savings-accounts" replace />}
             />
             <Route 
               path="/savings-accounts/:id" 
@@ -1085,19 +1076,7 @@ function AppContent() {
             />
             <Route 
               path="/savings/:id" 
-              element={
-                <SavingsAccountDetailPage
-                  onSelectDebitCard={(card) => setSelectedCard(card)}
-                  onToggleCompare={(acc) => {
-                    setSavingsCompareQueue(prev => {
-                      if (prev.some(a => String(a.id) === String(acc.id))) return prev;
-                      if (prev.length >= 3) return prev;
-                      return [...prev, acc];
-                    });
-                  }}
-                  isCompared={false}
-                />
-              } 
+              element={<RedirectToCanonicalParam basePath="/savings-accounts" />}
             />
             <Route 
               path="/compare-savings" 
@@ -1121,19 +1100,11 @@ function AppContent() {
             />
             <Route 
               path="/current-account" 
-              element={
-                <CurrentAccountsPage
-                  onSelectDebitCard={(card) => setSelectedCard(card)}
-                />
-              } 
+              element={<Navigate to="/current-accounts" replace />}
             />
             <Route 
               path="/current" 
-              element={
-                <CurrentAccountsPage
-                  onSelectDebitCard={(card) => setSelectedCard(card)}
-                />
-              } 
+              element={<Navigate to="/current-accounts" replace />}
             />
             <Route 
               path="/current-accounts/:id" 
@@ -1153,19 +1124,7 @@ function AppContent() {
             />
             <Route 
               path="/current-account/:id" 
-              element={
-                <CurrentAccountDetailPage
-                  onSelectDebitCard={(card) => setSelectedCard(card)}
-                  onToggleCompare={(acc) => {
-                    setCurrentCompareQueue(prev => {
-                      if (prev.some(a => String(a.id) === String(acc.id))) return prev;
-                      if (prev.length >= 3) return prev;
-                      return [...prev, acc];
-                    });
-                  }}
-                  isCompared={false}
-                />
-              } 
+              element={<RedirectToCanonicalParam basePath="/current-accounts" />}
             />
             <Route 
               path="/compare-current" 
@@ -1222,15 +1181,7 @@ function AppContent() {
             />
             <Route 
               path="/favorites" 
-              element={
-                <SavedCardsPage
-                  setSelectedCard={setSelectedCard}
-                  toggleCompareQueue={toggleCompareQueue}
-                  compareQueue={compareQueue}
-                  userProfile={userProfile}
-                  STATIC_RANKINGS={STATIC_RANKINGS}
-                />
-              } 
+              element={<Navigate to="/saved-cards" replace />}
             />
 
             {/* Bank profiles routes */}

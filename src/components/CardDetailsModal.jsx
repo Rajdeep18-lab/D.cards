@@ -190,8 +190,8 @@ function CardDetailsModal({ isOpen, onClose, card, compareQueue, toggleCompareQu
   useSEO({
     title: cardSeoTitle,
     description: cardSeoDesc,
-    canonicalUrl: "https://www.dcard.website/cards",
-    schema: cardSchema
+    schema: cardSchema,
+    enabled: Boolean(isOpen && card)
   });
 
   const { gradient: brandGradient, accent, shadow } = getBankCardSkin(bankName);

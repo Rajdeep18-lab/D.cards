@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node scripts/generate-sitemap.js && vite build",
+    "build": "node scripts/generate-sitemap.js && vite build && node scripts/prerender-seo.js",
     "generate:sitemap": "node scripts/generate-sitemap.js",
+    "prerender": "node scripts/prerender-seo.js",
     "preview": "vite preview",
     "test": "node scripts/validate-locations.js && node scripts/geocode-branches.mjs --check"
   },

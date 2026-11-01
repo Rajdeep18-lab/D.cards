@@ -302,14 +302,35 @@ function matchesDebitCardFilter(acc, cardFilter) {
 function SavingsAccountsPage({ onSelectDebitCard }) {
   const { selectedLocation } = useAppLocation();
   const { language, isHindi, t } = useLanguage();
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://www.dcard.website/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Savings Accounts",
+        "item": "https://www.dcard.website/savings-accounts"
+      }
+    ]
+  };
+
   useSEO({
     title: isHindi
       ? "भारत में सर्वश्रेष्ठ बचत खाते – ब्याज दर एवं न्यूनतम बैलेंस तुलना | D.Card"
-      : "Savings Accounts in India – Compare Interest Rates & Min Balance | D.Card",
+      : "Best Savings Accounts in India – Compare Interest Rates & Min Balance | D.Card",
     description: isHindi
-      ? "भारत के प्रमुख बैंकों के बचत खातों की खोज और तुलना करें। ब्याज दरें, न्यूनतम बैलेंस आवश्यकताएं और बैंकिंग सुविधाएं देखें।"
-      : "Explore and compare savings accounts from leading banks in India. Check interest rates, minimum balance requirements, and features on D.Card.",
-    canonicalUrl: "https://www.dcard.website/savings-accounts"
+      ? "भारत के प्रमुख बैंकों के बचत खातों की खोज और तुलना करें। ब्याज दरें, न्यूनतम बैलेंस आवश्यकताएं, लिंक डेबिट कार्ड लाभ और बैंकिंग सुविधाएं देखें।"
+      : "Explore and compare the best savings accounts from leading banks in India. Compare interest rates, zero balance options, debit card benefits, and fees on D.Card.",
+    canonicalUrl: "https://www.dcard.website/savings-accounts",
+    schema: breadcrumbSchema
   });
 
   const [accounts, setAccounts] = useState([]);
