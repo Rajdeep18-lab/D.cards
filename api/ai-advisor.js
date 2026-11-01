@@ -1,5 +1,6 @@
 import { GoogleGenAI } from '@google/genai';
 import { getRelevantProductsForAI, buildPromptContext } from './productContextService.js';
+import { getClientIp, handleCors, checkRateLimitAsync, checkRateLimit } from './rateLimiter.js';
 import { 
   classifyUserIntent, 
   extractProductRequirements, 
@@ -9,38 +10,7 @@ import {
   buildLocationPromptContext 
 } from './aiLocationService.js';
 
-// In-memory rate limiting map: ip -> timestamps[]
-const rateLimitMap = new Map();
-const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
-const MAX_REQUESTS_PER_WINDOW = 40;
-
-/**
- * Rate limiting guard with sliding window, memory sweep, and standard header feedback
- */
-function checkRateLimit(clientIp) {
-  if (!clientIp || clientIp === 'unknown') return { limited: false, remaining: MAX_REQUESTS_PER_WINDOW };
-  const now = Date.now();
-  const timestamps = (rateLimitMap.get(clientIp) || []).filter(t => now - t < RATE_LIMIT_WINDOW_MS);
-  
-  if (timestamps.length >= MAX_REQUESTS_PER_WINDOW) {
-    const oldest = timestamps[0];
-    const retryAfterSec = Math.max(1, Math.ceil((oldest + RATE_LIMIT_WINDOW_MS - now) / 1000));
-    return { limited: true, retryAfterSec, remaining: 0 };
-  }
-  
-  timestamps.push(now);
-  rateLimitMap.set(clientIp, timestamps);
-
-  if (rateLimitMap.size > 2000) {
-    for (const [key, tsList] of rateLimitMap.entries()) {
-      if (tsList.every(t => now - t >= RATE_LIMIT_WINDOW_MS)) {
-        rateLimitMap.delete(key);
-      }
-    }
-  }
-
-  return { limited: false, remaining: MAX_REQUESTS_PER_WINDOW - timestamps.length };
-}
+// Rate limiting handled via ./rateLimiter.js
 
 const SYSTEM_INSTRUCTION = `You are D.CARD AI Assistance.
 
@@ -133,30 +103,8 @@ export default async function handler(req, res) {
     };
   }
 
-  // Dynamic CORS origin validation for secure cross-origin requests
-  const requestOrigin = req.headers?.origin || '';
-  const allowedOrigins = [
-    'https://www.dcard.website',
-    'https://dcard.website',
-    'http://localhost:5173',
-    'http://localhost:3000',
-    'http://127.0.0.1:5173'
-  ];
-  // Allow official preview deployments strictly matching dcard project name
-  const isAllowedOrigin = allowedOrigins.includes(requestOrigin) || 
-    (/^https:\/\/(smartbank-compare|d-card)(-[a-z0-9-]+)?\.vercel\.app$/.test(requestOrigin));
-
-  if (typeof res.setHeader === 'function') {
-    if (isAllowedOrigin) {
-      res.setHeader('Access-Control-Allow-Origin', requestOrigin);
-      res.setHeader('Access-Control-Allow-Credentials', 'true');
-    }
-    res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Requested-With, Accept');
-  }
-
-  if (req.method === 'OPTIONS') {
-    res.status(204).end();
+  // Dynamic CORS origin validation
+  if (handleCors(req, res, { allowedMethods: 'POST,OPTIONS' })) {
     return;
   }
 
@@ -171,13 +119,22 @@ export default async function handler(req, res) {
     return;
   }
 
-  // Rate limiting
-  const clientIp = req.headers?.['x-forwarded-for'] || req.headers?.['x-real-ip'] || req.socket?.remoteAddress || 'unknown';
-  const rateLimitStatus = checkRateLimit(clientIp);
+  // Rate limiting with explicit degradation policy for expensive AI endpoints
+  const clientIp = getClientIp(req);
+  const rateLimitStatus = await checkRateLimitAsync(clientIp, { 
+    maxRequests: 40, 
+    windowMs: 60000, 
+    prefix: 'ai-advisor',
+    isExpensiveEndpoint: true 
+  });
 
   if (typeof res.setHeader === 'function') {
-    res.setHeader('X-RateLimit-Limit', String(MAX_REQUESTS_PER_WINDOW));
+    res.setHeader('X-RateLimit-Limit', rateLimitStatus.degraded ? '20' : '40');
     res.setHeader('X-RateLimit-Remaining', String(rateLimitStatus.remaining));
+    res.setHeader('X-RateLimit-Mode', rateLimitStatus.mode);
+    if (rateLimitStatus.degraded) {
+      res.setHeader('X-RateLimit-Degraded', 'true');
+    }
   }
 
   if (rateLimitStatus.limited) {

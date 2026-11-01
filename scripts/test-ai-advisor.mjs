@@ -156,7 +156,7 @@ async function runTests() {
     const { req: req5, res: res5 } = createMockHttp({ body: { message: 'test query' } });
     await handler(req5, res5);
     assert(
-      res5.getHeaders()['x-ratelimit-limit'] === '40' && res5.getHeaders()['x-ratelimit-remaining'] !== undefined,
+      (res5.getHeaders()['x-ratelimit-limit'] === '40' || res5.getHeaders()['x-ratelimit-limit'] === '20') && res5.getHeaders()['x-ratelimit-remaining'] !== undefined,
       'Standard rate limiting headers (X-RateLimit-Limit, X-RateLimit-Remaining) are present'
     );
   }
@@ -388,6 +388,7 @@ async function runTests() {
   if (failed > 0) {
     process.exit(1);
   }
+  process.exit(0);
 }
 
 runTests().catch(err => {

@@ -40,6 +40,8 @@ const AdminDashboardModal = lazy(() => import("./components/AdminDashboardModal"
 const AdminLoginPage = lazy(() => import("./components/AdminLoginPage"));
 const CardDetailsModal = lazy(() => import("./components/CardDetailsModal"));
 const FirstLoginModal = lazy(() => import("./components/FirstLoginModal"));
+const AccessDeniedModal = lazy(() => import("./components/AccessDeniedModal"));
+import { adminAuthService } from "./services/adminAuthService";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 function AuthRedirectHandler({ defaultTab = "login" }) {
@@ -285,6 +287,49 @@ function AppContent() {
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isAdminLoginOpen, setIsAdminLoginOpen] = useState(false);
   const [isAccessDeniedOpen, setIsAccessDeniedOpen] = useState(false);
+
+  // Handle Admin URL Routing and Hashes (#admin, #admin/login, #admin/dashboard, /admin)
+  useEffect(() => {
+    const handleAdminRoute = async () => {
+      const hash = window.location.hash;
+      const isPathAdmin = location.pathname === '/admin' || location.pathname.startsWith('/admin/');
+      
+      if (hash.startsWith('#admin') || isPathAdmin) {
+        if (!user) {
+          setIsAdminLoginOpen(true);
+        } else {
+          try {
+            const isAdmin = await adminAuthService.checkIsAdmin(user);
+            if (isAdmin) {
+              setIsAdminOpen(true);
+            } else {
+              setIsAccessDeniedOpen(true);
+            }
+          } catch (err) {
+            setIsAccessDeniedOpen(true);
+          }
+        }
+      }
+    };
+
+    handleAdminRoute();
+    window.addEventListener('hashchange', handleAdminRoute);
+    return () => window.removeEventListener('hashchange', handleAdminRoute);
+  }, [user, location.pathname]);
+
+  const handleCloseAdminDashboard = useCallback(() => {
+    setIsAdminOpen(false);
+    if (window.location.hash.startsWith('#admin')) {
+      window.history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
+  }, []);
+
+  const handleCloseAdminLogin = useCallback(() => {
+    setIsAdminLoginOpen(false);
+    if (window.location.hash.startsWith('#admin')) {
+      window.history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
+  }, []);
   const [isLegalOpen, setIsLegalOpen] = useState(false);
   const [legalTab, setLegalTab] = useState("privacy");
   const [compareQueue, setCompareQueue] = useState([]);

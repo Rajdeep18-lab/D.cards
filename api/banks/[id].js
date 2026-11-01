@@ -4,16 +4,21 @@
  * Fetches a single verified branch or ATM record by unique ID.
  */
 
-import { getBranchById, checkRateLimit } from '../banksService.js';
+import { getBranchById } from '../banksService.js';
+import { getClientIp, handleCors, checkRateLimitAsync } from '../rateLimiter.js';
 
 export default async function handler(req, res) {
+  if (handleCors(req, res, { allowedMethods: 'GET,OPTIONS' })) {
+    return;
+  }
+
   if (req.method !== 'GET') {
-    res.setHeader('Allow', ['GET']);
+    res.setHeader('Allow', ['GET', 'OPTIONS']);
     return res.status(405).json({ error: `Method ${req.method} Not Allowed` });
   }
 
-  const clientIp = req.headers['x-forwarded-for'] || req.socket?.remoteAddress || '127.0.0.1';
-  const rateLimitStatus = checkRateLimit(clientIp);
+  const clientIp = getClientIp(req);
+  const rateLimitStatus = await checkRateLimitAsync(clientIp, { maxRequests: 60, windowMs: 60000, prefix: 'banks-id' });
   if (rateLimitStatus.limited) {
     res.setHeader('Retry-After', String(rateLimitStatus.retryAfterSec || 60));
     return res.status(429).json({

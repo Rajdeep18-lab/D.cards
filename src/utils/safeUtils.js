@@ -1,6 +1,7 @@
 /**
- * SAFE NORMALIZATION HELPERS
+ * SAFE NORMALIZATION & SECURITY HELPERS
  * Protects string, array, and numeric operations from null / undefined runtime crashes
+ * and guards DOM insertions against XSS and unsafe URL protocols.
  */
 
 export function safeString(value) {
@@ -32,4 +33,32 @@ export function safeIncludes(haystack, needle) {
   const safeN = safeLower(needle);
   if (!safeN) return true;
   return safeH.includes(safeN);
+}
+
+/**
+ * Escapes HTML entities to prevent DOM XSS injection
+ */
+export function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/**
+ * Sanitizes external URLs, strictly rejecting dangerous schemes like javascript:, data:, or vbscript:
+ */
+export function safeUrl(url, defaultUrl = '#') {
+  if (!url || typeof url !== 'string') return defaultUrl;
+  const trimmed = url.trim();
+  if (/^(javascript|data|vbscript):/i.test(trimmed)) {
+    return defaultUrl;
+  }
+  if (/^(https?:|\/|#|tel:|mailto:)/i.test(trimmed)) {
+    return trimmed;
+  }
+  return defaultUrl;
 }

@@ -33,23 +33,7 @@ try {
 // -------------------------------------------------------------
 // Rate Limiting (Lightweight in-memory IP tracker)
 // -------------------------------------------------------------
-const rateLimitMap = new Map();
-const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
-const MAX_REQUESTS_PER_WINDOW = 60; // 60 requests/min per IP
-
-export function checkRateLimit(clientIp) {
-  if (!clientIp) return { limited: false };
-  const now = Date.now();
-  const timestamps = (rateLimitMap.get(clientIp) || []).filter(t => now - t < RATE_LIMIT_WINDOW_MS);
-  
-  if (timestamps.length >= MAX_REQUESTS_PER_WINDOW) {
-    return { limited: true, retryAfterSec: Math.ceil((timestamps[0] + RATE_LIMIT_WINDOW_MS - now) / 1000) };
-  }
-  
-  timestamps.push(now);
-  rateLimitMap.set(clientIp, timestamps);
-  return { limited: false };
-}
+export { checkRateLimit } from './rateLimiter.js';
 
 // -------------------------------------------------------------
 // Lightweight In-Memory Response Caching

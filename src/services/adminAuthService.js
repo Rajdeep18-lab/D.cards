@@ -31,8 +31,14 @@ export const adminAuthService = {
       return adminStatusCache[uid];
     }
 
-    // 1. Primary Admin Email Instant Verification
+    // 1. Primary Admin Email Verification (Strictly requires verified email)
     if (email === PRIMARY_ADMIN_EMAIL.toLowerCase()) {
+      if (!user.emailVerified) {
+        console.warn("[AdminAuth] Primary admin email detected but unverified. Access denied until email ownership is verified.");
+        adminStatusCache[uid] = false;
+        return false;
+      }
+
       adminStatusCache[uid] = true;
       
       // Auto-ensure Primary Admin doc exists in `admins` and `admin_users`
@@ -44,6 +50,7 @@ export const adminAuthService = {
             uid,
             email,
             role: "admin",
+            active: true,
             createdAt: new Date().toISOString()
           }, { merge: true });
         }
@@ -55,23 +62,27 @@ export const adminAuthService = {
     }
 
     try {
-      // 2. Check Firestore `admins` collection
+      // 2. Check Firestore `admins` collection (Strict role: 'admin' and active !== false)
       const adminDocRef = doc(db, 'admins', uid);
       const adminDoc = await getDoc(adminDocRef);
       if (adminDoc.exists()) {
         const data = adminDoc.data() || {};
-        if (data.role === 'admin' || data.email?.toLowerCase() === PRIMARY_ADMIN_EMAIL.toLowerCase()) {
+        const isRoleAdmin = data.role === 'admin';
+        const isActive = data.active !== false;
+        if (isRoleAdmin && isActive) {
           adminStatusCache[uid] = true;
           return true;
         }
       }
 
-      // 3. Check Firestore `admin_users` collection
+      // 3. Check Firestore `admin_users` collection (Strict role: 'admin' and active !== false)
       const adminUserDocRef = doc(db, 'admin_users', uid);
       const adminUserDoc = await getDoc(adminUserDocRef);
       if (adminUserDoc.exists()) {
         const data = adminUserDoc.data() || {};
-        if (data.role === 'admin' || data.email?.toLowerCase() === PRIMARY_ADMIN_EMAIL.toLowerCase()) {
+        const isRoleAdmin = data.role === 'admin';
+        const isActive = data.active !== false;
+        if (isRoleAdmin && isActive) {
           adminStatusCache[uid] = true;
           return true;
         }

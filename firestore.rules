@@ -12,14 +12,19 @@ service cloud.firestore {
       return isAuthenticated() && request.auth.uid == userId;
     }
     
-    // Helper function to check if user is an admin (strictly via protected admins tables or verified primary admin)
+    // Helper function to check if user is an admin
+    // Strictly requires verified primary admin email OR active entry in protected admins collections
     function isAdmin() {
       return isAuthenticated() && 
-        ((request.auth.token.email != null && request.auth.token.email.toLowerCase() == 'ritikanshu072@gmail.com') ||
+        ((request.auth.token.email != null && 
+          request.auth.token.email_verified == true && 
+          request.auth.token.email.toLowerCase() == 'ritikanshu072@gmail.com') ||
          (exists(/databases/$(database)/documents/admins/$(request.auth.uid)) && 
-          get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role == 'admin') ||
+          get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role == 'admin' &&
+          get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.active != false) ||
          (exists(/databases/$(database)/documents/admin_users/$(request.auth.uid)) && 
-          get(/databases/$(database)/documents/admin_users/$(request.auth.uid)).data.role == 'admin'));
+          get(/databases/$(database)/documents/admin_users/$(request.auth.uid)).data.role == 'admin' &&
+          get(/databases/$(database)/documents/admin_users/$(request.auth.uid)).data.active != false));
     }
 
     // Debit Cards Collection (Public Read, Admin Write Only)
@@ -78,54 +83,91 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
-    // User Profiles (Owner or Admin can read/write)
+    // User Profiles Collection
+    // - On create: user cannot inject privileged fields (role, admin, permissions)
+    // - On update: protected fields and ownership identifiers cannot be modified
+    // - Ordinary profile fields (name, phone, avatar, city, etc.) remain freely editable
     match /profiles/{userId} {
       allow read: if isOwner(userId) || isAdmin();
-      allow write: if isOwner(userId) || isAdmin();
+      allow delete: if isOwner(userId) || isAdmin();
+      allow create: if (isOwner(userId) && 
+        (!('id' in request.resource.data) || request.resource.data.id == userId) &&
+        (!('uid' in request.resource.data) || request.resource.data.uid == userId) &&
+        !request.resource.data.keys().hasAny(['role', 'isAdmin', 'admin', 'permissions', 'is_admin'])) || isAdmin();
+      allow update: if isAdmin() || (
+        isOwner(userId) &&
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'isAdmin', 'admin', 'permissions', 'is_admin', 'uid', 'id'])
+      );
     }
 
-    // Users Collection (Owner or Admin can read/write)
+    // Users Collection (Synchronized Auth Metadata)
     match /users/{userId} {
       allow read: if isOwner(userId) || isAdmin();
-      allow write: if isOwner(userId) || isAdmin();
+      allow delete: if isOwner(userId) || isAdmin();
+      allow create: if (isOwner(userId) && 
+        (!('id' in request.resource.data) || request.resource.data.id == userId) &&
+        (!('uid' in request.resource.data) || request.resource.data.uid == userId) &&
+        !request.resource.data.keys().hasAny(['role', 'isAdmin', 'admin', 'permissions', 'is_admin'])) || isAdmin();
+      allow update: if isAdmin() || (
+        isOwner(userId) &&
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'isAdmin', 'admin', 'permissions', 'is_admin', 'uid', 'id'])
+      );
     }
 
-    // Contact Queries & Messages Collection (Admin Read/Manage Only)
+    // Contact Queries & Messages Collection (Public Create with Schema Validation, Admin Read/Manage Only)
     match /contact_queries/{queryId} {
-      allow create: if true;
+      allow create: if request.resource.data.keys().hasOnly(['name', 'email', 'phone', 'subject', 'message', 'createdAt', 'created_at', 'status']) &&
+        request.resource.data.name is string && request.resource.data.name.size() <= 100 &&
+        request.resource.data.email is string && request.resource.data.email.size() <= 150 &&
+        request.resource.data.message is string && request.resource.data.message.size() <= 2000;
       allow read, update, delete: if isAdmin();
     }
     match /contact_messages/{msgId} {
-      allow create: if true;
+      allow create: if request.resource.data.keys().hasOnly(['name', 'email', 'phone', 'subject', 'message', 'createdAt', 'created_at', 'status']) &&
+        request.resource.data.name is string && request.resource.data.name.size() <= 100 &&
+        request.resource.data.email is string && request.resource.data.email.size() <= 150 &&
+        request.resource.data.message is string && request.resource.data.message.size() <= 2000;
       allow read, update, delete: if isAdmin();
     }
 
-    // Favorites / Saved Cards / Wishlists (Owner or Admin only)
+    // Saved Cards (Owner only; immutable ownership)
     match /saved_cards/{savedId} {
       allow read, delete: if isAuthenticated() && (resource.data.userId == request.auth.uid || resource.data.uid == request.auth.uid || isAdmin());
       allow create: if isAuthenticated() && (request.resource.data.userId == request.auth.uid || request.resource.data.uid == request.auth.uid);
-      allow update: if isAuthenticated() && (resource.data.userId == request.auth.uid || resource.data.uid == request.auth.uid || isAdmin());
+      allow update: if isAuthenticated() && (resource.data.userId == request.auth.uid || resource.data.uid == request.auth.uid || isAdmin()) &&
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['userId', 'uid']);
     }
+
+    // Favorites Collection (Owner only; immutable ownership)
     match /favorites/{favId} {
       allow read, delete: if isAuthenticated() && (resource.data.userId == request.auth.uid || resource.data.uid == request.auth.uid || isAdmin());
       allow create: if isAuthenticated() && (request.resource.data.userId == request.auth.uid || request.resource.data.uid == request.auth.uid);
-      allow update: if isAuthenticated() && (resource.data.userId == request.auth.uid || resource.data.uid == request.auth.uid || isAdmin());
-    }
-    match /wishlists/{userId} {
-      allow read, write: if isOwner(userId) || isAdmin();
+      allow update: if isAuthenticated() && (resource.data.userId == request.auth.uid || resource.data.uid == request.auth.uid || isAdmin()) &&
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['userId', 'uid']);
     }
 
-    // Compare History & Compare Logs (Owner or Admin only)
+    // User Wishlists
+    match /wishlists/{userId} {
+      allow read, delete: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId) || isAdmin();
+      allow update: if (isOwner(userId) || isAdmin()) &&
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['userId', 'uid', 'id']);
+    }
+
+    // Compare History (Owner only; immutable ownership)
     match /compare_history/{historyId} {
       allow read, delete: if isAuthenticated() && (resource.data.userId == request.auth.uid || resource.data.uid == request.auth.uid || isAdmin());
       allow create: if isAuthenticated() && (request.resource.data.userId == request.auth.uid || request.resource.data.uid == request.auth.uid);
-      allow update: if isAuthenticated() && (resource.data.userId == request.auth.uid || resource.data.uid == request.auth.uid || isAdmin());
+      allow update: if isAuthenticated() && (resource.data.userId == request.auth.uid || resource.data.uid == request.auth.uid || isAdmin()) &&
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['userId', 'uid']);
     }
+
+    // Compare Logs (Admin Read/Write Only)
     match /compare_logs/{logId} {
       allow read, write: if isAdmin();
     }
 
-    // Chatbot History & Chat History
+    // Chat History (Owner or Admin only)
     match /chat_history/{userId} {
       allow read, write: if isOwner(userId) || isAdmin();
     }
@@ -133,9 +175,11 @@ service cloud.firestore {
       allow read, write: if isAdmin();
     }
 
-    // Search Logs (Admin Read/Write Only)
+    // Search Logs (Public/User Write-Only Event Logging with Schema & Bound Checks, Admin Read/Manage Only)
     match /search_logs/{logId} {
-      allow create: if isAuthenticated();
+      allow create: if request.resource.data.keys().hasOnly(['query', 'user_email', 'timestamp', 'details']) &&
+        request.resource.data.query is string && request.resource.data.query.size() <= 250 &&
+        (!('user_email' in request.resource.data) || request.resource.data.user_email == 'Guest' || (isAuthenticated() && request.auth.token.email == request.resource.data.user_email));
       allow read, update, delete: if isAdmin();
     }
 
@@ -149,25 +193,38 @@ service cloud.firestore {
       allow read, write: if isAdmin();
     }
 
-    // Activity Logs (Admin Read/Write Only)
+    // Activity Logs (Write-Only Event Logging with Strict Type Whitelist & Size Bounds, Admin Read/Manage Only)
     match /activity_logs/{logId} {
-      allow create: if isAuthenticated();
+      allow create: if request.resource.data.keys().hasOnly(['type', 'text', 'user_email', 'timestamp', 'details']) &&
+        request.resource.data.type is string &&
+        request.resource.data.text is string && request.resource.data.text.size() <= 300 &&
+        (
+          (request.resource.data.type in ['registration', 'profile_update', 'favorite', 'compare', 'search', 'chatbot', 'contact', 'card_view']) ||
+          isAdmin()
+        ) &&
+        (!('user_email' in request.resource.data) || request.resource.data.user_email == 'Guest' || (isAuthenticated() && request.auth.token.email == request.resource.data.user_email) || isAdmin());
       allow read, update, delete: if isAdmin();
     }
 
-    // Referral Clicks
+    // Referral Clicks (Public Outlink Logging with Schema & Size Bounds, Admin Read/Manage Only)
     match /referral_clicks/{clickId} {
-      allow read, write: if isAuthenticated();
+      allow create: if request.resource.data.keys().hasOnly([
+        'referralCode', 'userId', 'user_id', 'timestamp', 'source', 'page',
+        'card_id', 'card_name', 'bank_name', 'clicked_url', 'clicked_at'
+      ]) &&
+      request.resource.data.referralCode is string && request.resource.data.referralCode.size() <= 100 &&
+      request.resource.data.source is string && request.resource.data.source.size() <= 150 &&
+      (!('userId' in request.resource.data) || request.resource.data.userId == null || (isAuthenticated() && request.resource.data.userId == request.auth.uid)) &&
+      (!('user_id' in request.resource.data) || request.resource.data.user_id == null || (isAuthenticated() && request.resource.data.user_id == request.auth.uid));
+      allow read, update, delete: if isAdmin();
     }
 
     // Admin DB & Admin Users Collections (Admin Only)
     match /admins/{adminId} {
-      allow read: if isAdmin();
-      allow write: if isAdmin();
+      allow read, write: if isAdmin();
     }
     match /admin_users/{adminId} {
-      allow read: if isAdmin();
-      allow write: if isAdmin();
+      allow read, write: if isAdmin();
     }
   }
 }

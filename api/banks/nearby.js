@@ -5,18 +5,24 @@
  * nearest-first sorting, input validation, rate limiting, and pagination.
  */
 
-import { getNearbyBranches, checkRateLimit } from '../banksService.js';
+import { getNearbyBranches } from '../banksService.js';
+import { getClientIp, handleCors, checkRateLimitAsync } from '../rateLimiter.js';
 
 export default async function handler(req, res) {
+  // CORS & Preflight handling
+  if (handleCors(req, res, { allowedMethods: 'GET,OPTIONS' })) {
+    return;
+  }
+
   // Only allow GET requests
   if (req.method !== 'GET') {
-    res.setHeader('Allow', ['GET']);
+    res.setHeader('Allow', ['GET', 'OPTIONS']);
     return res.status(405).json({ error: `Method ${req.method} Not Allowed` });
   }
 
-  // Security: Extract IP and enforce rate limiting (60 requests/min)
-  const clientIp = req.headers['x-forwarded-for'] || req.socket?.remoteAddress || '127.0.0.1';
-  const rateLimitStatus = checkRateLimit(clientIp);
+  // Security: Extract IP and enforce distributed / sliding rate limiting (60 requests/min)
+  const clientIp = getClientIp(req);
+  const rateLimitStatus = await checkRateLimitAsync(clientIp, { maxRequests: 60, windowMs: 60000, prefix: 'banks-nearby' });
   if (rateLimitStatus.limited) {
     res.setHeader('Retry-After', String(rateLimitStatus.retryAfterSec || 60));
     return res.status(429).json({
