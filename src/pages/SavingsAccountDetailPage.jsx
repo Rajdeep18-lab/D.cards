@@ -33,6 +33,13 @@ import { useSEO } from '../hooks/useSEO';
 import ICICIBSavingsDetailView from '../components/ICICIBSavingsDetailView';
 import BankLogo from '../components/BankLogo';
 import { useLanguage } from '../context/LanguageContext';
+import { 
+  formatInterestRate, 
+  formatMinimumBalance, 
+  formatNonMaintenanceCharge, 
+  formatBenefits, 
+  formatSourceAndVerification 
+} from '../utils/bankingDataFormatter';
 
 function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompared }) {
   const { id } = useParams();

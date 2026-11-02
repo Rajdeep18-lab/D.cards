@@ -248,7 +248,7 @@ function WelcomeState({ onPromptClick }) {
     { label: 'लाउंज एक्सेस कार्ड', query: 'किन डेबिट कार्डों पर एयरपोर्ट लाउंज एक्सेस मिलता है?' },
     { label: 'SBI बनाम HDFC तुलना', query: 'SBI और HDFC के बचत खातों की तुलना करें' },
     { label: 'विद्यार्थी खाता', query: 'विद्यार्थियों के लिए सबसे अच्छा बचत खाता कौन सा है?' }
-  ] : STARTER_PROMPTS.slice(0, 4);
+  ] : STARTER_PROMPTS_EN.slice(0, 4);
 
   return (
     <motion.div

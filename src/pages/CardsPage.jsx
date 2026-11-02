@@ -63,6 +63,8 @@ function CardsPage({
   query,
   setQuery
 }) {
+  const { language, isHindi, t } = useLanguage();
+
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
