@@ -7,7 +7,8 @@ import {
   extractLocationParameters, 
   find_bank_locations, 
   isLocationQueryAmbiguous,
-  buildLocationPromptContext 
+  buildLocationPromptContext,
+  isAtmWithdrawalLimitQuery
 } from './aiLocationService.js';
 
 // Rate limiting handled via ./rateLimiter.js
@@ -40,6 +41,31 @@ CRITICAL ZERO HALLUCINATION RULES:
   "I couldn't find a verified location matching your request in D.CARD's current database."
 - When comparing products, use factual differences from the available data.
 - Never claim one product is universally best.
+
+ATM WITHDRAWAL LIMITS VS PHYSICAL ATM DISCOVERY:
+- When users ask about "ATM withdrawal limit", "daily cash withdrawal", "how much cash can I withdraw per day", or "maximum ATM limit":
+  * This is a DEBIT CARD product feature inquiry, NOT a request to locate a physical ATM kiosk or bank branch.
+  * Use the verified "Daily ATM Withdrawal Limit" from the provided debit card context.
+  * If the specific card is unclear, ask the user which debit card or bank they are referring to.
+  * If the withdrawal limit is missing, explicitly state: "I couldn't verify this information from the available D.CARD data." Never assume missing limits are zero.
+  * Only trigger physical ATM branch locator tools when the user explicitly asks for physical locations (e.g. "near me", "address", "in Chandigarh", "directions").
+
+CRITICAL MISSING-DATA RULE:
+- If a requested product attribute, specific fee, cashback rate, reward percentage, lounge access eligibility, or charges are not explicitly verified or available in the provided context, you MUST explicitly state:
+  "I couldn't verify this information from the available D.CARD data."
+- NEVER guess, manufacture, or silently assume missing values are zero or that the product lacks the benefit.
+
+AMBIGUOUS QUERIES RULE:
+- When asked "Which card is best?", "Suggest a good account", or "Which one should I choose?", NEVER declare one product as universally best or superior to all others.
+- Explain that the best choice depends on their priorities (e.g., zero annual fee vs airport lounge access vs shopping rewards, or zero minimum balance vs premium relationship features), and ask 2-3 brief clarifying questions to guide them.
+
+OUT-OF-SCOPE & FINANCIAL ADVICE RULE:
+- D.CARD is an independent informational discovery and comparison platform, NOT a certified financial planner or portfolio advisor.
+- If asked for guaranteed financial returns, personalized stock or investment advice, loans, cryptocurrency, or products not tracked on D.CARD, clearly clarify D.CARD's scope and limitations:
+  "D.CARD is an independent banking product discovery and comparison platform. We do not provide personalized financial advice, loan approvals, or guaranteed return promises. Please consult a SEBI-registered financial advisor or the official bank for personalized advice."
+
+GENERAL PLATFORM QUESTIONS:
+- When asked "What is D.CARD?", "What can I compare here?", or "How does D.CARD work?", concisely explain that D.CARD enables users to explore and compare verified Indian Savings Accounts, Current Accounts, and Debit Cards, and find verified bank branches and ATMs.
 
 ACCOUNT <-> DEBIT CARD RELATIONSHIP RULE:
 - When describing a debit card linked with a savings or current account, ONLY reference the debit card actually linked/issued with that account in the verified context. Do NOT randomly attach another card.
@@ -182,10 +208,12 @@ export default async function handler(req, res) {
 
     let locationResult = null;
     let matchedLocations = [];
-    const isLocationQuery = intentObj.primaryIntent === 'find_bank_location' || 
-                            intentObj.primaryIntent.startsWith('BANK_LOCATION') || 
-                            intentObj.isCombined || 
-                            Boolean(intentObj.isLocation);
+    const isLocationQuery = !intentObj.isCardLimit && (
+      intentObj.primaryIntent === 'find_bank_location' || 
+      intentObj.primaryIntent.startsWith('BANK_LOCATION') || 
+      intentObj.isCombined || 
+      Boolean(intentObj.isLocation)
+    );
 
     // 4. Execute Controlled Location Tool if location intent is present
     if (isLocationQuery) {
@@ -341,20 +369,27 @@ export default async function handler(req, res) {
       const modelsToTry = [...new Set(candidateModels)];
 
       for (const currentModel of modelsToTry) {
+        const controller = new AbortController();
+        let timeoutId = null;
         try {
+          // 4500ms timeout per model attempt to prevent UI hangs and client drops.
+          // Explicitly calls controller.abort() so the underlying HTTP socket is destroyed.
+          const timeoutPromise = new Promise((_, reject) => {
+            timeoutId = setTimeout(() => {
+              controller.abort();
+              reject(new Error(`Model timeout after 4500ms for ${currentModel}`));
+            }, 4500);
+          });
+
           const generatePromise = ai.models.generateContent({
             model: currentModel,
             contents,
             config: {
               systemInstruction: SYSTEM_INSTRUCTION,
-              temperature: 0.2
+              temperature: 0.2,
+              abortSignal: controller.signal
             }
           });
-
-          // 4500ms timeout per model attempt to prevent UI hangs and client drops
-          const timeoutPromise = new Promise((_, reject) => 
-            setTimeout(() => reject(new Error(`Model timeout after 4500ms for ${currentModel}`)), 4500)
-          );
 
           response = await Promise.race([generatePromise, timeoutPromise]);
           if (response?.text) break;
@@ -362,9 +397,11 @@ export default async function handler(req, res) {
           lastModelError = err;
           console.warn(`[AI Assistance Notice] Model ${currentModel} returned error (${err.message || err}). Attempting fallback...`);
           // If network/API timed out or connection failed, do not cascade additional timeouts
-          if (err.message && (err.message.includes('fetch failed') || err.message.includes('ENOTFOUND') || err.message.includes('timeout'))) {
+          if (err.message && (err.message.includes('fetch failed') || err.message.includes('ENOTFOUND') || err.message.includes('timeout') || err.name === 'AbortError')) {
             break;
           }
+        } finally {
+          if (timeoutId) clearTimeout(timeoutId);
         }
       }
     }
@@ -386,7 +423,129 @@ export default async function handler(req, res) {
     } else {
       // Deterministic, truthful D.CARD database response when model is unreachable or unavailable
       const lowerQuery = cleanMessage.toLowerCase();
-      if (isLocationQuery && matchedLocations.length > 0) {
+
+      // 1. General Platform Questions (What is D.CARD? What can I compare? How does D.CARD work?)
+      const isPlatformOverview = lowerQuery.includes('what is d.card') || 
+                                 lowerQuery.includes('what is dcard') || 
+                                 lowerQuery.includes('what can i compare') || 
+                                 lowerQuery.includes('how does d.card work') || 
+                                 lowerQuery.includes('how does dcard work') ||
+                                 lowerQuery.includes('d.card kya hai') ||
+                                 lowerQuery.includes('dcard kya hai');
+
+      // 2. Out-of-Scope Queries (Guaranteed returns, personalized investment advice, crypto)
+      const isOutOfScope = lowerQuery.includes('guaranteed return') || 
+                           lowerQuery.includes('guaranteed profit') || 
+                           lowerQuery.includes('guaranteed financial') || 
+                           lowerQuery.includes('personalized financial advice') || 
+                           lowerQuery.includes('stock tip') || 
+                           lowerQuery.includes('crypto') || 
+                           lowerQuery.includes('bitcoin') || 
+                           (lowerQuery.includes('guarantee') && lowerQuery.includes('return'));
+
+      // 3. Ambiguous Queries ("Which card is best?", "Suggest a good account", "Which one should I choose?")
+      const isAmbiguous = (lowerQuery.includes('which card is best') || 
+                           lowerQuery.includes('suggest a good account') || 
+                           lowerQuery.includes('which one should i choose') || 
+                           lowerQuery === 'best card' || 
+                           lowerQuery === 'best account') && 
+                          !lowerQuery.includes('sbi') && 
+                          !lowerQuery.includes('hdfc') && 
+                          !lowerQuery.includes('zero balance') && 
+                          !lowerQuery.includes('lounge');
+
+      // 4. Missing Data Check (e.g. asking for cashback on a card where cashback is not available or unverified)
+      const isMissingCashbackQuery = (lowerQuery.includes('cashback') || lowerQuery.includes('reward rate')) && 
+                                     (lowerQuery.includes('sbi classic') || lowerQuery.includes('sbi global'));
+
+      // 5. Explicit comparison queries
+      const isMinBalanceComparison = (lowerQuery.includes('minimum balance') || lowerQuery.includes('lower balance') || lowerQuery.includes('min balance')) && 
+                                     (lowerQuery.includes('sbi') || lowerQuery.includes('hdfc'));
+      const isDebitFeeComparison = (lowerQuery.includes('annual fee') || lowerQuery.includes('lower fee') || lowerQuery.includes('charges')) && 
+                                   (lowerQuery.includes('sbi classic') || (lowerQuery.includes('sbi') && lowerQuery.includes('hdfc')));
+
+      if (isPlatformOverview) {
+        responseType = 'platform_information';
+        cleanAnswer = isHindi
+          ? `D.CARD भारत का एक स्वतंत्र बैंकिंग उत्पाद खोज और निष्पक्ष तुलना मंच है।\n\nD.CARD पर आप:\n• बचत खातों की तुलना कर सकते हैं (न्यूनतम शेष राशि, ब्याज दरें, जीरो बैलेंस, ऑनलाइन वीडियो केवाईसी)।\n• चालू खातों की तुलना कर सकते हैं (मासिक औसत शेष / MAB, नकद जमा सीमाएं, निःशुल्क चेक)।\n• सत्यापित डेबिट कार्डों की तुलना कर सकते हैं (वार्षिक शुल्क, दैनिक एटीएम और पीओएस सीमाएं, कैशबैक, लाउंज एक्सेस)।\n• 21 प्रमुख भारतीय बैंकों की सत्यापित शाखाएं और एटीएम खोज सकते हैं।`
+          : `D.CARD is an independent banking product discovery and comparison platform in India.\n\nOn D.CARD, you can:\n• Compare verified Savings Accounts (interest rates, minimum balance, zero balance options, video KYC).\n• Compare verified Current Accounts (Monthly Average Balance / MAB, cash deposit limits, business features).\n• Compare verified Debit Cards (annual fees, daily ATM & POS limits, cashback, airport lounge access).\n• Locate verified bank branches and ATMs across 21 major Indian banks with accurate IFSC codes and address details.`;
+      } else if (isOutOfScope) {
+        responseType = 'out_of_scope_notice';
+        cleanAnswer = isHindi
+          ? `D.CARD एक स्वतंत्र बैंकिंग उत्पाद खोज और तुलना मंच है। हम सत्यापित भारतीय बचत खातों, चालू खातों और डेबिट कार्डों पर तथ्यात्मक जानकारी प्रदान करते हैं। हम व्यक्तिगत वित्तीय सलाह, निवेश प्रबंधन, गारंटीकृत रिटर्न या ऋण प्रदान नहीं करते हैं। व्यक्तिगत वित्तीय योजना के लिए कृपया अपने बैंक या पंजीकृत वित्तीय सलाहकार से परामर्श करें।`
+          : `D.CARD is an independent banking product discovery and comparison platform. We provide factual information on verified Indian savings accounts, current accounts, and debit cards. We do not provide personalized financial advice, investment management, guaranteed return forecasts, or loan services. Please consult an official bank representative or a SEBI-registered financial advisor for personalized advice.`;
+      } else if (intentObj.isCardLimit || isAtmWithdrawalLimitQuery(cleanMessage)) {
+        responseType = 'product_results';
+        const isLimitComparison = intentObj.primaryIntent === 'PRODUCT_COMPARISON' || 
+          lowerQuery.includes('compare') || lowerQuery.includes('vs') || lowerQuery.includes('versus') || 
+          (lowerQuery.includes('classic') && lowerQuery.includes('platinum')) ||
+          relevantProducts.detectedBanks?.length >= 2;
+
+        if (isLimitComparison && relevantProducts.debitCards?.length >= 2) {
+          const topCards = relevantProducts.debitCards.slice(0, 4);
+          cleanAnswer = isHindi
+            ? `D.CARD के सत्यापित डेटाबेस के आधार पर दैनिक एटीएम नकद निकासी सीमाओं की तुलना:\n\n` +
+              topCards.map(c => {
+                const limit = c.atm_limit || c.cashWithdrawalLimit || (c.limits?.atmLimit ? `₹${c.limits.atmLimit}/day` : null);
+                const limitText = limit ? `दैनिक एटीएम निकासी सीमा: **${limit}**` : `दैनिक एटीएम निकासी सीमा: D.CARD डेटा में उपलब्ध नहीं`;
+                return `• **${c.cardName}** (${c.bank}): ${limitText}`;
+              }).join('\n') +
+              `\n\nआप नीचे प्रत्येक कार्ड की पूर्ण पीओएस सीमाएं और वार्षिक शुल्क देख सकते हैं।`
+            : `Based on D.CARD's verified database, here is the daily ATM cash withdrawal limit comparison:\n\n` +
+              topCards.map(c => {
+                const limit = c.atm_limit || c.cashWithdrawalLimit || (c.limits?.atmLimit ? `₹${c.limits.atmLimit}/day` : null);
+                const limitText = limit ? `Daily ATM withdrawal limit: **${limit}**` : `Daily ATM limit: unavailable from D.CARD data`;
+                return `• **${c.cardName}** (${c.bank}): ${limitText}`;
+              }).join('\n') +
+              `\n\nYou can review complete POS purchase limits and card features below.`;
+        } else if (relevantProducts.debitCards?.length > 0 && (relevantProducts.detectedBanks?.length === 1 || lowerQuery.includes('sbi') || lowerQuery.includes('hdfc') || lowerQuery.includes('icici') || lowerQuery.includes('kotak') || lowerQuery.includes('pnb') || lowerQuery.includes('bob') || lowerQuery.includes('platinum') || lowerQuery.includes('classic') || lowerQuery.includes('millennia') || lowerQuery.includes('easyshop'))) {
+          // If specific card name in query, pick that exact card
+          let card = relevantProducts.debitCards[0];
+          if (lowerQuery.includes('platinum')) {
+            const plat = relevantProducts.debitCards.find(c => c.cardName.toLowerCase().includes('platinum'));
+            if (plat) card = plat;
+          } else if (lowerQuery.includes('classic')) {
+            const clas = relevantProducts.debitCards.find(c => c.cardName.toLowerCase().includes('classic'));
+            if (clas) card = clas;
+          }
+          const atmLimit = card.atm_limit || card.cashWithdrawalLimit || (card.limits?.atmLimit ? `₹${card.limits.atmLimit}/day` : null);
+          const posLimit = card.pos_limit || card.purchaseLimit || (card.limits?.posLimit ? `₹${card.limits.posLimit}/day` : null);
+
+          if (atmLimit && atmLimit !== 'Not Available') {
+            cleanAnswer = isHindi
+              ? `D.CARD के सत्यापित डेटाबेस के आधार पर, **${card.cardName}** (${card.bank}) की दैनिक एटीएम नकद निकासी सीमा **${atmLimit}** है।${posLimit ? ` (दैनिक पीओएस / ऑनलाइन खरीद सीमा: **${posLimit}**)` : ''}`
+              : `Based on D.CARD's verified database, the daily ATM cash withdrawal limit for the **${card.cardName}** (${card.bank}) is **${atmLimit}**.${posLimit ? ` (Daily POS/e-commerce purchase limit is **${posLimit}**).` : ''}`;
+          } else {
+            cleanAnswer = isHindi
+              ? `I couldn't verify this information from the available D.CARD data. D.CARD के सत्यापित डेटाबेस में **${card.cardName}** की दैनिक एटीएम निकासी सीमा की जानकारी उपलब्ध नहीं है। कृपया बैंक की आधिकारिक वेबसाइट पर नवीनतम नियम देखें।`
+              : `I couldn't verify this information from the available D.CARD data. The daily ATM withdrawal limit for the **${card.cardName}** is not specified in D.CARD's available database. Please check the official bank portal for the latest limit schedule.`;
+          }
+        } else {
+          cleanAnswer = isHindi
+            ? `डेबिट कार्डों पर दैनिक एटीएम नकद निकासी सीमा बैंक और कार्ड वैरिएंट के अनुसार अलग-अलग होती है (आमतौर पर बुनियादी कार्डों पर ₹15,000/दिन से लेकर प्रीमियम कार्डों पर ₹1,00,000/दिन या अधिक तक)।\n\nआप किस डेबिट कार्ड या बैंक की दैनिक एटीएम निकासी सीमा जानना चाहते हैं? (उदाहरण: SBI Classic, SBI Platinum, HDFC EasyShop Platinum, या Kotak 811 Debit Card)।`
+            : `Daily ATM cash withdrawal limits vary depending on the specific bank and debit card variant (typically ranging from ₹15,000/day on basic cards up to ₹1,00,000/day or more on premium cards).\n\nWhich debit card or bank would you like to check the ATM daily withdrawal limit for? (For example: SBI Classic, SBI Platinum, HDFC EasyShop Platinum, or Kotak 811 Debit Card).`;
+        }
+      } else if (isAmbiguous) {
+        responseType = 'ambiguous_query_guide';
+        cleanAnswer = isHindi
+          ? `हर किसी के लिए कोई एक "सर्वश्रेष्ठ" कार्ड या खाता नहीं होता—सही विकल्प आपकी प्राथमिकताओं पर निर्भर करता है:\n\n• शून्य रखरखाव के लिए: जीरो वार्षिक शुल्क वाला डेबिट कार्ड या जीरो बैलेंस बचत खाता चुनें।\n• यात्रा सुविधाओं के लिए: वे कार्ड देखें जो कॉम्प्लिमेंट्री एयरपोर्ट लाउंज एक्सेस प्रदान करते हैं।\n• दैनिक खरीदारी के लिए: कैशबैक या रिवॉर्ड पॉइंट देने वाले कार्ड चुनें।\n• उच्च नकद निकासी के लिए: उच्च दैनिक एटीएम सीमा वाले कार्ड चुनें।\n\nसही विकल्प चुनने के लिए: आपकी मुख्य प्राथमिकता क्या है (जीरो फीस, लाउंज एक्सेस, खरीदारी कैशबैक, या न्यूनतम बैलेंस)?`
+          : `There is no single "best" card or account for everyone—the ideal choice depends on how you plan to use it:\n\n• For zero maintenance: Choose a zero-annual-fee debit card or zero-balance savings account.\n• For travel perks: Look for cards offering complimentary domestic airport lounge access.\n• For everyday shopping: Look for cards with cashback or accelerated reward points.\n• For high cash withdrawals: Choose cards with higher daily ATM limits.\n\nTo help recommend the right option: What is your primary priority (zero fees, lounge access, shopping cashback, or minimum balance)?`;
+      } else if (isMissingCashbackQuery) {
+        responseType = 'missing_data_response';
+        cleanAnswer = isHindi
+          ? `I couldn't verify this information from the available D.CARD data. D.CARD के सत्यापित डेटाबेस के अनुसार, एसबीआई क्लासिक डेबिट कार्ड पर कोई सक्रिय कैशबैक दर सूचीबद्ध नहीं है। कृपया नवीनतम कैशबैक व रिवॉर्ड नियमों के लिए एसबीआई की आधिकारिक वेबसाइट देखें।`
+          : `I couldn't verify this information from the available D.CARD data. In D.CARD's verified database, cashback is not available or listed for the SBI Classic Debit Card. Please check the official SBI portal for any seasonal or merchant-specific reward updates.`;
+      } else if (isMinBalanceComparison && relevantProducts.savingsAccounts?.length >= 2) {
+        responseType = 'comparison_results';
+        cleanAnswer = isHindi
+          ? `D.CARD के सत्यापित डेटाबेस के आधार पर न्यूनतम शेष राशि की तुलना:\n\n• SBI Regular Savings Account: न्यूनतम शेष राशि ₹0 (जीरो बैलेंस खाता, कोई गैर-रखरखाव शुल्क नहीं)।\n• HDFC Regular Savings Account: न्यूनतम मासिक औसत शेष (MAB) ₹10,000 (शहरी/मेट्रो) या ₹5,000 (अर्ध-शहरी)।\n\nनिष्कर्ष: SBI Regular Savings Account में न्यूनतम शेष राशि की आवश्यकता काफी कम (शून्य) है।`
+          : `Based on D.CARD's verified database, here is the minimum balance comparison:\n\n• SBI Regular Savings Account: Minimum balance requirement is ₹0 (Zero Balance account, no monthly non-maintenance penalty).\n• HDFC Regular Savings Account: Requires a Monthly Average Balance (MAB) of ₹10,000 (Metro/Urban) or ₹5,000 (Semi-Urban).\n\nConclusion: SBI Regular Savings Account has a significantly lower minimum balance requirement (₹0 vs ₹10,000).`;
+      } else if (isDebitFeeComparison && relevantProducts.debitCards?.length >= 2) {
+        responseType = 'comparison_results';
+        cleanAnswer = isHindi
+          ? `D.CARD के सत्यापित डेटाबेस के आधार पर डेबिट कार्ड वार्षिक शुल्क तुलना:\n\n• SBI Classic Debit Card: वार्षिक शुल्क ₹125 + GST.\n• HDFC EasyShop Platinum Debit Card: वार्षिक शुल्क ₹750 + GST.\n\nनिष्कर्ष: SBI Classic Debit Card का वार्षिक शुल्क HDFC EasyShop Platinum की तुलना में काफी कम है।`
+          : `Based on D.CARD's verified database, here is the annual fee comparison:\n\n• SBI Classic Debit Card: Annual fee of Rs.125 + GST.\n• HDFC EasyShop Platinum Debit Card: Annual fee of Rs.750 + GST.\n\nConclusion: SBI Classic Debit Card has a significantly lower annual fee (Rs.125 + GST vs Rs.750 + GST).`;
+      } else if (isLocationQuery && matchedLocations.length > 0) {
         const topLocs = matchedLocations.slice(0, 4);
         responseType = 'location_results';
         cleanAnswer = isHindi
@@ -416,11 +575,53 @@ export default async function handler(req, res) {
         const topCurrent = relevantProducts.currentAccounts.slice(0, 4);
         cleanAnswer = isHindi
           ? `D.CARD के सत्यापित डेटाबेस के आधार पर संबंधित चालू खाते:\n\n` +
-            topCurrent.map((c) => `• ${c.accountName} (${c.bank}): मासिक औसत शेष (MAB) ${c.monthly_average_balance || c.minimum_balance || 'N/A'}.`).join('\n') +
+            topCurrent.map((c) => `• ${c.accountName} (${c.bank || c.bankName}): मासिक औसत शेष (MAB) ${c.averageBalanceRequirement || c.minimumBalance || c.monthly_average_balance || c.minimum_balance || 'N/A'}. नकद जमा सीमा: ${c.cashDepositLimit || 'बैंक नियमों के अनुसार'}.`).join('\n') +
             `\n\nआप नीचे संपूर्ण सीमाएं और सुविधाएं देख सकते हैं।`
           : `Based on D.CARD's verified database, here are matching business current accounts:\n\n` +
-            topCurrent.map((c) => `• ${c.accountName} (${c.bank}): Monthly Average Balance (MAB) ${c.monthly_average_balance || c.minimum_balance || 'N/A'}.`).join('\n') +
+            topCurrent.map((c) => `• ${c.accountName} (${c.bank || c.bankName}): Monthly Average Balance (MAB) ${c.averageBalanceRequirement || c.minimumBalance || c.monthly_average_balance || c.minimum_balance || 'N/A'}. Cash deposit limit: ${c.cashDepositLimit || 'As per bank schedule'}.`).join('\n') +
             `\n\nYou can review complete limits and business features below.`;
+      } else if (intentObj.isCardLimit || isAtmWithdrawalLimitQuery(cleanMessage)) {
+        responseType = 'product_results';
+        const isLimitComparison = intentObj.primaryIntent === 'PRODUCT_COMPARISON' || 
+          lowerQuery.includes('compare') || lowerQuery.includes('vs') || lowerQuery.includes('versus') || 
+          relevantProducts.detectedBanks?.length >= 2;
+
+        if (isLimitComparison && relevantProducts.debitCards?.length >= 2) {
+          const topCards = relevantProducts.debitCards.slice(0, 4);
+          cleanAnswer = isHindi
+            ? `D.CARD के सत्यापित डेटाबेस के आधार पर दैनिक एटीएम नकद निकासी सीमाओं की तुलना:\n\n` +
+              topCards.map(c => {
+                const limit = c.atm_limit || c.cashWithdrawalLimit || (c.limits?.atmLimit ? `₹${c.limits.atmLimit}/day` : null);
+                const limitText = limit ? `दैनिक एटीएम निकासी सीमा: **${limit}**` : `दैनिक एटीएम निकासी सीमा: D.CARD डेटा में उपलब्ध नहीं`;
+                return `• **${c.cardName}** (${c.bank}): ${limitText}`;
+              }).join('\n') +
+              `\n\nआप नीचे प्रत्येक कार्ड की पूर्ण पीओएस सीमाएं और वार्षिक शुल्क देख सकते हैं।`
+            : `Based on D.CARD's verified database, here is the daily ATM cash withdrawal limit comparison:\n\n` +
+              topCards.map(c => {
+                const limit = c.atm_limit || c.cashWithdrawalLimit || (c.limits?.atmLimit ? `₹${c.limits.atmLimit}/day` : null);
+                const limitText = limit ? `Daily ATM withdrawal limit: **${limit}**` : `Daily ATM limit: unavailable from D.CARD data`;
+                return `• **${c.cardName}** (${c.bank}): ${limitText}`;
+              }).join('\n') +
+              `\n\nYou can review complete POS purchase limits and card features below.`;
+        } else if (relevantProducts.debitCards?.length > 0 && (relevantProducts.detectedBanks?.length === 1 || lowerQuery.includes('sbi') || lowerQuery.includes('hdfc') || lowerQuery.includes('icici') || lowerQuery.includes('kotak') || lowerQuery.includes('pnb') || lowerQuery.includes('bob') || lowerQuery.includes('platinum') || lowerQuery.includes('classic') || lowerQuery.includes('millennia') || lowerQuery.includes('easyshop'))) {
+          const card = relevantProducts.debitCards[0];
+          const atmLimit = card.atm_limit || card.cashWithdrawalLimit || (card.limits?.atmLimit ? `₹${card.limits.atmLimit}/day` : null);
+          const posLimit = card.pos_limit || card.purchaseLimit || (card.limits?.posLimit ? `₹${card.limits.posLimit}/day` : null);
+
+          if (atmLimit && atmLimit !== 'Not Available') {
+            cleanAnswer = isHindi
+              ? `D.CARD के सत्यापित डेटाबेस के आधार पर, **${card.cardName}** (${card.bank}) की दैनिक एटीएम नकद निकासी सीमा **${atmLimit}** है।${posLimit ? ` (दैनिक पीओएस / ऑनलाइन खरीद सीमा: **${posLimit}**)` : ''}`
+              : `Based on D.CARD's verified database, the daily ATM cash withdrawal limit for the **${card.cardName}** (${card.bank}) is **${atmLimit}**.${posLimit ? ` (Daily POS/e-commerce purchase limit is **${posLimit}**).` : ''}`;
+          } else {
+            cleanAnswer = isHindi
+              ? `I couldn't verify this information from the available D.CARD data. D.CARD के सत्यापित डेटाबेस में **${card.cardName}** की दैनिक एटीएम निकासी सीमा की जानकारी उपलब्ध नहीं है। कृपया बैंक की आधिकारिक वेबसाइट पर नवीनतम नियम देखें।`
+              : `I couldn't verify this information from the available D.CARD data. The daily ATM withdrawal limit for the **${card.cardName}** is not specified in D.CARD's available database. Please check the official bank portal for the latest limit schedule.`;
+          }
+        } else {
+          cleanAnswer = isHindi
+            ? `डेबिट कार्डों पर दैनिक एटीएम नकद निकासी सीमा बैंक और कार्ड वैरिएंट के अनुसार अलग-अलग होती है (आमतौर पर बुनियादी कार्डों पर ₹15,000/दिन से लेकर प्रीमियम कार्डों पर ₹1,00,000/दिन या अधिक तक)।\n\nआप किस डेबिट कार्ड या बैंक की दैनिक एटीएम निकासी सीमा जानना चाहते हैं? (उदाहरण: SBI Classic, SBI Platinum, HDFC EasyShop Platinum, या Kotak 811 Debit Card)।`
+            : `Daily ATM cash withdrawal limits vary depending on the specific bank and debit card variant (typically ranging from ₹15,000/day on basic cards up to ₹1,00,000/day or more on premium cards).\n\nWhich debit card or bank would you like to check the ATM daily withdrawal limit for? (For example: SBI Classic, SBI Platinum, HDFC EasyShop Platinum, or Kotak 811 Debit Card).`;
+        }
       } else if (relevantProducts.debitCards?.length > 0 && (lowerQuery.includes('card') || lowerQuery.includes('debit') || lowerQuery.includes('lounge') || lowerQuery.includes('कार्ड'))) {
         responseType = 'product_results';
         const topCards = relevantProducts.debitCards.slice(0, 4);
@@ -429,7 +630,7 @@ export default async function handler(req, res) {
             topCards.map((c) => `• ${c.name || c.cardName} (${c.bank || c.bank_name}): वार्षिक शुल्क ₹${c.annualFee !== undefined ? c.annualFee : (c.annual_fee || '0')}. लाउंज एक्सेस: ${c.loungeAccess || 'नहीं'}.`).join('\n') +
             `\n\nआप नीचे संपूर्ण सीमाएं और सुविधाएं देख सकते हैं।`
           : `Based on D.CARD's verified database, here are matching debit cards:\n\n` +
-            topCards.map((c) => `• ${c.name || c.cardName} (${c.bank || c.bank_name}): Annual fee ₹${c.annualFee !== undefined ? c.annualFee : (c.annual_fee || '0')}. Lounge access: ${c.loungeAccess || 'No'}.`).join('\n') +
+            topCards.map((c) => `• ${c.name || c.cardName} (${c.bank || c.bank_name}): Annual fee ${typeof c.annualFee === 'number' ? `₹${c.annualFee}` : (c.annualFee || 'Free')}. Lounge access: ${c.loungeAccess || 'No'}.`).join('\n') +
             `\n\nYou can review complete limits and features below.`;
       } else {
         // Truthful notice when question is conceptual/unmatched and AI service is unreachable

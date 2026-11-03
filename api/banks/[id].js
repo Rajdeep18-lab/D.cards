@@ -19,6 +19,13 @@ export default async function handler(req, res) {
 
   const clientIp = getClientIp(req);
   const rateLimitStatus = await checkRateLimitAsync(clientIp, { maxRequests: 60, windowMs: 60000, prefix: 'banks-id' });
+  res.setHeader('X-RateLimit-Limit', String(rateLimitStatus.maxRequests || 60));
+  res.setHeader('X-RateLimit-Remaining', String(Math.max(0, rateLimitStatus.remaining ?? 0)));
+  res.setHeader('X-RateLimit-Mode', rateLimitStatus.mode || 'local');
+  if (rateLimitStatus.degraded) {
+    res.setHeader('X-RateLimit-Degraded', 'true');
+  }
+
   if (rateLimitStatus.limited) {
     res.setHeader('Retry-After', String(rateLimitStatus.retryAfterSec || 60));
     return res.status(429).json({

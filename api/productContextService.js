@@ -77,7 +77,7 @@ export function getRelevantProductsForAI(query = '', conversationState = {}) {
   const wantsOnlineKYC = lower.includes('online') || lower.includes('video kyc') || lower.includes('digital') || lower.includes('instant open') || lower.includes('ऑनलाइन');
   const wantsLounge = lower.includes('lounge') || lower.includes('airport') || lower.includes('लाउंज');
   const wantsZeroFeeCard = lower.includes('zero fee') || lower.includes('free card') || lower.includes('no annual fee') || lower.includes('मुफ्त') || lower.includes('फ्री');
-  const wantsHighLimits = lower.includes('atm limit') || lower.includes('withdrawal limit') || lower.includes('high limit') || lower.includes('pos limit') || lower.includes('सीमा');
+  const wantsHighLimits = lower.includes('atm limit') || lower.includes('withdrawal limit') || lower.includes('high limit') || lower.includes('pos limit') || lower.includes('withdrawal') || lower.includes('withdraw') || lower.includes('daily limit') || lower.includes('cash limit') || lower.includes('सीमा');
   const wantsCurrentAccount = lower.includes('current account') || lower.includes('current accounts') || lower.includes('business account') || lower.includes('overdraft') || lower.includes('cheque') || lower.includes('चालू खाता') || lower.includes('व्यापार');
   const wantsDebitCard = lower.includes('debit card') || lower.includes('debit cards') || lower.includes('card') || lower.includes('visa') || lower.includes('rupay') || lower.includes('mastercard') || wantsLounge || wantsZeroFeeCard || lower.includes('डेबिट कार्ड') || lower.includes('कार्ड');
   const isComparison = lower.includes('compare') || lower.includes('vs') || lower.includes('versus') || lower.includes('difference between') || lower.includes('तुलना') || lower.includes('बनाम');
@@ -276,8 +276,10 @@ export function getRelevantProductsForAI(query = '', conversationState = {}) {
           }
         }
 
-        if (lower.includes(cardNameLower) || cardNameLower.split(' ').some(w => w.length > 3 && lower.includes(w))) {
-          score += 20;
+        if (cardNameLower && lower.includes(cardNameLower)) {
+          score += 50; // Exact card name match
+        } else if (cardNameLower.split(' ').some(w => w.length > 3 && !['debit', 'card', 'bank'].includes(w) && lower.includes(w))) {
+          score += 25; // Distinctive variant match (e.g. 'platinum', 'millennia', 'classic', 'sapphiro')
         }
 
         if (wantsLounge) {
@@ -299,8 +301,10 @@ export function getRelevantProductsForAI(query = '', conversationState = {}) {
         if (lower.includes('mastercard') && networkLower.includes('mastercard')) score += 15;
 
         if (wantsHighLimits) {
-          const atm = card.limits?.atmLimit || card.atmLimit || 0;
-          if (Number(atm) >= 100000) score += 15;
+          const atm = card.atm_limit || card.cashWithdrawalLimit || card.limits?.atmLimit || card.atmLimit || '';
+          if (atm && atm !== 'Not Available') score += 20;
+          const numAtm = typeof atm === 'number' ? atm : parseInt(String(atm).replace(/[^0-9]/g, ''), 10);
+          if (!isNaN(numAtm) && numAtm >= 50000) score += 10;
         }
 
         return { card, score };
@@ -392,16 +396,21 @@ export function buildPromptContext(productsData) {
         ? associated.map(card => `[Card: "${card.cardName}" (${card.network || 'Business Debit'}) | Annual Fee: ₹${card.annualFee || 'Free'}]`).join(', ')
         : 'Business debit card as per bank variant';
 
+      const mab = c.averageBalanceRequirement || c.minimumBalance || c.monthly_average_balance || c.minimum_balance || 'Not specified';
+      const deposit = c.cashDepositLimit || c.cash_deposit_limit || 'Standard limits apply';
+      const cheques = c.freeChequeLeaves || c.chequeBook || c.free_cheque_leaves || 'Available';
+      const features = (c.keyBenefits || c.features || c.specialFeatures || []).join('; ') || 'Business current account perks';
+
       return [
         `- Product: "${c.accountName}"`,
-        `  Bank: ${c.bank}`,
+        `  Bank: ${c.bank || c.bankName}`,
         `  Product ID: ${c.product_id || c.id}`,
-        `  Monthly Average Balance (MAB): ${c.monthly_average_balance || c.minimum_balance || 'Not specified'}`,
-        `  Cash Deposit Limit: ${c.cash_deposit_limit || 'Standard limits apply'}`,
-        `  Free Cheque Leaves: ${c.free_cheque_leaves || 'Available'}`,
-        `  Key Features: ${(c.features || c.keyBenefits || []).join('; ') || 'Business current account perks'}`,
+        `  Monthly Average Balance (MAB): ${mab}`,
+        `  Cash Deposit Limit: ${deposit}`,
+        `  Free Cheque Leaves: ${cheques}`,
+        `  Key Features: ${features}`,
         `  STRICT LINKED DEBIT CARD: ${cardStr}`,
-        `  Official Source URL: ${c.official_source_url || 'Available on official bank portal'}`
+        `  Official Source URL: ${c.official_source_url || c.source_url || 'Available on official bank portal'}`
       ].join('\n');
     });
 
@@ -411,8 +420,8 @@ export function buildPromptContext(productsData) {
   // 3. Debit Cards
   if (cards.length > 0) {
     const cardLines = cards.map(c => {
-      const atm = typeof c.limits?.atmLimit === 'number' ? `₹${c.limits.atmLimit.toLocaleString('en-IN')}/day` : (c.atmLimit ? `₹${c.atmLimit}/day` : '₹50,000/day');
-      const pos = typeof c.limits?.posLimit === 'number' ? `₹${c.limits.posLimit.toLocaleString('en-IN')}/day` : (c.posLimit ? `₹${c.posLimit}/day` : '₹100,000/day');
+      const atm = c.atm_limit || c.cashWithdrawalLimit || (typeof c.limits?.atmLimit === 'number' ? `₹${c.limits.atmLimit.toLocaleString('en-IN')}/day` : (c.atmLimit ? `₹${c.atmLimit}/day` : 'Not specified in available data'));
+      const pos = c.pos_limit || c.purchaseLimit || (typeof c.limits?.posLimit === 'number' ? `₹${c.limits.posLimit.toLocaleString('en-IN')}/day` : (c.posLimit ? `₹${c.posLimit}/day` : 'Not specified in available data'));
       const fee = c.annualFee === 0 || String(c.annualFee).toLowerCase() === 'free' ? 'Free (₹0)' : (c.annualFee ? `₹${c.annualFee}/yr` : 'Not specified');
 
       return [

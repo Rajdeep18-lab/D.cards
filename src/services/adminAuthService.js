@@ -31,7 +31,7 @@ export const adminAuthService = {
       return adminStatusCache[uid];
     }
 
-    // 1. Primary Admin Email Verification (Strictly requires verified email)
+    // 1. Primary Admin Email Verification (Strictly requires verified email AND active record)
     if (email === PRIMARY_ADMIN_EMAIL.toLowerCase()) {
       if (!user.emailVerified) {
         console.warn("[AdminAuth] Primary admin email detected but unverified. Access denied until email ownership is verified.");
@@ -39,14 +39,20 @@ export const adminAuthService = {
         return false;
       }
 
-      adminStatusCache[uid] = true;
-      
-      // Auto-ensure Primary Admin doc exists in `admins` and `admin_users`
+      // Check if primary admin document is deactivated in Firestore
       try {
-        const docRef = doc(db, 'admins', uid);
-        const docSnap = await getDoc(docRef);
-        if (!docSnap.exists()) {
-          await setDoc(docRef, {
+        const adminDocRef = doc(db, 'admins', uid);
+        const adminDoc = await getDoc(adminDocRef);
+        if (adminDoc.exists()) {
+          const data = adminDoc.data() || {};
+          if (data.active === false || (data.role && data.role !== 'admin')) {
+            console.warn("[AdminAuth] Primary admin account is deactivated or has invalid role.");
+            adminStatusCache[uid] = false;
+            return false;
+          }
+        } else {
+          // Auto-ensure Primary Admin doc exists in `admins` with role: "admin" and active: true
+          await setDoc(adminDocRef, {
             uid,
             email,
             role: "admin",
@@ -55,9 +61,10 @@ export const adminAuthService = {
           }, { merge: true });
         }
       } catch (e) {
-        console.warn("Primary admin doc sync warning:", e.message);
+        console.warn("Primary admin doc sync/verification notice:", e.message);
       }
 
+      adminStatusCache[uid] = true;
       return true;
     }
 

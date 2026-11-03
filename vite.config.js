@@ -132,6 +132,30 @@ export default defineConfig(({ mode }) => {
       sitemapPlugin(),
       apiDevPlugin()
     ],
+    build: {
+      chunkSizeWarningLimit: 1000,
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            const normalized = id.replace(/\\/g, '/');
+            if (normalized.includes('/node_modules/')) {
+              if (normalized.includes('firebase')) return 'vendor-firebase';
+              if (normalized.includes('framer-motion')) return 'vendor-motion';
+              if (normalized.includes('lucide-react')) return 'vendor-lucide';
+              if (normalized.includes('react') || normalized.includes('react-dom') || normalized.includes('react-router')) return 'vendor-react';
+              if (normalized.includes('@vercel')) return 'vendor-vercel';
+            }
+            if (normalized.includes('/src/data/branches.')) return 'data-branches';
+            if (normalized.includes('/src/data/mockSavingsAccounts') || normalized.includes('/src/data/savingsAccounts/')) return 'data-savings';
+            if (normalized.includes('/src/data/currentAccounts/')) return 'data-current';
+            if (normalized.includes('/src/data/debitCardsData') || normalized.includes('/src/data/mockData')) return 'data-cards';
+            if (normalized.includes('/src/locales/hi')) return 'locale-hi';
+            if (normalized.includes('/src/components/AIChatAssistant')) return 'chunk-ai-chat';
+            if (normalized.includes('/src/components/SavingsCalculator')) return 'chunk-calculator';
+          }
+        }
+      }
+    },
     define: {
       "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV || "production"),
       "import.meta.env.MAPTILER_API_KEY": JSON.stringify(env.MAPTILER_API_KEY || process.env.MAPTILER_API_KEY || "")

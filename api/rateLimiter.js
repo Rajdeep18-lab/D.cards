@@ -159,7 +159,7 @@ export function checkRateLimit(clientIp, { maxRequests = 40, windowMs = 60000, p
   if (timestamps.length >= maxRequests) {
     const oldest = timestamps[0];
     const retryAfterSec = Math.max(1, Math.ceil((oldest + windowMs - now) / 1000));
-    return { limited: true, retryAfterSec, remaining: 0, mode: 'local' };
+    return { limited: true, retryAfterSec, remaining: 0, maxRequests, mode: 'local' };
   }
 
   timestamps.push(now);
@@ -179,7 +179,7 @@ export function checkRateLimit(clientIp, { maxRequests = 40, windowMs = 60000, p
     }
   }
 
-  return { limited: false, remaining: maxRequests - timestamps.length, mode: 'local' };
+  return { limited: false, remaining: maxRequests - timestamps.length, maxRequests, mode: 'local' };
 }
 
 // Atomic Redis Lua Script for sliding-window rate limiting
@@ -287,6 +287,7 @@ export async function checkRateLimitAsync(clientIp, {
           limited: true,
           retryAfterSec: Math.max(1, Number(retryAfterSec) || windowSec),
           remaining: 0,
+          maxRequests,
           mode: 'distributed',
           degraded: false
         };
@@ -295,6 +296,7 @@ export async function checkRateLimitAsync(clientIp, {
       return {
         limited: false,
         remaining: Math.max(0, Number(remaining)),
+        maxRequests,
         mode: 'distributed',
         degraded: false
       };

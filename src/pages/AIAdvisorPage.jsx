@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, lazy, Suspense } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -7,7 +7,7 @@ import {
   ChevronRight, Bot, Landmark, Globe, Wallet,
   BarChart3, TrendingUp, Zap, Search,
 } from 'lucide-react';
-import AIChatAssistant from '../components/AIChatAssistant';
+const AIChatAssistant = lazy(() => import('../components/AIChatAssistant'));
 import BankLogo from '../components/BankLogo';
 import MapTilerMap from '../components/MapTilerMap';
 import { useSEO } from '../hooks/useSEO';

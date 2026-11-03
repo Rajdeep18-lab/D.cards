@@ -149,6 +149,35 @@ export function normalizeHinglishInput(text = '') {
 }
 
 /**
+ * Detects whether a query asks about ATM cash withdrawal limits / card transaction limits
+ * (Distinguishing card features from physical ATM / bank branch discovery)
+ */
+export function isAtmWithdrawalLimitQuery(message = '') {
+  const lower = String(message || '').toLowerCase();
+  
+  // Specific phrases asking about ATM limits or daily cash withdrawal
+  const isLimitPhrase = /\b(daily\s+atm(\s+cash)?\s+withdrawal\s+limit|atm(\s+cash)?\s+withdrawal\s+limit|atm\s+daily\s+limit|daily\s+atm\s+limit|per-?day\s+atm\s+limit|maximum\s+atm(\s+cash)?\s+withdrawal\s+limit|max\s+atm\s+limit|cash\s+withdrawal\s+limit|withdrawal\s+limit\s+of\s+this\s+debit\s+card|how\s+much\s+cash\s+can\s+i\s+withdraw|daily\s+cash\s+withdrawal\s+limit|per-?day\s+atm\s+withdrawal|atm\s+withdrawal\s+limits|atm\s+limit|atm\s+limits|pos\s+limit|pos\s+limits|nikalne\s+ki\s+limit|nikal\s+sakte\s+hain|paise\s+nikalne\s+ki\s+seema)\b/i.test(lower);
+  
+  if (isLimitPhrase) return true;
+
+  // General check: mentions limit/withdrawal AND atm/card
+  const hasLimitWord = /\b(limit|limits|withdrawal|withdraw|per day|per-day|daily|maximum|max|how much cash|kitna cash|kitne paise|seema|cap)\b/i.test(lower);
+  const mentionsAtmOrCard = /\b(atm|cash|withdrawal|withdraw|debit card|card)\b/i.test(lower);
+
+  if (hasLimitWord && mentionsAtmOrCard) {
+    // If it asks for physical direction/location, it's a physical ATM search
+    const isPhysicalLocation = /\b(near me|nearby|nearest|closest|around me|location|locations|address|directions|rasta|map|where is|kaha hai|kahan hai|kidhar hai|shakha|branch address|ifsc|pin code|pincode)\b/i.test(lower) ||
+      (/\b(in|at|near|around)\s+[a-z]+/.test(lower) && Object.keys(KNOWN_HUBS).some(c => lower.includes(c)));
+    
+    if (!isPhysicalLocation) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+/**
  * Classifies query intent across 9 controlled intent categories
  */
 export function classifyUserIntent(rawMessage = '', conversationState = {}) {
@@ -156,18 +185,42 @@ export function classifyUserIntent(rawMessage = '', conversationState = {}) {
   const lower = clean.toLowerCase();
   const normalized = normalizeHinglishInput(clean);
 
-  // 1. Check for location queries
-  const hasLocationWords = /\b(atm|branch|branches|location|locations|address|ifsc|locator|near|nearby|nearest|closest|within|andar|kaha|kahan|kidhar|pass|paas)\b/i.test(lower);
+  // 1. Distinguish ATM Withdrawal Limits (card feature) from Physical ATM Discovery
+  const isAtmDailyLimit = isAtmWithdrawalLimitQuery(clean);
+
+  // 2. Check for location queries (physical ATM or branch)
+  const hasLocationWords = /\b(branch|branches|location|locations|address|ifsc|locator|near|nearby|nearest|closest|within|andar|kaha|kahan|kidhar|pass|paas)\b/i.test(lower) ||
+    (!isAtmDailyLimit && /\batm\b/i.test(lower));
   const mentionsBank = /\b(sbi|hdfc|icici|axis|kotak|pnb|bob|baroda|canara|union\s+bank|bank|banks)\b/i.test(lower);
   const mentionsCity = Object.keys(KNOWN_HUBS).some(c => lower.includes(c)) || /\b\d{6}\b/.test(lower);
 
-  const isLocationSearch = (hasLocationWords && (mentionsBank || mentionsCity || /\b(near me|nearby|nearest|atm|branch)\b/i.test(lower))) ||
-    (mentionsBank && mentionsCity);
+  const isLocationSearch = !isAtmDailyLimit && (
+    (hasLocationWords && (mentionsBank || mentionsCity || /\b(near me|nearby|nearest|locator)\b/i.test(lower))) ||
+    (mentionsBank && mentionsCity)
+  );
 
-  // 2. Check for product comparison
+  // 3. Check for product comparison
   const isComparison = /\b(compare|versus|vs|difference|antar|kaunsa\s+achha|better)\b/i.test(lower);
 
-  // 3. Check for specific product types
+  // 4. Handle ATM Withdrawal Limit Queries immediately as product features
+  if (isAtmDailyLimit) {
+    if (isComparison) {
+      return {
+        primaryIntent: 'PRODUCT_COMPARISON',
+        subIntent: 'ATM_WITHDRAWAL_LIMIT_COMPARISON',
+        isCombined: false,
+        isCardLimit: true
+      };
+    }
+    return {
+      primaryIntent: 'PRODUCT_SEARCH',
+      subIntent: 'ATM_WITHDRAWAL_LIMIT',
+      isCombined: false,
+      isCardLimit: true
+    };
+  }
+
+  // 5. Check for specific product types
   const mentionsAccount = /\b(account|savings|current|bachat|khata|zero balance|mab|interest)\b/i.test(lower);
   const mentionsCard = /\b(debit card|atm card|rupay|visa|mastercard|lounge|card)\b/i.test(lower) && !/\b(atm\s+kaha|atm\s+near|nearest\s+atm)\b/i.test(lower);
 

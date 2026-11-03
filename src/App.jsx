@@ -41,6 +41,7 @@ const AdminLoginPage = lazy(() => import("./components/AdminLoginPage"));
 const CardDetailsModal = lazy(() => import("./components/CardDetailsModal"));
 const FirstLoginModal = lazy(() => import("./components/FirstLoginModal"));
 const AccessDeniedModal = lazy(() => import("./components/AccessDeniedModal"));
+const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 import { adminAuthService } from "./services/adminAuthService";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 
@@ -1286,8 +1287,17 @@ function AppContent() {
             />
 
             {/* Catch-all unknown routes inside protected scope */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Route>
+            </Route>
+
+          {/* Dedicated 404 Page for All Invalid Routes */}
+          <Route 
+            path="*" 
+            element={
+              <Suspense fallback={<LoadingSkeleton />}>
+                <NotFoundPage />
+              </Suspense>
+            } 
+          />
         </Routes>
       </div>
 

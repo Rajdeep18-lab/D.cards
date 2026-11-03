@@ -12,19 +12,26 @@ service cloud.firestore {
       return isAuthenticated() && request.auth.uid == userId;
     }
     
+    // Helper function to check if an active admin record exists for the given UID
+    function hasActiveAdminDoc(uid) {
+      return (exists(/databases/$(database)/documents/admins/$(uid)) && 
+              get(/databases/$(database)/documents/admins/$(uid)).data.role == 'admin' &&
+              get(/databases/$(database)/documents/admins/$(uid)).data.active == true) ||
+             (exists(/databases/$(database)/documents/admin_users/$(uid)) && 
+              get(/databases/$(database)/documents/admin_users/$(uid)).data.role == 'admin' &&
+              get(/databases/$(database)/documents/admin_users/$(uid)).data.active == true);
+    }
+
     // Helper function to check if user is an admin
-    // Strictly requires verified primary admin email OR active entry in protected admins collections
+    // Strictly requires an active admin document with role: 'admin' AND active: true.
+    // Inactive, missing, or invalid admin records strictly cannot grant admin privileges.
+    // If authenticated via primary admin email, also strictly requires email_verified == true.
     function isAdmin() {
       return isAuthenticated() && 
-        ((request.auth.token.email != null && 
-          request.auth.token.email_verified == true && 
-          request.auth.token.email.toLowerCase() == 'ritikanshu072@gmail.com') ||
-         (exists(/databases/$(database)/documents/admins/$(request.auth.uid)) && 
-          get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role == 'admin' &&
-          get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.active != false) ||
-         (exists(/databases/$(database)/documents/admin_users/$(request.auth.uid)) && 
-          get(/databases/$(database)/documents/admin_users/$(request.auth.uid)).data.role == 'admin' &&
-          get(/databases/$(database)/documents/admin_users/$(request.auth.uid)).data.active != false));
+        (request.auth.token.email == null || 
+         request.auth.token.email.toLowerCase() != 'ritikanshu072@gmail.com' || 
+         request.auth.token.email_verified == true) &&
+        hasActiveAdminDoc(request.auth.uid);
     }
 
     // Debit Cards Collection (Public Read, Admin Write Only)

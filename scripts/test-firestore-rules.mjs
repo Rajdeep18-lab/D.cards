@@ -53,18 +53,21 @@ function createEvaluationContext({
   const isAuthenticated = () => auth != null;
   const isOwner = (userId) => isAuthenticated() && auth.uid === userId;
 
+  const hasActiveAdminDoc = (uid) => {
+    const adminDoc = databaseState[`admins/${uid}`];
+    if (adminDoc && adminDoc.role === 'admin' && adminDoc.active === true) return true;
+    const adminUserDoc = databaseState[`admin_users/${uid}`];
+    if (adminUserDoc && adminUserDoc.role === 'admin' && adminUserDoc.active === true) return true;
+    return false;
+  };
+
   const isAdmin = () => {
     if (!isAuthenticated()) return false;
     const email = auth.token?.email;
     const emailVerified = auth.token?.email_verified === true;
-    if (email && emailVerified && email.toLowerCase() === 'ritikanshu072@gmail.com') {
-      return true;
-    }
-    const adminDoc = databaseState[`admins/${auth.uid}`];
-    if (adminDoc && adminDoc.role === 'admin' && adminDoc.active !== false) return true;
-    const adminUserDoc = databaseState[`admin_users/${auth.uid}`];
-    if (adminUserDoc && adminUserDoc.role === 'admin' && adminUserDoc.active !== false) return true;
-    return false;
+    const isPrimary = email && email.toLowerCase() === 'ritikanshu072@gmail.com';
+    if (isPrimary && !emailVerified) return false;
+    return hasActiveAdminDoc(auth.uid);
   };
 
   const req = {
@@ -255,34 +258,77 @@ console.log('\n--- 3. Ownership Immutability ---');
   assert(evaluateProfileUpdate(ctx, 'user_1') === false, 'Altering uid identifier on profile document is blocked');
 }
 
-// 4. Admin Bootstrap & Consistency
+// 4. Admin Bootstrap Consistency & Active Status
 console.log('\n--- 4. Admin Bootstrap Consistency & Active Status ---');
 {
-  // A. Active Admin
-  const ctxActiveAdmin = createEvaluationContext({
-    auth: { uid: 'adm_1', token: { email: 'adm@example.com', email_verified: true } },
-    databaseState: { 'admins/adm_1': { role: 'admin', active: true } }
+  // A. Primary Admin: Active and Email Verified
+  const ctxPrimaryActive = createEvaluationContext({
+    auth: { uid: 'adm_primary', token: { email: 'ritikanshu072@gmail.com', email_verified: true } },
+    databaseState: { 'admins/adm_primary': { role: 'admin', active: true } }
   });
-  assert(ctxActiveAdmin.isAdmin() === true, 'Admin with role: "admin" and active: true is authorized');
+  assert(ctxPrimaryActive.isAdmin() === true, 'Primary admin with role: "admin" and active: true is authorized');
 
-  // B. Deactivated Admin (active: false)
-  const ctxDeactivated = createEvaluationContext({
-    auth: { uid: 'adm_revoked', token: { email: 'revoked@example.com', email_verified: true } },
-    databaseState: { 'admins/adm_revoked': { role: 'admin', active: false } }
+  // B. Primary Admin: Deactivated (active: false) — FLAW RESOLVED
+  const ctxPrimaryDeactivated = createEvaluationContext({
+    auth: { uid: 'adm_primary', token: { email: 'ritikanshu072@gmail.com', email_verified: true } },
+    databaseState: { 'admins/adm_primary': { role: 'admin', active: false } }
   });
-  assert(ctxDeactivated.isAdmin() === false, 'Deactivated admin (active: false) is strictly DENIED');
+  assert(ctxPrimaryDeactivated.isAdmin() === false, 'Deactivated primary admin (active: false) is strictly DENIED (FLAW RESOLVED)');
 
-  // C. Unverified Primary Admin Email
-  const ctxUnverified = createEvaluationContext({
-    auth: { uid: 'impostor', token: { email: 'ritikanshu072@gmail.com', email_verified: false } }
+  // C. Primary Admin: Missing admin record
+  const ctxPrimaryMissingDoc = createEvaluationContext({
+    auth: { uid: 'adm_primary', token: { email: 'ritikanshu072@gmail.com', email_verified: true } },
+    databaseState: {}
   });
-  assert(ctxUnverified.isAdmin() === false, 'Unverified primary admin email is strictly DENIED');
+  assert(ctxPrimaryMissingDoc.isAdmin() === false, 'Primary admin with missing admin document is strictly DENIED');
 
-  // D. Ordinary User cannot write to /admins
+  // D. Primary Admin: Invalid role ('user')
+  const ctxPrimaryInvalidRole = createEvaluationContext({
+    auth: { uid: 'adm_primary', token: { email: 'ritikanshu072@gmail.com', email_verified: true } },
+    databaseState: { 'admins/adm_primary': { role: 'user', active: true } }
+  });
+  assert(ctxPrimaryInvalidRole.isAdmin() === false, 'Primary admin with invalid role (role: "user") is strictly DENIED');
+
+  // E. Primary Admin: Unverified Email
+  const ctxPrimaryUnverified = createEvaluationContext({
+    auth: { uid: 'adm_primary', token: { email: 'ritikanshu072@gmail.com', email_verified: false } },
+    databaseState: { 'admins/adm_primary': { role: 'admin', active: true } }
+  });
+  assert(ctxPrimaryUnverified.isAdmin() === false, 'Unverified primary admin email is strictly DENIED');
+
+  // F. Secondary Admin: Active
+  const ctxSecondaryActive = createEvaluationContext({
+    auth: { uid: 'adm_sec', token: { email: 'sec@example.com', email_verified: true } },
+    databaseState: { 'admins/adm_sec': { role: 'admin', active: true } }
+  });
+  assert(ctxSecondaryActive.isAdmin() === true, 'Secondary admin with role: "admin" and active: true is authorized');
+
+  // G. Secondary Admin: Deactivated (active: false)
+  const ctxSecondaryDeactivated = createEvaluationContext({
+    auth: { uid: 'adm_sec', token: { email: 'sec@example.com', email_verified: true } },
+    databaseState: { 'admins/adm_sec': { role: 'admin', active: false } }
+  });
+  assert(ctxSecondaryDeactivated.isAdmin() === false, 'Deactivated secondary admin (active: false) is strictly DENIED');
+
+  // H. Secondary Admin: Missing record
+  const ctxSecondaryMissing = createEvaluationContext({
+    auth: { uid: 'adm_sec', token: { email: 'sec@example.com', email_verified: true } },
+    databaseState: {}
+  });
+  assert(ctxSecondaryMissing.isAdmin() === false, 'Secondary admin with missing document is strictly DENIED');
+
+  // I. Ordinary User cannot write to /admins
   const ctxUser = createEvaluationContext({
     auth: { uid: 'user_1', token: { email: 'u1@example.com', email_verified: true } }
   });
   assert(evaluateAdminWrite(ctxUser) === false, 'Ordinary authenticated user cannot write to /admins');
+
+  // J. Unauthenticated access attempting admin write is strictly DENIED
+  const ctxUnauthed = createEvaluationContext({
+    auth: null
+  });
+  assert(evaluateAdminWrite(ctxUnauthed) === false, 'Unauthenticated user cannot write to /admins (strict denial)');
+  assert(ctxUnauthed.isAdmin() === false, 'Unauthenticated user isAdmin evaluates strictly to false');
 }
 
 // 5. Anonymous Firestore Writes & Schema Bounds
