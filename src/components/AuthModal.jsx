@@ -15,6 +15,7 @@ import {
 import { useAuth } from '../hooks/useAuth';
 import { useScrollLock } from '../hooks/useScrollLock';
 import { useLanguage } from '../context/LanguageContext';
+import GoogleAuthButton, { AuthDivider } from './auth/GoogleAuthButton';
 
 export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
   const { 
@@ -22,7 +23,8 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
     login, 
     signUp, 
     forgotPassword,
-    redirectTarget
+    redirectTarget,
+    continueWithGoogle
   } = useAuth();
   const { t } = useLanguage();
 
@@ -51,6 +53,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
   const [forgotSent, setForgotSent] = useState(false);
 
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
 
@@ -154,6 +157,42 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
   const handleBackdropClick = (e) => {
     if (e.target === e.currentTarget) {
       onClose();
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    if (googleLoading || loading) return;
+    setErrorMsg('');
+    setSuccessMsg('');
+    setGoogleLoading(true);
+
+    try {
+      const res = await continueWithGoogle();
+      if (!res) {
+        // Redirect flow initiated
+        return;
+      }
+      setSuccessMsg(
+        res.isNewUser
+          ? t('auth.signupSuccess', 'Account created successfully!')
+          : t('auth.loginSuccess', 'Signed in successfully!')
+      );
+      setTimeout(() => {
+        onClose();
+        if (onSuccessAction) onSuccessAction();
+      }, 400);
+    } catch (err) {
+      const isCancelled = err.message && (
+        err.message.toLowerCase().includes('cancelled') ||
+        err.message.toLowerCase().includes('closed the google sign-in window')
+      );
+      if (isCancelled) {
+        setErrorMsg(t('auth.errCancelled', 'Google Sign-In was cancelled.'));
+      } else {
+        setErrorMsg(err.message || t('auth.errGoogleFailed', 'Unable to sign in with Google. Please try again.'));
+      }
+    } finally {
+      setGoogleLoading(false);
     }
   };
 
@@ -358,6 +397,16 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
 
         {/* ── 1. SIGN IN FORM ── */}
         {activeTab === 'login' && (
+          <div>
+            <GoogleAuthButton
+              onClick={handleGoogleSignIn}
+              loading={googleLoading}
+              disabled={loading}
+              text={t('auth.googleSignIn', 'Continue with Google')}
+              loadingText={t('auth.connectingGoogle', 'Connecting to Google...')}
+            />
+
+            <AuthDivider text={t('auth.or', 'OR')} />
           <form onSubmit={handleSignInSubmit} className="space-y-4">
             {/* Email Address */}
             <div>
@@ -469,11 +518,23 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
               </button>
             </div>
           </form>
+          </div>
         )}
 
         {/* ── 2. CREATE ACCOUNT FORM ── */}
         {activeTab === 'signup' && (
-          <form onSubmit={handleSignUpSubmit} className="space-y-3.5">
+          <div>
+            <GoogleAuthButton
+              onClick={handleGoogleSignIn}
+              loading={googleLoading}
+              disabled={loading}
+              text={t('auth.googleSignIn', 'Continue with Google')}
+              loadingText={t('auth.connectingGoogle', 'Connecting to Google...')}
+            />
+
+            <AuthDivider text={t('auth.or', 'OR')} />
+
+            <form onSubmit={handleSignUpSubmit} className="space-y-3.5">
             {/* Full Name */}
             <div>
               <label 
@@ -612,6 +673,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
               </button>
             </div>
           </form>
+          </div>
         )}
 
         {/* ── 3. FORGOT PASSWORD FORM ── */}

@@ -61,6 +61,40 @@ export function AuthProvider({ children }) {
     return () => unsubscribe();
   }, [fetchProfile]);
 
+  useEffect(() => {
+    let isMounted = true;
+    firebaseAuthService.handleRedirectResult()
+      .then((res) => {
+        if (res && res.user && isMounted) {
+          const normalizedUser = {
+            ...res.user,
+            id: res.user.uid,
+            uid: res.user.uid,
+            email: res.user.email,
+            displayName: res.user.displayName,
+            email_confirmed_at: new Date().toISOString(),
+            confirmed_at: new Date().toISOString(),
+            photoURL: res.user.photoURL
+          };
+          setUser(normalizedUser);
+          setProfile(res.profile);
+          setIsAuthModalOpen(false);
+          if (res.isNewUser) {
+            toast("Welcome to D.Card! Account created with Google ✨", "success");
+          } else {
+            toast("Welcome back to D.Card! 🚀", "success");
+          }
+        }
+      })
+      .catch((err) => {
+        console.warn('[Redirect Auth notice]:', err.message);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [toast]);
+
   const openAuthModal = (tab = "login", intendedRedirect = null) => {
     if (intendedRedirect) {
       setRedirectTarget(intendedRedirect);
@@ -105,6 +139,44 @@ export function AuthProvider({ children }) {
       return res;
     } catch (err) {
       toast(err.message || "Login failed. Check your credentials.", "error");
+      throw err;
+    }
+  };
+
+  const continueWithGoogle = async () => {
+    try {
+      const res = await firebaseAuthService.signInWithGoogle();
+      if (!res) return null; // If redirect was initiated
+
+      const normalizedUser = {
+        ...res.user,
+        id: res.user.uid,
+        uid: res.user.uid,
+        email: res.user.email,
+        displayName: res.user.displayName,
+        email_confirmed_at: new Date().toISOString(),
+        confirmed_at: new Date().toISOString(),
+        photoURL: res.user.photoURL
+      };
+
+      setUser(normalizedUser);
+      setProfile(res.profile);
+      setIsAuthModalOpen(false);
+
+      if (res.isNewUser) {
+        toast("Welcome to D.Card! Account created with Google ✨", "success");
+      } else {
+        toast("Welcome back to D.Card! 🚀", "success");
+      }
+      return res;
+    } catch (err) {
+      const isCancelled = err.message && (
+        err.message.toLowerCase().includes('cancelled') || 
+        err.message.toLowerCase().includes('closed the google sign-in window')
+      );
+      if (!isCancelled) {
+        toast(err.message || "Google sign-in failed. Please try again.", "error");
+      }
       throw err;
     }
   };
@@ -182,6 +254,8 @@ export function AuthProvider({ children }) {
         openAuthModal,
         signUp,
         login,
+        continueWithGoogle,
+        signInWithGoogle: continueWithGoogle,
         logout,
         forgotPassword,
         updateProfile,

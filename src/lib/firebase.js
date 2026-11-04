@@ -9,7 +9,12 @@ import {
   sendEmailVerification,
   updateProfile as firebaseUpdateProfile,
   updateEmail as firebaseUpdateEmail,
-  updatePassword as firebaseUpdatePassword
+  updatePassword as firebaseUpdatePassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
+  getAdditionalUserInfo
 } from 'firebase/auth';
 import {
   getFirestore,
@@ -73,6 +78,11 @@ export {
   firebaseUpdateProfile,
   firebaseUpdateEmail,
   firebaseUpdatePassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
+  getAdditionalUserInfo,
   // Firestore exports
   doc,
   getDoc,

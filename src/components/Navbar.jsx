@@ -566,8 +566,16 @@ function Navbar({
                   aria-expanded={isProfileDropdownOpen}
                   aria-label="User Account Menu"
                 >
-                  <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white flex items-center justify-center font-bold text-xs shadow-xs shrink-0">
-                    {user.email ? user.email.charAt(0).toUpperCase() : 'U'}
+                  <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white flex items-center justify-center font-bold text-xs shadow-xs shrink-0 overflow-hidden">
+                    {user.photoURL || profile?.profileImage || profile?.avatar_url ? (
+                      <img 
+                        src={user.photoURL || profile?.profileImage || profile?.avatar_url} 
+                        alt={profile?.full_name || user.displayName || 'User'} 
+                        className="w-full h-full object-cover rounded-full" 
+                      />
+                    ) : (
+                      user.email ? user.email.charAt(0).toUpperCase() : 'U'
+                    )}
                   </div>
                   <span className="hidden sm:inline-block text-xs font-bold text-[#1F2937] dark:text-white max-w-[65px] md:max-w-[80px] xl:max-w-[95px] truncate whitespace-nowrap overflow-hidden text-ellipsis">
                     {profile?.full_name || user.displayName || 'Rajdeep'}

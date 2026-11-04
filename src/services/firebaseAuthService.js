@@ -3,6 +3,12 @@ import {
   db,
   doc,
   setDoc,
+  getDoc,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
+  getAdditionalUserInfo,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   firebaseSignOut,
@@ -110,6 +116,162 @@ export const firebaseAuthService = {
   /**
    * Sign out active Firebase user
    */
+  /**
+   * Synchronize Google user data with Firestore collections ("users" and "profiles")
+   */
+  async syncGoogleUserData(userCredential) {
+    if (!userCredential || !userCredential.user) {
+      throw new Error('No user credential returned from Google Authentication.');
+    }
+
+    const user = userCredential.user;
+    const additionalInfo = getAdditionalUserInfo(userCredential);
+    const isExplicitNewUser = Boolean(additionalInfo?.isNewUser);
+
+    const userDocRef = doc(db, 'users', user.uid);
+    const profileDocRef = doc(db, 'profiles', user.uid);
+
+    let existingUserData = null;
+    let existingProfileData = null;
+
+    try {
+      const [userSnap, profileSnap] = await Promise.all([
+        getDoc(userDocRef),
+        getDoc(profileDocRef)
+      ]);
+      if (userSnap.exists()) existingUserData = userSnap.data();
+      if (profileSnap.exists()) existingProfileData = profileSnap.data();
+    } catch (e) {
+      console.warn('[Firestore Google user check warning]:', e.message);
+    }
+
+    const isNewUser = isExplicitNewUser || (!existingUserData && !existingProfileData);
+    const createdAtTimestamp = new Date().toISOString();
+    const displayName = user.displayName || user.email?.split('@')[0] || 'User';
+    const photoURL = user.photoURL || '';
+
+    let profileData = null;
+
+    if (isNewUser) {
+      // 1. New Google User: Create records in both 'users' and 'profiles' matching D.CARD schema
+      const initialUserData = {
+        uid: user.uid,
+        name: displayName,
+        email: user.email,
+        city: '',
+        state: '',
+        profileImage: photoURL,
+        createdAt: createdAtTimestamp
+      };
+
+      const initialProfileData = {
+        ...initialUserData,
+        id: user.uid,
+        full_name: displayName,
+        phone: '',
+        country: 'India',
+        user_type: 'Working Professional',
+        email_verified: true,
+        created_at: createdAtTimestamp,
+        auth_provider: 'google'
+      };
+
+      try {
+        await Promise.all([
+          setDoc(userDocRef, initialUserData, { merge: true }),
+          setDoc(profileDocRef, initialProfileData, { merge: true })
+        ]);
+      } catch (err) {
+        console.warn('[Firestore Google signup save warning]:', err.message);
+      }
+
+      profileData = initialProfileData;
+    } else {
+      // 2. Existing User: Preserve all custom user info (bookmarks, wishlist, saved cards, city, state, etc.)
+      const base = existingProfileData || existingUserData || {};
+      profileData = {
+        ...base,
+        id: user.uid,
+        uid: user.uid,
+        email: user.email || base.email,
+        full_name: base.full_name || base.name || displayName,
+        name: base.name || base.full_name || displayName,
+        profileImage: base.profileImage || base.avatar_url || photoURL,
+        avatar_url: base.avatar_url || base.profileImage || photoURL,
+        auth_provider: base.auth_provider || 'google'
+      };
+
+      // Safely ensure basic identifiers exist without overwriting existing data
+      try {
+        await setDoc(userDocRef, {
+          uid: user.uid,
+          email: user.email,
+          ...(base.name ? {} : { name: displayName }),
+          ...(base.profileImage ? {} : { profileImage: photoURL })
+        }, { merge: true });
+      } catch (err) {
+        console.warn('[Firestore Google login sync warning]:', err.message);
+      }
+    }
+
+    // Persist in localStorage for instant retrieval
+    try {
+      localStorage.setItem(`dcard_firebase_profile_${user.uid}`, JSON.stringify(profileData));
+    } catch (e) {
+      console.warn('LocalStorage profile save notice:', e);
+    }
+
+    return { user, profile: profileData, isNewUser };
+  },
+
+  /**
+   * Authenticate with Google using Firebase GoogleAuthProvider
+   * Prompts user with Google's real account selection screen
+   */
+  async signInWithGoogle({ useRedirect = false } = {}) {
+    const provider = new GoogleAuthProvider();
+    // Prompt user to select their account explicitly
+    provider.setCustomParameters({ prompt: 'select_account' });
+
+    if (useRedirect) {
+      await signInWithRedirect(auth, provider);
+      return null;
+    }
+
+    try {
+      const userCredential = await signInWithPopup(auth, provider);
+      return await this.syncGoogleUserData(userCredential);
+    } catch (error) {
+      console.error('Firebase Google Sign-In Error:', error);
+      // If popup was blocked by browser, attempt redirect fallback
+      if (error.code === 'auth/popup-blocked') {
+        try {
+          await signInWithRedirect(auth, provider);
+          return null;
+        } catch (redirectError) {
+          throw new Error(this.formatErrorMessage(error));
+        }
+      }
+      throw new Error(this.formatErrorMessage(error));
+    }
+  },
+
+  /**
+   * Handle redirect result after mobile / redirect-based sign-in
+   */
+  async handleRedirectResult() {
+    try {
+      const userCredential = await getRedirectResult(auth);
+      if (!userCredential || !userCredential.user) {
+        return null;
+      }
+      return await this.syncGoogleUserData(userCredential);
+    } catch (error) {
+      console.error('Firebase Redirect Auth Error:', error);
+      throw new Error(this.formatErrorMessage(error));
+    }
+  },
+
   async logout() {
     try {
       await firebaseSignOut(auth);
@@ -187,6 +349,18 @@ export const firebaseAuthService = {
   formatErrorMessage(error) {
     const code = error.code || '';
     switch (code) {
+      case 'auth/popup-closed-by-user':
+        return 'Sign-in was cancelled. You closed the Google sign-in window.';
+      case 'auth/cancelled-popup-request':
+        return 'Only one sign-in window can be active at a time. Please try again.';
+      case 'auth/popup-blocked':
+        return 'Google Sign-In popup was blocked by your browser. Please allow popups for this site and try again.';
+      case 'auth/account-exists-with-different-credential':
+        return 'An account already exists with this email address using a different sign-in method. Please sign in with your email and password.';
+      case 'auth/operation-not-allowed':
+        return 'Google Sign-In is not currently enabled in Firebase Authentication. Please enable Google under Firebase Console > Authentication > Sign-in method.';
+      case 'auth/unauthorized-domain':
+        return 'This domain is not authorized for Google Sign-In in Firebase Console.';
       case 'auth/user-not-found':
       case 'auth/wrong-password':
       case 'auth/invalid-credential':

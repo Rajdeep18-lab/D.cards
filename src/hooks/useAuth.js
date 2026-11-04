@@ -16,6 +16,8 @@ export function useAuth() {
       openAuthModal: () => {},
       signUp: async () => {},
       login: async () => {},
+      continueWithGoogle: async () => {},
+      signInWithGoogle: async () => {},
       logout: async () => {},
       updateProfile: async () => {},
       updateEmail: async () => {},

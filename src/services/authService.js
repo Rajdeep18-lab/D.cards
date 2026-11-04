@@ -34,6 +34,14 @@ export const authService = {
   /**
    * Logs in a user using email and password
    */
+  async continueWithGoogle(options) {
+    return await firebaseAuthService.signInWithGoogle(options);
+  },
+
+  async signInWithGoogle(options) {
+    return await firebaseAuthService.signInWithGoogle(options);
+  },
+
   async login(email, password) {
     return await firebaseAuthService.login(email, password);
   },

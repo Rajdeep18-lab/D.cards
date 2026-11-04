@@ -6,12 +6,14 @@ import { useAuth } from '../../hooks/useAuth';
 import AuthInput from './AuthInput';
 import PasswordInput from './PasswordInput';
 import AuthButton from './AuthButton';
+import GoogleAuthButton, { AuthDivider } from './GoogleAuthButton';
 
 /**
  * SignupForm — Modern, accessible registration form component for D.CARD.
  */
 export default function SignupForm() {
-  const { signUp } = useAuth();
+  const { signUp, continueWithGoogle } = useAuth();
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -110,6 +112,37 @@ export default function SignupForm() {
     return message || 'Account registration failed. Please try again.';
   };
 
+  const handleGoogleSignIn = async () => {
+    if (isGoogleLoading || isSubmitting) return;
+    setGeneralError('');
+    setIsGoogleLoading(true);
+
+    try {
+      const res = await continueWithGoogle();
+      if (!res) return;
+      setSignupSuccess(true);
+      const target = getTargetRedirect();
+      try {
+        sessionStorage.removeItem('dcard_auth_redirect');
+      } catch (err) {}
+      setTimeout(() => {
+        navigate(target, { replace: true });
+      }, 750);
+    } catch (err) {
+      const isCancelled = err.message && (
+        err.message.toLowerCase().includes('cancelled') ||
+        err.message.toLowerCase().includes('closed the google sign-in window')
+      );
+      if (isCancelled) {
+        setGeneralError('Google Sign-In was cancelled.');
+      } else {
+        setGeneralError(err.message || 'Unable to sign in with Google. Please try again.');
+      }
+    } finally {
+      setIsGoogleLoading(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setGeneralError('');
@@ -184,6 +217,18 @@ export default function SignupForm() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Continue with Google */}
+      <div className="mb-5">
+        <GoogleAuthButton
+          onClick={handleGoogleSignIn}
+          loading={isGoogleLoading}
+          disabled={isSubmitting || signupSuccess}
+          text="Continue with Google"
+          loadingText="Connecting to Google..."
+        />
+        <AuthDivider text="OR" bgClass="bg-slate-900" />
+      </div>
 
       {/* Sign Up Form */}
       <form onSubmit={handleSubmit} noValidate className="space-y-4">

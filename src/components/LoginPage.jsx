@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Lock, Eye, EyeOff, Check, AlertCircle, ArrowRight, ShieldCheck, Sparkles } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import GoogleAuthButton, { AuthDivider } from './auth/GoogleAuthButton';
 
 function LoginPage({ onSwitchToSignup, onSwitchToForgot, onSuccess }) {
-  const { login } = useAuth();
+  const { login, continueWithGoogle } = useAuth();
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(true);
@@ -32,6 +34,33 @@ function LoginPage({ onSwitchToSignup, onSwitchToForgot, onSuccess }) {
   };
 
   const isEmailValid = email.length > 3 && email.includes('@') && email.includes('.');
+
+  const handleGoogleSignIn = async () => {
+    if (googleLoading || loading) return;
+    setErrorMsg('');
+    setGoogleLoading(true);
+
+    try {
+      const res = await continueWithGoogle();
+      if (!res) return;
+      setLoginSuccessState(res?.profile?.full_name || res?.user?.displayName || 'User');
+      setTimeout(() => {
+        if (onSuccess) onSuccess();
+      }, 1500);
+    } catch (err) {
+      const isCancelled = err.message && (
+        err.message.toLowerCase().includes('cancelled') ||
+        err.message.toLowerCase().includes('closed the google sign-in window')
+      );
+      if (isCancelled) {
+        setErrorMsg('Google Sign-In was cancelled.');
+      } else {
+        setErrorMsg(err.message || 'Unable to sign in with Google. Please try again.');
+      }
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -119,6 +148,17 @@ function LoginPage({ onSwitchToSignup, onSwitchToForgot, onSuccess }) {
           <span>{errorMsg}</span>
         </motion.div>
       )}
+
+      <div className="mb-4">
+        <GoogleAuthButton
+          onClick={handleGoogleSignIn}
+          loading={googleLoading}
+          disabled={loading}
+          text="Continue with Google"
+          loadingText="Connecting to Google..."
+        />
+        <AuthDivider text="OR" bgClass="bg-white dark:bg-[#1E293B]" />
+      </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Floating Label Email Input */}
