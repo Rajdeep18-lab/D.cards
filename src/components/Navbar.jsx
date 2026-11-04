@@ -116,11 +116,11 @@ function Navbar({
     { name: t('nav.aiAssistance', "AI Assistance"), key: "ai", path: "/ai-advisor", isProtected: true, icon: Bot },
     { name: t('nav.banks', "Banks"), key: "banks", path: "/banks", isProtected: true, isSecondary: true, icon: Building2 },
     { name: t('nav.findMyBank', "Find My Bank"), key: "find-bank", path: "/find-my-bank", isProtected: false, isSecondary: true, icon: Compass },
-    { name: t('nav.about', "About"), key: "about", path: "/about", isProtected: false, isSecondary: true, icon: Info },
+    { name: t('nav.aboutUs', t('nav.about', "About Us")), key: "about", path: "/about", isProtected: false, isSecondary: true, icon: Info },
   ];
 
   // Secondary items that tuck into "More ▾" on intermediate screen widths (< 1400px)
-  const secondaryNavKeys = ["current", "banks", "find-bank", "about"];
+  const secondaryNavKeys = ["ai", "banks", "about", "current", "find-bank"];
   const isMoreActive = secondaryNavKeys.some(k => {
     const item = primaryNavItems.find(p => p.key === k);
     return item && location.pathname.startsWith(item.path);
@@ -299,37 +299,7 @@ function Navbar({
               )}
             </NavLink>
 
-            {/* 6. AI Assistance */}
-            <NavLink
-              to="/ai-advisor"
-              onClick={(e) => handleProtectedClick(e, '/ai-advisor', true)}
-              className={({ isActive }) =>
-                `px-2 xl:px-2.5 2xl:px-3 py-1.5 text-[12.5px] 2xl:text-[13px] font-semibold whitespace-nowrap transition-colors rounded-lg shrink-0 ${
-                  isActive
-                    ? 'text-[#B8860B] dark:text-[#F5DFA8] font-bold border-b-2 border-[#D6A64B] pb-0.5'
-                    : 'text-[#111827] dark:text-slate-200 hover:text-[#B8860B] dark:hover:text-[#F5DFA8]'
-                }`
-              }
-            >
-              {t('nav.aiAssistance', "AI Assistance")}
-            </NavLink>
-
-            {/* 7. Banks (Direct on screens >= 1280px; inside More on 1024-1279px) */}
-            <NavLink
-              to="/banks"
-              onClick={(e) => handleProtectedClick(e, '/banks', true)}
-              className={({ isActive }) =>
-                `hidden xl:flex px-2 xl:px-2.5 2xl:px-3 py-1.5 text-[12.5px] 2xl:text-[13px] font-semibold whitespace-nowrap transition-colors rounded-lg shrink-0 ${
-                  isActive
-                    ? 'text-[#B8860B] dark:text-[#F5DFA8] font-bold border-b-2 border-[#D6A64B] pb-0.5'
-                    : 'text-[#111827] dark:text-slate-200 hover:text-[#B8860B] dark:hover:text-[#F5DFA8]'
-                }`
-              }
-            >
-              {t('nav.banks', "Banks")}
-            </NavLink>
-
-            {/* 8. Find My Bank (Direct on screens >= 1600px; inside More on < 1600px) */}
+            {/* 6. Find My Bank (Direct on screens >= 1600px; inside More on < 1600px) */}
             <NavLink
               to="/find-my-bank"
               className={({ isActive }) =>
@@ -343,22 +313,8 @@ function Navbar({
               {t('nav.findMyBank', "Find My Bank")}
             </NavLink>
 
-            {/* 9. About (Direct on screens >= 1280px; inside More on 1024-1279px) */}
-            <NavLink
-              to="/about"
-              className={({ isActive }) =>
-                `hidden xl:flex px-2 xl:px-2.5 2xl:px-3 py-1.5 text-[12.5px] 2xl:text-[13px] font-semibold whitespace-nowrap transition-colors rounded-lg shrink-0 ${
-                  isActive
-                    ? 'text-[#B8860B] dark:text-[#F5DFA8] font-bold border-b-2 border-[#D6A64B] pb-0.5'
-                    : 'text-[#111827] dark:text-slate-200 hover:text-[#B8860B] dark:hover:text-[#F5DFA8]'
-                }`
-              }
-            >
-              {t('nav.about', "About")}
-            </NavLink>
-
             {/* ── INTERMEDIATE RESPONSIVE "MORE ▾" DROPDOWN (< 1600px) ── */}
-            <div className="relative 2xl:hidden shrink-0" ref={moreDropdownRef}>
+            <div className="relative shrink-0" ref={moreDropdownRef}>
               <button
                 type="button"
                 onClick={() => setIsMoreDropdownOpen(!isMoreDropdownOpen)}
@@ -376,6 +332,57 @@ function Navbar({
 
               {isMoreDropdownOpen && (
                 <div className="absolute top-full right-0 mt-2 w-52 rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E8D6B3] dark:border-slate-700 shadow-xl py-2 z-50 text-left animate-in fade-in zoom-in-95 duration-150">
+                  {/* Moved Links: AI Assistance, Banks, About Us */}
+                  <NavLink
+                    to="/ai-advisor"
+                    onClick={(e) => {
+                      setIsMoreDropdownOpen(false);
+                      handleProtectedClick(e, '/ai-advisor', true);
+                    }}
+                    className={({ isActive }) =>
+                      `flex items-center gap-2 px-4 py-2.5 text-xs font-semibold transition-colors ${
+                        isActive
+                          ? 'text-[#2455A4] bg-[#F7EEDC]/80 dark:bg-slate-700/60 dark:text-[#60A5FA] font-bold'
+                          : 'text-[#111827] dark:text-slate-200 hover:bg-amber-50/70 dark:hover:bg-slate-700/40'
+                      }`
+                    }
+                  >
+                    <Bot className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+                    <span>{t('nav.aiAssistance', 'AI Assistance')}</span>
+                  </NavLink>
+
+                  <NavLink
+                    to="/banks"
+                    onClick={(e) => {
+                      setIsMoreDropdownOpen(false);
+                      handleProtectedClick(e, '/banks', true);
+                    }}
+                    className={({ isActive }) =>
+                      `flex items-center gap-2 px-4 py-2.5 text-xs font-semibold transition-colors ${
+                        isActive
+                          ? 'text-[#2455A4] bg-[#F7EEDC]/80 dark:bg-slate-700/60 dark:text-[#60A5FA] font-bold'
+                          : 'text-[#111827] dark:text-slate-200 hover:bg-amber-50/70 dark:hover:bg-slate-700/40'
+                      }`
+                    }
+                  >
+                    <Building2 className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+                    <span>{t('nav.banks', 'Banks')}</span>
+                  </NavLink>
+
+                  <NavLink
+                    to="/about"
+                    onClick={() => setIsMoreDropdownOpen(false)}
+                    className={({ isActive }) =>
+                      `flex items-center gap-2 px-4 py-2.5 text-xs font-semibold transition-colors ${
+                        isActive
+                          ? 'text-[#2455A4] bg-[#F7EEDC]/80 dark:bg-slate-700/60 dark:text-[#60A5FA] font-bold'
+                          : 'text-[#111827] dark:text-slate-200 hover:bg-amber-50/70 dark:hover:bg-slate-700/40'
+                      }`
+                    }
+                  >
+                    <Info className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+                    <span>{t('nav.aboutUs', t('nav.about', 'About Us'))}</span>
+                  </NavLink>
                   <NavLink
                     to="/current-accounts"
                     onClick={(e) => {
@@ -409,40 +416,7 @@ function Navbar({
                     <span>{t('nav.findMyBank', 'Find My Bank')}</span>
                   </NavLink>
 
-                  <div className="xl:hidden">
-                    <NavLink
-                      to="/banks"
-                      onClick={(e) => {
-                        setIsMoreDropdownOpen(false);
-                        handleProtectedClick(e, '/banks', true);
-                      }}
-                      className={({ isActive }) =>
-                        `flex items-center gap-2 px-4 py-2.5 text-xs font-semibold transition-colors ${
-                          isActive
-                            ? 'text-[#2455A4] bg-[#F7EEDC]/80 dark:bg-slate-700/60 dark:text-[#60A5FA] font-bold'
-                            : 'text-[#111827] dark:text-slate-200 hover:bg-amber-50/70 dark:hover:bg-slate-700/40'
-                        }`
-                      }
-                    >
-                      <Building2 className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-                      <span>{t('nav.banks', 'Banks')}</span>
-                    </NavLink>
 
-                    <NavLink
-                      to="/about"
-                      onClick={() => setIsMoreDropdownOpen(false)}
-                      className={({ isActive }) =>
-                        `flex items-center gap-2 px-4 py-2.5 text-xs font-semibold transition-colors ${
-                          isActive
-                            ? 'text-[#2455A4] bg-[#F7EEDC]/80 dark:bg-slate-700/60 dark:text-[#60A5FA] font-bold'
-                            : 'text-[#111827] dark:text-slate-200 hover:bg-amber-50/70 dark:hover:bg-slate-700/40'
-                        }`
-                      }
-                    >
-                      <Info className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-                      <span>{t('nav.about', 'About')}</span>
-                    </NavLink>
-                  </div>
 
                   {/* Festive campaign link inside More for narrow desktop (< 1280px) */}
                   {FESTIVE_CONFIG.isFestiveEnabled && FESTIVE_CONFIG.navbarFestiveBadgeEnabled && (

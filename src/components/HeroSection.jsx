@@ -25,6 +25,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useLanguage } from '../context/LanguageContext';
 import HeroFestiveAtmosphere from './festive/HeroFestiveAtmosphere';
 import DiyaIllustration from './festive/DiyaIllustration';
+import DiwaliHeroRangoli from './festive/DiwaliHeroRangoli';
 import { FESTIVE_CONFIG } from '../config/festiveConfig';
 
 const HeroVisual = memo(({ isMobile }) => {
@@ -221,6 +222,13 @@ const HeroVisual = memo(({ isMobile }) => {
         </div>
 
       </div>
+
+      {/* ── DIWALI TRADITIONAL RANGOLI WITH RESTING EARTHEN DIYA (Task 2) ── */}
+      {FESTIVE_CONFIG.isFestiveEnabled && (
+        <div className="my-1 sm:my-2 z-20 flex items-center justify-center w-full">
+          <DiwaliHeroRangoli />
+        </div>
+      )}
 
       {/* FLOATING BOTTOM BADGE */}
       <motion.div
