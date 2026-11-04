@@ -492,7 +492,7 @@ export default function CardOfTheMonthBanner({ activeCardsList = [], onViewDetai
           {/* Model Commercial Photo with Smooth Gradient Blend */}
           <img
             src="/assets/card-of-month-model.jpg"
-            alt="D.CARD Featured Debit Card Lifestyle Traveler"
+            alt="D.CARD Featured Debit Card Lifestyle Traveler in Festive Ethnic Attire"
             className="w-full h-full object-cover object-top max-h-[380px] sm:max-h-[440px] lg:max-h-full filter contrast-[1.03]"
             loading="lazy"
           />
