@@ -15,6 +15,10 @@ import {
 import { useSEO } from '../hooks/useSEO';
 import { useAuth } from '../hooks/useAuth';
 import { useLanguage } from '../context/LanguageContext';
+import DhanterasHeroCampaign from '../components/festive/DhanterasHeroCampaign';
+import AuditCycleSection from '../components/festive/AuditCycleSection';
+import DiwaliCampaignBanners from '../components/festive/DiwaliCampaignBanners';
+import { FESTIVE_CONFIG } from '../config/festiveConfig';
 
 function HomePage({
   query,
@@ -84,7 +88,7 @@ function HomePage({
   };
 
   return (
-    <div className="space-y-8 select-none">
+    <div className="space-y-8 select-none overflow-x-hidden">
       {/* ── 1. HERO SECTION ── */}
       <HeroSection 
         query={query} 
@@ -92,6 +96,11 @@ function HomePage({
         onSearchSubmit={handleHeroSearchSubmit}
         onViewDetails={onViewDetails} 
       />
+
+      {/* ── DHANTERAS HOMEPAGE HERO PROMOTIONAL CAMPAIGN ── */}
+      {FESTIVE_CONFIG.isFestiveEnabled && FESTIVE_CONFIG.dhanterasHeroCampaignEnabled && (
+        <DhanterasHeroCampaign />
+      )}
 
       <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-16 space-y-12 sm:space-y-16">
         {/* ── CARD OF THE MONTH PROMOTIONAL BANNER ── */}
@@ -101,6 +110,11 @@ function HomePage({
             onViewDetails={onViewDetails}
           />
         </section>
+
+        {/* ── SPECIAL HOMEPAGE SECTION: 15-DAY AUDIT CYCLE ── */}
+        {FESTIVE_CONFIG.isFestiveEnabled && FESTIVE_CONFIG.auditCycleSectionEnabled && (
+          <AuditCycleSection />
+        )}
 
         {/* ── Main Homepage Content ── */}
         <div className="w-full min-w-0 space-y-16 lg:space-y-20">
@@ -275,6 +289,12 @@ function HomePage({
             </motion.div>
           </div>
         </section>
+
+        
+        {/* ── DIWALI PROMOTIONAL CAMPAIGN BANNERS ── */}
+        {FESTIVE_CONFIG.isFestiveEnabled && FESTIVE_CONFIG.diwaliCampaignBannersEnabled && (
+          <DiwaliCampaignBanners />
+        )}
 
         {/* ── 3. D.CARD AI ASSISTANCE SECTION ── */}
         <AIAssistanceSection

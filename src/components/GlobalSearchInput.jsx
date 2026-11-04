@@ -244,8 +244,8 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
 
   return (
     <div ref={searchContainerRef} className="w-full relative z-40 select-none">
-      {/* ── Search Input Box ── */}
-      <div className="flex items-center gap-2 bg-white dark:bg-[#1E293B] p-2 rounded-2xl border border-[#E5E7EB] dark:border-slate-700 shadow-lg hover:border-[#2563EB]/50 transition-all">
+      {/* ── Search Input Box (Warm White / Cream with Gold Border & Navy Button) ── */}
+      <div className="flex items-center gap-2 bg-white/95 dark:bg-[#1E293B]/95 p-2 rounded-2xl border border-amber-400/40 dark:border-amber-400/30 shadow-[0_4px_20px_rgba(245,158,11,0.12)] hover:border-amber-500/60 transition-all">
         <div className="relative flex-1 flex items-center pl-3">
           <Search className="w-4 h-4 text-[#6B7280] dark:text-slate-400 shrink-0" />
           <input
@@ -280,10 +280,10 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
 
         <button
           onClick={handleExecuteSearchSubmit}
-          className="px-6 py-3.5 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-bold tracking-wide uppercase shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 shrink-0"
+          className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#0B132B] to-[#1E293B] hover:from-[#1E293B] hover:to-[#0B132B] text-white border border-amber-400/40 text-xs font-bold tracking-wide uppercase shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 shrink-0"
         >
           <span>{t('common.search', "Search")}</span>
-          <ArrowRight className="w-4 h-4" />
+          <ArrowRight className="w-4 h-4 text-amber-400" />
         </button>
       </div>
 

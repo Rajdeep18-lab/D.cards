@@ -17,6 +17,9 @@ import { useWishlist } from "../context/WishlistContext";
 import { useLanguage } from "../context/LanguageContext";
 import TopDisclaimerTicker from "./TopDisclaimerTicker";
 import LanguageSelector from "./LanguageSelector";
+import ToranGarland from "./festive/ToranGarland";
+import DiyaIllustration from "./festive/DiyaIllustration";
+import { FESTIVE_CONFIG } from "../config/festiveConfig";
 
 function Navbar({ 
   isDarkMode, 
@@ -86,13 +89,13 @@ function Navbar({
     { name: t('nav.home', "Home"), rawName: "Compare", key: "home", path: "/", end: true, isProtected: false },
     { name: t('nav.debitCards', "Debit Cards"), rawName: "Debit Cards", key: "cards", path: "/cards", isProtected: true },
     { name: t('nav.savingsAccounts', "Savings Accounts"), rawName: "Savings Accounts", key: "savings", path: "/savings-accounts", isProtected: true },
-    { name: t('nav.currentAccounts', "Current Accounts"), rawName: "Current Accounts", key: "current", path: "/current-accounts", isProtected: true },
+    { name: t('nav.currentAccounts', "Current Accounts"), rawName: "Current Accounts", key: "current", path: "/current-accounts", isProtected: true, hiddenBelow1536: true },
     { name: t('nav.compare', "Compare"), rawName: "Compare", key: "compare", path: "/compare", isProtected: true },
     { name: t('nav.aiAssistance', "AI Assistance"), rawName: "AI Assistance", key: "ai", path: "/ai-advisor", isProtected: true },
     { name: t('nav.banks', "Banks"), rawName: "Banks", key: "banks", path: "/banks", isProtected: true },
     { name: t('nav.findMyBank', "Find My Bank"), rawName: "Find My Bank", key: "find-bank", path: "/find-my-bank", isProtected: false },
     { name: t('nav.about', "About"), rawName: "About", key: "about", path: "/about", isProtected: false },
-    { name: t('nav.contact', "Contact"), rawName: "Contact", key: "contact", path: "/contact", isProtected: false },
+    { name: t('nav.contact', "Contact"), rawName: "Contact", key: "contact", path: "/contact", isProtected: false, hiddenBelow1536: true },
   ];
 
   const handleProtectedClick = (e, path, isProtected) => {
@@ -116,11 +119,51 @@ function Navbar({
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full select-none shadow-xs">
+    <header className="sticky top-0 z-50 w-full select-none shadow-xs relative">
+      {/* ── Minimalistic Festive Marigold Toran Garland across Top Navigation ── */}
+      {FESTIVE_CONFIG.isFestiveEnabled && <ToranGarland />}
       {/* ==================================================
           1. TOP: RUNNING DISCLAIMER / STATUTORY BAR
          ================================================== */}
       <TopDisclaimerTicker />
+
+      {/* ==================================================
+          2. DEDICATED DIWALI & DHANTERAS FESTIVE CAMPAIGN ANNOUNCEMENT RIBBON
+          (Completely decoupled from main nav row to guarantee ZERO overlap 
+           with navigation links across any screen resolution)
+         ================================================== */}
+      {FESTIVE_CONFIG.isFestiveEnabled && FESTIVE_CONFIG.navbarFestiveBadgeEnabled && (
+        <aside 
+          aria-label="Festive Campaign Announcement"
+          className="w-full bg-gradient-to-r from-[#2B080C] via-[#1E0509] to-[#0F172A] border-b border-amber-500/30 text-white py-1.5 px-3 sm:px-6 select-none shadow-xs"
+        >
+          <div className="max-w-[1720px] mx-auto flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2 text-amber-200 min-w-0">
+              <span className="text-amber-400 text-sm shrink-0">🪔</span>
+              <span className="font-extrabold text-[11px] sm:text-xs text-amber-300 tracking-wide truncate">
+                {isHindi ? FESTIVE_CONFIG.navbarAccent.badgeTextHi : FESTIVE_CONFIG.navbarAccent.badgeText}
+              </span>
+              <span className="hidden md:inline text-amber-100/70 text-[11px] truncate">
+                — {isHindi ? 'पारदर्शी व निष्पक्ष बैंकिंग उत्पाद खोज व तुलना' : 'Celebrate Prosperity with Transparent Banking Choices'}
+              </span>
+            </div>
+            <a
+              href="#dhanteras-hero"
+              onClick={(e) => {
+                if (location.pathname === '/') {
+                  e.preventDefault();
+                  const el = document.getElementById('dhanteras-hero');
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 text-[#1F1600] font-black text-[10px] sm:text-[11px] hover:shadow-[0_0_12px_rgba(245,158,11,0.5)] hover:scale-[1.02] transition-all cursor-pointer shrink-0"
+            >
+              <span>{isHindi ? 'अभियान देखें' : 'Explore Festive Special'}</span>
+              <span className="text-xs">➔</span>
+            </a>
+          </div>
+        </aside>
+      )}
 
       {/* ==================================================
           2. MAIN HEADER / NAVIGATION BAR
@@ -128,8 +171,8 @@ function Navbar({
       <div
         className={`w-full transition-all duration-300 h-[68px] sm:h-[76px] flex items-center ${
           scrolled
-            ? "backdrop-blur-xl border-b border-[#E5E7EB] dark:border-slate-800 shadow-sm bg-white/95 dark:bg-[#0F172A]/95"
-            : "border-b border-[#E5E7EB]/60 dark:border-slate-800/60 bg-white/90 dark:bg-[#0F172A]/90 backdrop-blur-md"
+            ? "backdrop-blur-xl border-b border-amber-300/40 dark:border-slate-800 shadow-sm bg-[#FFFDF9]/95 dark:bg-[#0F172A]/95"
+            : "border-b border-amber-200/50 dark:border-slate-800/60 bg-[#FFFDF9]/90 dark:bg-[#0F172A]/90 backdrop-blur-md"
         }`}
       >
         <div className="w-full max-w-[1720px] mx-auto px-3 sm:px-4 lg:px-6 h-full flex items-center justify-between gap-2 lg:gap-3 xl:gap-4">
@@ -166,33 +209,65 @@ function Navbar({
                   {t('nav.tagline', 'COMPARE. CHOOSE. BENEFIT.')}
                 </span>
               </div>
+              {/* Navbar Earthen Diya next to brand logo */}
+              {FESTIVE_CONFIG.isFestiveEnabled && (
+                <div className="hidden sm:inline-flex items-center ml-1.5 shrink-0">
+                  <DiyaIllustration size={28} glow={true} animate={true} />
+                </div>
+              )}
             </Link>
-          </div>
+
+            </div>
 
           {/* ── MIDDLE: DESKTOP NAVIGATION LINKS (>= 1280px) ── */}
-          <nav className="hidden min-[1280px]:flex items-center justify-center gap-0.5 xl:gap-1 2xl:gap-1.5 flex-1 min-w-0 mx-1 xl:mx-2">
-            {navLinks.map((link) => (
-              <NavLink
-                key={link.path}
-                to={link.path}
-                end={link.end}
-                onClick={(e) => handleProtectedClick(e, link.path, link.isProtected)}
-                className={({ isActive }) =>
-                  `px-1.5 xl:px-2 2xl:px-2.5 py-1.5 rounded-xl text-[11.5px] xl:text-[12px] 2xl:text-[12.5px] font-semibold transition-all whitespace-nowrap flex items-center gap-1 shrink-0 ${
-                    isActive
-                      ? 'text-[#2563EB] dark:text-[#60A5FA] font-bold bg-[#EFF6FF] dark:bg-slate-800/80 shadow-xs border border-[#2563EB]/15 dark:border-[#60A5FA]/20'
-                      : 'text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] dark:hover:text-[#60A5FA] hover:bg-gray-100/60 dark:hover:bg-slate-800/40'
-                  }`
-                }
+          <nav 
+            aria-label="Primary Navigation"
+            className="hidden min-[1280px]:flex items-center justify-center gap-0.5 xl:gap-1 2xl:gap-1.5 flex-1 min-w-0 px-1 xl:px-2"
+          >
+            {navLinks.map((link) => {
+              const visibilityClass = link.hiddenBelow1536 ? "hidden min-[1536px]:flex" : "flex";
+              return (
+                <NavLink
+                  key={link.path}
+                  to={link.path}
+                  end={link.end}
+                  onClick={(e) => handleProtectedClick(e, link.path, link.isProtected)}
+                  className={({ isActive }) =>
+                    `${visibilityClass} px-1.5 xl:px-2 2xl:px-2.5 py-1.5 rounded-xl text-[11.5px] xl:text-[12px] 2xl:text-[12.5px] font-semibold transition-all whitespace-nowrap items-center gap-1 shrink-0 ${
+                      isActive
+                        ? 'text-amber-900 dark:text-[#60A5FA] font-bold bg-amber-100/70 dark:bg-slate-800/80 shadow-xs border border-amber-300/60 dark:border-[#60A5FA]/20'
+                        : 'text-[#374151] dark:text-slate-300 hover:text-amber-800 dark:hover:text-[#60A5FA] hover:bg-amber-50/60 dark:hover:bg-slate-800/40'
+                    }`
+                  }
+                >
+                  <span>{link.name}</span>
+                  {link.key === "compare" && compareCount > 0 && (
+                    <span className="inline-flex items-center justify-center px-1.5 py-0.2 text-[10px] font-extrabold rounded-full bg-emerald-500 text-white leading-none shadow-xs ml-0.5 shrink-0">
+                      {compareCount}
+                    </span>
+                  )}
+                </NavLink>
+              );
+            })}
+
+            {/* Glowing Diwali Special Pill Button (Directly matching design mockup) */}
+            {FESTIVE_CONFIG.isFestiveEnabled && FESTIVE_CONFIG.navbarFestiveBadgeEnabled && (
+              <a
+                href="#dhanteras-hero"
+                onClick={(e) => {
+                  if (location.pathname === '/') {
+                    e.preventDefault();
+                    const el = document.getElementById('dhanteras-hero');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-[#8B1D24] via-[#A8252E] to-[#78151B] text-amber-200 border border-amber-400/60 text-[11px] font-black tracking-wide shadow-[0_0_15px_rgba(245,158,11,0.35)] hover:shadow-[0_0_20px_rgba(245,158,11,0.55)] hover:scale-105 transition-all cursor-pointer shrink-0 group select-none ml-1"
+                title={isHindi ? 'शुभ धनतेरस व दीपावली उत्सव' : 'Shubh Dhanteras & Diwali Special'}
               >
-                <span>{link.name}</span>
-                {link.key === "compare" && compareCount > 0 && (
-                  <span className="inline-flex items-center justify-center px-1.5 py-0.2 text-[10px] font-extrabold rounded-full bg-emerald-500 text-white leading-none shadow-xs ml-0.5 shrink-0">
-                    {compareCount}
-                  </span>
-                )}
-              </NavLink>
-            ))}
+                <span className="text-amber-400 group-hover:scale-110 transition-transform">🪔</span>
+                <span className="whitespace-nowrap">{isHindi ? 'दिवाली स्पेशल' : 'Diwali Special'}</span>
+              </a>
+            )}
           </nav>
 
           {/* ── RIGHT: CONTROLS (Language 🌐, Legal ⚖, Theme, Notification, User Profile) ── */}
@@ -339,6 +414,17 @@ function Navbar({
          ================================================== */}
       {isMobileMenuOpen && (
         <div className="absolute top-full left-0 right-0 min-[1280px]:hidden border-b border-[#E5E7EB] dark:border-slate-800 bg-white/98 dark:bg-[#0F172A]/98 backdrop-blur-xl px-4 py-4 space-y-1 text-left shadow-2xl z-[55] max-h-[calc(100vh-120px)] overflow-y-auto">
+          {/* Mobile Festive Greeting Banner */}
+          {FESTIVE_CONFIG.isFestiveEnabled && FESTIVE_CONFIG.navbarFestiveBadgeEnabled && (
+            <div className="mx-2 mb-2 p-2.5 rounded-xl bg-gradient-to-r from-amber-500/15 via-yellow-500/10 to-amber-500/15 border border-amber-400/30 flex items-center justify-between text-xs text-amber-800 dark:text-amber-300 font-bold select-none">
+              <span className="flex items-center gap-1.5">
+                <span>🪔</span>
+                <span>{isHindi ? FESTIVE_CONFIG.navbarAccent.badgeTextHi : FESTIVE_CONFIG.navbarAccent.badgeText}</span>
+              </span>
+              <span className="text-[10px] uppercase tracking-wider text-amber-600 dark:text-amber-400 font-extrabold">D.CARD</span>
+            </div>
+          )}
+
           <div className="text-[11px] font-extrabold uppercase tracking-wider text-gray-400 dark:text-slate-500 px-3 py-1">
             Navigation Menu
           </div>

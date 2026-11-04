@@ -1,0 +1,322 @@
+[
+  {
+    "bank_id": "sbi",
+    "bank_name": "State Bank of India",
+    "banking_category": "Public Sector Bank",
+    "official_website": "https://sbi.co.in",
+    "mobile_banking_app": "YONO SBI",
+    "official_net_banking_url": "https://www.onlinesbi.sbi"
+  },
+  {
+    "bank_id": "hdfc",
+    "bank_name": "HDFC Bank",
+    "banking_category": "Private Sector Bank",
+    "official_website": "https://www.hdfcbank.com",
+    "mobile_banking_app": "HDFC MobileBanking / PayZapp",
+    "official_net_banking_url": "https://netbanking.hdfcbank.com"
+  },
+  {
+    "bank_id": "icici",
+    "bank_name": "ICICI Bank",
+    "banking_category": "Private Sector Bank",
+    "official_website": "https://www.icicibank.com",
+    "mobile_banking_app": "iMobile Pay",
+    "official_net_banking_url": "https://infinity.icicibank.com"
+  },
+  {
+    "bank_id": "axis",
+    "bank_name": "Axis Bank",
+    "banking_category": "Private Sector Bank",
+    "official_website": "https://www.axisbank.com",
+    "mobile_banking_app": "Axis Mobile",
+    "official_net_banking_url": null
+  },
+  {
+    "bank_id": "kotak",
+    "bank_name": "Kotak Mahindra Bank",
+    "banking_category": "Private Sector Bank",
+    "official_website": "https://www.kotak.com",
+    "mobile_banking_app": "Kotak 811",
+    "official_net_banking_url": "https://www.kotak811.bank.in/"
+  },
+  {
+    "bank_id": "pnb",
+    "bank_name": "Punjab National Bank",
+    "banking_category": "Public Sector Bank",
+    "official_website": "https://www.pnbindia.in",
+    "mobile_banking_app": "PNB ONE",
+    "official_net_banking_url": null
+  },
+  {
+    "bank_id": "bob",
+    "bank_name": "Bank of Baroda",
+    "banking_category": "Public Sector Bank",
+    "official_website": "https://www.bankofbaroda.in",
+    "mobile_banking_app": "bob World",
+    "official_net_banking_url": null
+  },
+  {
+    "bank_id": "canara",
+    "bank_name": "Canara Bank",
+    "banking_category": "Public Sector Bank",
+    "official_website": "https://canarabank.com",
+    "mobile_banking_app": "Canara ai1",
+    "official_net_banking_url": "https://canarabank.com/Select.aspx"
+  },
+  {
+    "bank_id": "union",
+    "bank_name": "Union Bank of India",
+    "banking_category": "Public Sector Bank",
+    "official_website": "https://www.unionbankofindia.co.in",
+    "mobile_banking_app": null,
+    "official_net_banking_url": null
+  },
+  {
+    "bank_id": "idfc",
+    "bank_name": "IDFC FIRST Bank",
+    "banking_category": "Private Sector Bank",
+    "official_website": "https://www.idfcfirstbank.com",
+    "mobile_banking_app": "IDFC FIRST Bank Mobile App",
+    "official_net_banking_url": null
+  },
+  {
+    "bank_id": "indusind",
+    "bank_name": "IndusInd Bank",
+    "banking_category": "Private Sector Bank",
+    "official_website": "https://www.indusind.com",
+    "mobile_banking_app": "INDIE by IndusInd Bank",
+    "official_net_banking_url": null
+  },
+  {
+    "bank_id": "federal",
+    "bank_name": "Federal Bank",
+    "banking_category": "Private Sector Bank",
+    "official_website": "https://www.federalbank.co.in",
+    "mobile_banking_app": "FedMobile",
+    "official_net_banking_url": null
+  },
+  {
+    "bank_id": "yes",
+    "bank_name": "Yes Bank",
+    "banking_category": "Private Sector Bank",
+    "official_website": "https://www.yesbank.in",
+    "mobile_banking_app": null,
+    "official_net_banking_url": null
+  },
+  {
+    "bank_id": "rbl",
+    "bank_name": "RBL Bank",
+    "banking_category": "Private Sector Bank",
+    "official_website": "https://www.rblbank.com",
+    "mobile_banking_app": null,
+    "official_net_banking_url": null
+  },
+  {
+    "bank_id": "au",
+    "bank_name": "AU Small Finance Bank",
+    "banking_category": "Small Finance Bank",
+    "official_website": "https://www.aubank.in",
+    "mobile_banking_app": null,
+    "official_net_banking_url": null
+  },
+  {
+    "bank_id": "boi",
+    "bank_name": "Bank of India",
+    "banking_category": "Public Sector Bank",
+    "official_website": "https://www.bankofindia.co.in",
+    "mobile_banking_app": null,
+    "official_net_banking_url": null
+  },
+  {
+    "bank_id": "central",
+    "bank_name": "Central Bank of India",
+    "banking_category": "Public Sector Bank",
+    "official_website": "https://www.centralbankofindia.co.in",
+    "mobile_banking_app": null,
+    "official_net_banking_url": null
+  },
+  {
+    "bank_id": "indian",
+    "bank_name": "Indian Bank",
+    "banking_category": "Public Sector Bank",
+    "official_website": "https://www.indianbank.in",
+    "mobile_banking_app": null,
+    "official_net_banking_url": null
+  },
+  {
+    "bank_id": "uco",
+    "bank_name": "UCO Bank",
+    "banking_category": "Public Sector Bank",
+    "official_website": "https://www.ucobank.com",
+    "mobile_banking_app": null,
+    "official_net_banking_url": null
+  },
+  {
+    "bank_id": "psb",
+    "bank_name": "Punjab & Sind Bank",
+    "banking_category": "Public Sector Bank",
+    "official_website": "https://punjabandsindbank.co.in",
+    "mobile_banking_app": null,
+    "official_net_banking_url": null
+  },
+  {
+    "bank_id": "idbi",
+    "bank_name": "IDBI Bank",
+    "banking_category": "Private Sector Bank",
+    "official_website": "https://www.idbibank.in",
+    "mobile_banking_app": null,
+    "official_net_banking_url": null
+  },
+  {
+    "bank_id": "iob",
+    "bank_name": "Indian Overseas Bank",
+    "banking_category": "Public Sector Bank",
+    "official_website": "https://www.iob.in",
+    "mobile_banking_app": null,
+    "official_net_banking_url": null
+  },
+  {
+    "bank_id": "south_indian",
+    "bank_name": "South Indian Bank",
+    "banking_category": "Private Sector Bank",
+    "official_website": "https://www.southindianbank.com",
+    "mobile_banking_app": null,
+    "official_net_banking_url": null
+  },
+  {
+    "bank_id": "karnataka",
+    "bank_name": "Karnataka Bank",
+    "banking_category": "Private Sector Bank",
+    "official_website": "https://karnatakabank.com",
+    "mobile_banking_app": null,
+    "official_net_banking_url": null
+  },
+  {
+    "bank_id": "cub",
+    "bank_name": "City Union Bank",
+    "banking_category": "Private Sector Bank",
+    "official_website": "https://www.cityunionbank.com",
+    "mobile_banking_app": null,
+    "official_net_banking_url": null
+  },
+  {
+    "bank_id": "dcb",
+    "bank_name": "DCB Bank",
+    "banking_category": "Private Sector Bank",
+    "official_website": "https://www.dcbbank.com",
+    "mobile_banking_app": null,
+    "official_net_banking_url": null
+  },
+  {
+    "bank_id": "equitas",
+    "bank_name": "Equitas Small Finance Bank",
+    "banking_category": "Small Finance Bank",
+    "official_website": "https://www.equitasbank.com",
+    "mobile_banking_app": null,
+    "official_net_banking_url": null
+  },
+  {
+    "bank_id": "ujjivan",
+    "bank_name": "Ujjivan Small Finance Bank",
+    "banking_category": "Small Finance Bank",
+    "official_website": "https://www.ujjivansfb.in",
+    "mobile_banking_app": null,
+    "official_net_banking_url": null
+  },
+  {
+    "bank_id": "jana",
+    "bank_name": "Jana Small Finance Bank",
+    "banking_category": "Small Finance Bank",
+    "official_website": "https://www.janabank.com",
+    "mobile_banking_app": null,
+    "official_net_banking_url": null
+  },
+  {
+    "bank_id": "esaf",
+    "bank_name": "ESAF Small Finance Bank",
+    "banking_category": "Small Finance Bank",
+    "official_website": "https://www.esafbank.com",
+    "mobile_banking_app": null,
+    "official_net_banking_url": null
+  },
+  {
+    "bank_id": "suryoday",
+    "bank_name": "Suryoday Small Finance Bank",
+    "banking_category": "Small Finance Bank",
+    "official_website": "https://www.suryodaybank.com",
+    "mobile_banking_app": null,
+    "official_net_banking_url": null
+  },
+  {
+    "bank_id": "fi",
+    "bank_name": "Fi Money",
+    "banking_category": "Payments Bank / Fintech",
+    "official_website": "https://fi.money",
+    "mobile_banking_app": "Fi Money App",
+    "official_net_banking_url": null
+  },
+  {
+    "bank_id": "jupiter",
+    "bank_name": "Jupiter",
+    "banking_category": "Payments Bank / Fintech",
+    "official_website": "https://jupiter.money",
+    "mobile_banking_app": "Jupiter App",
+    "official_net_banking_url": null
+  },
+  {
+    "bank_id": "niyo",
+    "bank_name": "Niyo",
+    "banking_category": "Payments Bank / Fintech",
+    "official_website": "https://niyo.co",
+    "mobile_banking_app": "Niyo App",
+    "official_net_banking_url": null
+  },
+  {
+    "bank_id": "freo",
+    "bank_name": "Freo",
+    "banking_category": "Payments Bank / Fintech",
+    "official_website": "https://freo.money",
+    "mobile_banking_app": "Freo App",
+    "official_net_banking_url": null
+  },
+  {
+    "bank_id": "airtel",
+    "bank_name": "Airtel Payments Bank",
+    "banking_category": "Payments Bank / Fintech",
+    "official_website": "https://www.airtel.in/bank",
+    "mobile_banking_app": "Airtel Thanks",
+    "official_net_banking_url": null
+  },
+  {
+    "bank_id": "india_post",
+    "bank_name": "India Post Payments Bank",
+    "banking_category": "Payments Bank / Fintech",
+    "official_website": "https://www.ippbonline.com",
+    "mobile_banking_app": "IPPB Mobile Banking",
+    "official_net_banking_url": null
+  },
+  {
+    "bank_id": "hsbc",
+    "bank_name": "HSBC India",
+    "banking_category": "Foreign Bank",
+    "official_website": "https://www.hsbc.co.in",
+    "mobile_banking_app": null,
+    "official_net_banking_url": null
+  },
+  {
+    "bank_id": "standard_chartered",
+    "bank_name": "Standard Chartered",
+    "banking_category": "Foreign Bank",
+    "official_website": "https://www.sc.com/in",
+    "mobile_banking_app": null,
+    "official_net_banking_url": null
+  },
+  {
+    "bank_id": "dbs",
+    "bank_name": "DBS Bank India",
+    "banking_category": "Foreign Bank",
+    "official_website": "https://www.dbs.com/in",
+    "mobile_banking_app": null,
+    "official_net_banking_url": null
+  }
+]
