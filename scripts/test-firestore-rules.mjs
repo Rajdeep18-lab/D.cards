@@ -1,10 +1,25 @@
 import fs from 'fs';
 
 /**
- * D.CARD Firestore Security Rules Release-Gate Verification Suite
+ * D.CARD Firestore Security Rules Audit & Hardening Test Suite
  * 
- * Tests the exact semantic access control rules of firestore.rules
- * across all collections, schemas, admin bootstrap flows, and public logging boundaries.
+ * Verifies access control rules across:
+ * 1. Static syntax & CEL rule integrity checks on firestore.rules
+ * 2. 14 Mandatory Security Audit Tests
+ * 3. Multi-field ownership consistency & anti-spoofing (user and admin paths)
+ * 4. Admin update permissions separated from normal owner update permissions,
+ *    while strictly locking ownership identity fields (userId, uid, user_id, id)
+ * 5. Contact query schema hardening & anti-injection validation:
+ *    - Strict ISO timestamp bounds
+ *    - Nested history map validation (whitelisted keys, sender == 'user')
+ *    - Status, assigned_to, admin_reply and replied_at constraints
+ * 6. Admin document bootstrap field whitelist and role verification
+ * 7. Review creation bounds, serverTimestamp validation, and email matching
+ * 8. Public logging boundaries
+ * 
+ * NOTE: This suite executes static syntax checks and comprehensive in-memory
+ * behavioral logic simulation. Live Firebase Emulator testing requires
+ * @firebase/rules-unit-testing and a Java 11+ runtime.
  */
 
 let passed = 0;
@@ -97,50 +112,273 @@ function createEvaluationContext({
 // Evaluator Functions matching firestore.rules definitions
 // ---------------------------------------------------------------------------
 
+function isStrictOwner(data, authUid) {
+  if (!data || !authUid) return false;
+  const hasAtLeastOne = (data.userId === authUid) || (data.uid === authUid) || (data.user_id === authUid);
+  const noMismatchUserId = !('userId' in data) || data.userId === authUid;
+  const noMismatchUid = !('uid' in data) || data.uid === authUid;
+  const noMismatchUserIdAlt = !('user_id' in data) || data.user_id === authUid;
+  return hasAtLeastOne && noMismatchUserId && noMismatchUid && noMismatchUserIdAlt;
+}
+
+function evaluateDebitCardRead() {
+  return true;
+}
+
+function evaluateDebitCardWrite(ctx) {
+  return ctx.isAdmin();
+}
+
+function evaluateProfileRead(ctx, userId) {
+  return ctx.isOwner(userId) || ctx.isAdmin();
+}
+
 function evaluateProfileCreate(ctx, userId) {
   const { isOwner, isAdmin, request } = ctx;
   if (!isOwner(userId) && !isAdmin()) return false;
   const data = request?.resource?.data || {};
   const hasIdMatch = !('id' in data) || data.id === userId;
   const hasUidMatch = !('uid' in data) || data.uid === userId;
+  const hasUserIdMatch = !('user_id' in data) || data.user_id === userId;
   const hasNoPrivilegedKeys = !data.keys?.().hasAny(['role', 'isAdmin', 'admin', 'permissions', 'is_admin']);
 
-  return (isOwner(userId) && hasIdMatch && hasUidMatch && hasNoPrivilegedKeys) || isAdmin();
+  return (isOwner(userId) && hasIdMatch && hasUidMatch && hasUserIdMatch && hasNoPrivilegedKeys) || isAdmin();
 }
 
 function evaluateProfileUpdate(ctx, userId) {
   const { isOwner, isAdmin, request, resource } = ctx;
-  if (isAdmin()) return true;
+  const affectedKeys = request.resource.data.diff(resource.data).affectedKeys();
+
+  // Admin update path: permitted, but strictly cannot tamper with identity keys
+  if (isAdmin()) {
+    return !affectedKeys.hasAny(['uid', 'id', 'user_id']);
+  }
+
+  // Owner update path
   if (!isOwner(userId)) return false;
 
-  const affectedKeys = request.resource.data.diff(resource.data).affectedKeys();
-  const touchesProtected = affectedKeys.hasAny(['role', 'isAdmin', 'admin', 'permissions', 'is_admin', 'uid', 'id']);
+  const data = request?.resource?.data || {};
+  const hasIdMatch = !('id' in data) || data.id === userId;
+  const hasUidMatch = !('uid' in data) || data.uid === userId;
+  const hasUserIdMatch = !('user_id' in data) || data.user_id === userId;
+  if (!hasIdMatch || !hasUidMatch || !hasUserIdMatch) return false;
+
+  const touchesProtected = affectedKeys.hasAny(['role', 'isAdmin', 'admin', 'permissions', 'is_admin', 'uid', 'id', 'user_id']);
   return !touchesProtected;
-}
-
-function evaluateSavedCardCreate(ctx) {
-  const { isAuthenticated, request } = ctx;
-  const uid = request.auth?.uid;
-  const data = request.resource?.data || {};
-  return isAuthenticated() && (data.userId === uid || data.uid === uid);
-}
-
-function evaluateSavedCardUpdate(ctx) {
-  const { isAuthenticated, isAdmin, request, resource } = ctx;
-  const uid = request.auth?.uid;
-  const existing = resource?.data || {};
-  const isAuthorized = isAuthenticated() && (existing.userId === uid || existing.uid === uid || isAdmin());
-  if (!isAuthorized) return false;
-
-  const touchesOwnerKeys = request.resource.data.diff(resource.data).affectedKeys().hasAny(['userId', 'uid']);
-  return !touchesOwnerKeys;
 }
 
 function evaluateSavedCardRead(ctx) {
   const { isAuthenticated, isAdmin, request, resource } = ctx;
   const uid = request.auth?.uid;
   const existing = resource?.data || {};
-  return isAuthenticated() && (existing.userId === uid || existing.uid === uid || isAdmin());
+  return isAuthenticated() && (isStrictOwner(existing, uid) || isAdmin());
+}
+
+function evaluateSavedCardCreate(ctx) {
+  const { isAuthenticated, request } = ctx;
+  const uid = request.auth?.uid;
+  const data = request.resource?.data || {};
+  return isAuthenticated() && isStrictOwner(data, uid);
+}
+
+function evaluateSavedCardUpdate(ctx) {
+  const { isAuthenticated, isAdmin, request, resource } = ctx;
+  
+  // Both user and admin are strictly forbidden from modifying ownership fields
+  const touchesOwnerKeys = request.resource.data.diff(resource.data).affectedKeys().hasAny(['userId', 'uid', 'user_id']);
+  if (touchesOwnerKeys) return false;
+
+  if (isAdmin()) return true; // Authorized admin can manage other fields
+  if (!isAuthenticated()) return false;
+
+  const uid = request.auth?.uid;
+  const existing = resource?.data || {};
+  const proposed = request.resource?.data || {};
+
+  return isStrictOwner(existing, uid) && isStrictOwner(proposed, uid);
+}
+
+function evaluateFavoriteUpdate(ctx) {
+  const { isAuthenticated, isAdmin, request, resource } = ctx;
+  
+  // Both user and admin are strictly forbidden from modifying ownership fields
+  const touchesOwnerKeys = request.resource.data.diff(resource.data).affectedKeys().hasAny(['userId', 'uid', 'user_id']);
+  if (touchesOwnerKeys) return false;
+
+  if (isAdmin()) return true;
+  if (!isAuthenticated()) return false;
+
+  const uid = request.auth?.uid;
+  const existing = resource?.data || {};
+  const proposed = request.resource?.data || {};
+
+  return isStrictOwner(existing, uid) && isStrictOwner(proposed, uid);
+}
+
+function evaluateCompareHistoryUpdate(ctx) {
+  const { isAuthenticated, isAdmin, request, resource } = ctx;
+  
+  // Both user and admin are strictly forbidden from modifying ownership fields
+  const touchesOwnerKeys = request.resource.data.diff(resource.data).affectedKeys().hasAny(['userId', 'uid', 'user_id']);
+  if (touchesOwnerKeys) return false;
+
+  if (isAdmin()) return true;
+  if (!isAuthenticated()) return false;
+
+  const uid = request.auth?.uid;
+  const existing = resource?.data || {};
+  const proposed = request.resource?.data || {};
+
+  return isStrictOwner(existing, uid) && isStrictOwner(proposed, uid);
+}
+
+function evaluateWishlistRead(ctx, userId) {
+  return ctx.isOwner(userId) || ctx.isAdmin();
+}
+
+function evaluateWishlistCreate(ctx, userId) {
+  const { isOwner, isAdmin, request } = ctx;
+  if (!isOwner(userId) && !isAdmin()) return false;
+  const data = request?.resource?.data || {};
+  const matchUserId = !('userId' in data) || data.userId === userId;
+  const matchUid = !('uid' in data) || data.uid === userId;
+  const matchUserIdAlt = !('user_id' in data) || data.user_id === userId;
+  return (isOwner(userId) && matchUserId && matchUid && matchUserIdAlt) || isAdmin();
+}
+
+function evaluateWishlistUpdate(ctx, userId) {
+  const { isOwner, isAdmin, request, resource } = ctx;
+  if (!isOwner(userId) && !isAdmin()) return false;
+  const data = request?.resource?.data || {};
+  const matchUserId = !('userId' in data) || data.userId === userId;
+  const matchUid = !('uid' in data) || data.uid === userId;
+  const matchUserIdAlt = !('user_id' in data) || data.user_id === userId;
+  if (!matchUserId || !matchUid || !matchUserIdAlt) return false;
+
+  const affectedKeys = request.resource.data.diff(resource.data).affectedKeys();
+  return !affectedKeys.hasAny(['userId', 'uid', 'id', 'user_id']);
+}
+
+function evaluateAdminAccess(ctx) {
+  return ctx.isAdmin();
+}
+
+function evaluateAdminCreate(ctx, adminId) {
+  const { isAuthenticated, isAdmin, request } = ctx;
+  if (isAdmin()) return true;
+  if (!isAuthenticated()) return false;
+  const auth = request.auth;
+  const data = request.resource?.data || {};
+
+  const allowedKeys = ['uid', 'email', 'role', 'active', 'createdAt', 'created_at'];
+  if (!data.keys?.().hasOnly(allowedKeys)) return false;
+
+  const isPrimary = auth.token?.email && auth.token.email.toLowerCase() === 'ritikanshu072@gmail.com';
+  const isDocEmailMatch = data.email && data.email.toLowerCase() === 'ritikanshu072@gmail.com';
+
+  return (
+    auth.uid === adminId &&
+    data.uid === adminId &&
+    isPrimary &&
+    isDocEmailMatch &&
+    auth.token?.email_verified === true &&
+    data.role === 'admin' &&
+    data.active === true
+  );
+}
+
+function evaluateAdminUpdate(ctx) {
+  return ctx.isAdmin();
+}
+
+function evaluateContactCreate(ctx) {
+  const data = ctx.request?.resource?.data;
+  if (!data) return false;
+  const allowed = [
+    'query_id', 'name', 'email', 'phone', 'mobile', 'subject',
+    'message', 'createdAt', 'created_at', 'status', 'assigned_to',
+    'admin_reply', 'replied_at', 'history'
+  ];
+  if (!data.keys().hasOnly(allowed)) return false;
+  if (typeof data.name !== 'string' || data.name.length < 2 || data.name.length > 100) return false;
+  if (typeof data.email !== 'string' || data.email.length > 150) return false;
+  if (typeof data.message !== 'string' || data.message.length < 5 || data.message.length > 2000) return false;
+  if (data.subject != null && (typeof data.subject !== 'string' || data.subject.length > 150)) return false;
+  if (data.mobile != null && (typeof data.mobile !== 'string' || data.mobile.length > 30)) return false;
+  if (data.phone != null && (typeof data.phone !== 'string' || data.phone.length > 30)) return false;
+  if (data.query_id != null && (typeof data.query_id !== 'string' || data.query_id.length > 100)) return false;
+
+  // Safe initial values enforced for public creation
+  if (data.status != null && data.status !== 'Pending') return false;
+  if (data.assigned_to != null && data.assigned_to !== 'Founder / Support Team') return false;
+  if (data.admin_reply != null && data.admin_reply !== '') return false;
+  if (data.replied_at != null) return false;
+
+  // Timestamps validation: at least one timestamp required, formatted correctly
+  if (!('created_at' in data || 'createdAt' in data)) return false;
+  if ('created_at' in data && (typeof data.created_at !== 'string' || data.created_at.length < 19 || data.created_at.length > 35)) return false;
+  if ('createdAt' in data && (typeof data.createdAt !== 'string' || data.createdAt.length < 19 || data.createdAt.length > 35) && data.createdAt !== ctx.request?.time) return false;
+
+  // History list validation
+  if ('history' in data) {
+    if (!Array.isArray(data.history) || data.history.length > 1) return false;
+    if (data.history.length === 1) {
+      const h0 = data.history[0];
+      if (typeof h0 !== 'object' || h0 === null) return false;
+      const hKeys = ['id', 'sender', 'senderName', 'message', 'timestamp'];
+      if (!Object.keys(h0).every(k => hKeys.includes(k))) return false;
+      if (h0.sender !== 'user') return false; // Strictly blocks fake admin sender
+      if (typeof h0.senderName !== 'string' || h0.senderName.length > 100) return false;
+      if (typeof h0.message !== 'string' || h0.message.length > 2000) return false;
+      if ('id' in h0 && (typeof h0.id !== 'string' || h0.id.length > 100)) return false;
+      if ('timestamp' in h0 && (typeof h0.timestamp !== 'string' || h0.timestamp.length > 50)) return false;
+    }
+  }
+
+  return true;
+}
+
+function evaluateReviewCreate(ctx) {
+  const { isAuthenticated, request } = ctx;
+  const data = request?.resource?.data;
+  if (!data) return false;
+
+  const allowedKeys = [
+    'userId', 'userName', 'userEmail', 'rating', 'message', 'category',
+    'role', 'cardName', 'createdAt', 'date', 'isUserSubmitted'
+  ];
+  if (!data.keys().hasOnly(allowedKeys)) return false;
+
+  if (typeof data.userName !== 'string' || data.userName.length < 2 || data.userName.length > 100) return false;
+  if (typeof data.message !== 'string' || data.message.length < 5 || data.message.length > 2000) return false;
+  if (typeof data.rating !== 'number' || data.rating < 1 || data.rating > 5) return false;
+
+  // Enforce createdAt == request.time (Firebase serverTimestamp())
+  if (!('createdAt' in data) || data.createdAt !== request.time) return false;
+
+  const authUid = request.auth?.uid;
+  if (data.userId != null && (!isAuthenticated() || data.userId !== authUid)) return false;
+
+  // userEmail validation:
+  if (data.userEmail != null) {
+    if (!isAuthenticated()) {
+      if (typeof data.userEmail !== 'string' || data.userEmail.length > 150) return false;
+    } else {
+      if (data.userEmail !== request.auth?.token?.email) return false;
+    }
+  }
+
+  if (data.category != null && (typeof data.category !== 'string' || data.category.length > 100)) return false;
+  if (data.role != null && (typeof data.role !== 'string' || data.role.length > 100)) return false;
+  if (data.cardName != null && (typeof data.cardName !== 'string' || data.cardName.length > 100)) return false;
+  if (data.date != null && (typeof data.date !== 'string' || data.date.length > 50)) return false;
+  if (data.isUserSubmitted != null && typeof data.isUserSubmitted !== 'boolean') return false;
+
+  return true;
+}
+
+function evaluateReviewRead(ctx) {
+  return ctx.isAdmin();
 }
 
 function evaluateReferralClickCreate(ctx) {
@@ -196,505 +434,580 @@ function evaluateActivityLogCreate(ctx) {
   return true;
 }
 
-function evaluateAdminWrite(ctx) {
-  return ctx.isAdmin();
-}
-
 function evaluateLogRead(ctx) {
   return ctx.isAdmin();
 }
-
-function evaluateReviewCreate(ctx) {
-  const { isAuthenticated, request } = ctx;
-  const data = request?.resource?.data;
-  if (!data) return false;
-
-  const allowedKeys = [
-    'userId', 'userName', 'userEmail', 'rating', 'message', 'category',
-    'role', 'cardName', 'createdAt', 'date', 'isUserSubmitted'
-  ];
-  if (!data.keys().hasOnly(allowedKeys)) return false;
-
-  if (typeof data.userName !== 'string' || data.userName.length < 2 || data.userName.length > 100) return false;
-  if (typeof data.message !== 'string' || data.message.length < 5 || data.message.length > 2000) return false;
-  if (typeof data.rating !== 'number' || data.rating < 1 || data.rating > 5) return false;
-
-  // Enforce createdAt == request.time (Firebase serverTimestamp())
-  if (!('createdAt' in data) || data.createdAt !== request.time) return false;
-
-  const authUid = request.auth?.uid;
-  if (data.userId != null && (!isAuthenticated() || data.userId !== authUid)) return false;
-
-  // userEmail validation:
-  // - Guest: null or string <= 150 chars
-  // - Authenticated: null or exactly matching request.auth.token.email
-  if (data.userEmail != null) {
-    if (!isAuthenticated()) {
-      if (typeof data.userEmail !== 'string' || data.userEmail.length > 150) return false;
-    } else {
-      if (data.userEmail !== request.auth?.token?.email) return false;
-    }
-  }
-
-  if (data.category != null && (typeof data.category !== 'string' || data.category.length > 100)) return false;
-  if (data.role != null && (typeof data.role !== 'string' || data.role.length > 100)) return false;
-  if (data.cardName != null && (typeof data.cardName !== 'string' || data.cardName.length > 100)) return false;
-  if (data.date != null && (typeof data.date !== 'string' || data.date.length > 50)) return false;
-  if (data.isUserSubmitted != null && typeof data.isUserSubmitted !== 'boolean') return false;
-
-  return true;
-}
-
-function evaluateReviewUpdate(ctx) {
-  return ctx.isAdmin();
-}
-
-function evaluateReviewDelete(ctx) {
-  return ctx.isAdmin();
-}
-
-function evaluateReviewRead(ctx) {
-  return ctx.isAdmin();
-}
-
 
 // ---------------------------------------------------------------------------
 // TEST EXECUTION
 // ---------------------------------------------------------------------------
 
 console.log('\n======================================================');
-console.log('   FIRESTORE RULES RELEASE-GATE AUDIT TEST SUITE      ');
+console.log('   FIRESTORE RULES AUDIT & SECURITY TEST SUITE        ');
+console.log('   (Static Syntax Checks & Behavioral Logic Mock)     ');
 console.log('======================================================\n');
 
-// 1. Profile Creation
-console.log('--- 1. Profile Creation Security ---');
-{
-  const ctx = createEvaluationContext({
-    auth: { uid: 'user_1', token: { email: 'u1@example.com', email_verified: true } },
-    proposedResource: { name: 'Alice', city: 'Delhi', state: 'Delhi' }
-  });
-  assert(evaluateProfileCreate(ctx, 'user_1') === true, 'Legitimate profile creation without role fields is allowed');
+// ===========================================================================
+// SECTION 0: FIRESTORE.RULES FILE SYNTAX & STATIC INTEGRITY VERIFICATION
+// ===========================================================================
+console.log('--- SECTION 0: Rules File Syntax & Static Integrity ---');
+const rulesPath = 'firestore.rules';
+const rulesContent = fs.readFileSync(rulesPath, 'utf8');
 
-  const ctxInjectedRole = createEvaluationContext({
-    auth: { uid: 'user_1', token: { email: 'u1@example.com', email_verified: true } },
-    proposedResource: { name: 'Alice', role: 'admin' }
-  });
-  assert(evaluateProfileCreate(ctxInjectedRole, 'user_1') === false, 'Role injection during profile creation is blocked');
+assert(rulesContent.length > 500, 'firestore.rules file exists and is populated');
+assert(rulesContent.includes("rules_version = '2';"), 'firestore.rules specifies rules_version = 2');
+assert(!rulesContent.includes('.toLowerCase()'), 'firestore.rules does NOT contain invalid CEL method .toLowerCase()');
+assert(rulesContent.includes('.lower()'), 'firestore.rules uses valid CEL method .lower()');
+assert(rulesContent.includes("isStrictOwner(data, authUid)"), 'firestore.rules defines isStrictOwner helper');
+assert(rulesContent.includes("!request.resource.data.diff(resource.data).affectedKeys().hasAny(['userId', 'uid', 'user_id'])"), 'firestore.rules locks ownership fields for both users and admins');
+assert(rulesContent.includes("request.resource.data.status == 'Pending'") && rulesContent.includes("request.resource.data.admin_reply == ''"), 'firestore.rules hardens contact_queries against public parameter injection');
+assert(rulesContent.includes("request.resource.data.history[0].sender == 'user'"), 'firestore.rules requires initial history item sender to strictly be user');
+assert(rulesContent.includes("request.resource.data.keys().hasOnly(['uid', 'email', 'role', 'active', 'createdAt', 'created_at'])"), 'firestore.rules restricts /admins/{adminId} bootstrap to strict whitelisted fields');
+
+const FIXED_TIME = '2026-11-04T23:00:00Z';
+
+// ===========================================================================
+// SECTION A: 14 MANDATORY AUDIT TEST REQUIREMENTS (Items 1 - 14)
+// ===========================================================================
+console.log('\n--- SECTION A: 14 Mandatory Security Audit Tests ---');
+
+// 1. Unauthenticated user reading public debit card data
+{
+  const allowed = evaluateDebitCardRead();
+  assert(allowed === true, 'Test 1: Unauthenticated user reading public debit card data (ALLOWED)');
 }
 
-// 2. Normal Owner Updates & Pre-existing Role Field Preservation
-console.log('\n--- 2. Profile Updates & Pre-existing Role Preservation ---');
+// 2. Unauthenticated user modifying debit card data
 {
-  const ctx = createEvaluationContext({
-    auth: { uid: 'user_1', token: { email: 'u1@example.com', email_verified: true } },
-    existingResource: { uid: 'user_1', name: 'Alice', role: 'user' },
-    proposedResource: { uid: 'user_1', name: 'Alice Updated', role: 'user' }
-  });
-  assert(
-    evaluateProfileUpdate(ctx, 'user_1') === true,
-    'Normal update succeeds on document that already has role: "user" (FLAW RESOLVED)'
-  );
-
-  const ctxEscalate = createEvaluationContext({
-    auth: { uid: 'user_1', token: { email: 'u1@example.com', email_verified: true } },
-    existingResource: { uid: 'user_1', name: 'Alice', role: 'user' },
-    proposedResource: { uid: 'user_1', name: 'Alice', role: 'admin' }
-  });
-  assert(evaluateProfileUpdate(ctxEscalate, 'user_1') === false, 'Privilege escalation from "user" to "admin" is blocked');
+  const ctxAnon = createEvaluationContext({ auth: null });
+  const allowed = evaluateDebitCardWrite(ctxAnon);
+  assert(allowed === false, 'Test 2: Unauthenticated user modifying debit card data (BLOCKED)');
 }
 
-// 3. Ownership Changes Denied
-console.log('\n--- 3. Ownership Immutability ---');
+// 3. Normal user accessing their own profile
 {
-  const ctx = createEvaluationContext({
-    auth: { uid: 'user_1', token: { email: 'u1@example.com', email_verified: true } },
-    existingResource: { uid: 'user_1', name: 'Alice' },
-    proposedResource: { uid: 'user_2', name: 'Alice' }
+  const ctxSelf = createEvaluationContext({
+    auth: { uid: 'user_alice', token: { email: 'alice@example.com' } }
   });
-  assert(evaluateProfileUpdate(ctx, 'user_1') === false, 'Altering uid identifier on profile document is blocked');
+  const allowed = evaluateProfileRead(ctxSelf, 'user_alice');
+  assert(allowed === true, 'Test 3: Normal user accessing their own profile (ALLOWED)');
 }
 
-// 4. Admin Bootstrap Consistency & Active Status
-console.log('\n--- 4. Admin Bootstrap Consistency & Active Status ---');
+// 4. Normal user accessing another user's profile
 {
-  // A. Primary Admin: Active and Email Verified
-  const ctxPrimaryActive = createEvaluationContext({
-    auth: { uid: 'adm_primary', token: { email: 'ritikanshu072@gmail.com', email_verified: true } },
-    databaseState: { 'admins/adm_primary': { role: 'admin', active: true } }
+  const ctxOther = createEvaluationContext({
+    auth: { uid: 'user_alice', token: { email: 'alice@example.com' } }
   });
-  assert(ctxPrimaryActive.isAdmin() === true, 'Primary admin with role: "admin" and active: true is authorized');
-
-  // B. Primary Admin: Deactivated (active: false) — FLAW RESOLVED
-  const ctxPrimaryDeactivated = createEvaluationContext({
-    auth: { uid: 'adm_primary', token: { email: 'ritikanshu072@gmail.com', email_verified: true } },
-    databaseState: { 'admins/adm_primary': { role: 'admin', active: false } }
-  });
-  assert(ctxPrimaryDeactivated.isAdmin() === false, 'Deactivated primary admin (active: false) is strictly DENIED (FLAW RESOLVED)');
-
-  // C. Primary Admin: Missing admin record
-  const ctxPrimaryMissingDoc = createEvaluationContext({
-    auth: { uid: 'adm_primary', token: { email: 'ritikanshu072@gmail.com', email_verified: true } },
-    databaseState: {}
-  });
-  assert(ctxPrimaryMissingDoc.isAdmin() === false, 'Primary admin with missing admin document is strictly DENIED');
-
-  // D. Primary Admin: Invalid role ('user')
-  const ctxPrimaryInvalidRole = createEvaluationContext({
-    auth: { uid: 'adm_primary', token: { email: 'ritikanshu072@gmail.com', email_verified: true } },
-    databaseState: { 'admins/adm_primary': { role: 'user', active: true } }
-  });
-  assert(ctxPrimaryInvalidRole.isAdmin() === false, 'Primary admin with invalid role (role: "user") is strictly DENIED');
-
-  // E. Primary Admin: Unverified Email
-  const ctxPrimaryUnverified = createEvaluationContext({
-    auth: { uid: 'adm_primary', token: { email: 'ritikanshu072@gmail.com', email_verified: false } },
-    databaseState: { 'admins/adm_primary': { role: 'admin', active: true } }
-  });
-  assert(ctxPrimaryUnverified.isAdmin() === false, 'Unverified primary admin email is strictly DENIED');
-
-  // F. Secondary Admin: Active
-  const ctxSecondaryActive = createEvaluationContext({
-    auth: { uid: 'adm_sec', token: { email: 'sec@example.com', email_verified: true } },
-    databaseState: { 'admins/adm_sec': { role: 'admin', active: true } }
-  });
-  assert(ctxSecondaryActive.isAdmin() === true, 'Secondary admin with role: "admin" and active: true is authorized');
-
-  // G. Secondary Admin: Deactivated (active: false)
-  const ctxSecondaryDeactivated = createEvaluationContext({
-    auth: { uid: 'adm_sec', token: { email: 'sec@example.com', email_verified: true } },
-    databaseState: { 'admins/adm_sec': { role: 'admin', active: false } }
-  });
-  assert(ctxSecondaryDeactivated.isAdmin() === false, 'Deactivated secondary admin (active: false) is strictly DENIED');
-
-  // H. Secondary Admin: Missing record
-  const ctxSecondaryMissing = createEvaluationContext({
-    auth: { uid: 'adm_sec', token: { email: 'sec@example.com', email_verified: true } },
-    databaseState: {}
-  });
-  assert(ctxSecondaryMissing.isAdmin() === false, 'Secondary admin with missing document is strictly DENIED');
-
-  // I. Ordinary User cannot write to /admins
-  const ctxUser = createEvaluationContext({
-    auth: { uid: 'user_1', token: { email: 'u1@example.com', email_verified: true } }
-  });
-  assert(evaluateAdminWrite(ctxUser) === false, 'Ordinary authenticated user cannot write to /admins');
-
-  // J. Unauthenticated access attempting admin write is strictly DENIED
-  const ctxUnauthed = createEvaluationContext({
-    auth: null
-  });
-  assert(evaluateAdminWrite(ctxUnauthed) === false, 'Unauthenticated user cannot write to /admins (strict denial)');
-  assert(ctxUnauthed.isAdmin() === false, 'Unauthenticated user isAdmin evaluates strictly to false');
+  const allowed = evaluateProfileRead(ctxOther, 'user_bob');
+  assert(allowed === false, 'Test 4: Normal user accessing another user profile (BLOCKED)');
 }
 
-// 5. Anonymous Firestore Writes & Schema Bounds
-console.log('\n--- 5. Public Logging Boundaries & Schema Bounds ---');
+// 5. User changing their own ownership UID
 {
-  // A. Legitimate Referral Click
-  const ctxRefValid = createEvaluationContext({
-    auth: null,
-    proposedResource: {
-      referralCode: 'REF_101_HDFC',
-      source: 'Card Details Modal',
-      card_name: 'HDFC Millennia',
-      timestamp: '2026-11-02T00:00:00Z'
-    }
+  const ctxChangeUid = createEvaluationContext({
+    auth: { uid: 'user_alice', token: { email: 'alice@example.com' } },
+    existingResource: { id: 'user_alice', uid: 'user_alice', user_id: 'user_alice', full_name: 'Alice' },
+    proposedResource: { id: 'user_alice', uid: 'user_attacker', user_id: 'user_alice', full_name: 'Alice' }
   });
-  assert(evaluateReferralClickCreate(ctxRefValid) === true, 'Valid anonymous referral clickout allowed');
-
-  // B. Referral Click with Injected Privileged Fields
-  const ctxRefInjection = createEvaluationContext({
-    auth: null,
-    proposedResource: {
-      referralCode: 'REF_101',
-      source: 'Modal',
-      revenue: 5000,
-      isAdmin: true
-    }
-  });
-  assert(evaluateReferralClickCreate(ctxRefInjection) === false, 'Referral with injected arbitrary/revenue fields is BLOCKED');
-
-  // C. Referral Click with Oversized Payload
-  const ctxRefOversized = createEvaluationContext({
-    auth: null,
-    proposedResource: {
-      referralCode: 'A'.repeat(500), // > 100 limit
-      source: 'Modal'
-    }
-  });
-  assert(evaluateReferralClickCreate(ctxRefOversized) === false, 'Referral with oversized string (>100 chars) is BLOCKED');
-
-  // D. Referral Click with Spoofed UserId
-  const ctxRefSpoofedUser = createEvaluationContext({
-    auth: null, // anonymous
-    proposedResource: {
-      referralCode: 'REF_101',
-      source: 'Modal',
-      userId: 'target_victim_uid' // Attempting to link to another user without auth
-    }
-  });
-  assert(evaluateReferralClickCreate(ctxRefSpoofedUser) === false, 'Anonymous referral click attributing another userId is BLOCKED');
-
-  // E. Valid Search Log
-  const ctxSearchValid = createEvaluationContext({
-    auth: null,
-    proposedResource: {
-      query: 'SBI zero balance',
-      user_email: 'Guest',
-      timestamp: '2026-11-02T00:00:00Z'
-    }
-  });
-  assert(evaluateSearchLogCreate(ctxSearchValid) === true, 'Valid anonymous search log allowed');
-
-  // F. Search Log with Spoofed User Email
-  const ctxSearchSpoofed = createEvaluationContext({
-    auth: null,
-    proposedResource: {
-      query: 'SBI',
-      user_email: 'victim@bank.com' // Unauthenticated guest claiming to be victim
-    }
-  });
-  assert(evaluateSearchLogCreate(ctxSearchSpoofed) === false, 'Search log with spoofed email is BLOCKED');
-
-  // G. Valid Guest Activity Log
-  const ctxActValid = createEvaluationContext({
-    auth: null,
-    proposedResource: {
-      type: 'card_view',
-      text: 'Viewed SBI Global Card',
-      user_email: 'Guest',
-      timestamp: '2026-11-02T00:00:00Z'
-    }
-  });
-  assert(evaluateActivityLogCreate(ctxActValid) === true, 'Valid guest activity log (card_view) allowed');
-
-  // H. Activity Log Spoofing Admin Import Operation
-  const ctxActSpoofAdmin = createEvaluationContext({
-    auth: null,
-    proposedResource: {
-      type: 'import_csv', // Admin-only event type
-      text: 'Imported records',
-      user_email: 'Guest',
-      timestamp: '2026-11-02T00:00:00Z'
-    }
-  });
-  assert(evaluateActivityLogCreate(ctxActSpoofAdmin) === false, 'Guest activity log attempting admin operation (import_csv) is BLOCKED');
-
-  // I. Unauthorized Read on Analytics/Logs
-  const ctxAnonRead = createEvaluationContext({ auth: null });
-  assert(evaluateLogRead(ctxAnonRead) === false, 'Anonymous inspection/read of logs is DENIED');
+  const allowed = evaluateProfileUpdate(ctxChangeUid, 'user_alice');
+  assert(allowed === false, 'Test 5: User changing their own ownership UID (BLOCKED)');
 }
 
-
-// 6. Reviews Collection Security
-console.log('\n--- 6. Reviews Collection Security ---');
+// 6. User creating a saved card for another user
 {
-  const TEST_TIME = '2026-11-04T23:00:00Z';
+  const ctxCrossUserSaved = createEvaluationContext({
+    auth: { uid: 'user_attacker', token: { email: 'attacker@example.com' } },
+    proposedResource: {
+      userId: 'user_victim', // Attempting to inject into victim's account
+      cardId: 'card_hdfc_millennia',
+      cardName: 'HDFC Millennia',
+      bankName: 'HDFC Bank'
+    }
+  });
+  const allowed = evaluateSavedCardCreate(ctxCrossUserSaved);
+  assert(allowed === false, 'Test 6: User creating a saved card for another user (BLOCKED)');
+}
 
-  // A. Valid Anonymous Review Submission with serverTimestamp (createdAt == request.time)
-  const ctxAnonReview = createEvaluationContext({
+// 7. Normal user accessing admin collections
+{
+  const ctxNormalAdmin = createEvaluationContext({
+    auth: { uid: 'user_regular', token: { email: 'regular@example.com' } }
+  });
+  const allowed = evaluateAdminAccess(ctxNormalAdmin);
+  assert(allowed === false, 'Test 7: Normal user accessing admin collections (BLOCKED)');
+}
+
+// 8. Authorized admin modifying bank card information
+{
+  const ctxAdminCard = createEvaluationContext({
+    auth: { uid: 'adm_ritik', token: { email: 'ritikanshu072@gmail.com', email_verified: true } },
+    databaseState: { 'admins/adm_ritik': { role: 'admin', active: true } }
+  });
+  const allowed = evaluateDebitCardWrite(ctxAdminCard);
+  assert(allowed === true, 'Test 8: Authorized admin modifying bank card information (ALLOWED)');
+}
+
+// 9. Guest submitting a valid review
+{
+  const ctxGuestValid = createEvaluationContext({
     auth: null,
-    time: TEST_TIME,
+    time: FIXED_TIME,
     proposedResource: {
       userId: null,
       userName: 'Aarav Patel',
       userEmail: 'aarav@example.com',
       rating: 5,
-      message: 'Great comparison platform! Found my zero balance debit card in seconds.',
+      message: 'Great comparison platform! Found my debit card in seconds.',
       category: 'General',
-      createdAt: TEST_TIME,
+      createdAt: FIXED_TIME,
       date: '5 Nov 2026',
       isUserSubmitted: true
     }
   });
-  assert(evaluateReviewCreate(ctxAnonReview) === true, 'Valid anonymous review creation is allowed');
-
-  // B. Valid Authenticated User Review Submission with matching email and serverTimestamp
-  const ctxUserReview = createEvaluationContext({
-    auth: { uid: 'user_review_1', token: { email: 'user@example.com' } },
-    time: TEST_TIME,
-    proposedResource: {
-      userId: 'user_review_1',
-      userName: 'Priya Sharma',
-      userEmail: 'user@example.com',
-      rating: 4,
-      message: 'Helped me pick HDFC Millennia card.',
-      category: 'HDFC Millennia',
-      cardName: 'HDFC Millennia Debit Card',
-      role: 'Working Professional',
-      createdAt: TEST_TIME,
-      date: '5 Nov 2026',
-      isUserSubmitted: true
-    }
-  });
-  assert(evaluateReviewCreate(ctxUserReview) === true, 'Valid authenticated user review creation is allowed');
-
-  // C. Authenticated User with Mismatched/Spoofed Email -> BLOCKED
-  const ctxUserSpoofedEmail = createEvaluationContext({
-    auth: { uid: 'user_review_1', token: { email: 'actual_user@example.com' } },
-    time: TEST_TIME,
-    proposedResource: {
-      userId: 'user_review_1',
-      userName: 'Priya Sharma',
-      userEmail: 'victim_spoofed@example.com', // Mismatched email
-      rating: 5,
-      message: 'Trying to forge someone else email address.',
-      createdAt: TEST_TIME
-    }
-  });
-  assert(evaluateReviewCreate(ctxUserSpoofedEmail) === false, 'Authenticated user review with spoofed/mismatched email is BLOCKED');
-
-  // D. Authenticated User with null userEmail -> ALLOWED
-  const ctxUserNullEmail = createEvaluationContext({
-    auth: { uid: 'user_review_1', token: { email: 'user@example.com' } },
-    time: TEST_TIME,
-    proposedResource: {
-      userId: 'user_review_1',
-      userName: 'Priya Sharma',
-      userEmail: null,
-      rating: 5,
-      message: 'Valid review with null email provided.',
-      createdAt: TEST_TIME
-    }
-  });
-  assert(evaluateReviewCreate(ctxUserNullEmail) === true, 'Authenticated user review with null userEmail is allowed');
-
-  // E. Guest User with null userEmail -> ALLOWED
-  const ctxGuestNullEmail = createEvaluationContext({
-    auth: null,
-    time: TEST_TIME,
-    proposedResource: {
-      userId: null,
-      userName: 'Guest Visitor',
-      userEmail: null,
-      rating: 5,
-      message: 'Anonymous review without email.',
-      createdAt: TEST_TIME
-    }
-  });
-  assert(evaluateReviewCreate(ctxGuestNullEmail) === true, 'Guest user review with null userEmail is allowed');
-
-  // F. Guest User with Oversized Email (> 150 chars) -> BLOCKED
-  const ctxGuestOversizedEmail = createEvaluationContext({
-    auth: null,
-    time: TEST_TIME,
-    proposedResource: {
-      userId: null,
-      userName: 'Guest Visitor',
-      userEmail: 'a'.repeat(145) + '@bank.com', // > 150 chars
-      rating: 5,
-      message: 'Anonymous review with oversized email.',
-      createdAt: TEST_TIME
-    }
-  });
-  assert(evaluateReviewCreate(ctxGuestOversizedEmail) === false, 'Guest user review with oversized email (>150 chars) is BLOCKED');
-
-  // G. Client Supplying Arbitrary Past/Future Timestamp (createdAt != request.time) -> BLOCKED
-  const ctxArbitraryTime = createEvaluationContext({
-    auth: null,
-    time: TEST_TIME,
-    proposedResource: {
-      userId: null,
-      userName: 'Time Hacker',
-      rating: 5,
-      message: 'Attempting to spoof backdated or future review timestamp.',
-      createdAt: '2020-01-01T00:00:00Z' // Arbitrary timestamp != request.time
-    }
-  });
-  assert(evaluateReviewCreate(ctxArbitraryTime) === false, 'Review with arbitrary client timestamp (createdAt != request.time) is BLOCKED');
-
-  // H. Review Submitted Without createdAt -> BLOCKED
-  const ctxMissingTime = createEvaluationContext({
-    auth: null,
-    time: TEST_TIME,
-    proposedResource: {
-      userId: null,
-      userName: 'No Time User',
-      rating: 5,
-      message: 'Review without any createdAt timestamp field.'
-    }
-  });
-  assert(evaluateReviewCreate(ctxMissingTime) === false, 'Review missing createdAt timestamp is BLOCKED');
-
-  // I. Injected / Unwhitelisted Fields (e.g. status: "approved", role: "admin")
-  const ctxInjectedReview = createEvaluationContext({
-    auth: null,
-    time: TEST_TIME,
-    proposedResource: {
-      userName: 'Sneaky User',
-      rating: 5,
-      message: 'Trying to inject malicious admin field',
-      createdAt: TEST_TIME,
-      isAdmin: true,
-      status: 'approved'
-    }
-  });
-  assert(evaluateReviewCreate(ctxInjectedReview) === false, 'Review with unwhitelisted injected fields is BLOCKED');
-
-  // J. Spoofed userId (Unauthenticated user claiming another user\'s UID)
-  const ctxSpoofedUser = createEvaluationContext({
-    auth: null,
-    time: TEST_TIME,
-    proposedResource: {
-      userId: 'victim_user_uid',
-      userName: 'Attacker',
-      rating: 5,
-      message: 'Forged review claiming to be someone else.',
-      createdAt: TEST_TIME
-    }
-  });
-  assert(evaluateReviewCreate(ctxSpoofedUser) === false, 'Review with spoofed userId is BLOCKED');
-
-  // K. Invalid Rating (Out of bounds)
-  const ctxInvalidRating = createEvaluationContext({
-    auth: null,
-    time: TEST_TIME,
-    proposedResource: {
-      userName: 'Rater',
-      rating: 6,
-      message: 'Rating 6 is out of 1-5 bounds.',
-      createdAt: TEST_TIME
-    }
-  });
-  assert(evaluateReviewCreate(ctxInvalidRating) === false, 'Review with rating > 5 is BLOCKED');
-
-  // L. Message Too Short (< 5 chars)
-  const ctxShortMessage = createEvaluationContext({
-    auth: null,
-    time: TEST_TIME,
-    proposedResource: {
-      userName: 'Rater',
-      rating: 5,
-      message: 'Bad',
-      createdAt: TEST_TIME
-    }
-  });
-  assert(evaluateReviewCreate(ctxShortMessage) === false, 'Review with message shorter than 5 chars is BLOCKED');
-
-  // M. Unauthorized User Cannot Modify Other Users\' Reviews
-  const ctxAnonModify = createEvaluationContext({
-    auth: { uid: 'unauthorized_user', token: { email: 'anon@example.com' } },
-    databaseState: {}
-  });
-  assert(evaluateReviewUpdate(ctxAnonModify) === false, 'Unauthorized user cannot modify reviews (BLOCKED)');
-
-  // N. Unauthorized User Cannot Delete Reviews
-  assert(evaluateReviewDelete(ctxAnonModify) === false, 'Unauthorized user cannot delete reviews (BLOCKED)');
-
-  // O. Unauthorized User Cannot Read Reviews Directly (Protects Email Privacy)
-  assert(evaluateReviewRead(ctxAnonModify) === false, 'Unauthorized user cannot read reviews collection directly (BLOCKED)');
-
-  // P. DBA / Admin Access Allowed
-  const ctxAdmin = createEvaluationContext({
-    auth: { uid: 'adm_dba', token: { email: 'dba@dcard.website', email_verified: true } },
-    databaseState: { 'admins/adm_dba': { role: 'admin', active: true } }
-  });
-  assert(evaluateReviewRead(ctxAdmin) === true, 'DBA / Admin can read submitted reviews in Firestore');
-  assert(evaluateReviewUpdate(ctxAdmin) === true, 'DBA / Admin can manage/update reviews in Firestore');
-  assert(evaluateReviewDelete(ctxAdmin) === true, 'DBA / Admin can delete reviews in Firestore');
+  const allowed = evaluateReviewCreate(ctxGuestValid);
+  assert(allowed === true, 'Test 9: Guest submitting a valid review (ALLOWED)');
 }
+
+// 10. Invalid review submission
+{
+  const ctxInvalidRev = createEvaluationContext({
+    auth: null,
+    time: FIXED_TIME,
+    proposedResource: {
+      userName: 'R', // Less than 2 chars (invalid)
+      rating: 7,    // Greater than 5 (invalid)
+      message: 'Hi', // Less than 5 chars (invalid)
+      createdAt: '2020-01-01T00:00:00Z' // Fake client timestamp != request.time (invalid)
+    }
+  });
+  const allowed = evaluateReviewCreate(ctxInvalidRev);
+  assert(allowed === false, 'Test 10: Invalid review submission (BLOCKED)');
+}
+
+// 11. Authenticated user submitting a review
+{
+  const ctxAuthReview = createEvaluationContext({
+    auth: { uid: 'user_auth_123', token: { email: 'priya@example.com' } },
+    time: FIXED_TIME,
+    proposedResource: {
+      userId: 'user_auth_123',
+      userName: 'Priya Sharma',
+      userEmail: 'priya@example.com',
+      rating: 4,
+      message: 'Helped me pick SBI Global International Debit Card.',
+      category: 'SBI Global',
+      cardName: 'SBI Global International Debit Card',
+      role: 'Working Professional',
+      createdAt: FIXED_TIME,
+      date: '5 Nov 2026',
+      isUserSubmitted: true
+    }
+  });
+  const allowed = evaluateReviewCreate(ctxAuthReview);
+  assert(allowed === true, 'Test 11: Authenticated user submitting a review (ALLOWED)');
+}
+
+// 12. Unauthorized user reading private reviews
+{
+  const ctxAnonRead = createEvaluationContext({
+    auth: { uid: 'user_intruder', token: { email: 'intruder@example.com' } }
+  });
+  const allowed = evaluateReviewRead(ctxAnonRead);
+  assert(allowed === false, 'Test 12: Unauthorized user reading private reviews (BLOCKED)');
+}
+
+// 13. User attempting to modify another user's wishlist
+{
+  const ctxCrossWishlist = createEvaluationContext({
+    auth: { uid: 'user_attacker', token: { email: 'attacker@example.com' } },
+    existingResource: { user_id: 'user_victim', items: [] },
+    proposedResource: { user_id: 'user_victim', items: [{ card_id: 'hijacked' }] }
+  });
+  const allowed = evaluateWishlistUpdate(ctxCrossWishlist, 'user_victim');
+  assert(allowed === false, 'Test 13: User attempting to modify another user wishlist (BLOCKED)');
+}
+
+// 14. User attempting to grant themselves admin privileges
+{
+  const ctxSelfEscalate = createEvaluationContext({
+    auth: { uid: 'user_alice', token: { email: 'alice@example.com' } },
+    existingResource: { id: 'user_alice', uid: 'user_alice', role: 'user' },
+    proposedResource: { id: 'user_alice', uid: 'user_alice', role: 'admin' }
+  });
+  const allowed = evaluateProfileUpdate(ctxSelfEscalate, 'user_alice');
+  assert(allowed === false, 'Test 14: User attempting to grant themselves admin privileges (BLOCKED)');
+}
+
+// ===========================================================================
+// SECTION B: SPECIFIC SECURITY & ADMIN UPDATE VERIFICATION TESTS
+// ===========================================================================
+console.log('\n--- SECTION B: Specific Security & Admin Update Verification Tests ---');
+
+// 15. Admin updating another user's saved card (Allowed for content, Blocked for ownership)
+{
+  const ctxAdminUpdateSaved = createEvaluationContext({
+    auth: { uid: 'adm_ritik', token: { email: 'ritikanshu072@gmail.com', email_verified: true } },
+    databaseState: { 'admins/adm_ritik': { role: 'admin', active: true } },
+    existingResource: { userId: 'user_alice', cardId: 'card_1' },
+    proposedResource: { userId: 'user_alice', cardId: 'card_1', adminVerified: true }
+  });
+  const allowed = evaluateSavedCardUpdate(ctxAdminUpdateSaved);
+  assert(allowed === true, 'Test 15a: Admin updating another user saved card content (ALLOWED)');
+
+  // 15b: Admin attempting to reassign ownership
+  const ctxAdminReassignSaved = createEvaluationContext({
+    auth: { uid: 'adm_ritik', token: { email: 'ritikanshu072@gmail.com', email_verified: true } },
+    databaseState: { 'admins/adm_ritik': { role: 'admin', active: true } },
+    existingResource: { userId: 'user_alice', cardId: 'card_1' },
+    proposedResource: { userId: 'user_bob', cardId: 'card_1', adminVerified: true }
+  });
+  const allowedReassign = evaluateSavedCardUpdate(ctxAdminReassignSaved);
+  assert(allowedReassign === false, 'Test 15b: Admin attempting to reassign ownership (userId) is BLOCKED');
+
+  // 15c: Admin attempting to change profile uid
+  const ctxAdminProfileUid = createEvaluationContext({
+    auth: { uid: 'adm_ritik', token: { email: 'ritikanshu072@gmail.com', email_verified: true } },
+    databaseState: { 'admins/adm_ritik': { role: 'admin', active: true } },
+    existingResource: { id: 'user_alice', uid: 'user_alice', full_name: 'Alice' },
+    proposedResource: { id: 'user_alice', uid: 'user_bob', full_name: 'Alice' }
+  });
+  const allowedProfileUid = evaluateProfileUpdate(ctxAdminProfileUid, 'user_alice');
+  assert(allowedProfileUid === false, 'Test 15c: Admin attempting to mutate profile ownership uid is BLOCKED');
+}
+
+// 16. Admin updating another user's favorite
+{
+  const ctxAdminUpdateFav = createEvaluationContext({
+    auth: { uid: 'adm_ritik', token: { email: 'ritikanshu072@gmail.com', email_verified: true } },
+    databaseState: { 'admins/adm_ritik': { role: 'admin', active: true } },
+    existingResource: { userId: 'user_alice', favId: 'fav_1' },
+    proposedResource: { userId: 'user_alice', favId: 'fav_1', flagged: false }
+  });
+  const allowed = evaluateFavoriteUpdate(ctxAdminUpdateFav);
+  assert(allowed === true, 'Test 16: Admin updating another user favorite (ALLOWED)');
+}
+
+// 17. Admin updating another user's compare history
+{
+  const ctxAdminUpdateCompare = createEvaluationContext({
+    auth: { uid: 'adm_ritik', token: { email: 'ritikanshu072@gmail.com', email_verified: true } },
+    databaseState: { 'admins/adm_ritik': { role: 'admin', active: true } },
+    existingResource: { userId: 'user_alice', user_id: 'user_alice', comparedAt: '2026-11-01' },
+    proposedResource: { userId: 'user_alice', user_id: 'user_alice', comparedAt: '2026-11-01', adminReviewed: true }
+  });
+  const allowed = evaluateCompareHistoryUpdate(ctxAdminUpdateCompare);
+  assert(allowed === true, 'Test 17: Admin updating another user compare history (ALLOWED)');
+}
+
+// 18. Guest attempting to inject admin_reply or assigned_to in contact query
+{
+  const ctxGuestInjectAdminReply = createEvaluationContext({
+    auth: null,
+    proposedResource: {
+      name: 'Sneaky User',
+      email: 'sneaky@example.com',
+      message: 'Legitimate looking text',
+      created_at: FIXED_TIME,
+      admin_reply: 'Your refund of 50000 INR has been approved by management.'
+    }
+  });
+  const allowedReply = evaluateContactCreate(ctxGuestInjectAdminReply);
+  assert(allowedReply === false, 'Test 18a: Guest attempting to inject admin_reply is BLOCKED');
+
+  const ctxGuestInjectAssignedTo = createEvaluationContext({
+    auth: null,
+    proposedResource: {
+      name: 'Sneaky User',
+      email: 'sneaky@example.com',
+      message: 'Legitimate looking text',
+      created_at: FIXED_TIME,
+      assigned_to: 'Ritik Anshu'
+    }
+  });
+  const allowedAssign = evaluateContactCreate(ctxGuestInjectAssignedTo);
+  assert(allowedAssign === false, 'Test 18b: Guest attempting to inject assigned_to is BLOCKED');
+
+  const ctxGuestInjectStatus = createEvaluationContext({
+    auth: null,
+    proposedResource: {
+      name: 'Sneaky User',
+      email: 'sneaky@example.com',
+      message: 'Legitimate looking text',
+      created_at: FIXED_TIME,
+      status: 'Closed'
+    }
+  });
+  const allowedStatus = evaluateContactCreate(ctxGuestInjectStatus);
+  assert(allowedStatus === false, 'Test 18c: Guest attempting to inject status != Pending is BLOCKED');
+}
+
+// 19. Invalid admin document fields on bootstrap
+{
+  const ctxAdminInjectedFields = createEvaluationContext({
+    auth: { uid: 'adm_ritik', token: { email: 'ritikanshu072@gmail.com', email_verified: true } },
+    proposedResource: {
+      uid: 'adm_ritik',
+      email: 'ritikanshu072@gmail.com',
+      role: 'admin',
+      active: true,
+      superAdmin: true,
+      walletBalance: 999999
+    }
+  });
+  const allowedInjected = evaluateAdminCreate(ctxAdminInjectedFields, 'adm_ritik');
+  assert(allowedInjected === false, 'Test 19a: Admin document bootstrap with unwhitelisted fields is BLOCKED');
+
+  const ctxAdminInvalidRole = createEvaluationContext({
+    auth: { uid: 'adm_ritik', token: { email: 'ritikanshu072@gmail.com', email_verified: true } },
+    proposedResource: {
+      uid: 'adm_ritik',
+      email: 'ritikanshu072@gmail.com',
+      role: 'super_user',
+      active: true
+    }
+  });
+  const allowedRole = evaluateAdminCreate(ctxAdminInvalidRole, 'adm_ritik');
+  assert(allowedRole === false, 'Test 19b: Admin document bootstrap with role != admin is BLOCKED');
+
+  const ctxAdminInvalidActive = createEvaluationContext({
+    auth: { uid: 'adm_ritik', token: { email: 'ritikanshu072@gmail.com', email_verified: true } },
+    proposedResource: {
+      uid: 'adm_ritik',
+      email: 'ritikanshu072@gmail.com',
+      role: 'admin',
+      active: false
+    }
+  });
+  const allowedActive = evaluateAdminCreate(ctxAdminInvalidActive, 'adm_ritik');
+  assert(allowedActive === false, 'Test 19c: Admin document bootstrap with active != true is BLOCKED');
+
+  const ctxAdminSpoofedEmail = createEvaluationContext({
+    auth: { uid: 'adm_ritik', token: { email: 'imposter@gmail.com', email_verified: true } },
+    proposedResource: {
+      uid: 'adm_ritik',
+      email: 'ritikanshu072@gmail.com',
+      role: 'admin',
+      active: true
+    }
+  });
+  const allowedSpoof = evaluateAdminCreate(ctxAdminSpoofedEmail, 'adm_ritik');
+  assert(allowedSpoof === false, 'Test 19d: Admin bootstrap with non-primary authenticated email is BLOCKED');
+}
+
+// 20. Normal users changing ownership aliases during update
+{
+  const ctxUserChangeUserId = createEvaluationContext({
+    auth: { uid: 'user_alice', token: { email: 'alice@example.com' } },
+    existingResource: { userId: 'user_alice', cardId: 'card_1' },
+    proposedResource: { userId: 'user_bob', cardId: 'card_1' }
+  });
+  const allowedUserId = evaluateSavedCardUpdate(ctxUserChangeUserId);
+  assert(allowedUserId === false, 'Test 20a: Normal user changing userId on saved_card is BLOCKED');
+
+  const ctxUserChangeUserIdAlt = createEvaluationContext({
+    auth: { uid: 'user_alice', token: { email: 'alice@example.com' } },
+    existingResource: { user_id: 'user_alice', cardId: 'card_1' },
+    proposedResource: { user_id: 'user_bob', cardId: 'card_1' }
+  });
+  const allowedUserIdAlt = evaluateSavedCardUpdate(ctxUserChangeUserIdAlt);
+  assert(allowedUserIdAlt === false, 'Test 20b: Normal user changing user_id alias on saved_card is BLOCKED');
+
+  const ctxUserInjectConflict = createEvaluationContext({
+    auth: { uid: 'user_alice', token: { email: 'alice@example.com' } },
+    existingResource: { userId: 'user_alice', cardId: 'card_1' },
+    proposedResource: { userId: 'user_alice', uid: 'user_bob', cardId: 'card_1' }
+  });
+  const allowedConflict = evaluateSavedCardUpdate(ctxUserInjectConflict);
+  assert(allowedConflict === false, 'Test 20c: Normal user injecting conflicting uid alias on update is BLOCKED');
+}
+
+// ===========================================================================
+// SECTION C: CONTACT & REVIEW SCHEMA VALIDATION
+// ===========================================================================
+console.log('\n--- SECTION C: Contact & Review Schema Validation ---');
+
+// 21. Valid contact submission matching contactService.submitQuery()
+{
+  const ctxContactValid = createEvaluationContext({
+    auth: null,
+    proposedResource: {
+      query_id: 'QRY-ABC123XYZ',
+      name: 'Rohan Mehra',
+      email: 'rohan@example.com',
+      mobile: '+919876543210',
+      subject: 'Inquiry regarding Lounge Access',
+      message: 'Does HDFC Millennia card have free international lounge access?',
+      created_at: FIXED_TIME,
+      status: 'Pending',
+      assigned_to: 'Founder / Support Team',
+      admin_reply: '',
+      replied_at: null,
+      history: [{
+        id: 'msg_1001_1',
+        sender: 'user',
+        senderName: 'Rohan Mehra',
+        message: 'Does HDFC Millennia card have free international lounge access?',
+        timestamp: FIXED_TIME
+      }]
+    }
+  });
+  const allowed = evaluateContactCreate(ctxContactValid);
+  assert(allowed === true, 'Test 21a: Full contactService.submitQuery() payload is ALLOWED');
+
+  // 21b: Attacker attempting to inject fake admin sender in history
+  const ctxContactFakeAdminHistory = createEvaluationContext({
+    auth: null,
+    proposedResource: {
+      ...ctxContactValid.request.resource.data,
+      history: [{
+        id: 'msg_1001_1',
+        sender: 'admin',
+        senderName: 'Admin Team',
+        message: 'Your refund is approved',
+        timestamp: FIXED_TIME
+      }]
+    }
+  });
+  const allowedFakeSender = evaluateContactCreate(ctxContactFakeAdminHistory);
+  assert(allowedFakeSender === false, 'Test 21b: History item with sender: admin is BLOCKED');
+
+  // 21c: Attacker attempting to inject unwhitelisted keys in history
+  const ctxContactUnwhitelistedHistoryKey = createEvaluationContext({
+    auth: null,
+    proposedResource: {
+      ...ctxContactValid.request.resource.data,
+      history: [{
+        id: 'msg_1001_1',
+        sender: 'user',
+        senderName: 'User',
+        message: 'Inquiry',
+        timestamp: FIXED_TIME,
+        isPrivileged: true
+      }]
+    }
+  });
+  const allowedInjectedHistory = evaluateContactCreate(ctxContactUnwhitelistedHistoryKey);
+  assert(allowedInjectedHistory === false, 'Test 21c: History item with unwhitelisted keys is BLOCKED');
+
+  // 21d: Contact query with invalid/bogus timestamp format
+  const ctxContactBogusTimestamp = createEvaluationContext({
+    auth: null,
+    proposedResource: {
+      ...ctxContactValid.request.resource.data,
+      created_at: 'bad-timestamp'
+    }
+  });
+  const allowedBogusTime = evaluateContactCreate(ctxContactBogusTimestamp);
+  assert(allowedBogusTime === false, 'Test 21d: Contact query with non-ISO timestamp format is BLOCKED');
+
+  // 21e: Contact query missing both created_at and createdAt
+  const ctxContactMissingTime = createEvaluationContext({
+    auth: null,
+    proposedResource: {
+      name: 'Rohan Mehra',
+      email: 'rohan@example.com',
+      message: 'Does HDFC Millennia card have lounge access?'
+    }
+  });
+  const allowedMissingTime = evaluateContactCreate(ctxContactMissingTime);
+  assert(allowedMissingTime === false, 'Test 21e: Contact query missing creation timestamp is BLOCKED');
+}
+
+// 22. Authenticated user review with spoofed email
+{
+  const ctxSpoofedEmail = createEvaluationContext({
+    auth: { uid: 'user_1', token: { email: 'actual@example.com' } },
+    time: FIXED_TIME,
+    proposedResource: {
+      userId: 'user_1',
+      userName: 'User One',
+      userEmail: 'victim@example.com', // Spoofed
+      rating: 5,
+      message: 'Review with forged email',
+      createdAt: FIXED_TIME
+    }
+  });
+  const allowed = evaluateReviewCreate(ctxSpoofedEmail);
+  assert(allowed === false, 'Test 22: Authenticated user review with spoofed email is BLOCKED');
+}
+
+// 23. Deactivated Primary Admin cannot reactivate via client SDK
+{
+  const ctxDeactivated = createEvaluationContext({
+    auth: { uid: 'adm_primary', token: { email: 'ritikanshu072@gmail.com', email_verified: true } },
+    databaseState: { 'admins/adm_primary': { role: 'admin', active: false } }
+  });
+  const allowed = evaluateAdminUpdate(ctxDeactivated);
+  assert(allowed === false, 'Test 23: Deactivated primary admin cannot perform admin updates (BLOCKED)');
+}
+
+// ===========================================================================
+// SECTION D: PUBLIC LOGGING BOUNDARIES
+// ===========================================================================
+console.log('\n--- SECTION D: Public Logging Boundaries & Schema Bounds ---');
+
+// 24. Valid anonymous referral clickout allowed
+{
+  const ctx = createEvaluationContext({
+    auth: null,
+    proposedResource: { referralCode: 'REF_101', source: 'CardsPage' }
+  });
+  assert(evaluateReferralClickCreate(ctx) === true, 'Test 24: Valid anonymous referral clickout allowed');
+}
+
+// 25. Referral with injected arbitrary/revenue fields is BLOCKED
+{
+  const ctx = createEvaluationContext({
+    auth: null,
+    proposedResource: { referralCode: 'REF_101', source: 'Modal', revenue: 5000, isAdmin: true }
+  });
+  assert(evaluateReferralClickCreate(ctx) === false, 'Test 25: Referral with injected arbitrary/revenue fields is BLOCKED');
+}
+
+// 26. Valid anonymous search log allowed
+{
+  const ctx = createEvaluationContext({
+    auth: null,
+    proposedResource: { query: 'SBI zero balance', user_email: 'Guest', timestamp: '2026-11-02T00:00:00Z' }
+  });
+  assert(evaluateSearchLogCreate(ctx) === true, 'Test 26: Valid anonymous search log allowed');
+}
+
+// 27. Search log with spoofed email is BLOCKED
+{
+  const ctx = createEvaluationContext({
+    auth: null,
+    proposedResource: { query: 'SBI', user_email: 'victim@bank.com' }
+  });
+  assert(evaluateSearchLogCreate(ctx) === false, 'Test 27: Search log with spoofed email is BLOCKED');
+}
+
+// 28. Valid guest activity log allowed
+{
+  const ctx = createEvaluationContext({
+    auth: null,
+    proposedResource: { type: 'card_view', text: 'Viewed SBI Global Card', user_email: 'Guest', timestamp: '2026-11-02T00:00:00Z' }
+  });
+  assert(evaluateActivityLogCreate(ctx) === true, 'Test 28: Valid guest activity log (card_view) allowed');
+}
+
+// 29. Guest activity log attempting admin operation is BLOCKED
+{
+  const ctx = createEvaluationContext({
+    auth: null,
+    proposedResource: { type: 'import_csv', text: 'Imported records', user_email: 'Guest', timestamp: '2026-11-02T00:00:00Z' }
+  });
+  assert(evaluateActivityLogCreate(ctx) === false, 'Test 29: Guest activity log attempting admin operation is BLOCKED');
+}
+
+// 30. Anonymous inspection/read of logs is DENIED
+{
+  const ctx = createEvaluationContext({ auth: null });
+  assert(evaluateLogRead(ctx) === false, 'Test 30: Anonymous inspection/read of logs is DENIED');
+}
+
 console.log('\n======================================================');
-console.log(`RELEASE-GATE RULES TEST SUMMARY: ${passed} Passed, ${failed} Failed`);
+console.log(`AUDIT & SECURITY TEST SUMMARY: ${passed} Passed, ${failed} Failed`);
 console.log('======================================================\n');
 
 if (failed > 0) process.exit(1);

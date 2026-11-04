@@ -11,6 +11,18 @@ service cloud.firestore {
     function isOwner(userId) {
       return isAuthenticated() && request.auth.uid == userId;
     }
+
+    // Helper function to check strict ownership across possible ownership field aliases (userId, uid, user_id).
+    // Requires at least one ownership field to be present, and EVERY present ownership field MUST match authUid.
+    // If multiple exist (e.g. both userId and uid), both must strictly match. Conflicting ownership is blocked.
+    function isStrictOwner(data, authUid) {
+      return (('userId' in data && data.userId == authUid) || 
+              ('uid' in data && data.uid == authUid) || 
+              ('user_id' in data && data.user_id == authUid)) &&
+             (!('userId' in data) || data.userId == authUid) &&
+             (!('uid' in data) || data.uid == authUid) &&
+             (!('user_id' in data) || data.user_id == authUid);
+    }
     
     // Helper function to check if an active admin record exists for the given UID
     function hasActiveAdminDoc(uid) {
@@ -29,7 +41,7 @@ service cloud.firestore {
     function isAdmin() {
       return isAuthenticated() && 
         (request.auth.token.email == null || 
-         request.auth.token.email.toLowerCase() != 'ritikanshu072@gmail.com' || 
+         request.auth.token.email.lower() != 'ritikanshu072@gmail.com' || 
          request.auth.token.email_verified == true) &&
         hasActiveAdminDoc(request.auth.uid);
     }
@@ -92,48 +104,120 @@ service cloud.firestore {
 
     // User Profiles Collection
     // - On create: user cannot inject privileged fields (role, admin, permissions)
-    // - On update: protected fields and ownership identifiers cannot be modified
+    // - On update: protected fields and ownership identifiers cannot be modified by user or admin
     // - Ordinary profile fields (name, phone, avatar, city, etc.) remain freely editable
     match /profiles/{userId} {
-      allow read: if isOwner(userId) || isAdmin();
-      allow delete: if isOwner(userId) || isAdmin();
+      allow read, delete: if isOwner(userId) || isAdmin();
       allow create: if (isOwner(userId) && 
         (!('id' in request.resource.data) || request.resource.data.id == userId) &&
         (!('uid' in request.resource.data) || request.resource.data.uid == userId) &&
+        (!('user_id' in request.resource.data) || request.resource.data.user_id == userId) &&
         !request.resource.data.keys().hasAny(['role', 'isAdmin', 'admin', 'permissions', 'is_admin'])) || isAdmin();
-      allow update: if isAdmin() || (
-        isOwner(userId) &&
-        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'isAdmin', 'admin', 'permissions', 'is_admin', 'uid', 'id'])
+      allow update: if (
+        (isAdmin() && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['uid', 'id', 'user_id'])) || (
+          isOwner(userId) &&
+          (!('id' in request.resource.data) || request.resource.data.id == userId) &&
+          (!('uid' in request.resource.data) || request.resource.data.uid == userId) &&
+          (!('user_id' in request.resource.data) || request.resource.data.user_id == userId) &&
+          !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'isAdmin', 'admin', 'permissions', 'is_admin', 'uid', 'id', 'user_id'])
+        )
       );
     }
 
     // Users Collection (Synchronized Auth Metadata)
     match /users/{userId} {
-      allow read: if isOwner(userId) || isAdmin();
-      allow delete: if isOwner(userId) || isAdmin();
+      allow read, delete: if isOwner(userId) || isAdmin();
       allow create: if (isOwner(userId) && 
         (!('id' in request.resource.data) || request.resource.data.id == userId) &&
         (!('uid' in request.resource.data) || request.resource.data.uid == userId) &&
+        (!('user_id' in request.resource.data) || request.resource.data.user_id == userId) &&
         !request.resource.data.keys().hasAny(['role', 'isAdmin', 'admin', 'permissions', 'is_admin'])) || isAdmin();
-      allow update: if isAdmin() || (
-        isOwner(userId) &&
-        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'isAdmin', 'admin', 'permissions', 'is_admin', 'uid', 'id'])
+      allow update: if (
+        (isAdmin() && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['uid', 'id', 'user_id'])) || (
+          isOwner(userId) &&
+          (!('id' in request.resource.data) || request.resource.data.id == userId) &&
+          (!('uid' in request.resource.data) || request.resource.data.uid == userId) &&
+          (!('user_id' in request.resource.data) || request.resource.data.user_id == userId) &&
+          !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'isAdmin', 'admin', 'permissions', 'is_admin', 'uid', 'id', 'user_id'])
+        )
       );
     }
 
-    // Contact Queries & Messages Collection (Public Create with Schema Validation, Admin Read/Manage Only)
+    // Contact Queries & Messages Collection (Public Create with Strict Validation, Admin Read/Manage Only)
     match /contact_queries/{queryId} {
-      allow create: if request.resource.data.keys().hasOnly(['name', 'email', 'phone', 'subject', 'message', 'createdAt', 'created_at', 'status']) &&
-        request.resource.data.name is string && request.resource.data.name.size() <= 100 &&
-        request.resource.data.email is string && request.resource.data.email.size() <= 150 &&
-        request.resource.data.message is string && request.resource.data.message.size() <= 2000;
+      allow create: if request.resource.data.keys().hasOnly([
+        'query_id', 'name', 'email', 'phone', 'mobile', 'subject',
+        'message', 'createdAt', 'created_at', 'status', 'assigned_to',
+        'admin_reply', 'replied_at', 'history'
+      ]) &&
+      request.resource.data.name is string && request.resource.data.name.size() >= 2 && request.resource.data.name.size() <= 100 &&
+      request.resource.data.email is string && request.resource.data.email.size() <= 150 &&
+      request.resource.data.message is string && request.resource.data.message.size() >= 5 && request.resource.data.message.size() <= 2000 &&
+      (!('subject' in request.resource.data) || (request.resource.data.subject is string && request.resource.data.subject.size() <= 150)) &&
+      (!('mobile' in request.resource.data) || (request.resource.data.mobile is string && request.resource.data.mobile.size() <= 30)) &&
+      (!('phone' in request.resource.data) || (request.resource.data.phone is string && request.resource.data.phone.size() <= 30)) &&
+      (!('query_id' in request.resource.data) || (request.resource.data.query_id is string && request.resource.data.query_id.size() <= 100)) &&
+      (!('status' in request.resource.data) || request.resource.data.status == 'Pending') &&
+      (!('assigned_to' in request.resource.data) || request.resource.data.assigned_to == 'Founder / Support Team') &&
+      (!('admin_reply' in request.resource.data) || request.resource.data.admin_reply == '') &&
+      (!('replied_at' in request.resource.data) || request.resource.data.replied_at == null) &&
+      ('created_at' in request.resource.data || 'createdAt' in request.resource.data) &&
+      (!('created_at' in request.resource.data) || (request.resource.data.created_at is string && request.resource.data.created_at.size() >= 19 && request.resource.data.created_at.size() <= 35)) &&
+      (!('createdAt' in request.resource.data) || (request.resource.data.createdAt is string && request.resource.data.createdAt.size() >= 19 && request.resource.data.createdAt.size() <= 35) || request.resource.data.createdAt == request.time) &&
+      (!('history' in request.resource.data) || (
+        request.resource.data.history is list &&
+        request.resource.data.history.size() <= 1 &&
+        (
+          request.resource.data.history.size() == 0 ||
+          (
+            request.resource.data.history[0] is map &&
+            request.resource.data.history[0].keys().hasOnly(['id', 'sender', 'senderName', 'message', 'timestamp']) &&
+            request.resource.data.history[0].sender == 'user' &&
+            request.resource.data.history[0].senderName is string && request.resource.data.history[0].senderName.size() <= 100 &&
+            request.resource.data.history[0].message is string && request.resource.data.history[0].message.size() <= 2000 &&
+            (!('id' in request.resource.data.history[0]) || (request.resource.data.history[0].id is string && request.resource.data.history[0].id.size() <= 100)) &&
+            (!('timestamp' in request.resource.data.history[0]) || (request.resource.data.history[0].timestamp is string && request.resource.data.history[0].timestamp.size() <= 50))
+          )
+        )
+      ));
       allow read, update, delete: if isAdmin();
     }
     match /contact_messages/{msgId} {
-      allow create: if request.resource.data.keys().hasOnly(['name', 'email', 'phone', 'subject', 'message', 'createdAt', 'created_at', 'status']) &&
-        request.resource.data.name is string && request.resource.data.name.size() <= 100 &&
-        request.resource.data.email is string && request.resource.data.email.size() <= 150 &&
-        request.resource.data.message is string && request.resource.data.message.size() <= 2000;
+      allow create: if request.resource.data.keys().hasOnly([
+        'query_id', 'name', 'email', 'phone', 'mobile', 'subject',
+        'message', 'createdAt', 'created_at', 'status', 'assigned_to',
+        'admin_reply', 'replied_at', 'history'
+      ]) &&
+      request.resource.data.name is string && request.resource.data.name.size() >= 2 && request.resource.data.name.size() <= 100 &&
+      request.resource.data.email is string && request.resource.data.email.size() <= 150 &&
+      request.resource.data.message is string && request.resource.data.message.size() >= 5 && request.resource.data.message.size() <= 2000 &&
+      (!('subject' in request.resource.data) || (request.resource.data.subject is string && request.resource.data.subject.size() <= 150)) &&
+      (!('mobile' in request.resource.data) || (request.resource.data.mobile is string && request.resource.data.mobile.size() <= 30)) &&
+      (!('phone' in request.resource.data) || (request.resource.data.phone is string && request.resource.data.phone.size() <= 30)) &&
+      (!('query_id' in request.resource.data) || (request.resource.data.query_id is string && request.resource.data.query_id.size() <= 100)) &&
+      (!('status' in request.resource.data) || request.resource.data.status == 'Pending') &&
+      (!('assigned_to' in request.resource.data) || request.resource.data.assigned_to == 'Founder / Support Team') &&
+      (!('admin_reply' in request.resource.data) || request.resource.data.admin_reply == '') &&
+      (!('replied_at' in request.resource.data) || request.resource.data.replied_at == null) &&
+      ('created_at' in request.resource.data || 'createdAt' in request.resource.data) &&
+      (!('created_at' in request.resource.data) || (request.resource.data.created_at is string && request.resource.data.created_at.size() >= 19 && request.resource.data.created_at.size() <= 35)) &&
+      (!('createdAt' in request.resource.data) || (request.resource.data.createdAt is string && request.resource.data.createdAt.size() >= 19 && request.resource.data.createdAt.size() <= 35) || request.resource.data.createdAt == request.time) &&
+      (!('history' in request.resource.data) || (
+        request.resource.data.history is list &&
+        request.resource.data.history.size() <= 1 &&
+        (
+          request.resource.data.history.size() == 0 ||
+          (
+            request.resource.data.history[0] is map &&
+            request.resource.data.history[0].keys().hasOnly(['id', 'sender', 'senderName', 'message', 'timestamp']) &&
+            request.resource.data.history[0].sender == 'user' &&
+            request.resource.data.history[0].senderName is string && request.resource.data.history[0].senderName.size() <= 100 &&
+            request.resource.data.history[0].message is string && request.resource.data.history[0].message.size() <= 2000 &&
+            (!('id' in request.resource.data.history[0]) || (request.resource.data.history[0].id is string && request.resource.data.history[0].id.size() <= 100)) &&
+            (!('timestamp' in request.resource.data.history[0]) || (request.resource.data.history[0].timestamp is string && request.resource.data.history[0].timestamp.size() <= 50))
+          )
+        )
+      ));
       allow read, update, delete: if isAdmin();
     }
 
@@ -159,36 +243,52 @@ service cloud.firestore {
       allow read, update, delete: if isAdmin();
     }
 
-    // Saved Cards (Owner only; immutable ownership)
+    // Saved Cards (Strict Ownership with Multi-Field Consistency Check)
     match /saved_cards/{savedId} {
-      allow read, delete: if isAuthenticated() && (resource.data.userId == request.auth.uid || resource.data.uid == request.auth.uid || isAdmin());
-      allow create: if isAuthenticated() && (request.resource.data.userId == request.auth.uid || request.resource.data.uid == request.auth.uid);
-      allow update: if isAuthenticated() && (resource.data.userId == request.auth.uid || resource.data.uid == request.auth.uid || isAdmin()) &&
-        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['userId', 'uid']);
+      allow read, delete: if isAuthenticated() && (isStrictOwner(resource.data, request.auth.uid) || isAdmin());
+      allow create: if isAuthenticated() && isStrictOwner(request.resource.data, request.auth.uid);
+      allow update: if (isAdmin() || (
+        isAuthenticated() &&
+        isStrictOwner(resource.data, request.auth.uid) &&
+        isStrictOwner(request.resource.data, request.auth.uid)
+      )) && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['userId', 'uid', 'user_id']);
     }
 
-    // Favorites Collection (Owner only; immutable ownership)
+    // Favorites Collection (Strict Ownership with Multi-Field Consistency Check)
     match /favorites/{favId} {
-      allow read, delete: if isAuthenticated() && (resource.data.userId == request.auth.uid || resource.data.uid == request.auth.uid || isAdmin());
-      allow create: if isAuthenticated() && (request.resource.data.userId == request.auth.uid || request.resource.data.uid == request.auth.uid);
-      allow update: if isAuthenticated() && (resource.data.userId == request.auth.uid || resource.data.uid == request.auth.uid || isAdmin()) &&
-        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['userId', 'uid']);
+      allow read, delete: if isAuthenticated() && (isStrictOwner(resource.data, request.auth.uid) || isAdmin());
+      allow create: if isAuthenticated() && isStrictOwner(request.resource.data, request.auth.uid);
+      allow update: if (isAdmin() || (
+        isAuthenticated() &&
+        isStrictOwner(resource.data, request.auth.uid) &&
+        isStrictOwner(request.resource.data, request.auth.uid)
+      )) && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['userId', 'uid', 'user_id']);
     }
 
-    // User Wishlists
+    // User Wishlists (Owner only; immutable ownership keys for owner and admin)
     match /wishlists/{userId} {
       allow read, delete: if isOwner(userId) || isAdmin();
-      allow create: if isOwner(userId) || isAdmin();
+      allow create: if (isOwner(userId) &&
+        (!('userId' in request.resource.data) || request.resource.data.userId == userId) &&
+        (!('uid' in request.resource.data) || request.resource.data.uid == userId) &&
+        (!('user_id' in request.resource.data) || request.resource.data.user_id == userId)
+      ) || isAdmin();
       allow update: if (isOwner(userId) || isAdmin()) &&
-        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['userId', 'uid', 'id']);
+        (!('userId' in request.resource.data) || request.resource.data.userId == userId) &&
+        (!('uid' in request.resource.data) || request.resource.data.uid == userId) &&
+        (!('user_id' in request.resource.data) || request.resource.data.user_id == userId) &&
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['userId', 'uid', 'id', 'user_id']);
     }
 
-    // Compare History (Owner only; immutable ownership)
+    // Compare History (Strict Ownership with Multi-Field Consistency Check)
     match /compare_history/{historyId} {
-      allow read, delete: if isAuthenticated() && (resource.data.userId == request.auth.uid || resource.data.uid == request.auth.uid || isAdmin());
-      allow create: if isAuthenticated() && (request.resource.data.userId == request.auth.uid || request.resource.data.uid == request.auth.uid);
-      allow update: if isAuthenticated() && (resource.data.userId == request.auth.uid || resource.data.uid == request.auth.uid || isAdmin()) &&
-        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['userId', 'uid']);
+      allow read, delete: if isAuthenticated() && (isStrictOwner(resource.data, request.auth.uid) || isAdmin());
+      allow create: if isAuthenticated() && isStrictOwner(request.resource.data, request.auth.uid);
+      allow update: if (isAdmin() || (
+        isAuthenticated() &&
+        isStrictOwner(resource.data, request.auth.uid) &&
+        isStrictOwner(request.resource.data, request.auth.uid)
+      )) && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['userId', 'uid', 'user_id']);
     }
 
     // Compare Logs (Admin Read/Write Only)
@@ -196,9 +296,13 @@ service cloud.firestore {
       allow read, write: if isAdmin();
     }
 
-    // Chat History (Owner or Admin only)
+    // Chat History (Owner or Admin only; immutable ownership keys)
     match /chat_history/{userId} {
-      allow read, write: if isOwner(userId) || isAdmin();
+      allow read, delete: if isOwner(userId) || isAdmin();
+      allow create: if (isOwner(userId) && (!('user_id' in request.resource.data) || request.resource.data.user_id == userId)) || isAdmin();
+      allow update: if (isOwner(userId) || isAdmin()) &&
+        (!('user_id' in request.resource.data) || request.resource.data.user_id == userId) &&
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['user_id', 'userId', 'uid', 'id']);
     }
     match /chatbot_history/{historyId} {
       allow read, write: if isAdmin();
@@ -248,9 +352,21 @@ service cloud.firestore {
       allow read, update, delete: if isAdmin();
     }
 
-    // Admin DB & Admin Users Collections (Admin Only)
+    // Admin DB & Admin Users Collections (Admin Only with Verified Primary Bootstrap Exception)
     match /admins/{adminId} {
-      allow read, write: if isAdmin();
+      allow read, update, delete: if isAdmin();
+      allow create: if isAdmin() || (
+        isAuthenticated() &&
+        request.auth.uid == adminId &&
+        request.auth.token.email != null &&
+        request.auth.token.email.lower() == 'ritikanshu072@gmail.com' &&
+        request.auth.token.email_verified == true &&
+        request.resource.data.keys().hasOnly(['uid', 'email', 'role', 'active', 'createdAt', 'created_at']) &&
+        request.resource.data.uid == adminId &&
+        request.resource.data.email.lower() == 'ritikanshu072@gmail.com' &&
+        request.resource.data.role == 'admin' &&
+        request.resource.data.active == true
+      );
     }
     match /admin_users/{adminId} {
       allow read, write: if isAdmin();
