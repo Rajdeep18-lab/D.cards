@@ -306,7 +306,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 15 }}
         transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-        className="relative w-full max-w-[460px] max-h-[90vh] overflow-y-auto rounded-[24px] bg-white dark:bg-[#0F172A] p-6 sm:p-8 shadow-[0_20px_60px_rgba(0,0,0,0.18)] border border-slate-200/80 dark:border-slate-800 text-left select-none custom-scrollbar overscroll-contain"
+        className="relative w-full max-w-[460px] max-h-[90vh] overflow-y-auto rounded-[24px] bg-[#FFF9EE] dark:bg-[#0B132B] p-6 sm:p-8 shadow-[0_20px_60px_rgba(214,166,75,0.22)] border border-[#E8D6B3] dark:border-amber-900/60 text-left select-none custom-scrollbar overscroll-contain"
         style={{
           overscrollBehavior: 'contain',
           WebkitOverflowScrolling: 'touch',
@@ -319,27 +319,27 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
           onClick={onClose}
           type="button"
           aria-label={t('common.cancel', 'Close modal')}
-          className="absolute right-4 top-4 sm:right-5 sm:top-5 w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white flex items-center justify-center transition-all cursor-pointer z-10"
+          className="absolute right-4 top-4 sm:right-5 sm:top-5 w-8 h-8 rounded-full bg-[#F7EEDC] dark:bg-slate-800 hover:bg-amber-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 hover:text-[#111827] dark:hover:text-white flex items-center justify-center transition-all cursor-pointer z-10 border border-[#E8D6B3]/60"
         >
           <X className="w-4 h-4" />
         </button>
 
         {/* Branding Header */}
         <div className="flex flex-col items-center justify-center text-center mb-5">
-          <div className="w-11 h-11 rounded-2xl bg-blue-50 dark:bg-blue-950/60 border border-blue-100 dark:border-blue-900/60 flex items-center justify-center p-2 mb-2 shadow-xs">
+          <div className="w-11 h-11 rounded-2xl bg-[#F7EEDC] dark:bg-slate-800 border border-[#E8D6B3] dark:border-amber-900/60 flex items-center justify-center p-2 mb-2 shadow-xs">
             <img src="/logo-mark.png" alt="D.CARD" className="w-full h-full object-contain" />
           </div>
-          <h2 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white leading-none">
-            D.<span className="text-[#2563EB]">CARD</span>
+          <h2 className="text-xl sm:text-2xl font-black tracking-tight text-[#111827] dark:text-white leading-none">
+            D.<span className="text-[#2455A4] dark:text-[#60A5FA]">CARD</span>
           </h2>
-          <p className="text-[9.5px] sm:text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-1">
+          <p className="text-[9.5px] sm:text-[10px] font-bold text-amber-800/70 dark:text-amber-400/70 uppercase tracking-widest mt-1">
             {t('nav.tagline', 'COMPARE. CHOOSE. BENEFIT.')}
           </p>
         </div>
 
         {/* Tabs Switcher: Sign In | Create Account (Only shown when not in Forgot mode) */}
         {activeTab !== 'forgot' && (
-          <div className="flex bg-slate-100 dark:bg-slate-800/80 p-1 rounded-2xl mb-5 border border-slate-200/60 dark:border-slate-700/60">
+          <div className="flex bg-[#F7EEDC] dark:bg-slate-800/80 p-1 rounded-2xl mb-5 border border-[#E8D6B3] dark:border-amber-900/40">
             <button
               type="button"
               onClick={() => {
@@ -348,8 +348,8 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
               }}
               className={`flex-1 py-2 text-xs font-extrabold rounded-xl transition-all cursor-pointer ${
                 activeTab === 'login'
-                  ? 'bg-white dark:bg-slate-900 text-[#2563EB] dark:text-[#60A5FA] shadow-xs'
-                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  ? 'bg-white dark:bg-slate-900 text-[#B8860B] dark:text-[#F5DFA8] shadow-xs'
+                  : 'text-[#4B5563] dark:text-slate-400 hover:text-[#111827] dark:hover:text-white'
               }`}
             >
               {t('auth.signIn', 'Sign In')}
@@ -362,8 +362,8 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
               }}
               className={`flex-1 py-2 text-xs font-extrabold rounded-xl transition-all cursor-pointer ${
                 activeTab === 'signup'
-                  ? 'bg-white dark:bg-slate-900 text-[#2563EB] dark:text-[#60A5FA] shadow-xs'
-                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  ? 'bg-white dark:bg-slate-900 text-[#B8860B] dark:text-[#F5DFA8] shadow-xs'
+                  : 'text-[#4B5563] dark:text-slate-400 hover:text-[#111827] dark:hover:text-white'
               }`}
             >
               {t('auth.createAccount', 'Create Account')}
@@ -478,7 +478,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
                   setErrorMsg('');
                   setForgotEmail(signInEmail);
                 }}
-                className="font-bold text-[#2563EB] dark:text-[#60A5FA] hover:underline cursor-pointer"
+                className="font-bold text-[#B8860B] dark:text-[#F5DFA8] hover:underline cursor-pointer"
               >
                 {t('auth.forgotPassword', 'Forgot password?')}
               </button>
@@ -488,7 +488,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
             <button
               type="submit"
               disabled={loading}
-              className="w-full mt-2 py-3 px-5 rounded-xl bg-gradient-to-r from-[#2563EB] via-[#3B82F6] to-[#2563EB] hover:opacity-95 text-white text-xs sm:text-sm font-bold shadow-md shadow-blue-500/20 hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99] disabled:opacity-50"
+              className="w-full mt-2 py-3 px-5 rounded-xl bg-gradient-to-r from-[#111827] via-[#1E293B] to-[#111827] hover:opacity-95 text-white text-xs sm:text-sm font-bold border border-[#D6A64B]/80 hover:border-[#D6A64B] shadow-md shadow-amber-950/20 hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99] disabled:opacity-50"
             >
               {loading ? (
                 <>
@@ -498,13 +498,13 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
               ) : (
                 <>
                   <span>{t('auth.signIn', 'Sign In')}</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="w-4 h-4 text-amber-400" />
                 </>
               )}
             </button>
 
             {/* Bottom Switcher */}
-            <div className="pt-3 border-t border-slate-100 dark:border-slate-800 text-center text-xs text-slate-600 dark:text-slate-400">
+            <div className="pt-3 border-t border-[#E8D6B3]/60 dark:border-slate-800 text-center text-xs text-slate-600 dark:text-slate-400">
               {t('auth.dontHaveAccount', "Don't have an account?")}{' '}
               <button
                 type="button"
@@ -512,7 +512,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
                   setActiveTab('signup');
                   setErrorMsg('');
                 }}
-                className="font-bold text-[#2563EB] dark:text-[#60A5FA] hover:underline cursor-pointer"
+                className="font-bold text-[#B8860B] dark:text-[#F5DFA8] hover:underline cursor-pointer"
               >
                 {t('auth.createAnAccount', 'Create an account')}
               </button>
@@ -643,7 +643,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
             <button
               type="submit"
               disabled={loading}
-              className="w-full mt-2 py-3 px-5 rounded-xl bg-gradient-to-r from-[#2563EB] via-[#3B82F6] to-[#2563EB] hover:opacity-95 text-white text-xs sm:text-sm font-bold shadow-md shadow-blue-500/20 hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99] disabled:opacity-50"
+              className="w-full mt-2 py-3 px-5 rounded-xl bg-gradient-to-r from-[#111827] via-[#1E293B] to-[#111827] hover:opacity-95 text-white text-xs sm:text-sm font-bold border border-[#D6A64B]/80 hover:border-[#D6A64B] shadow-md shadow-amber-950/20 hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99] disabled:opacity-50"
             >
               {loading ? (
                 <>
@@ -653,13 +653,13 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
               ) : (
                 <>
                   <span>{t('auth.createAccount', 'Create Account')}</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="w-4 h-4 text-amber-400" />
                 </>
               )}
             </button>
 
             {/* Bottom Switcher */}
-            <div className="pt-3 border-t border-slate-100 dark:border-slate-800 text-center text-xs text-slate-600 dark:text-slate-400">
+            <div className="pt-3 border-t border-[#E8D6B3]/60 dark:border-slate-800 text-center text-xs text-slate-600 dark:text-slate-400">
               {t('auth.alreadyHaveAccount', 'Already have an account?')}{' '}
               <button
                 type="button"
@@ -667,7 +667,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
                   setActiveTab('login');
                   setErrorMsg('');
                 }}
-                className="font-bold text-[#2563EB] dark:text-[#60A5FA] hover:underline cursor-pointer"
+                className="font-bold text-[#B8860B] dark:text-[#F5DFA8] hover:underline cursor-pointer"
               >
                 {t('auth.signIn', 'Sign In')}
               </button>
@@ -686,7 +686,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
                 setErrorMsg('');
                 setForgotSent(false);
               }}
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-[#2563EB] transition-colors cursor-pointer mb-1"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#B8860B] dark:text-[#F5DFA8] hover:underline transition-colors cursor-pointer mb-1"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>{t('auth.backToLogin', 'Back to Sign In')}</span>
@@ -744,7 +744,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3 px-5 rounded-xl bg-gradient-to-r from-[#2563EB] via-[#3B82F6] to-[#2563EB] hover:opacity-95 text-white text-xs sm:text-sm font-bold shadow-md shadow-blue-500/20 hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99] disabled:opacity-50"
+                  className="w-full py-3 px-5 rounded-xl bg-gradient-to-r from-[#111827] via-[#1E293B] to-[#111827] hover:opacity-95 text-white text-xs sm:text-sm font-bold border border-[#D6A64B]/80 hover:border-[#D6A64B] shadow-md shadow-amber-950/20 hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99] disabled:opacity-50"
                 >
                   {loading ? (
                     <>
@@ -754,7 +754,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
                   ) : (
                     <>
                       <span>{t('auth.sendResetLink', 'Send Reset Link')}</span>
-                      <ArrowRight className="w-4 h-4" />
+                      <ArrowRight className="w-4 h-4 text-amber-400" />
                     </>
                   )}
                 </button>

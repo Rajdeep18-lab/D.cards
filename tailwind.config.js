@@ -5,36 +5,48 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Poppins', 'sans-serif'],
-        serif: ['Poppins', 'sans-serif'],
+        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        heading: ['Poppins', 'sans-serif'],
         display: ['Poppins', 'sans-serif'],
-        mono: ['Poppins', 'sans-serif'],
+        serif: ['Poppins', 'sans-serif'],
+        mono: ['monospace'],
       },
 
       colors: {
-        // ── Unified Fintech Blue Palette ──────────────────
-        primary:      "#2563EB",   // Primary Blue
-        secondary:    "#3B82F6",   // Secondary Blue
-        accent:       "#60A5FA",   // Light Accent Blue
-        darkNavy:     "#0F172A",   // Dark Navy
-        lightBg:      "#F8FAFC",   // Clean Background
+        // ── Global Diwali Festive Palette (Exact User Spec) ──
+        'diwali-ivory':       "#FFF9EE",   // Primary background: Warm Ivory
+        'diwali-cream':       "#F7EEDC",   // Secondary background: Soft Cream
+        'diwali-navy':        "#111827",   // Primary text: Deep Navy
+        'diwali-royal':       "#2455A4",   // Royal Blue
+        'diwali-purple':      "#291747",   // Deep Purple
+        'diwali-gold':        "#D6A64B",   // Premium Gold
+        'diwali-gold-light':  "#F5DFA8",   // Light Gold
+        'diwali-gold-dark':   "#B8860B",   // Dark Amber Gold
+        'diwali-border':      "#E8D6B3",   // Subtle Gold Border
+
+        // ── Unified Fintech & Festive Aliases ──────────────────
+        primary:      "#2455A4",   // Royal Blue (#2455A4)
+        secondary:    "#D6A64B",   // Premium Gold
+        accent:       "#D6A64B",   // Premium Gold
+        darkNavy:     "#111827",   // Deep Navy
+        lightBg:      "#FFF9EE",   // Warm Ivory Background
         cardBg:       "#FFFFFF",   // Cards Background
-        borderLine:   "#E5E7EB",   // Border Line
-        textDark:     "#1F2937",   // Primary Text
-        textSoft:     "#6B7280",   // Muted Text
-        hoverBlue:    "#1D4ED8",   // Darker Blue for Hover
+        borderLine:   "#E8D6B3",   // Subtle Gold Border
+        textDark:     "#111827",   // Deep Navy Primary Text
+        textSoft:     "#4B5563",   // Muted Text
+        hoverBlue:    "#1B4080",   // Darker Royal Blue for Hover
 
-        // Helper aliases (Purged Pink & Plum)
-        cta:          "#2563EB",
-        ctaHover:     "#1D4ED8",
-        highlight:    "#E5E7EB",
-        neutralBg:    "#F8FAFC",
-        roseGold:     "#60A5FA",   // Mapped to Light Accent Blue for backward safety
+        // Helper aliases
+        cta:          "#2455A4",
+        ctaHover:     "#1B4080",
+        highlight:    "#F5DFA8",
+        neutralBg:    "#FFF9EE",
+        roseGold:     "#D6A64B",
 
-        // Dark Mode Slate & Navy
-        darkBg:       "#0F172A",
+        // Dark Mode Slate & Midnight Navy
+        darkBg:       "#0B132B",
         darkCard:     "#1E293B",
-        darkHighlight:"#334155",
+        darkHighlight:"#291747",
       },
 
       boxShadow: {

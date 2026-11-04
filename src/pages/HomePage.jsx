@@ -122,7 +122,7 @@ function HomePage({
             {/* ── 2. PRODUCT DISCOVERY SECTION (Explore Banking Products) ── */}
             <section id="product-categories" className="select-none scroll-mt-24">
           <div className="text-center max-w-2xl mx-auto space-y-2.5 mb-10">
-            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] text-xs font-bold tracking-widest uppercase rounded-full border border-[#2563EB]/20">
+            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-amber-500/10 text-[#B8860B] dark:text-[#F5DFA8] text-xs font-bold tracking-widest uppercase rounded-full border border-[#E8D6B3]">
               <Sparkles className="w-3.5 h-3.5 text-[#2563EB]" />
               {t('home.categoriesBadge', 'BANKING PRODUCT DISCOVERY')}
             </span>
@@ -140,10 +140,10 @@ function HomePage({
               whileHover={{ y: -6, scale: 1.01 }}
               transition={{ type: "spring", stiffness: 350, damping: 25 }}
               onClick={() => handleNavigateProtected('/savings-accounts')}
-              className="p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 hover:border-[#2563EB]/50 shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-between space-y-6"
+              className="p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-[#E8D6B3] dark:border-amber-900/40 hover:border-[#D6A64B] shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-between space-y-6"
             >
               <div className="space-y-4">
-                <div className="w-14 h-14 rounded-2xl bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] flex items-center justify-center text-2xl font-bold shadow-sm border border-[#2563EB]/20">
+                <div className="w-14 h-14 rounded-2xl bg-[#D6A64B]/15 text-[#B8860B] dark:text-[#F5DFA8] flex items-center justify-center text-2xl font-bold shadow-sm border border-[#D6A64B]/30">
                   🏦
                 </div>
                 <div>
@@ -160,15 +160,15 @@ function HomePage({
 
                 <ul className="grid grid-cols-1 gap-2 pt-2 text-xs text-slate-700 dark:text-slate-300 font-medium">
                   <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-[#D6A64B] shrink-0" />
                     <span>{t('savings.interestRate', 'Account types & interest rates')}</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-[#D6A64B] shrink-0" />
                     <span>{t('savings.minimumBalance', 'Balance & waiver rules')}</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-[#D6A64B] shrink-0" />
                     <span>{t('savings.linkedCard', 'Linked debit card perks')}</span>
                   </li>
                 </ul>
@@ -178,7 +178,7 @@ function HomePage({
                 <span className="text-xs font-bold text-slate-400">150+ Verified</span>
                 <button
                   onClick={(e) => { e.stopPropagation(); handleNavigateProtected('/savings-accounts'); }}
-                  className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:from-[#1D4ED8] hover:to-[#2563EB] text-white font-extrabold text-xs transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
+                  className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#111827] via-[#2455A4] to-[#111827] hover:opacity-95 text-white border border-[#D6A64B]/80 hover:border-[#D6A64B] font-extrabold text-xs transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
                 >
                   <span>{t('home.exploreNow', 'Explore Savings')}</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -191,7 +191,7 @@ function HomePage({
               whileHover={{ y: -6, scale: 1.01 }}
               transition={{ type: "spring", stiffness: 350, damping: 25 }}
               onClick={() => handleNavigateProtected('/current-accounts')}
-              className="p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 hover:border-[#2563EB]/50 shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-between space-y-6"
+              className="p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-[#E8D6B3] dark:border-amber-900/40 hover:border-[#D6A64B] shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-between space-y-6"
             >
               <div className="space-y-4">
                 <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-2xl font-bold shadow-sm border border-emerald-500/20">
@@ -242,10 +242,10 @@ function HomePage({
               whileHover={{ y: -6, scale: 1.01 }}
               transition={{ type: "spring", stiffness: 350, damping: 25 }}
               onClick={() => handleNavigateProtected('/cards')}
-              className="p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 hover:border-[#2563EB]/50 shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-between space-y-6"
+              className="p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-[#E8D6B3] dark:border-amber-900/40 hover:border-[#D6A64B] shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-between space-y-6"
             >
               <div className="space-y-4">
-                <div className="w-14 h-14 rounded-2xl bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] flex items-center justify-center text-2xl font-bold shadow-sm border border-[#2563EB]/20">
+                <div className="w-14 h-14 rounded-2xl bg-[#D6A64B]/15 text-[#B8860B] dark:text-[#F5DFA8] flex items-center justify-center text-2xl font-bold shadow-sm border border-[#D6A64B]/30">
                   💳
                 </div>
                 <div>
@@ -262,15 +262,15 @@ function HomePage({
 
                 <ul className="grid grid-cols-1 gap-2 pt-2 text-xs text-slate-700 dark:text-slate-300 font-medium">
                   <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-[#D6A64B] shrink-0" />
                     <span>{t('debitCards.annualFee', 'Annual fees & spend waivers')}</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-[#D6A64B] shrink-0" />
                     <span>{t('debitCards.dailyAtmLimit', 'Daily ATM & POS limits')}</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-[#D6A64B] shrink-0" />
                     <span>{t('debitCards.loungeAccess', 'Airport lounge access')}</span>
                   </li>
                 </ul>
@@ -280,7 +280,7 @@ function HomePage({
                 <span className="text-xs font-bold text-slate-400">100+ Cards</span>
                 <button
                   onClick={(e) => { e.stopPropagation(); handleNavigateProtected('/cards'); }}
-                  className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:from-[#1D4ED8] hover:to-[#2563EB] text-white font-extrabold text-xs transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
+                  className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#111827] via-[#2455A4] to-[#111827] hover:opacity-95 text-white border border-[#D6A64B]/80 hover:border-[#D6A64B] font-extrabold text-xs transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
                 >
                   <span>{t('home.exploreNow', 'Explore Cards')}</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -307,7 +307,7 @@ function HomePage({
         {/* ── 4. HOW D.CARD WORKS ── */}
         <section className="select-none text-left space-y-8">
           <div className="text-center max-w-2xl mx-auto space-y-2.5">
-            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] text-xs font-bold tracking-widest uppercase rounded-full border border-[#2563EB]/20">
+            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-amber-500/10 text-[#B8860B] dark:text-[#F5DFA8] text-xs font-bold tracking-widest uppercase rounded-full border border-[#E8D6B3]">
               <ShieldCheck className="w-4 h-4 text-[#2563EB]" />
               SIMPLE 3-STEP PROCESS
             </span>

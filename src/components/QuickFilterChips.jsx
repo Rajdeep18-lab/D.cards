@@ -106,11 +106,11 @@ function QuickFilterChips({
     <div className="w-full mb-6 select-none">
       <div className="flex items-center justify-between mb-2 px-1">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-bold uppercase tracking-wider text-[#1F2937] dark:text-white flex items-center gap-1.5">
-            <Zap className="w-3.5 h-3.5 text-[#2563EB]" /> {isHindi ? 'त्वरित खोज फ़िल्टर' : 'Quick Discovery Filters'}
+          <span className="text-xs font-bold uppercase tracking-wider text-[#111827] dark:text-white flex items-center gap-1.5">
+            <Zap className="w-3.5 h-3.5 text-amber-500" /> {isHindi ? 'त्वरित खोज फ़िल्टर' : 'Quick Discovery Filters'}
           </span>
           {activeChipsCount > 0 && (
-            <span className="px-2 py-0.5 rounded-full bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] text-[10px] font-bold border border-[#2563EB]/20">
+            <span className="px-2 py-0.5 rounded-full bg-amber-500/10 text-[#B8860B] dark:text-[#F5DFA8] text-[10px] font-bold border border-[#E8D6B3]">
               {activeChipsCount} {isHindi ? 'सक्रिय' : 'Active'}
             </span>
           )}
@@ -120,7 +120,7 @@ function QuickFilterChips({
           <button
             type="button"
             onClick={onResetFilters}
-            className="text-[11px] font-semibold text-[#2563EB] dark:text-[#60A5FA] hover:underline cursor-pointer flex items-center gap-1"
+            className="text-[11px] font-semibold text-[#B8860B] dark:text-[#F5DFA8] hover:underline cursor-pointer flex items-center gap-1"
           >
             <span>{isHindi ? 'त्वरित फ़िल्टर हटाएं' : 'Clear Quick Filters'}</span>
             <X className="w-3 h-3" />
@@ -141,13 +141,13 @@ function QuickFilterChips({
               onClick={() => handleChipClick(chip)}
               className={`px-3.5 py-2 rounded-2xl text-xs font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer border flex items-center gap-1.5 shadow-sm ${
                 active
-                  ? 'bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white border-[#2563EB] shadow-[0_4px_15px_rgba(37,99,235,0.35)]'
-                  : 'bg-white dark:bg-[#1E293B] border-[#E5E7EB] dark:border-slate-700 text-[#1F2937] dark:text-slate-200 hover:border-[#2563EB]'
+                  ? 'bg-gradient-to-r from-[#D6A64B] via-[#E5C158] to-[#C59B27] text-[#2A1800] border-amber-300 font-bold shadow-[0_4px_15px_rgba(214,166,75,0.4)]'
+                  : 'bg-white dark:bg-[#1E293B] border-[#E8D6B3] dark:border-slate-700 text-[#111827] dark:text-slate-200 hover:border-[#D6A64B]'
               }`}
             >
               <IconComp className="w-3.5 h-3.5" />
               <span>{chip.label}</span>
-              {active && <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />}
+              {active && <span className="w-1.5 h-1.5 rounded-full bg-[#2A1800] animate-pulse" />}
             </motion.button>
           );
         })}

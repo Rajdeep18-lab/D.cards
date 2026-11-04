@@ -15,6 +15,8 @@ export default function DiyaIllustration({
   const shouldReduceMotion = useReducedMotion();
   const width = size;
   const height = Math.round(size * 0.95);
+  const glowSize = Math.max(16, Math.round(size * 1.25));
+  const glowTop = -Math.max(2, Math.round(size * 0.18));
 
   return (
     <div 
@@ -22,10 +24,16 @@ export default function DiyaIllustration({
       style={{ width, height }}
       aria-hidden="true"
     >
-      {/* Ambient Radial Golden Glow */}
+      {/* Ambient Radial Golden Glow (proportional to diya size) */}
       {glow && (
         <div 
-          className="absolute -top-3 left-1/2 -translate-x-1/2 w-16 h-16 rounded-full bg-gradient-to-t from-amber-500/25 via-yellow-400/20 to-transparent blur-md pointer-events-none"
+          className="absolute left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-t from-amber-500/30 via-yellow-400/25 to-transparent pointer-events-none"
+          style={{ 
+            width: glowSize, 
+            height: glowSize, 
+            top: glowTop,
+            filter: size > 32 ? 'blur(8px)' : 'blur(4px)'
+          }}
         />
       )}
 

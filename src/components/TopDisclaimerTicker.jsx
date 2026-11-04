@@ -19,12 +19,23 @@ export default function TopDisclaimerTicker() {
   return (
     <aside
       aria-label="Important Bank Data Disclaimer"
-      className={`w-full text-[11px] sm:text-xs py-2 overflow-hidden select-none relative z-10 shrink-0 shadow-xs ${
+      className={`w-full text-[11px] sm:text-xs py-2 overflow-hidden select-none relative z-10 shrink-0 shadow-2xs ${
         isFestive
-          ? "bg-[#FEF9EE] dark:bg-[#1A1508] text-[#78350F] dark:text-amber-200 border-y border-[#F3E8D0] dark:border-amber-900/40"
+          ? "bg-[#FFF9EE] dark:bg-[#0B132B] text-[#4B5563] dark:text-amber-200 border-b border-[#E8D6B3] dark:border-amber-900/40"
           : "bg-[#B8860B] dark:bg-[#A87900] text-white border-y border-[#926B08] dark:border-[#855F00]"
       }`}
     >
+      {/* Decorative Golden Rangoli Flourish on Right Corner (matches reference design) */}
+      {isFestive && (
+        <div className="absolute right-0 top-0 bottom-0 pointer-events-none opacity-30 flex items-center pr-2 z-20">
+          <svg width="68" height="28" viewBox="0 0 68 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M68 0C52 4 42 14 36 28C42 16 54 8 68 0Z" fill="#D6A64B" />
+            <circle cx="58" cy="12" r="2.5" fill="#D6A64B" />
+            <circle cx="48" cy="20" r="2" fill="#D6A64B" />
+            <path d="M64 4C54 10 46 18 32 28" stroke="#D6A64B" strokeWidth="1" strokeDasharray="2 2" />
+          </svg>
+        </div>
+      )}
       <div className="flex w-max animate-marquee-continuous whitespace-nowrap items-center">
         {tickerItems.map((idx) => (
           <div key={idx} className="flex items-center gap-2.5 mx-6 sm:mx-10 shrink-0">

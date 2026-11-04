@@ -449,10 +449,10 @@ export default function FindMyBankPage() {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors">
       {/* Top Banner / Hero Section */}
-      <section className="relative pt-8 pb-10 px-4 sm:px-6 lg:px-8 border-b border-slate-200/80 dark:border-slate-800 bg-gradient-to-b from-white via-blue-50/20 to-slate-50 dark:from-slate-900 dark:via-slate-900/60 dark:to-slate-950">
+      <section className="relative pt-8 pb-10 px-4 sm:px-6 lg:px-8 border-b border-[#E8D6B3] dark:border-amber-900/40 bg-gradient-to-b from-[#FFF9EE] via-[#F7EEDC] to-[#FFF9EE] dark:from-[#0B132B] dark:via-[#0F172A] dark:to-[#0B132B]">
         <div className="max-w-7xl mx-auto text-left">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 dark:bg-blue-400/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 text-xs font-black uppercase tracking-wider mb-3">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 text-amber-900 dark:text-[#F5DFA8] border border-[#E8D6B3] dark:border-amber-900/40 text-xs font-black uppercase tracking-wider mb-3">
             <MapPin className="w-3.5 h-3.5" />
             <span>{t('findBanks.badge', 'Interactive MapTiler Branch Locator')}</span>
           </div>
@@ -468,7 +468,7 @@ export default function FindMyBankPage() {
             </div>
 
             {/* Current Active Location Pill */}
-            <div className="flex items-center gap-3 p-3 px-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm shrink-0">
+            <div className="flex items-center gap-3 p-3 px-4 rounded-2xl bg-white dark:bg-slate-900 border border-[#E8D6B3] dark:border-amber-900/40 shadow-sm shrink-0">
               <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-md">
                 📍
               </div>

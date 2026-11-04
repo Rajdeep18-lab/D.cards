@@ -307,9 +307,9 @@ function BanksPage({
     <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 relative z-20 space-y-8 text-left select-none">
       
       {/* ── 0. BANK SELECTION BAR (Quick Switching across all covered banks) ── */}
-      <div className="p-4 rounded-3xl glass-card-premium border border-slate-200 dark:border-slate-800 shadow-soft space-y-3">
+      <div className="p-4 rounded-3xl bg-white/95 dark:bg-[#1E293B]/95 border border-[#E8D6B3] dark:border-amber-900/40 shadow-2xs space-y-3">
         <div className="flex items-center justify-between">
-          <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA] flex items-center gap-1.5">
+          <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#B8860B] dark:text-[#F5DFA8] flex items-center gap-1.5">
             <Building2 className="w-4 h-4" /> {t('banks.selectInstitution', 'Select Bank Institution:')}
           </span>
           <span className="text-xs font-bold text-slate-400">
@@ -324,7 +324,7 @@ function BanksPage({
               onClick={() => handleBankSelect(b.name)}
               className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer whitespace-nowrap flex items-center gap-2 border ${
                 canonicalBankName(selectedBankName) === canonicalBankName(b.name)
-                  ? 'bg-[#2563EB] text-white border-[#2563EB] shadow-md shadow-[#2563EB]/25 scale-105'
+                  ? 'bg-gradient-to-r from-[#111827] to-[#1E293B] text-white border-[#D6A64B]/80 shadow-md scale-105'
                   : 'bg-slate-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800'
               }`}
             >

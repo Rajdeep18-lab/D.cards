@@ -28,10 +28,10 @@ function Footer({ onOpenLegal }) {
   };
 
   return (
-    <footer className="relative z-20 mt-20 px-4 sm:px-6 lg:px-8 pt-16 pb-8 text-xs transition-colors border-t border-[#E5E7EB] dark:border-slate-800/80 bg-gradient-to-b from-[#F8FAFC] to-[#EFF6FF]/40 dark:from-[#0F172A] dark:to-[#090D16] text-[#6B7280] dark:text-slate-400 overflow-hidden select-none">
+    <footer className="relative z-20 mt-20 px-4 sm:px-6 lg:px-8 pt-16 pb-8 text-xs transition-colors border-t border-[#E8D6B3] dark:border-amber-900/40 bg-gradient-to-b from-[#FFF9EE] via-[#F7EEDC] to-[#FFF9EE] dark:from-[#0B132B] dark:to-[#090D16] text-[#4B5563] dark:text-slate-400 overflow-hidden select-none">
       
-      {/* Background Soft Blue Ambient Glow */}
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-gradient-to-t from-[#2563EB]/10 via-[#3B82F6]/5 to-transparent blur-[100px] pointer-events-none z-0" />
+      {/* Background Warm Golden Ambient Glow */}
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-gradient-to-t from-[#D6A64B]/15 via-[#F5DFA8]/8 to-transparent blur-[100px] pointer-events-none z-0" />
 
       <div className="mx-auto max-w-7xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10 mb-12 text-left relative z-10 items-start">
  
@@ -44,16 +44,16 @@ function Footer({ onOpenLegal }) {
               className="h-10 w-auto object-contain group-hover:scale-105 transition-transform duration-300"
             />
             <div className="flex flex-col">
-              <span className="text-xl font-extrabold tracking-tight text-[#0F172A] dark:text-white">
-                D.<span className="text-[#2563EB]">CARD</span>
+              <span className="text-xl font-extrabold tracking-tight text-[#111827] dark:text-white">
+                D.<span className="text-[#2455A4] dark:text-[#60A5FA]">CARD</span>
               </span>
-              <span className="text-[9px] font-bold text-[#2563EB] dark:text-[#60A5FA] tracking-widest uppercase mt-0.5">
+              <span className="text-[9px] font-bold text-[#B8860B] dark:text-[#F5DFA8] tracking-widest uppercase mt-0.5">
                 {t('footer.tagline', 'COMPARE. CHOOSE. BENEFIT.')}
               </span>
             </div>
           </Link>
           
-          <p className="text-xs leading-relaxed text-[#6B7280] dark:text-slate-400 max-w-[280px] font-normal">
+          <p className="text-xs leading-relaxed text-[#4B5563] dark:text-slate-400 max-w-[280px] font-normal">
             {t('footer.description', 'Explore and compare savings accounts, current accounts, and debit cards from leading banks in one place. Structured product specs, fee breakdowns, and lounge access rules.')}
           </p>
 
@@ -64,9 +64,9 @@ function Footer({ onOpenLegal }) {
             </span>
             <a 
               href="mailto:dcard.website@gmail.com" 
-              className="text-xs font-bold text-[#1F2937] dark:text-white hover:text-[#2563EB] dark:hover:text-[#60A5FA] transition-colors break-all flex items-center gap-1.5 mt-0.5"
+              className="text-xs font-bold text-[#111827] dark:text-white hover:text-[#B8860B] dark:hover:text-[#F5DFA8] transition-colors break-all flex items-center gap-1.5 mt-0.5"
             >
-              <Mail className="w-3.5 h-3.5 text-[#2563EB] shrink-0" />
+              <Mail className="w-3.5 h-3.5 text-[#B8860B] shrink-0" />
               <span>dcard.website@gmail.com</span>
             </a>
           </div>
@@ -78,7 +78,7 @@ function Footer({ onOpenLegal }) {
               target="_blank"
               rel="noopener noreferrer"
               title="Official Instagram"
-              className="w-9 h-9 rounded-xl bg-white dark:bg-slate-800 border border-[#E5E7EB] dark:border-slate-700 flex items-center justify-center text-[#2563EB] dark:text-[#60A5FA] hover:bg-[#2563EB] hover:text-white hover:border-[#2563EB] transition-all shadow-xs group"
+              className="w-9 h-9 rounded-xl bg-white dark:bg-slate-800 border border-[#E8D6B3] dark:border-slate-700 flex items-center justify-center text-[#B8860B] dark:text-[#F5DFA8] hover:bg-[#D6A64B] hover:text-[#2A1800] hover:border-[#D6A64B] transition-all shadow-xs group"
             >
               <svg className="w-4 h-4 fill-current group-hover:scale-110 transition-transform" viewBox="0 0 24 24">
                 <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
@@ -90,7 +90,7 @@ function Footer({ onOpenLegal }) {
         {/* Quick Links & Company Nav Columns */}
         {Object.entries(footerLinks).map(([section, links]) => (
           <div key={section}>
-            <h4 className="font-extrabold text-[#1F2937] dark:text-white text-sm mb-4 tracking-tight">{section}</h4>
+            <h4 className="font-extrabold text-[#111827] dark:text-white text-sm mb-4 tracking-tight">{section}</h4>
             <ul className="space-y-2.5">
               {links.map(link => (
                 <li key={link.name}>
@@ -102,17 +102,17 @@ function Footer({ onOpenLegal }) {
                           onOpenLegal(link.type);
                         }
                       }}
-                      className="text-[#6B7280] dark:text-slate-400 hover:text-[#2563EB] dark:hover:text-[#60A5FA] transition-colors flex items-center gap-1.5 text-left w-full bg-transparent border-none cursor-pointer focus:outline-none text-xs font-normal group"
+                      className="text-[#4B5563] dark:text-slate-400 hover:text-[#B8860B] dark:hover:text-[#F5DFA8] transition-colors flex items-center gap-1.5 text-left w-full bg-transparent border-none cursor-pointer focus:outline-none text-xs font-normal group"
                     >
-                      <ArrowRight className="w-3 h-3 text-[#2563EB] group-hover:translate-x-1 transition-transform" />
+                      <ArrowRight className="w-3 h-3 text-[#B8860B] group-hover:translate-x-1 transition-transform" />
                       <span>{link.name}</span>
                     </button>
                   ) : (
                     <Link 
                       to={link.path}
-                      className="text-[#6B7280] dark:text-slate-400 hover:text-[#2563EB] dark:hover:text-[#60A5FA] transition-colors flex items-center gap-1.5 text-xs font-normal group"
+                      className="text-[#4B5563] dark:text-slate-400 hover:text-[#B8860B] dark:hover:text-[#F5DFA8] transition-colors flex items-center gap-1.5 text-xs font-normal group"
                     >
-                      <ArrowRight className="w-3 h-3 text-[#2563EB] group-hover:translate-x-1 transition-transform" />
+                      <ArrowRight className="w-3 h-3 text-[#B8860B] group-hover:translate-x-1 transition-transform" />
                       <span>{link.name}</span>
                     </Link>
                   )}
@@ -129,23 +129,23 @@ function Footer({ onOpenLegal }) {
           {/* Ask AI Advisor Button */}
           <Link
             to="/ai-advisor"
-            className="w-full p-3.5 rounded-2xl bg-gradient-to-r from-[#0B3D91] via-[#1E3A8A] to-[#1E293B] text-white font-bold text-xs flex items-center justify-between shadow-md hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] border border-slate-700 transition-all cursor-pointer group"
+            className="w-full p-3.5 rounded-2xl bg-gradient-to-r from-[#111827] via-[#291747] to-[#111827] text-[#F5DFA8] font-bold text-xs flex items-center justify-between shadow-md hover:shadow-[0_0_20px_rgba(214,166,75,0.4)] border border-[#D6A64B]/60 hover:border-[#D6A64B] transition-all cursor-pointer group"
           >
             <div className="flex items-center gap-2">
-              <Bot className="w-4 h-4 text-[#60A5FA]" />
+              <Bot className="w-4 h-4 text-amber-400" />
               <span>{t('footer.askAiAssistance', 'Ask AI Assistance')}</span>
             </div>
-            <ArrowRight className="w-4 h-4 text-[#60A5FA] group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-4 h-4 text-amber-400 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
       </div>
 
       {/* Bottom Bar: Copyright & Disclaimer */}
-      <div className="h-px bg-[#E5E7EB] dark:border-slate-800 mb-6 relative z-10" />
+      <div className="h-px bg-[#E8D6B3]/60 dark:border-amber-900/40 mb-6 relative z-10" />
       <div className="flex flex-col gap-3 text-center text-[#6B7280] dark:text-slate-500 text-xs relative z-10">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
           <p>{t('footer.copyright', '© 2026 D.CARD. Financial Information Platform. All rights reserved.')}</p>
-          <p className="flex items-center gap-1.5 text-[#2563EB] dark:text-[#60A5FA] font-bold">
+          <p className="flex items-center gap-1.5 text-[#B8860B] dark:text-[#F5DFA8] font-bold">
             <ShieldCheck className="w-4 h-4" />
             <span>{t('footer.independentRatings', '100% Independent Ratings')}</span>
           </p>

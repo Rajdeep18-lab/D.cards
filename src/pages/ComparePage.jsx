@@ -46,9 +46,9 @@ function ComparePage({ compareQueue, setCompareQueue, setSelectedCard }) {
   return (
     <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 relative z-20 space-y-8 text-left">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#E5E7EB] dark:border-slate-800 pb-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#E8D6B3] dark:border-amber-900/40 pb-6">
         <div>
-          <span className="text-xs font-semibold text-[#2563EB] dark:text-[#60A5FA] tracking-widest uppercase block mb-1">
+          <span className="text-xs font-semibold text-[#B8860B] dark:text-[#F5DFA8] tracking-widest uppercase block mb-1">
             {t('compare.badge', 'FEATURE COMPARISON ENGINE')}
           </span>
           <h1 className="text-3xl font-bold text-[#1F2937] dark:text-white">
@@ -74,7 +74,7 @@ function ComparePage({ compareQueue, setCompareQueue, setSelectedCard }) {
       <div className="flex flex-wrap items-center gap-2 p-1.5 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 w-fit">
         <button
           onClick={() => navigate('/compare')}
-          className="px-4 py-2 rounded-xl text-xs font-bold bg-[#2563EB] text-white shadow-xs cursor-pointer flex items-center gap-1.5"
+          className="px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-[#111827] to-[#1E293B] text-white border border-[#D6A64B]/80 shadow-xs cursor-pointer flex items-center gap-1.5"
         >
           <CreditCard className="w-3.5 h-3.5" />
           <span>{t('compare.debitCardsTab', 'Debit Cards')}</span>
@@ -96,7 +96,7 @@ function ComparePage({ compareQueue, setCompareQueue, setSelectedCard }) {
       </div>
 
       {/* Main Comparison Section */}
-      <section className="bg-white dark:bg-[#1E293B] rounded-3xl p-4 sm:p-8 shadow-soft border border-[#E5E7EB] dark:border-slate-800 transition-colors">
+      <section className="bg-white dark:bg-[#1E293B] rounded-3xl p-4 sm:p-8 shadow-2xs border border-[#E8D6B3] dark:border-amber-900/40 transition-colors">
         {compareQueue.length === 0 ? (
           <div className="py-16 px-6 text-center max-w-lg mx-auto space-y-5">
             <div className="w-16 h-16 rounded-full bg-[#EFF6FF] text-[#2563EB] border border-[#2563EB]/20 flex items-center justify-center text-3xl mx-auto shadow-sm">
