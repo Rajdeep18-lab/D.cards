@@ -3,6 +3,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import DiyaIllustration from './DiyaIllustration';
 import { GoldenMandala, FestiveCornerRangoli } from './MandalaWatermark';
 import FloatingGoldCoin from './FloatingGoldCoin';
+import { AkashKandilLantern, MarigoldFlower } from './ToranGarland';
 import { FESTIVE_CONFIG } from '../../config/festiveConfig';
 
 /**
@@ -101,24 +102,6 @@ export default function HeroFestiveAtmosphere() {
         <DiyaIllustration size={38} glow={true} animate={true} />
       </motion.div>
 
-      {/* Diya 3: Under the Feature Cards (Center Left) */}
-      <motion.div
-        className="hidden lg:block absolute bottom-[24%] left-[49%] -translate-x-1/2 z-20"
-        animate={!shouldReduceMotion ? { y: [0, -3, 0] } : {}}
-        transition={{ duration: 4.8, repeat: Infinity, delay: 1.4, ease: 'easeInOut' }}
-      >
-        <DiyaIllustration size={34} glow={true} animate={true} />
-      </motion.div>
-
-      {/* Diya 4: Under the Feature Cards (Center Right) */}
-      <motion.div
-        className="hidden lg:block absolute bottom-[24%] right-[8%] z-20"
-        animate={!shouldReduceMotion ? { y: [0, -3, 0] } : {}}
-        transition={{ duration: 5.0, repeat: Infinity, delay: 0.4, ease: 'easeInOut' }}
-      >
-        <DiyaIllustration size={34} glow={true} animate={true} />
-      </motion.div>
-
       {/* Diya 5: Bottom Center Diya */}
       <motion.div
         className="hidden sm:block absolute bottom-3 left-[51%] -translate-x-1/2 z-10"
@@ -172,6 +155,33 @@ export default function HeroFestiveAtmosphere() {
           ))}
         </div>
       )}
+
+      {/* ── 6. FESTIVE CORNER TORAN & AKASH KANDIL LANTERN (Matching Reference Design) ── */}
+      {/* Top-Left Hanging Marigold Garland & Leaf Drops */}
+      <div className="absolute top-0 left-1 sm:left-4 z-20 pointer-events-none flex flex-col items-center gap-1">
+        <MarigoldFlower size={24} color="#F97316" secondaryColor="#FACC15" />
+        <MarigoldFlower size={22} color="#EAB308" secondaryColor="#F97316" />
+        <MarigoldFlower size={22} color="#F97316" secondaryColor="#FEF08A" />
+        <MarigoldFlower size={20} color="#EA580C" secondaryColor="#FACC15" />
+        <MarigoldFlower size={18} color="#F97316" secondaryColor="#FDE047" />
+        <MarigoldFlower size={16} color="#EAB308" secondaryColor="#F97316" />
+        {/* Hanging leaf drop */}
+        <div className="w-2 h-7 rounded-full bg-gradient-to-b from-amber-500 via-emerald-600 to-emerald-700 shadow-xs" />
+      </div>
+
+      {/* Top-Right Hanging Traditional Akash Kandil (Diwali Lantern) & Marigold String */}
+      <div className="absolute top-0 right-2 sm:right-6 z-20 pointer-events-none flex items-start gap-2">
+        {/* Marigold Garland alongside lantern */}
+        <div className="hidden sm:flex flex-col items-center gap-1 mt-1">
+          <MarigoldFlower size={20} color="#EAB308" secondaryColor="#F97316" />
+          <MarigoldFlower size={18} color="#F97316" secondaryColor="#FEF08A" />
+          <MarigoldFlower size={18} color="#EA580C" secondaryColor="#FACC15" />
+          <MarigoldFlower size={16} color="#F97316" secondaryColor="#FDE047" />
+          <MarigoldFlower size={14} color="#EAB308" secondaryColor="#F97316" />
+        </div>
+        {/* Glowing Akash Kandil Lantern */}
+        <AkashKandilLantern size={52} className="relative top-0 right-0" />
+      </div>
     </div>
   );
 }

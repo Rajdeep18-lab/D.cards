@@ -136,9 +136,9 @@ function CardsPage({
   return (
     <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 relative z-20 select-none">
       {/* Header Banner */}
-      <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#E5E7EB] dark:border-slate-800 pb-6 text-left">
+      <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#E8D6B3] dark:border-amber-900/40 pb-6 text-left">
         <div>
-          <span className="text-xs font-bold text-[#2563EB] dark:text-[#60A5FA] tracking-widest uppercase block mb-1">
+          <span className="text-xs font-bold text-[#B8860B] dark:text-[#F5DFA8] tracking-widest uppercase block mb-1">
             {isHindi ? "वित्तीय सूचना डेटाबेस" : "FINANCIAL INFORMATION DATABASE"}
           </span>
           <h1 className="text-3xl font-extrabold text-[#1F2937] dark:text-white">
@@ -151,7 +151,7 @@ function CardsPage({
 
         {/* Global Search inside Cards Page */}
         <div className="w-full md:w-80">
-          <div className="relative flex items-center bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-700 rounded-xl px-3.5 py-2.5 shadow-sm focus-within:border-[#2563EB] transition-colors">
+          <div className="relative flex items-center bg-white dark:bg-[#1E293B] border border-[#E8D6B3] dark:border-amber-900/40 rounded-xl px-3.5 py-2.5 shadow-2xs focus-within:border-[#D6A64B] transition-colors">
             <Search className="w-4 h-4 text-[#6B7280] dark:text-slate-400 mr-2 flex-shrink-0" />
             <input
               type="text"

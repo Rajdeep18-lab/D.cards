@@ -4,7 +4,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 /**
  * Single Marigold Blossom SVG
  */
-const MarigoldFlower = memo(({ size = 18, color = '#F97316', secondaryColor = '#FACC15', className = '' }) => (
+export const MarigoldFlower = memo(({ size = 18, color = '#F97316', secondaryColor = '#FACC15', className = '' }) => (
   <svg
     width={size}
     height={size}

@@ -72,7 +72,7 @@ export default function LanguageSelector({ variant = 'dropdown', className = '' 
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1.5 px-2.5 h-9 rounded-xl border border-[#E5E7EB] dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 hover:bg-[#EFF6FF] dark:hover:bg-slate-700/60 hover:border-[#2563EB]/40 dark:hover:border-[#60A5FA]/40 text-[#4B5563] dark:text-slate-200 text-xs font-bold transition-all cursor-pointer shadow-2xs group focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20"
+        className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 h-8 min-[380px]:h-9 sm:h-10 rounded-lg sm:rounded-xl border border-amber-300/60 dark:border-slate-700 bg-white/90 dark:bg-slate-800/90 hover:bg-amber-50/80 dark:hover:bg-slate-700/60 hover:border-amber-400/80 dark:hover:border-amber-400/50 text-[#1F2937] dark:text-slate-200 text-xs font-bold transition-all cursor-pointer shadow-xs group focus:outline-none focus:ring-2 focus:ring-amber-500/40"
         aria-label="Change language"
         aria-haspopup="listbox"
         aria-expanded={isOpen}
@@ -89,9 +89,9 @@ export default function LanguageSelector({ variant = 'dropdown', className = '' 
         <div
           role="listbox"
           aria-label="Languages"
-          className="absolute right-0 mt-1.5 w-36 rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-700 shadow-xl py-1.5 z-50 animate-in fade-in zoom-in-95 duration-150 overflow-hidden"
+          className="absolute right-0 mt-1.5 w-40 rounded-2xl bg-white dark:bg-[#1E293B] border border-amber-200/80 dark:border-slate-700 shadow-2xl py-1.5 z-[70] animate-in fade-in zoom-in-95 duration-150 overflow-hidden"
         >
-          <div className="px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-gray-400 dark:text-slate-400 border-b border-gray-100 dark:border-slate-800 mb-1">
+          <div className="px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-amber-800/70 dark:text-amber-400/70 border-b border-amber-100 dark:border-slate-800 mb-1">
             Language / भाषा
           </div>
 
@@ -100,9 +100,9 @@ export default function LanguageSelector({ variant = 'dropdown', className = '' 
             role="option"
             aria-selected={!isHindi}
             onClick={() => handleSelect('en')}
-            className={`w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-left transition-colors cursor-pointer ${
+            className={`w-full flex items-center justify-between px-3 py-2.5 min-h-[44px] text-xs font-semibold text-left transition-colors cursor-pointer ${
               !isHindi
-                ? 'bg-[#EFF6FF] dark:bg-slate-800 text-[#2563EB] dark:text-[#60A5FA] font-bold'
+                ? 'bg-amber-50/80 dark:bg-slate-800 text-[#2563EB] dark:text-[#60A5FA] font-bold'
                 : 'text-[#1F2937] dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-800/60'
             }`}
           >
@@ -110,7 +110,7 @@ export default function LanguageSelector({ variant = 'dropdown', className = '' 
               <span className="text-sm">🇬🇧</span>
               <span>English</span>
             </div>
-            {!isHindi && <Check className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#60A5FA]" />}
+            {!isHindi && <Check className="w-4 h-4 text-[#2563EB] dark:text-[#60A5FA]" />}
           </button>
 
           <button
@@ -118,9 +118,9 @@ export default function LanguageSelector({ variant = 'dropdown', className = '' 
             role="option"
             aria-selected={isHindi}
             onClick={() => handleSelect('hi')}
-            className={`w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-left transition-colors cursor-pointer ${
+            className={`w-full flex items-center justify-between px-3 py-2.5 min-h-[44px] text-xs font-semibold text-left transition-colors cursor-pointer ${
               isHindi
-                ? 'bg-[#EFF6FF] dark:bg-slate-800 text-[#2563EB] dark:text-[#60A5FA] font-bold'
+                ? 'bg-amber-50/80 dark:bg-slate-800 text-[#2563EB] dark:text-[#60A5FA] font-bold'
                 : 'text-[#1F2937] dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-800/60'
             }`}
           >
@@ -128,7 +128,7 @@ export default function LanguageSelector({ variant = 'dropdown', className = '' 
               <span className="text-sm">🇮🇳</span>
               <span>हिंदी</span>
             </div>
-            {isHindi && <Check className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#60A5FA]" />}
+            {isHindi && <Check className="w-4 h-4 text-[#2563EB] dark:text-[#60A5FA]" />}
           </button>
         </div>
       )}

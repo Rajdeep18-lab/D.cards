@@ -649,9 +649,9 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
   return (
     <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 relative z-20 space-y-8 text-left select-none">
       {/* Page Header */}
-      <div className="border-b border-[#E5E7EB] dark:border-slate-800 pb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="border-b border-[#E8D6B3] dark:border-amber-900/40 pb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] text-xs font-extrabold tracking-widest uppercase rounded-full mb-2">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-900 dark:text-[#F5DFA8] border border-[#E8D6B3] dark:border-amber-900/40 text-xs font-extrabold tracking-widest uppercase rounded-full mb-2">
             <Sparkles className="w-3.5 h-3.5 animate-pulse text-[#2563EB]" />
             {isHindi ? "बचत खाता खोज इंजन" : "SAVINGS DISCOVERY ENGINE"}
           </span>
@@ -689,7 +689,7 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
       </div>
 
       {/* Prominent Search Bar */}
-      <div className="p-4 rounded-3xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-800 shadow-soft flex flex-col md:flex-row items-center gap-4">
+      <div className="p-4 rounded-3xl bg-white dark:bg-[#1E293B] border border-[#E8D6B3] dark:border-amber-900/40 shadow-2xs flex flex-col md:flex-row items-center gap-4">
         <div className="relative flex-1 w-full">
           <Search className="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
           <input

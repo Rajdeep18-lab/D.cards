@@ -235,8 +235,8 @@ function AboutPage() {
     <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 relative z-20 space-y-16 text-left select-none">
       
       {/* ── 1. ABOUT D.CARD (HERO BANNER) ── */}
-      <section className="border-b border-[#E5E7EB] dark:border-slate-800 pb-10">
-        <span className="text-xs font-semibold text-[#2563EB] dark:text-[#60A5FA] tracking-widest uppercase block mb-2">
+      <section className="border-b border-[#E8D6B3] dark:border-amber-900/40 pb-10">
+        <span className="text-xs font-semibold text-[#B8860B] dark:text-[#F5DFA8] tracking-widest uppercase block mb-2">
           {isHindi ? 'कंपनी अवलोकन' : 'COMPANY OVERVIEW'}
         </span>
         <h1 className="text-4xl sm:text-5xl font-bold text-[#1F2937] dark:text-white tracking-tight">

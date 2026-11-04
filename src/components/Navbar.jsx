@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { 
   Sun, 
   Moon, 
   LogIn, 
-  Bell, 
   Heart, 
   Menu, 
   X, 
@@ -26,7 +26,6 @@ import { useWishlist } from "../context/WishlistContext";
 import { useLanguage } from "../context/LanguageContext";
 import TopDisclaimerTicker from "./TopDisclaimerTicker";
 import LanguageSelector from "./LanguageSelector";
-import ToranGarland from "./festive/ToranGarland";
 import DiyaIllustration from "./festive/DiyaIllustration";
 import { FESTIVE_CONFIG } from "../config/festiveConfig";
 
@@ -35,9 +34,7 @@ function Navbar({
   toggleDarkMode, 
   onOpenAuth, 
   compareCount = 0, 
-  onOpenLegal,
-  unreadNotificationCount = 0,
-  unreadCount: propUnreadCount
+  onOpenLegal
 }) {
   const { user, profile, logout, openAuthModal } = useAuth();
   const { wishlist } = useWishlist();
@@ -49,27 +46,13 @@ function Navbar({
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [isMoreDropdownOpen, setIsMoreDropdownOpen] = useState(false);
 
-  // Unread notifications state - defaults to 0 (no fake/hardcoded badges)
-  const [unreadCount, setUnreadCount] = useState(
-    typeof propUnreadCount === 'number'
-      ? propUnreadCount
-      : (typeof unreadNotificationCount === 'number' ? unreadNotificationCount : 0)
-  );
-
-  useEffect(() => {
-    if (typeof propUnreadCount === 'number') {
-      setUnreadCount(propUnreadCount);
-    } else if (typeof unreadNotificationCount === 'number') {
-      setUnreadCount(unreadNotificationCount);
-    }
-  }, [propUnreadCount, unreadNotificationCount]);
-
+  // Live count of saved favourites
   const favoritesCount = Array.isArray(wishlist) ? wishlist.length : 0;
 
   const profileDropdownRef = useRef(null);
   const moreDropdownRef = useRef(null);
 
-  // Handle scroll effect
+  // Handle subtle scroll elevation
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 15);
@@ -136,7 +119,7 @@ function Navbar({
     { name: t('nav.about', "About"), key: "about", path: "/about", isProtected: false, isSecondary: true, icon: Info },
   ];
 
-  // Secondary items that tuck into "More ▾" on intermediate screen widths (1024px to 1399px)
+  // Secondary items that tuck into "More ▾" on intermediate screen widths (< 1400px)
   const secondaryNavKeys = ["current", "banks", "find-bank", "about"];
   const isMoreActive = secondaryNavKeys.some(k => {
     const item = primaryNavItems.find(p => p.key === k);
@@ -164,10 +147,8 @@ function Navbar({
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full select-none shadow-xs relative bg-[#FFFDF9]/95 dark:bg-[#0F172A]/95 backdrop-blur-md">
-      {/* ── Minimalistic Festive Marigold Toran Garland across Top Navigation ── */}
-      {FESTIVE_CONFIG.isFestiveEnabled && <ToranGarland />}
-
+    <header className="sticky top-0 z-50 w-full select-none shadow-xs relative bg-[#FFF9EE] dark:bg-[#0B132B]">
+      
       {/* ==================================================
           1. TOP: RUNNING DISCLAIMER / STATUTORY BAR
          ================================================== */}
@@ -175,57 +156,57 @@ function Navbar({
 
       {/* ==================================================
           2. MAIN NAVBAR: 3 CLEARLY DEFINED SECTIONS
-             LEFT: Logo + Tagline
-             CENTER: Campaign Link + Nav Links (with responsive More dropdown on intermediate screens)
-             RIGHT: Language, Comparison, Dark Mode, Notifications, Login/Profile
+             LEFT: Hamburger (mobile) + Logo + Tagline
+             CENTER: Primary Nav Links (responsive More on intermediate)
+             RIGHT: Language, Scale, Dark Mode, Heart (Saved), Login/Profile
          ================================================== */}
       <div
-        className={`w-full transition-colors duration-200 h-[68px] sm:h-[72px] flex items-center border-b ${
+        className={`w-full transition-colors duration-200 h-16 sm:h-[70px] flex items-center border-b ${
           scrolled
-            ? "border-amber-300/40 dark:border-slate-800 shadow-sm bg-[#FFFDF9]/95 dark:bg-[#0F172A]/95"
-            : "border-amber-200/50 dark:border-slate-800/60 bg-[#FFFDF9]/90 dark:bg-[#0F172A]/90"
+            ? "border-[#E8D6B3] dark:border-amber-900/40 shadow-xs bg-[#FFF9EE] dark:bg-[#0B132B]"
+            : "border-[#E8D6B3]/70 dark:border-amber-900/30 bg-[#FFF9EE] dark:bg-[#0B132B]"
         }`}
       >
-        <div className="w-full max-w-[1720px] mx-auto px-3 sm:px-4 lg:px-6 h-full flex items-center justify-between gap-2 lg:gap-3 xl:gap-4">
+        <div className="w-full max-w-[1720px] mx-auto px-2 sm:px-4 lg:px-6 h-full flex items-center justify-between gap-1.5 sm:gap-2.5 lg:gap-3 xl:gap-4">
           
           {/* ══════════════════════════════════════════════
               LEFT SECTION: LOGO + TAGLINE + MOBILE TRIGGER
              ══════════════════════════════════════════════ */}
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0 z-10 pr-1">
             {/* Mobile/Tablet Hamburger Trigger (< 1024px) */}
             <button
               type="button"
               onClick={() => setIsMobileDrawerOpen(true)}
-              className="w-11 h-11 flex items-center justify-center rounded-xl text-[#4B5563] dark:text-slate-300 hover:bg-amber-50 dark:hover:bg-slate-800 lg:hidden cursor-pointer shrink-0 transition-colors focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className="w-8 h-8 min-[380px]:w-9 min-[380px]:h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg sm:rounded-xl text-[#111827] dark:text-slate-200 hover:bg-black/5 dark:hover:bg-white/5 lg:hidden cursor-pointer shrink-0 transition-colors focus:outline-none focus:ring-2 focus:ring-amber-500"
               aria-label="Open Navigation Menu"
               aria-expanded={isMobileDrawerOpen}
             >
-              <Menu className="w-5 h-5 sm:w-6 sm:h-6" />
+              <Menu className="w-4.5 h-4.5 sm:w-5.5 sm:h-5.5" />
             </button>
 
             {/* D.CARD LOGO + BRAND TAGLINE */}
             <Link
               to="/"
-              className="flex items-center gap-2 group text-left bg-transparent border-0 cursor-pointer focus:outline-none shrink-0"
+              className="flex items-center gap-1.5 sm:gap-2 group text-left bg-transparent border-0 cursor-pointer focus:outline-none shrink-0"
               aria-label="D.CARD Home"
             >
               <img 
                 src="/logo-mark.png" 
                 alt="D.CARD Logo" 
-                className="h-8 sm:h-9 w-auto object-contain group-hover:scale-105 transition-transform duration-300 shrink-0"
+                className="h-7 sm:h-8 max-h-8 w-auto object-contain group-hover:scale-105 transition-transform duration-200 shrink-0"
               />
               <div className="flex flex-col justify-center shrink-0">
-                <span className="text-base sm:text-lg xl:text-xl font-extrabold tracking-tight leading-none text-[#0F172A] dark:text-white font-sans whitespace-nowrap">
-                  D.<span className="text-[#2563EB]">CARD</span>
+                <span className="text-[15px] sm:text-lg xl:text-xl font-black tracking-tight leading-none text-[#111827] dark:text-white font-sans whitespace-nowrap">
+                  D.<span className="text-[#2455A4] dark:text-[#60A5FA]">CARD</span>
                 </span>
-                <span className="hidden min-[480px]:block text-[8px] sm:text-[8.5px] font-bold text-[#6B7280] dark:text-slate-400 tracking-wider uppercase mt-0.5 leading-tight whitespace-nowrap">
+                <span className="hidden xl:block text-[8px] sm:text-[8.5px] font-bold text-[#6B7280] dark:text-slate-400 tracking-wider uppercase mt-0.5 leading-tight whitespace-nowrap">
                   {t('nav.tagline', 'COMPARE. CHOOSE. BENEFIT.')}
                 </span>
               </div>
-              {/* Navbar Earthen Diya next to brand logo */}
+              {/* Navbar Earthen Diya next to brand logo on desktop/tablet */}
               {FESTIVE_CONFIG.isFestiveEnabled && (
-                <div className="hidden sm:inline-flex items-center ml-1 shrink-0">
-                  <DiyaIllustration size={22} glow={true} animate={true} />
+                <div className="hidden sm:inline-flex items-center ml-1.5 shrink-0">
+                  <DiyaIllustration size={20} glow={false} animate={true} />
                 </div>
               )}
             </Link>
@@ -233,110 +214,80 @@ function Navbar({
 
           {/* ══════════════════════════════════════════════
               CENTER SECTION: DESKTOP NAVIGATION (>= 1024px)
-              Order:
-              1. Dhanteras/Diwali campaign link
-              2. Home
-              3. Debit Cards
-              4. Savings Accounts
-              5. Current Accounts
-              6. Compare
-              7. AI Assistance
-              8. Banks
-              9. Find My Bank
-              10. About
              ══════════════════════════════════════════════ */}
           <nav 
             aria-label="Primary Navigation"
-            className="hidden lg:flex items-center justify-center gap-1 xl:gap-1.5 2xl:gap-2 flex-1 min-w-0 px-1"
+            className="hidden lg:flex items-center justify-center gap-0.5 xl:gap-1 2xl:gap-1.5 flex-1 min-w-0 px-1"
           >
-            {/* 1. Dhanteras/Diwali Campaign Link (Campaign pill strictly separated, never overlapping) */}
-            {FESTIVE_CONFIG.isFestiveEnabled && FESTIVE_CONFIG.navbarFestiveBadgeEnabled && (
-              <a
-                href="#dhanteras-hero"
-                onClick={(e) => {
-                  if (location.pathname === '/') {
-                    e.preventDefault();
-                    const el = document.getElementById('dhanteras-hero');
-                    if (el) el.scrollIntoView({ behavior: 'smooth' });
-                  }
-                }}
-                className="inline-flex items-center gap-1.5 px-2.5 xl:px-3 py-1 rounded-full bg-gradient-to-r from-[#8B1D24] via-[#A8252E] to-[#78151B] text-amber-200 border border-amber-400/60 text-[11px] xl:text-[11.5px] font-black tracking-wide shadow-[0_0_12px_rgba(245,158,11,0.3)] hover:shadow-[0_0_18px_rgba(245,158,11,0.5)] hover:scale-105 transition-all cursor-pointer shrink-0 mr-1 select-none"
-                title={isHindi ? 'शुभ धनतेरस व दीपावली उत्सव' : 'Shubh Dhanteras & Diwali Special'}
-              >
-                <span className="text-amber-400 text-xs">🪔</span>
-                <span className="whitespace-nowrap">{isHindi ? 'दिवाली स्पेशल' : 'Diwali Special'}</span>
-              </a>
-            )}
-
-            {/* 2. Home */}
+            {/* 1. Home */}
             <NavLink
               to="/"
               end
               className={({ isActive }) =>
-                `px-2 xl:px-2.5 py-1 text-[11.5px] xl:text-[12px] 2xl:text-[12.5px] font-semibold whitespace-nowrap transition-colors rounded-lg shrink-0 ${
+                `px-2 xl:px-2.5 2xl:px-3 py-1.5 text-[12.5px] 2xl:text-[13px] font-semibold whitespace-nowrap transition-colors rounded-lg shrink-0 ${
                   isActive
-                    ? 'text-amber-900 dark:text-amber-300 font-bold border-b-2 border-amber-500 pb-0.5'
-                    : 'text-[#374151] dark:text-slate-300 hover:text-amber-800 dark:hover:text-amber-300'
+                    ? 'text-[#B8860B] dark:text-[#F5DFA8] font-bold border-b-2 border-[#D6A64B] pb-0.5'
+                    : 'text-[#111827] dark:text-slate-200 hover:text-[#B8860B] dark:hover:text-[#F5DFA8]'
                 }`
               }
             >
               {t('nav.home', "Home")}
             </NavLink>
 
-            {/* 3. Debit Cards */}
+            {/* 2. Debit Cards */}
             <NavLink
               to="/cards"
               onClick={(e) => handleProtectedClick(e, '/cards', true)}
               className={({ isActive }) =>
-                `px-2 xl:px-2.5 py-1 text-[11.5px] xl:text-[12px] 2xl:text-[12.5px] font-semibold whitespace-nowrap transition-colors rounded-lg shrink-0 ${
+                `px-2 xl:px-2.5 2xl:px-3 py-1.5 text-[12.5px] 2xl:text-[13px] font-semibold whitespace-nowrap transition-colors rounded-lg shrink-0 ${
                   isActive
-                    ? 'text-amber-900 dark:text-amber-300 font-bold border-b-2 border-amber-500 pb-0.5'
-                    : 'text-[#374151] dark:text-slate-300 hover:text-amber-800 dark:hover:text-amber-300'
+                    ? 'text-[#B8860B] dark:text-[#F5DFA8] font-bold border-b-2 border-[#D6A64B] pb-0.5'
+                    : 'text-[#111827] dark:text-slate-200 hover:text-[#B8860B] dark:hover:text-[#F5DFA8]'
                 }`
               }
             >
               {t('nav.debitCards', "Debit Cards")}
             </NavLink>
 
-            {/* 4. Savings Accounts */}
+            {/* 3. Savings Accounts */}
             <NavLink
               to="/savings-accounts"
               onClick={(e) => handleProtectedClick(e, '/savings-accounts', true)}
               className={({ isActive }) =>
-                `px-2 xl:px-2.5 py-1 text-[11.5px] xl:text-[12px] 2xl:text-[12.5px] font-semibold whitespace-nowrap transition-colors rounded-lg shrink-0 ${
+                `px-2 xl:px-2.5 2xl:px-3 py-1.5 text-[12.5px] 2xl:text-[13px] font-semibold whitespace-nowrap transition-colors rounded-lg shrink-0 ${
                   isActive
-                    ? 'text-amber-900 dark:text-amber-300 font-bold border-b-2 border-amber-500 pb-0.5'
-                    : 'text-[#374151] dark:text-slate-300 hover:text-amber-800 dark:hover:text-amber-300'
+                    ? 'text-[#B8860B] dark:text-[#F5DFA8] font-bold border-b-2 border-[#D6A64B] pb-0.5'
+                    : 'text-[#111827] dark:text-slate-200 hover:text-[#B8860B] dark:hover:text-[#F5DFA8]'
                 }`
               }
             >
               {t('nav.savingsAccounts', "Savings Accounts")}
             </NavLink>
 
-            {/* 5. Current Accounts (Direct on screens >= 1400px; accessible in More on 1024px-1399px) */}
+            {/* 4. Current Accounts (Direct on screens >= 1600px; inside More on < 1600px) */}
             <NavLink
               to="/current-accounts"
               onClick={(e) => handleProtectedClick(e, '/current-accounts', true)}
               className={({ isActive }) =>
-                `hidden min-[1400px]:flex px-2 xl:px-2.5 py-1 text-[11.5px] xl:text-[12px] 2xl:text-[12.5px] font-semibold whitespace-nowrap transition-colors rounded-lg shrink-0 ${
+                `hidden 2xl:flex px-2 xl:px-2.5 2xl:px-3 py-1.5 text-[12.5px] 2xl:text-[13px] font-semibold whitespace-nowrap transition-colors rounded-lg shrink-0 ${
                   isActive
-                    ? 'text-amber-900 dark:text-amber-300 font-bold border-b-2 border-amber-500 pb-0.5'
-                    : 'text-[#374151] dark:text-slate-300 hover:text-amber-800 dark:hover:text-amber-300'
+                    ? 'text-[#B8860B] dark:text-[#F5DFA8] font-bold border-b-2 border-[#D6A64B] pb-0.5'
+                    : 'text-[#111827] dark:text-slate-200 hover:text-[#B8860B] dark:hover:text-[#F5DFA8]'
                 }`
               }
             >
               {t('nav.currentAccounts', "Current Accounts")}
             </NavLink>
 
-            {/* 6. Compare */}
+            {/* 5. Compare */}
             <NavLink
               to="/compare"
               onClick={(e) => handleProtectedClick(e, '/compare', true)}
               className={({ isActive }) =>
-                `px-2 xl:px-2.5 py-1 text-[11.5px] xl:text-[12px] 2xl:text-[12.5px] font-semibold whitespace-nowrap transition-colors rounded-lg shrink-0 flex items-center gap-1 ${
+                `px-2 xl:px-2.5 2xl:px-3 py-1.5 text-[12.5px] 2xl:text-[13px] font-semibold whitespace-nowrap transition-colors rounded-lg shrink-0 flex items-center gap-1 ${
                   isActive
-                    ? 'text-amber-900 dark:text-amber-300 font-bold border-b-2 border-amber-500 pb-0.5'
-                    : 'text-[#374151] dark:text-slate-300 hover:text-amber-800 dark:hover:text-amber-300'
+                    ? 'text-[#B8860B] dark:text-[#F5DFA8] font-bold border-b-2 border-[#D6A64B] pb-0.5'
+                    : 'text-[#111827] dark:text-slate-200 hover:text-[#B8860B] dark:hover:text-[#F5DFA8]'
                 }`
               }
             >
@@ -348,73 +299,73 @@ function Navbar({
               )}
             </NavLink>
 
-            {/* 7. AI Assistance */}
+            {/* 6. AI Assistance */}
             <NavLink
               to="/ai-advisor"
               onClick={(e) => handleProtectedClick(e, '/ai-advisor', true)}
               className={({ isActive }) =>
-                `px-2 xl:px-2.5 py-1 text-[11.5px] xl:text-[12px] 2xl:text-[12.5px] font-semibold whitespace-nowrap transition-colors rounded-lg shrink-0 ${
+                `px-2 xl:px-2.5 2xl:px-3 py-1.5 text-[12.5px] 2xl:text-[13px] font-semibold whitespace-nowrap transition-colors rounded-lg shrink-0 ${
                   isActive
-                    ? 'text-amber-900 dark:text-amber-300 font-bold border-b-2 border-amber-500 pb-0.5'
-                    : 'text-[#374151] dark:text-slate-300 hover:text-amber-800 dark:hover:text-amber-300'
+                    ? 'text-[#B8860B] dark:text-[#F5DFA8] font-bold border-b-2 border-[#D6A64B] pb-0.5'
+                    : 'text-[#111827] dark:text-slate-200 hover:text-[#B8860B] dark:hover:text-[#F5DFA8]'
                 }`
               }
             >
               {t('nav.aiAssistance', "AI Assistance")}
             </NavLink>
 
-            {/* 8. Banks (Direct on screens >= 1400px; accessible in More on 1024px-1399px) */}
+            {/* 7. Banks (Direct on screens >= 1280px; inside More on 1024-1279px) */}
             <NavLink
               to="/banks"
               onClick={(e) => handleProtectedClick(e, '/banks', true)}
               className={({ isActive }) =>
-                `hidden min-[1400px]:flex px-2 xl:px-2.5 py-1 text-[11.5px] xl:text-[12px] 2xl:text-[12.5px] font-semibold whitespace-nowrap transition-colors rounded-lg shrink-0 ${
+                `hidden xl:flex px-2 xl:px-2.5 2xl:px-3 py-1.5 text-[12.5px] 2xl:text-[13px] font-semibold whitespace-nowrap transition-colors rounded-lg shrink-0 ${
                   isActive
-                    ? 'text-amber-900 dark:text-amber-300 font-bold border-b-2 border-amber-500 pb-0.5'
-                    : 'text-[#374151] dark:text-slate-300 hover:text-amber-800 dark:hover:text-amber-300'
+                    ? 'text-[#B8860B] dark:text-[#F5DFA8] font-bold border-b-2 border-[#D6A64B] pb-0.5'
+                    : 'text-[#111827] dark:text-slate-200 hover:text-[#B8860B] dark:hover:text-[#F5DFA8]'
                 }`
               }
             >
               {t('nav.banks', "Banks")}
             </NavLink>
 
-            {/* 9. Find My Bank (Direct on screens >= 1400px; accessible in More on 1024px-1399px) */}
+            {/* 8. Find My Bank (Direct on screens >= 1600px; inside More on < 1600px) */}
             <NavLink
               to="/find-my-bank"
               className={({ isActive }) =>
-                `hidden min-[1400px]:flex px-2 xl:px-2.5 py-1 text-[11.5px] xl:text-[12px] 2xl:text-[12.5px] font-semibold whitespace-nowrap transition-colors rounded-lg shrink-0 ${
+                `hidden 2xl:flex px-2 xl:px-2.5 2xl:px-3 py-1.5 text-[12.5px] 2xl:text-[13px] font-semibold whitespace-nowrap transition-colors rounded-lg shrink-0 ${
                   isActive
-                    ? 'text-amber-900 dark:text-amber-300 font-bold border-b-2 border-amber-500 pb-0.5'
-                    : 'text-[#374151] dark:text-slate-300 hover:text-amber-800 dark:hover:text-amber-300'
+                    ? 'text-[#B8860B] dark:text-[#F5DFA8] font-bold border-b-2 border-[#D6A64B] pb-0.5'
+                    : 'text-[#111827] dark:text-slate-200 hover:text-[#B8860B] dark:hover:text-[#F5DFA8]'
                 }`
               }
             >
               {t('nav.findMyBank', "Find My Bank")}
             </NavLink>
 
-            {/* 10. About (Direct on screens >= 1400px; accessible in More on 1024px-1399px) */}
+            {/* 9. About (Direct on screens >= 1280px; inside More on 1024-1279px) */}
             <NavLink
               to="/about"
               className={({ isActive }) =>
-                `hidden min-[1400px]:flex px-2 xl:px-2.5 py-1 text-[11.5px] xl:text-[12px] 2xl:text-[12.5px] font-semibold whitespace-nowrap transition-colors rounded-lg shrink-0 ${
+                `hidden xl:flex px-2 xl:px-2.5 2xl:px-3 py-1.5 text-[12.5px] 2xl:text-[13px] font-semibold whitespace-nowrap transition-colors rounded-lg shrink-0 ${
                   isActive
-                    ? 'text-amber-900 dark:text-amber-300 font-bold border-b-2 border-amber-500 pb-0.5'
-                    : 'text-[#374151] dark:text-slate-300 hover:text-amber-800 dark:hover:text-amber-300'
+                    ? 'text-[#B8860B] dark:text-[#F5DFA8] font-bold border-b-2 border-[#D6A64B] pb-0.5'
+                    : 'text-[#111827] dark:text-slate-200 hover:text-[#B8860B] dark:hover:text-[#F5DFA8]'
                 }`
               }
             >
               {t('nav.about', "About")}
             </NavLink>
 
-            {/* ── INTERMEDIATE RESPONSIVE "MORE ▾" DROPDOWN (1024px to 1399px) ── */}
-            <div className="relative min-[1400px]:hidden shrink-0" ref={moreDropdownRef}>
+            {/* ── INTERMEDIATE RESPONSIVE "MORE ▾" DROPDOWN (< 1600px) ── */}
+            <div className="relative 2xl:hidden shrink-0" ref={moreDropdownRef}>
               <button
                 type="button"
                 onClick={() => setIsMoreDropdownOpen(!isMoreDropdownOpen)}
-                className={`px-2 py-1 text-[11.5px] xl:text-[12px] font-semibold rounded-lg flex items-center gap-1 transition-colors cursor-pointer ${
+                className={`px-2 xl:px-2.5 py-1.5 text-[12px] xl:text-[12.5px] font-semibold rounded-lg flex items-center gap-1 transition-colors cursor-pointer ${
                   isMoreActive
-                    ? 'text-amber-900 dark:text-amber-300 font-bold border-b-2 border-amber-500 pb-0.5'
-                    : 'text-[#374151] dark:text-slate-300 hover:text-amber-800 dark:hover:text-amber-300'
+                    ? 'text-[#B8860B] dark:text-[#F5DFA8] font-bold border-b-2 border-[#D6A64B] pb-0.5'
+                    : 'text-[#111827] dark:text-slate-200 hover:text-[#B8860B] dark:hover:text-[#F5DFA8]'
                 }`}
                 aria-expanded={isMoreDropdownOpen}
                 aria-label="More navigation links"
@@ -424,7 +375,7 @@ function Navbar({
               </button>
 
               {isMoreDropdownOpen && (
-                <div className="absolute top-full right-0 mt-2 w-52 rounded-2xl bg-white dark:bg-[#1E293B] border border-amber-200/60 dark:border-slate-700 shadow-xl py-2 z-50 text-left animate-in fade-in zoom-in-95 duration-150">
+                <div className="absolute top-full right-0 mt-2 w-52 rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E8D6B3] dark:border-slate-700 shadow-xl py-2 z-50 text-left animate-in fade-in zoom-in-95 duration-150">
                   <NavLink
                     to="/current-accounts"
                     onClick={(e) => {
@@ -434,8 +385,8 @@ function Navbar({
                     className={({ isActive }) =>
                       `flex items-center gap-2 px-4 py-2.5 text-xs font-semibold transition-colors ${
                         isActive
-                          ? 'text-[#2563EB] bg-[#EFF6FF] dark:bg-slate-700/60 dark:text-[#60A5FA] font-bold'
-                          : 'text-[#1F2937] dark:text-slate-200 hover:bg-amber-50/70 dark:hover:bg-slate-700/40'
+                          ? 'text-[#2455A4] bg-[#F7EEDC]/80 dark:bg-slate-700/60 dark:text-[#60A5FA] font-bold'
+                          : 'text-[#111827] dark:text-slate-200 hover:bg-amber-50/70 dark:hover:bg-slate-700/40'
                       }`
                     }
                   >
@@ -444,31 +395,13 @@ function Navbar({
                   </NavLink>
 
                   <NavLink
-                    to="/banks"
-                    onClick={(e) => {
-                      setIsMoreDropdownOpen(false);
-                      handleProtectedClick(e, '/banks', true);
-                    }}
-                    className={({ isActive }) =>
-                      `flex items-center gap-2 px-4 py-2.5 text-xs font-semibold transition-colors ${
-                        isActive
-                          ? 'text-[#2563EB] bg-[#EFF6FF] dark:bg-slate-700/60 dark:text-[#60A5FA] font-bold'
-                          : 'text-[#1F2937] dark:text-slate-200 hover:bg-amber-50/70 dark:hover:bg-slate-700/40'
-                      }`
-                    }
-                  >
-                    <Building2 className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-                    <span>{t('nav.banks', 'Banks')}</span>
-                  </NavLink>
-
-                  <NavLink
                     to="/find-my-bank"
                     onClick={() => setIsMoreDropdownOpen(false)}
                     className={({ isActive }) =>
                       `flex items-center gap-2 px-4 py-2.5 text-xs font-semibold transition-colors ${
                         isActive
-                          ? 'text-[#2563EB] bg-[#EFF6FF] dark:bg-slate-700/60 dark:text-[#60A5FA] font-bold'
-                          : 'text-[#1F2937] dark:text-slate-200 hover:bg-amber-50/70 dark:hover:bg-slate-700/40'
+                          ? 'text-[#2455A4] bg-[#F7EEDC]/80 dark:bg-slate-700/60 dark:text-[#60A5FA] font-bold'
+                          : 'text-[#111827] dark:text-slate-200 hover:bg-amber-50/70 dark:hover:bg-slate-700/40'
                       }`
                     }
                   >
@@ -476,52 +409,106 @@ function Navbar({
                     <span>{t('nav.findMyBank', 'Find My Bank')}</span>
                   </NavLink>
 
-                  <NavLink
-                    to="/about"
-                    onClick={() => setIsMoreDropdownOpen(false)}
-                    className={({ isActive }) =>
-                      `flex items-center gap-2 px-4 py-2.5 text-xs font-semibold transition-colors ${
-                        isActive
-                          ? 'text-[#2563EB] bg-[#EFF6FF] dark:bg-slate-700/60 dark:text-[#60A5FA] font-bold'
-                          : 'text-[#1F2937] dark:text-slate-200 hover:bg-amber-50/70 dark:hover:bg-slate-700/40'
-                      }`
-                    }
-                  >
-                    <Info className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-                    <span>{t('nav.about', 'About')}</span>
-                  </NavLink>
+                  <div className="xl:hidden">
+                    <NavLink
+                      to="/banks"
+                      onClick={(e) => {
+                        setIsMoreDropdownOpen(false);
+                        handleProtectedClick(e, '/banks', true);
+                      }}
+                      className={({ isActive }) =>
+                        `flex items-center gap-2 px-4 py-2.5 text-xs font-semibold transition-colors ${
+                          isActive
+                            ? 'text-[#2455A4] bg-[#F7EEDC]/80 dark:bg-slate-700/60 dark:text-[#60A5FA] font-bold'
+                            : 'text-[#111827] dark:text-slate-200 hover:bg-amber-50/70 dark:hover:bg-slate-700/40'
+                        }`
+                      }
+                    >
+                      <Building2 className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+                      <span>{t('nav.banks', 'Banks')}</span>
+                    </NavLink>
+
+                    <NavLink
+                      to="/about"
+                      onClick={() => setIsMoreDropdownOpen(false)}
+                      className={({ isActive }) =>
+                        `flex items-center gap-2 px-4 py-2.5 text-xs font-semibold transition-colors ${
+                          isActive
+                            ? 'text-[#2455A4] bg-[#F7EEDC]/80 dark:bg-slate-700/60 dark:text-[#60A5FA] font-bold'
+                            : 'text-[#111827] dark:text-slate-200 hover:bg-amber-50/70 dark:hover:bg-slate-700/40'
+                        }`
+                      }
+                    >
+                      <Info className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+                      <span>{t('nav.about', 'About')}</span>
+                    </NavLink>
+                  </div>
+
+                  {/* Festive campaign link inside More for narrow desktop (< 1280px) */}
+                  {FESTIVE_CONFIG.isFestiveEnabled && FESTIVE_CONFIG.navbarFestiveBadgeEnabled && (
+                    <a
+                      href="#dhanteras-hero"
+                      onClick={(e) => {
+                        setIsMoreDropdownOpen(false);
+                        if (location.pathname === '/') {
+                          e.preventDefault();
+                          const el = document.getElementById('dhanteras-hero') || document.getElementById('home');
+                          if (el) el.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }}
+                      className="xl:hidden flex items-center gap-2 px-4 py-2.5 text-xs font-bold text-amber-700 dark:text-amber-300 hover:bg-amber-50/70 dark:hover:bg-slate-700/40 border-t border-amber-100 dark:border-slate-800"
+                    >
+                      <span>🪔</span>
+                      <span>{isHindi ? 'दिवाली स्पेशल' : 'Diwali Special'}</span>
+                    </a>
+                  )}
                 </div>
               )}
             </div>
+
+            {/* 10. 🪔 Dhanteras/Diwali Campaign Link (Visible on >= 1280px, strictly separated) */}
+            {FESTIVE_CONFIG.isFestiveEnabled && FESTIVE_CONFIG.navbarFestiveBadgeEnabled && (
+              <a
+                href="#dhanteras-hero"
+                onClick={(e) => {
+                  if (location.pathname === '/') {
+                    e.preventDefault();
+                    const el = document.getElementById('dhanteras-hero') || document.getElementById('home');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
+                className="hidden xl:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-[#9A3412] via-[#C2410C] to-[#D97706] hover:from-[#C2410C] hover:to-[#9A3412] text-white border border-amber-300/40 text-[11px] font-bold tracking-wide shadow-sm hover:shadow-md hover:scale-105 transition-all cursor-pointer shrink-0 ml-1 2xl:ml-2 select-none"
+                title={isHindi ? 'शुभ धनतेरस व दीपावली उत्सव' : 'Shubh Dhanteras & Diwali Special'}
+              >
+                <span className="text-xs">🪔</span>
+                <span className="whitespace-nowrap">{isHindi ? 'दिवाली स्पेशल' : 'Diwali Special'}</span>
+              </a>
+            )}
           </nav>
 
           {/* ══════════════════════════════════════════════
               RIGHT SECTION: UTILITY CONTROLS
               Order:
               1. Language selector
-              2. Comparison icon
-              3. Dark mode toggle
-              4. Notifications
+              2. Comparison icon (sm+)
+              3. Dark mode toggle (sm+)
+              4. Saved Favourites (Heart Icon) (ALL screens)
               5. Login/Profile button
              ══════════════════════════════════════════════ */}
-          <div className="flex items-center gap-1.5 sm:gap-2 xl:gap-2.5 shrink-0 justify-end">
+          <div className="flex items-center gap-1 sm:gap-1.5 md:gap-2 shrink-0 justify-end z-10 pl-1">
             
             {/* 1. Language Selector (English / हिंदी) */}
             <LanguageSelector variant="dropdown" />
 
-            {/* 2. Comparison Icon (Scales-of-Justice symbol with live compare badge) */}
+            {/* 2. Comparison Icon (Scales-of-Justice symbol with live compare badge) - hidden on mobile < 640px to prevent crowding */}
             <Link
               to="/compare"
               onClick={(e) => handleProtectedClick(e, '/compare', true)}
-              className="relative w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-xl text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] hover:bg-amber-50/80 dark:hover:bg-slate-800 transition-all cursor-pointer group shrink-0"
+              className="hidden sm:flex relative w-9 h-9 sm:w-10 sm:h-10 items-center justify-center rounded-xl text-[#4B5563] dark:text-slate-300 hover:text-[#2455A4] hover:bg-black/5 dark:hover:bg-white/5 transition-all cursor-pointer group shrink-0"
               title={t('nav.compare', 'Compare Products')}
               aria-label={`Compare Products (${compareCount})`}
             >
-              <img 
-                src="/assets/legal-scales.png" 
-                alt="Compare" 
-                className="w-4 h-4 sm:w-5 sm:h-5 object-contain transition-transform group-hover:scale-110 shrink-0" 
-              />
+              <Scale className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#4B5563] dark:text-slate-300 group-hover:text-[#2455A4] dark:group-hover:text-[#60A5FA] group-hover:scale-110 transition-transform shrink-0" strokeWidth={2} />
               {compareCount > 0 && (
                 <span className="absolute -top-1 -right-1 min-w-[16px] h-[16px] px-1 flex items-center justify-center text-[9px] font-extrabold rounded-full bg-emerald-500 text-white leading-none shadow-xs pointer-events-none">
                   {compareCount}
@@ -529,29 +516,33 @@ function Navbar({
               )}
             </Link>
 
-            {/* 3. Dark Mode Toggle */}
+            {/* 3. Dark Mode Toggle - hidden on mobile < 640px to prevent crowding */}
             <button
               type="button"
               onClick={toggleDarkMode}
-              className="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-xl text-[#4B5563] dark:text-slate-300 hover:text-amber-600 hover:bg-amber-50/80 dark:hover:bg-slate-800 transition-all cursor-pointer shrink-0 focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className="hidden sm:flex w-9 h-9 sm:w-10 sm:h-10 items-center justify-center rounded-xl text-[#4B5563] dark:text-slate-300 hover:text-amber-600 hover:bg-black/5 dark:hover:bg-white/5 transition-all cursor-pointer shrink-0 focus:outline-none focus:ring-2 focus:ring-amber-500"
               title={isDarkMode ? t('nav.lightMode', "Switch to Light Mode") : t('nav.darkMode', "Switch to Dark Mode")}
               aria-label="Toggle Dark Mode"
             >
-              {isDarkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-[#2563EB]" />}
+              {isDarkMode ? (
+                <Sun className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-amber-500 group-hover:scale-110 transition-transform shrink-0" />
+              ) : (
+                <Moon className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#2455A4] dark:text-[#60A5FA] group-hover:scale-110 transition-transform shrink-0" />
+              )}
             </button>
 
-            {/* 4. Notification Button (Bell) */}
+            {/* 4. Saved Favourites Button (Heart Icon replacing old Bell icon) - accessible across mobile and desktop */}
             <Link
               to="/saved-cards"
               onClick={(e) => handleProtectedClick(e, '/saved-cards', true)}
-              className="relative w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-xl text-[#4B5563] dark:text-slate-300 hover:text-[#2563EB] hover:bg-amber-50/80 dark:hover:bg-slate-800 transition-all group shrink-0 focus:outline-none focus:ring-2 focus:ring-amber-500"
-              title={t('nav.notifications', 'Notifications')}
-              aria-label={t('nav.notifications', 'Notifications')}
+              className="relative w-8 h-8 min-[380px]:w-9 min-[380px]:h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center text-[#4B5563] dark:text-slate-300 hover:text-rose-500 hover:bg-black/5 dark:hover:bg-white/5 transition-all group shrink-0 focus:outline-none focus:ring-2 focus:ring-rose-500/40"
+              title={t('nav.savedFavourites', 'Saved Favourites')}
+              aria-label={`Saved Favourites (${favoritesCount})`}
             >
-              <Bell className="w-4 h-4 text-[#4B5563] dark:text-slate-300 group-hover:text-[#2563EB] dark:group-hover:text-[#60A5FA] transition-all shrink-0" />
-              {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 min-w-[16px] h-[16px] px-1 flex items-center justify-center text-[9px] font-extrabold rounded-full bg-rose-500 text-white leading-none shadow-xs pointer-events-none">
-                  {unreadCount}
+              <Heart className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#4B5563] dark:text-slate-300 group-hover:text-rose-500 dark:group-hover:text-rose-400 group-hover:scale-110 transition-all shrink-0" strokeWidth={2} />
+              {favoritesCount > 0 && (
+                <span className="absolute -top-1 -right-1 min-w-[15px] sm:min-w-[16px] h-[15px] sm:h-[16px] px-1 flex items-center justify-center text-[8.5px] sm:text-[9px] font-extrabold rounded-full bg-rose-500 text-white leading-none shadow-xs pointer-events-none animate-in zoom-in-75 duration-150">
+                  {favoritesCount}
                 </span>
               )}
             </Link>
@@ -562,11 +553,11 @@ function Navbar({
                 <button
                   type="button"
                   onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                  className="flex items-center gap-1.5 sm:gap-2 p-1 pr-2 sm:pr-2.5 rounded-full border border-amber-300/60 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-[#2563EB] dark:hover:border-[#60A5FA] transition-all cursor-pointer shadow-xs shrink-0 max-w-[130px] sm:max-w-[160px] focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  className="flex items-center gap-1.5 sm:gap-2 p-1 pr-2 sm:pr-2.5 rounded-full border border-amber-300/60 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-[#2455A4] dark:hover:border-[#60A5FA] transition-all cursor-pointer shadow-xs shrink-0 max-w-[130px] sm:max-w-[160px] focus:outline-none focus:ring-2 focus:ring-amber-500"
                   aria-expanded={isProfileDropdownOpen}
                   aria-label="User Account Menu"
                 >
-                  <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white flex items-center justify-center font-bold text-xs shadow-xs shrink-0 overflow-hidden">
+                  <div className="w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-full bg-gradient-to-r from-[#2455A4] to-[#3B82F6] text-white flex items-center justify-center font-bold text-xs shadow-xs shrink-0 overflow-hidden">
                     {user.photoURL || profile?.profileImage || profile?.avatar_url ? (
                       <img 
                         src={user.photoURL || profile?.profileImage || profile?.avatar_url} 
@@ -577,17 +568,17 @@ function Navbar({
                       user.email ? user.email.charAt(0).toUpperCase() : 'U'
                     )}
                   </div>
-                  <span className="hidden sm:inline-block text-xs font-bold text-[#1F2937] dark:text-white max-w-[65px] md:max-w-[80px] xl:max-w-[95px] truncate whitespace-nowrap overflow-hidden text-ellipsis">
-                    {profile?.full_name || user.displayName || 'Rajdeep'}
+                  <span className="hidden sm:inline-block text-xs font-bold text-[#111827] dark:text-white max-w-[65px] md:max-w-[80px] xl:max-w-[95px] truncate whitespace-nowrap overflow-hidden text-ellipsis">
+                    {profile?.full_name || user.displayName || 'Member'}
                   </span>
                   <ChevronDown className="w-3.5 h-3.5 text-gray-400 shrink-0" />
                 </button>
 
                 {isProfileDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-52 rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-700 shadow-xl py-2 z-[60] text-left animate-in fade-in zoom-in-95 duration-150">
+                  <div className="absolute right-0 mt-2 w-52 rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E8D6B3] dark:border-slate-700 shadow-xl py-2 z-[60] text-left animate-in fade-in zoom-in-95 duration-150">
                     <div className="px-4 py-2 border-b border-gray-100 dark:border-slate-800">
-                      <p className="text-xs font-bold text-[#1F2937] dark:text-white truncate">
-                        {profile?.full_name || user.displayName || 'Rajdeep'}
+                      <p className="text-xs font-bold text-[#111827] dark:text-white truncate">
+                        {profile?.full_name || user.displayName || 'Member'}
                       </p>
                       <p className="text-[11px] text-gray-500 dark:text-slate-400 truncate">
                         {user.email}
@@ -596,19 +587,19 @@ function Navbar({
                     <Link
                       to="/profile"
                       onClick={() => setIsProfileDropdownOpen(false)}
-                      className="flex items-center gap-2 px-4 py-2 text-xs font-semibold text-[#1F2937] dark:text-white hover:bg-[#EFF6FF] dark:hover:bg-slate-700/60 transition-colors"
+                      className="flex items-center gap-2 px-4 py-2 text-xs font-semibold text-[#111827] dark:text-white hover:bg-amber-50/70 dark:hover:bg-slate-700/60 transition-colors"
                     >
-                      <User className="w-3.5 h-3.5 text-[#2563EB]" />
-                      <span>Profile Dashboard</span>
+                      <User className="w-3.5 h-3.5 text-[#2455A4]" />
+                      <span>{t('nav.myProfile', 'Profile Dashboard')}</span>
                     </Link>
                     <Link
                       to="/saved-cards"
                       onClick={() => setIsProfileDropdownOpen(false)}
-                      className="flex items-center justify-between px-4 py-2 text-xs font-semibold text-[#1F2937] dark:text-white hover:bg-[#EFF6FF] dark:hover:bg-slate-700/60 transition-colors"
+                      className="flex items-center justify-between px-4 py-2 text-xs font-semibold text-[#111827] dark:text-white hover:bg-amber-50/70 dark:hover:bg-slate-700/60 transition-colors"
                     >
                       <div className="flex items-center gap-2">
                         <Heart className="w-3.5 h-3.5 text-rose-500" />
-                        <span>Saved Favourites</span>
+                        <span>{t('nav.savedFavourites', 'Saved Favourites')}</span>
                       </div>
                       {favoritesCount > 0 && (
                         <span className="px-1.5 py-0.2 text-[10px] font-extrabold rounded-full bg-rose-500 text-white">
@@ -625,7 +616,7 @@ function Navbar({
                       className="w-full text-left flex items-center gap-2 px-4 py-2 text-xs font-semibold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors cursor-pointer"
                     >
                       <LogOut className="w-3.5 h-3.5 text-rose-500" />
-                      <span>Sign Out</span>
+                      <span>{t('nav.signOut', 'Sign Out')}</span>
                     </button>
                   </div>
                 )}
@@ -634,10 +625,11 @@ function Navbar({
               <button
                 type="button"
                 onClick={handleAuthButtonClick}
-                className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:opacity-95 text-white text-xs font-semibold shadow-md flex items-center gap-1.5 cursor-pointer transition-all active:scale-95 shrink-0 whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-amber-500"
+                className="h-8 min-[380px]:h-9 sm:h-10 px-2 min-[380px]:px-3.5 sm:px-4 rounded-lg sm:rounded-xl bg-gradient-to-r from-[#111827] via-[#1E293B] to-[#111827] hover:from-[#1E293B] hover:to-[#111827] text-white border border-[#D6A64B]/60 hover:border-[#D6A64B] text-xs font-semibold shadow-xs flex items-center justify-center gap-1.5 cursor-pointer transition-all active:scale-95 shrink-0 whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-amber-500"
+                title={t('nav.login', 'Login')}
               >
-                <LogIn className="w-3.5 h-3.5 shrink-0" />
-                <span>Login</span>
+                <LogIn className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400 shrink-0" />
+                <span className="hidden min-[380px]:inline">{t('nav.login', 'Login')}</span>
               </button>
             )}
 
@@ -652,7 +644,7 @@ function Navbar({
              backdrop, scroll lock, clear close button,
              accessible keyboard handling, and all links.
          ================================================== */}
-      {isMobileDrawerOpen && (
+      {isMobileDrawerOpen && typeof document !== 'undefined' && createPortal(
         <div className="fixed inset-0 z-[100] lg:hidden" role="dialog" aria-modal="true" aria-label="Navigation Menu">
           {/* Backdrop overlay */}
           <div
@@ -662,20 +654,20 @@ function Navbar({
           />
 
           {/* Drawer container (Slide-over from left) */}
-          <div className="fixed inset-y-0 left-0 w-[85vw] max-w-sm sm:max-w-md bg-[#FFFDF9] dark:bg-[#0F172A] border-r border-amber-200/50 dark:border-slate-800 shadow-2xl flex flex-col justify-between overflow-hidden z-[101] text-left">
+          <div className="fixed inset-y-0 left-0 w-[85vw] max-w-sm sm:max-w-md h-full bg-[#FFF9EE] dark:bg-[#0B132B] border-r border-[#E8D6B3] dark:border-amber-900/50 shadow-2xl flex flex-col justify-between overflow-hidden z-[101] text-left">
             
             {/* 1. Drawer Header */}
-            <div className="flex items-center justify-between px-4 sm:px-5 py-4 border-b border-amber-200/40 dark:border-slate-800 shrink-0 bg-amber-50/20 dark:bg-slate-900/40">
+            <div className="flex items-center justify-between px-4 sm:px-5 py-3.5 border-b border-[#E8D6B3] dark:border-amber-900/40 shrink-0 bg-[#F7EEDC]/60 dark:bg-slate-900/40">
               <Link 
                 to="/" 
                 onClick={() => setIsMobileDrawerOpen(false)}
                 className="flex items-center gap-2"
                 aria-label="D.CARD Home"
               >
-                <img src="/logo-mark.png" alt="D.CARD Logo" className="h-8 w-auto object-contain" />
+                <img src="/logo-mark.png" alt="D.CARD Logo" className="h-7 w-auto object-contain" />
                 <div className="flex flex-col">
-                  <span className="text-base font-extrabold text-[#0F172A] dark:text-white">
-                    D.<span className="text-[#2563EB]">CARD</span>
+                  <span className="text-base font-black text-[#111827] dark:text-white">
+                    D.<span className="text-[#2455A4] dark:text-[#60A5FA]">CARD</span>
                   </span>
                   <span className="text-[8px] font-bold text-[#6B7280] dark:text-slate-400 uppercase tracking-wider">
                     {t('nav.tagline', 'COMPARE. CHOOSE. BENEFIT.')}
@@ -685,7 +677,7 @@ function Navbar({
               <button
                 type="button"
                 onClick={() => setIsMobileDrawerOpen(false)}
-                className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber-500"
+                className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber-500"
                 aria-label="Close navigation menu"
               >
                 <X className="w-5 h-5" />
@@ -695,6 +687,44 @@ function Navbar({
             {/* 2. Scrollable Navigation Body */}
             <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4 overscroll-contain">
               
+              {/* User Status / Quick Login in Mobile Drawer */}
+              {user ? (
+                <div className="p-3 rounded-2xl bg-white dark:bg-slate-800 border border-[#E8D6B3] dark:border-slate-700 shadow-2xs flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-r from-[#2455A4] to-[#3B82F6] text-white flex items-center justify-center font-bold text-xs shrink-0">
+                      {user.email ? user.email.charAt(0).toUpperCase() : 'U'}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs font-bold text-[#111827] dark:text-white truncate">
+                        {profile?.full_name || user.displayName || 'Member'}
+                      </p>
+                      <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
+                        {user.email}
+                      </p>
+                    </div>
+                  </div>
+                  <Link
+                    to="/profile"
+                    onClick={() => setIsMobileDrawerOpen(false)}
+                    className="px-2.5 py-1 text-[11px] font-bold text-[#2455A4] dark:text-[#60A5FA] bg-amber-50 dark:bg-slate-700 rounded-lg shrink-0"
+                  >
+                    View
+                  </Link>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsMobileDrawerOpen(false);
+                    handleAuthButtonClick();
+                  }}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#111827] via-[#1E293B] to-[#111827] text-white border border-[#D6A64B]/60 font-bold text-xs shadow-sm cursor-pointer min-h-[44px] transition-all"
+                >
+                  <LogIn className="w-4 h-4 text-amber-400" />
+                  <span>{t('nav.signInRegister', 'Sign In / Register')}</span>
+                </button>
+              )}
+
               {/* Mobile Festive Greeting Banner */}
               {FESTIVE_CONFIG.isFestiveEnabled && FESTIVE_CONFIG.navbarFestiveBadgeEnabled && (
                 <a
@@ -707,14 +737,14 @@ function Navbar({
                       if (el) el.scrollIntoView({ behavior: 'smooth' });
                     }
                   }}
-                  className="block p-3 rounded-2xl bg-gradient-to-r from-[#8B1D24] via-[#A8252E] to-[#78151B] text-amber-200 border border-amber-400/50 shadow-md text-xs font-bold select-none cursor-pointer"
+                  className="block p-3 rounded-2xl bg-gradient-to-r from-[#9A3412] via-[#C2410C] to-[#D97706] text-white border border-amber-300/40 shadow-sm text-xs font-bold select-none cursor-pointer"
                 >
                   <div className="flex items-center justify-between">
                     <span className="flex items-center gap-2">
                       <span className="text-base">🪔</span>
-                      <span>{isHindi ? FESTIVE_CONFIG.navbarAccent.badgeTextHi : FESTIVE_CONFIG.navbarAccent.badgeText}</span>
+                      <span>{isHindi ? 'शुभ धनतेरस व दीपावली उत्सव' : 'Shubh Dhanteras & Diwali Special'}</span>
                     </span>
-                    <span className="text-[10px] uppercase font-black px-2 py-0.5 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-200">
+                    <span className="text-[10px] uppercase font-black px-2 py-0.5 rounded-full bg-white/20 text-white">
                       ➔
                     </span>
                   </div>
@@ -746,7 +776,7 @@ function Navbar({
                           `flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all min-h-[44px] ${
                             isActive
                               ? 'bg-amber-100/90 dark:bg-slate-800 text-amber-950 dark:text-amber-300 font-bold border border-amber-300/80 dark:border-amber-500/40 shadow-xs'
-                              : 'text-[#1F2937] dark:text-slate-200 hover:bg-amber-50/70 dark:hover:bg-slate-800/60'
+                              : 'text-[#111827] dark:text-slate-200 hover:bg-amber-50/70 dark:hover:bg-slate-800/60'
                           }`
                         }
                       >
@@ -765,24 +795,85 @@ function Navbar({
                 </div>
               </div>
 
-              {/* Legal & Terms Link */}
-              <button
-                type="button"
-                onClick={() => {
-                  setIsMobileDrawerOpen(false);
-                  if (onOpenLegal) onOpenLegal('terms');
-                }}
-                className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold text-[#1F2937] dark:text-slate-200 hover:bg-amber-50/70 dark:hover:bg-slate-800/60 cursor-pointer text-left min-h-[44px]"
-              >
-                <div className="flex items-center gap-2.5">
-                  <img 
-                    src="/assets/legal-scales.png" 
-                    alt="Legal" 
-                    className="w-[18px] h-[18px] object-contain shrink-0" 
-                  />
-                  <span>{t('nav.legalAndTerms', 'Legal & Terms')}</span>
+              {/* Saved Favourites Link in Mobile Drawer */}
+              <div className="pt-3 border-t border-amber-200/40 dark:border-slate-800 space-y-1">
+                <div className="text-[10.5px] font-extrabold uppercase tracking-wider text-amber-800/70 dark:text-amber-400/70 px-2 mb-1">
+                  {t('nav.accountAndUtilities', 'Account & Utilities')}
                 </div>
-              </button>
+
+                <Link
+                  to="/saved-cards"
+                  onClick={(e) => {
+                    if (!user) {
+                      handleProtectedClick(e, '/saved-cards', true);
+                    } else {
+                      setIsMobileDrawerOpen(false);
+                    }
+                  }}
+                  className="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold text-[#111827] dark:text-slate-200 hover:bg-black/5 dark:hover:bg-white/5 min-h-[44px]"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Heart className="w-4 h-4 text-rose-500" strokeWidth={2} />
+                    <span>{t('nav.savedFavourites', 'Saved Favourites')}</span>
+                  </div>
+                  {favoritesCount > 0 && (
+                    <span className="px-2 py-0.5 text-[10px] font-extrabold rounded-full bg-rose-500 text-white">
+                      {favoritesCount}
+                    </span>
+                  )}
+                </Link>
+
+                <NavLink
+                  to="/compare"
+                  onClick={(e) => {
+                    if (!user) {
+                      handleProtectedClick(e, '/compare', true);
+                    } else {
+                      setIsMobileDrawerOpen(false);
+                    }
+                  }}
+                  className="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold text-[#111827] dark:text-slate-200 hover:bg-black/5 dark:hover:bg-white/5 min-h-[44px]"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Scale className="w-4 h-4 text-[#2455A4] dark:text-[#60A5FA]" strokeWidth={2} />
+                    <span>{t('nav.compare', 'Compare Matrix')}</span>
+                  </div>
+                  {compareCount > 0 && (
+                    <span className="px-2 py-0.5 text-[10px] font-extrabold rounded-full bg-emerald-500 text-white">
+                      {compareCount}
+                    </span>
+                  )}
+                </NavLink>
+
+                {/* Legal & Terms Link */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsMobileDrawerOpen(false);
+                    if (onOpenLegal) onOpenLegal('terms');
+                  }}
+                  className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold text-[#111827] dark:text-slate-200 hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer text-left min-h-[44px]"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Info className="w-4 h-4 text-slate-500" />
+                    <span>{t('nav.legalAndTerms', 'Legal & Terms')}</span>
+                  </div>
+                </button>
+
+                {user && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsMobileDrawerOpen(false);
+                      logout();
+                    }}
+                    className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 cursor-pointer text-left min-h-[44px]"
+                  >
+                    <LogOut className="w-4 h-4 text-rose-500" />
+                    <span>{t('nav.signOut', 'Sign Out')}</span>
+                  </button>
+                )}
+              </div>
 
               {/* Language Switcher in Mobile Drawer */}
               <div className="pt-3 border-t border-amber-200/40 dark:border-slate-800 space-y-2">
@@ -794,99 +885,24 @@ function Navbar({
                 </div>
               </div>
 
-              {/* Account & Profile Quick Actions */}
-              <div className="pt-3 border-t border-amber-200/40 dark:border-slate-800 space-y-1">
-                <div className="text-[10.5px] font-extrabold uppercase tracking-wider text-amber-800/70 dark:text-amber-400/70 px-2 mb-1">
-                  {t('nav.accountAndUtilities', 'Account & Utilities')}
-                </div>
-
-                <NavLink
-                  to="/profile"
-                  onClick={(e) => {
-                    if (!user) {
-                      handleProtectedClick(e, '/profile', true);
-                    } else {
-                      setIsMobileDrawerOpen(false);
-                    }
-                  }}
-                  className={({ isActive }) =>
-                    `flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold min-h-[44px] ${
-                      isActive 
-                        ? 'bg-[#2563EB] text-white font-bold' 
-                        : 'text-[#1F2937] dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800'
-                    }`
-                  }
-                >
-                  <User className="w-4 h-4 text-[#2563EB]" />
-                  <span>{t('nav.myProfile', 'My Profile')}</span>
-                </NavLink>
-
-                <Link
-                  to="/saved-cards"
-                  onClick={(e) => {
-                    if (!user) {
-                      handleProtectedClick(e, '/saved-cards', true);
-                    } else {
-                      setIsMobileDrawerOpen(false);
-                    }
-                  }}
-                  className="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold text-[#1F2937] dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800 min-h-[44px]"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <Heart className="w-4 h-4 text-rose-500" />
-                    <span>{t('nav.savedFavourites', 'Saved Favourites')}</span>
-                  </div>
-                  {favoritesCount > 0 && (
-                    <span className="px-2 py-0.5 text-[10px] font-extrabold rounded-full bg-rose-500 text-white">
-                      {favoritesCount}
-                    </span>
-                  )}
-                </Link>
-
-                {user ? (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsMobileDrawerOpen(false);
-                      logout();
-                    }}
-                    className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 cursor-pointer text-left min-h-[44px]"
-                  >
-                    <LogOut className="w-4 h-4 text-rose-500" />
-                    <span>{t('nav.signOut', 'Sign Out')} ({user.email})</span>
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsMobileDrawerOpen(false);
-                      handleAuthButtonClick();
-                    }}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-semibold text-xs shadow-md mt-2 cursor-pointer min-h-[44px] transition-all"
-                  >
-                    <LogIn className="w-4 h-4" />
-                    <span>{t('nav.signInRegister', 'Sign In / Register')}</span>
-                  </button>
-                )}
-              </div>
-
             </div>
 
             {/* 3. Drawer Bottom Bar */}
-            <div className="px-5 py-3 border-t border-amber-200/40 dark:border-slate-800 shrink-0 bg-amber-50/40 dark:bg-slate-900/40 flex items-center justify-between text-[11px] text-[#6B7280] dark:text-slate-400">
-              <span>D.CARD Fintech Platform</span>
+            <div className="px-5 py-3 border-t border-[#E8D6B3] dark:border-slate-800 shrink-0 bg-[#F7EEDC]/60 dark:bg-slate-900/40 flex items-center justify-between text-[11px] text-[#6B7280] dark:text-slate-400">
+              <span className="font-semibold">D.CARD Banking Platform</span>
               <button
                 type="button"
                 onClick={toggleDarkMode}
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold cursor-pointer"
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-[#E8D6B3] dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold cursor-pointer text-xs"
               >
-                {isDarkMode ? <Sun className="w-3.5 h-3.5 text-amber-400" /> : <Moon className="w-3.5 h-3.5 text-[#2563EB]" />}
+                {isDarkMode ? <Sun className="w-3.5 h-3.5 text-amber-400" /> : <Moon className="w-3.5 h-3.5 text-[#2455A4]" />}
                 <span>{isDarkMode ? "Light" : "Dark"}</span>
               </button>
             </div>
 
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </header>
   );

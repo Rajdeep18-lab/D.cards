@@ -405,14 +405,14 @@ function AIAdvisorPage({ onOpenContact, onSelectDebitCard, toggleCompareQueue, s
   const totalInsights = (insights.accounts?.length || 0) + (insights.cards?.length || 0) + (insights.locations?.length || 0);
 
   return (
-    <main className="min-h-screen bg-[#F8FAFC] pb-10" style={{ fontFamily: 'Inter, Poppins, sans-serif' }}>
+    <main className="min-h-screen bg-[#FFF9EE] dark:bg-[#0B132B] pb-10" style={{ fontFamily: 'Inter, Poppins, sans-serif' }}>
 
       {/* ═══ CLEAN COMPACT HEADER ═══════════════════════════════════════════════ */}
-      <header className="bg-white border-b border-gray-200/80 sticky top-[68px] sm:top-[76px] z-30 shadow-xs">
+      <header className="bg-[#FFF9EE]/95 dark:bg-[#0B132B]/95 border-b border-[#E8D6B3] dark:border-amber-900/40 sticky top-[68px] sm:top-[76px] z-30 shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-[#2563EB] flex items-center justify-center text-white shadow-xs shrink-0">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-r from-[#111827] via-[#291747] to-[#111827] border border-[#D6A64B]/60 flex items-center justify-center text-amber-300 shadow-xs shrink-0">
                 <Bot className="w-5 h-5" />
               </div>
               <div>
