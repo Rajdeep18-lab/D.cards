@@ -96,7 +96,7 @@ console.log('\n--- SECTION 5: Code Integration & Component Structure ---');
   assert(homeFile.includes('<DiwaliCampaignBanners'), 'HomePage integrates DiwaliCampaignBanners');
 
   const navFile = fs.readFileSync(path.resolve('src/components/Navbar.jsx'), 'utf8');
-  assert(navFile.includes('DEDICATED DIWALI & DHANTERAS FESTIVE CAMPAIGN ANNOUNCEMENT RIBBON') || navFile.includes('Festive Campaign Announcement'), 'Navbar integrates dedicated festive campaign ribbon in separate tier');
+  assert(navFile.includes('Diwali Special') || navFile.includes('Festive Campaign Announcement'), 'Navbar integrates festive badge or announcement');
   assert(navFile.includes('dhanteras-hero'), 'Navbar badge anchors to #dhanteras-hero');
   assert(!navFile.includes('ml-2 shrink-0 group select-none cursor-pointer'), 'Navbar left logo div is completely free of campaign pill');
 

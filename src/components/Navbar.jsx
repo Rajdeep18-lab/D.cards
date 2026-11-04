@@ -83,19 +83,25 @@ function Navbar({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Ordered Navigation Links for Desktop & Mobile
-  // Desktop Order: Home -> Debit Cards -> Savings Accounts -> Current Accounts -> Compare -> AI Assistance -> Banks -> Find My Bank -> About -> Contact
+  // Ordered Navigation Links for Desktop
+  // Primary Desktop Order: Home -> Debit Accounts -> Savings Accounts -> Compare -> AI Assistance -> Banks -> Find My Bank -> About
   const navLinks = [
-    { name: t('nav.home', "Home"), rawName: "Compare", key: "home", path: "/", end: true, isProtected: false },
-    { name: t('nav.debitCards', "Debit Cards"), rawName: "Debit Cards", key: "cards", path: "/cards", isProtected: true },
-    { name: t('nav.savingsAccounts', "Savings Accounts"), rawName: "Savings Accounts", key: "savings", path: "/savings-accounts", isProtected: true },
-    { name: t('nav.currentAccounts', "Current Accounts"), rawName: "Current Accounts", key: "current", path: "/current-accounts", isProtected: true, hiddenBelow1536: true },
-    { name: t('nav.compare', "Compare"), rawName: "Compare", key: "compare", path: "/compare", isProtected: true },
-    { name: t('nav.aiAssistance', "AI Assistance"), rawName: "AI Assistance", key: "ai", path: "/ai-advisor", isProtected: true },
-    { name: t('nav.banks', "Banks"), rawName: "Banks", key: "banks", path: "/banks", isProtected: true },
-    { name: t('nav.findMyBank', "Find My Bank"), rawName: "Find My Bank", key: "find-bank", path: "/find-my-bank", isProtected: false },
-    { name: t('nav.about', "About"), rawName: "About", key: "about", path: "/about", isProtected: false },
-    { name: t('nav.contact', "Contact"), rawName: "Contact", key: "contact", path: "/contact", isProtected: false, hiddenBelow1536: true },
+    { name: t('nav.home', "Home"), key: "home", path: "/", end: true, isProtected: false },
+    { name: t('nav.debitCards', "Debit Accounts"), key: "cards", path: "/cards", isProtected: true },
+    { name: t('nav.savingsAccounts', "Savings Accounts"), key: "savings", path: "/savings-accounts", isProtected: true },
+    { name: t('nav.compare', "Compare"), key: "compare", path: "/compare", isProtected: true },
+    { name: t('nav.aiAssistance', "AI Assistance"), key: "ai", path: "/ai-advisor", isProtected: true },
+    { name: t('nav.banks', "Banks"), key: "banks", path: "/banks", isProtected: true },
+    { name: t('nav.findMyBank', "Find My Bank"), key: "find-bank", path: "/find-my-bank", isProtected: false },
+    { name: t('nav.about', "About"), key: "about", path: "/about", isProtected: false },
+  ];
+
+  // Full links including Current Accounts and Contact for Mobile Drawer
+  const allNavLinks = [
+    ...navLinks.slice(0, 3),
+    { name: t('nav.currentAccounts', "Current Accounts"), key: "current", path: "/current-accounts", isProtected: true },
+    ...navLinks.slice(3),
+    { name: t('nav.contact', "Contact"), key: "contact", path: "/contact", isProtected: false },
   ];
 
   const handleProtectedClick = (e, path, isProtected) => {
@@ -126,44 +132,6 @@ function Navbar({
           1. TOP: RUNNING DISCLAIMER / STATUTORY BAR
          ================================================== */}
       <TopDisclaimerTicker />
-
-      {/* ==================================================
-          2. DEDICATED DIWALI & DHANTERAS FESTIVE CAMPAIGN ANNOUNCEMENT RIBBON
-          (Completely decoupled from main nav row to guarantee ZERO overlap 
-           with navigation links across any screen resolution)
-         ================================================== */}
-      {FESTIVE_CONFIG.isFestiveEnabled && FESTIVE_CONFIG.navbarFestiveBadgeEnabled && (
-        <aside 
-          aria-label="Festive Campaign Announcement"
-          className="w-full bg-gradient-to-r from-[#2B080C] via-[#1E0509] to-[#0F172A] border-b border-amber-500/30 text-white py-1.5 px-3 sm:px-6 select-none shadow-xs"
-        >
-          <div className="max-w-[1720px] mx-auto flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2 text-amber-200 min-w-0">
-              <span className="text-amber-400 text-sm shrink-0">🪔</span>
-              <span className="font-extrabold text-[11px] sm:text-xs text-amber-300 tracking-wide truncate">
-                {isHindi ? FESTIVE_CONFIG.navbarAccent.badgeTextHi : FESTIVE_CONFIG.navbarAccent.badgeText}
-              </span>
-              <span className="hidden md:inline text-amber-100/70 text-[11px] truncate">
-                — {isHindi ? 'पारदर्शी व निष्पक्ष बैंकिंग उत्पाद खोज व तुलना' : 'Celebrate Prosperity with Transparent Banking Choices'}
-              </span>
-            </div>
-            <a
-              href="#dhanteras-hero"
-              onClick={(e) => {
-                if (location.pathname === '/') {
-                  e.preventDefault();
-                  const el = document.getElementById('dhanteras-hero');
-                  if (el) el.scrollIntoView({ behavior: 'smooth' });
-                }
-              }}
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 text-[#1F1600] font-black text-[10px] sm:text-[11px] hover:shadow-[0_0_12px_rgba(245,158,11,0.5)] hover:scale-[1.02] transition-all cursor-pointer shrink-0"
-            >
-              <span>{isHindi ? 'अभियान देखें' : 'Explore Festive Special'}</span>
-              <span className="text-xs">➔</span>
-            </a>
-          </div>
-        </aside>
-      )}
 
       {/* ==================================================
           2. MAIN HEADER / NAVIGATION BAR
@@ -222,33 +190,30 @@ function Navbar({
           {/* ── MIDDLE: DESKTOP NAVIGATION LINKS (>= 1280px) ── */}
           <nav 
             aria-label="Primary Navigation"
-            className="hidden min-[1280px]:flex items-center justify-center gap-0.5 xl:gap-1 2xl:gap-1.5 flex-1 min-w-0 px-1 xl:px-2"
+            className="hidden min-[1280px]:flex items-center justify-center gap-1.5 xl:gap-2.5 2xl:gap-3 flex-1 min-w-0 px-1 xl:px-2"
           >
-            {navLinks.map((link) => {
-              const visibilityClass = link.hiddenBelow1536 ? "hidden min-[1536px]:flex" : "flex";
-              return (
-                <NavLink
-                  key={link.path}
-                  to={link.path}
-                  end={link.end}
-                  onClick={(e) => handleProtectedClick(e, link.path, link.isProtected)}
-                  className={({ isActive }) =>
-                    `${visibilityClass} px-1.5 xl:px-2 2xl:px-2.5 py-1.5 rounded-xl text-[11.5px] xl:text-[12px] 2xl:text-[12.5px] font-semibold transition-all whitespace-nowrap items-center gap-1 shrink-0 ${
-                      isActive
-                        ? 'text-amber-900 dark:text-[#60A5FA] font-bold bg-amber-100/70 dark:bg-slate-800/80 shadow-xs border border-amber-300/60 dark:border-[#60A5FA]/20'
-                        : 'text-[#374151] dark:text-slate-300 hover:text-amber-800 dark:hover:text-[#60A5FA] hover:bg-amber-50/60 dark:hover:bg-slate-800/40'
-                    }`
-                  }
-                >
-                  <span>{link.name}</span>
-                  {link.key === "compare" && compareCount > 0 && (
-                    <span className="inline-flex items-center justify-center px-1.5 py-0.2 text-[10px] font-extrabold rounded-full bg-emerald-500 text-white leading-none shadow-xs ml-0.5 shrink-0">
-                      {compareCount}
-                    </span>
-                  )}
-                </NavLink>
-              );
-            })}
+            {navLinks.map((link) => (
+              <NavLink
+                key={link.path}
+                to={link.path}
+                end={link.end}
+                onClick={(e) => handleProtectedClick(e, link.path, link.isProtected)}
+                className={({ isActive }) =>
+                  `px-2 py-1 text-[12px] xl:text-[12.5px] 2xl:text-[13px] font-semibold transition-all whitespace-nowrap items-center gap-1 shrink-0 ${
+                    isActive
+                      ? 'text-amber-900 dark:text-amber-300 font-bold border-b-2 border-amber-500 pb-0.5'
+                      : 'text-[#374151] dark:text-slate-300 hover:text-amber-800 dark:hover:text-amber-300'
+                  }`
+                }
+              >
+                <span>{link.name}</span>
+                {link.key === "compare" && compareCount > 0 && (
+                  <span className="inline-flex items-center justify-center px-1.5 py-0.2 text-[10px] font-extrabold rounded-full bg-emerald-500 text-white leading-none shadow-xs ml-0.5 shrink-0">
+                    {compareCount}
+                  </span>
+                )}
+              </NavLink>
+            ))}
 
             {/* Glowing Diwali Special Pill Button (Directly matching design mockup) */}
             {FESTIVE_CONFIG.isFestiveEnabled && FESTIVE_CONFIG.navbarFestiveBadgeEnabled && (
@@ -261,7 +226,7 @@ function Navbar({
                     if (el) el.scrollIntoView({ behavior: 'smooth' });
                   }
                 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-[#8B1D24] via-[#A8252E] to-[#78151B] text-amber-200 border border-amber-400/60 text-[11px] font-black tracking-wide shadow-[0_0_15px_rgba(245,158,11,0.35)] hover:shadow-[0_0_20px_rgba(245,158,11,0.55)] hover:scale-105 transition-all cursor-pointer shrink-0 group select-none ml-1"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-[#8B1D24] via-[#A8252E] to-[#78151B] text-amber-200 border border-amber-400/60 text-[11px] font-black tracking-wide shadow-[0_0_15px_rgba(245,158,11,0.35)] hover:shadow-[0_0_20px_rgba(245,158,11,0.55)] hover:scale-105 transition-all cursor-pointer shrink-0 group select-none ml-1.5"
                 title={isHindi ? 'शुभ धनतेरस व दीपावली उत्सव' : 'Shubh Dhanteras & Diwali Special'}
               >
                 <span className="text-amber-400 group-hover:scale-110 transition-transform">🪔</span>
@@ -429,7 +394,7 @@ function Navbar({
             Navigation Menu
           </div>
 
-          {navLinks.map((link) => (
+          {allNavLinks.map((link) => (
             <NavLink
               key={link.name}
               to={link.path}
