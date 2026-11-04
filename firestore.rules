@@ -137,6 +137,28 @@ service cloud.firestore {
       allow read, update, delete: if isAdmin();
     }
 
+    // Reviews Collection (Public Create with Schema Validation, Admin Read/Manage Only)
+    match /reviews/{reviewId} {
+      allow create: if request.resource.data.keys().hasOnly([
+        'userId', 'userName', 'userEmail', 'rating', 'message', 'category',
+        'role', 'cardName', 'createdAt', 'date', 'isUserSubmitted'
+      ]) &&
+      request.resource.data.userName is string && request.resource.data.userName.size() >= 2 && request.resource.data.userName.size() <= 100 &&
+      request.resource.data.message is string && request.resource.data.message.size() >= 5 && request.resource.data.message.size() <= 2000 &&
+      request.resource.data.rating is number && request.resource.data.rating >= 1 && request.resource.data.rating <= 5 &&
+      request.resource.data.createdAt == request.time &&
+      (!('userId' in request.resource.data) || request.resource.data.userId == null || (isAuthenticated() && request.resource.data.userId == request.auth.uid)) &&
+      (!('userEmail' in request.resource.data) || request.resource.data.userEmail == null ||
+        (!isAuthenticated() && request.resource.data.userEmail is string && request.resource.data.userEmail.size() <= 150) ||
+        (isAuthenticated() && request.resource.data.userEmail == request.auth.token.email)) &&
+      (!('category' in request.resource.data) || request.resource.data.category == null || (request.resource.data.category is string && request.resource.data.category.size() <= 100)) &&
+      (!('role' in request.resource.data) || request.resource.data.role == null || (request.resource.data.role is string && request.resource.data.role.size() <= 100)) &&
+      (!('cardName' in request.resource.data) || request.resource.data.cardName == null || (request.resource.data.cardName is string && request.resource.data.cardName.size() <= 100)) &&
+      (!('date' in request.resource.data) || request.resource.data.date == null || (request.resource.data.date is string && request.resource.data.date.size() <= 50)) &&
+      (!('isUserSubmitted' in request.resource.data) || request.resource.data.isUserSubmitted is bool);
+      allow read, update, delete: if isAdmin();
+    }
+
     // Saved Cards (Owner only; immutable ownership)
     match /saved_cards/{savedId} {
       allow read, delete: if isAuthenticated() && (resource.data.userId == request.auth.uid || resource.data.uid == request.auth.uid || isAdmin());

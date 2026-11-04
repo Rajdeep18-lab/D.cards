@@ -3,6 +3,7 @@ import { reviews as initialMockReviews } from '../data/mockData';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Star, MessageSquarePlus, Mail, ArrowRight, X, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import { reviewService, getStoredReviews, saveStoredReview } from '../services/reviewService';
 
 function ReviewSection({ onOpenContact }) {
   const { user } = useAuth();
@@ -16,12 +17,12 @@ function ReviewSection({ onOpenContact }) {
   const [rating, setRating] = useState(5);
   const [reviewText, setReviewText] = useState('');
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Load reviews from localStorage + mockData
   useEffect(() => {
     try {
-      const saved = localStorage.getItem('dcard_user_reviews');
-      const customReviews = saved ? JSON.parse(saved) : [];
+      const customReviews = getStoredReviews();
       setReviewsList([...customReviews, ...initialMockReviews]);
     } catch (e) {
       setReviewsList(initialMockReviews);
@@ -35,42 +36,62 @@ function ReviewSection({ onOpenContact }) {
     }
   }, [user]);
 
-  const handleSubmitReview = (e) => {
+  const handleSubmitReview = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return;
+
     const cleanUser = userName.trim().slice(0, 50);
     const cleanText = reviewText.trim().slice(0, 1000);
     const cleanCard = cardName.trim().slice(0, 80);
     if (!cleanText || !cleanUser) return;
 
-    const newReview = {
-      id: `custom-${Date.now()}`,
-      user: cleanUser,
-      name: cleanUser,
-      role: userRole,
-      cardName: cleanCard || 'Verified Card User',
-      rating: Math.min(5, Math.max(1, Number(rating) || 5)),
-      text: cleanText,
-      date: new Date().toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }),
-      isUserSubmitted: true
-    };
-
+    setIsSubmitting(true);
     try {
-      const saved = localStorage.getItem('dcard_user_reviews');
-      const existingCustom = saved ? JSON.parse(saved) : [];
-      const updatedCustom = [newReview, ...existingCustom].slice(0, 50);
-      localStorage.setItem('dcard_user_reviews', JSON.stringify(updatedCustom));
-      setReviewsList([newReview, ...reviewsList]);
-    } catch (err) {
-      setReviewsList([newReview, ...reviewsList]);
-    }
+      await reviewService.submitReview({
+        name: cleanUser,
+        email: user?.email || null,
+        rating: Math.min(5, Math.max(1, Number(rating) || 5)),
+        message: cleanText,
+        category: cleanCard || 'Debit Cards',
+        role: userRole,
+        cardName: cleanCard || 'Verified Card User',
+        user
+      });
 
-    setSubmitSuccess(true);
-    setTimeout(() => {
-      setSubmitSuccess(false);
-      setIsWriteModalOpen(false);
-      setReviewText('');
-      setCardName('');
-    }, 1200);
+      const updatedStored = getStoredReviews();
+      setReviewsList([...updatedStored, ...initialMockReviews]);
+      setSubmitSuccess(true);
+      setTimeout(() => {
+        setSubmitSuccess(false);
+        setIsWriteModalOpen(false);
+        setReviewText('');
+        setCardName('');
+      }, 1200);
+    } catch (err) {
+      console.warn('Could not submit review to Cloud Firestore, falling back to local storage:', err);
+      const fallbackReview = {
+        id: `custom-${Date.now()}`,
+        user: cleanUser,
+        name: cleanUser,
+        role: userRole,
+        cardName: cleanCard || 'Verified Card User',
+        rating: Math.min(5, Math.max(1, Number(rating) || 5)),
+        text: cleanText,
+        date: new Date().toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }),
+        isUserSubmitted: true
+      };
+      saveStoredReview(fallbackReview);
+      setReviewsList([fallbackReview, ...reviewsList]);
+      setSubmitSuccess(true);
+      setTimeout(() => {
+        setSubmitSuccess(false);
+        setIsWriteModalOpen(false);
+        setReviewText('');
+        setCardName('');
+      }, 1200);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -95,7 +116,7 @@ function ReviewSection({ onOpenContact }) {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {reviewsList.slice(0, 5).map((review, index) => (
+        {reviewsList.slice(0, 5).map((review) => (
           <div
             key={review.id}
             className="p-6 rounded-3xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-700 shadow-soft flex flex-col group text-left relative overflow-hidden"
@@ -126,7 +147,7 @@ function ReviewSection({ onOpenContact }) {
             )}
 
             <p className="text-[#1F2937] dark:text-slate-200 italic mb-5 flex-grow leading-relaxed text-xs sm:text-sm font-normal">
-              "{review.text}"
+              "{review.text || review.message}"
             </p>
 
             <div className="flex items-center gap-3 mt-auto pt-4 border-t border-[#E5E7EB] dark:border-slate-800">
@@ -285,9 +306,17 @@ function ReviewSection({ onOpenContact }) {
                     </button>
                     <button
                       type="submit"
-                      className="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white text-xs font-semibold uppercase tracking-wider shadow-md hover:opacity-95 active:scale-95 transition-all cursor-pointer"
+                      disabled={isSubmitting}
+                      className="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white text-xs font-semibold uppercase tracking-wider shadow-md hover:opacity-95 disabled:opacity-60 disabled:cursor-not-allowed active:scale-95 transition-all cursor-pointer flex items-center gap-1.5"
                     >
-                      Submit Review
+                      {isSubmitting ? (
+                        <>
+                          <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          <span>Submitting...</span>
+                        </>
+                      ) : (
+                        <span>Submit Review</span>
+                      )}
                     </button>
                   </div>
                 </form>

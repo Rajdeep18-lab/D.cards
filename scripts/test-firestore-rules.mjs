@@ -46,6 +46,7 @@ function diff(proposedData, existingData) {
 
 function createEvaluationContext({
   auth = null,
+  time = '2026-11-04T23:00:00Z',
   databaseState = {},
   existingResource = null,
   proposedResource = null
@@ -72,6 +73,7 @@ function createEvaluationContext({
 
   const req = {
     auth,
+    time,
     resource: proposedResource ? {
       data: {
         ...proposedResource,
@@ -201,6 +203,60 @@ function evaluateAdminWrite(ctx) {
 function evaluateLogRead(ctx) {
   return ctx.isAdmin();
 }
+
+function evaluateReviewCreate(ctx) {
+  const { isAuthenticated, request } = ctx;
+  const data = request?.resource?.data;
+  if (!data) return false;
+
+  const allowedKeys = [
+    'userId', 'userName', 'userEmail', 'rating', 'message', 'category',
+    'role', 'cardName', 'createdAt', 'date', 'isUserSubmitted'
+  ];
+  if (!data.keys().hasOnly(allowedKeys)) return false;
+
+  if (typeof data.userName !== 'string' || data.userName.length < 2 || data.userName.length > 100) return false;
+  if (typeof data.message !== 'string' || data.message.length < 5 || data.message.length > 2000) return false;
+  if (typeof data.rating !== 'number' || data.rating < 1 || data.rating > 5) return false;
+
+  // Enforce createdAt == request.time (Firebase serverTimestamp())
+  if (!('createdAt' in data) || data.createdAt !== request.time) return false;
+
+  const authUid = request.auth?.uid;
+  if (data.userId != null && (!isAuthenticated() || data.userId !== authUid)) return false;
+
+  // userEmail validation:
+  // - Guest: null or string <= 150 chars
+  // - Authenticated: null or exactly matching request.auth.token.email
+  if (data.userEmail != null) {
+    if (!isAuthenticated()) {
+      if (typeof data.userEmail !== 'string' || data.userEmail.length > 150) return false;
+    } else {
+      if (data.userEmail !== request.auth?.token?.email) return false;
+    }
+  }
+
+  if (data.category != null && (typeof data.category !== 'string' || data.category.length > 100)) return false;
+  if (data.role != null && (typeof data.role !== 'string' || data.role.length > 100)) return false;
+  if (data.cardName != null && (typeof data.cardName !== 'string' || data.cardName.length > 100)) return false;
+  if (data.date != null && (typeof data.date !== 'string' || data.date.length > 50)) return false;
+  if (data.isUserSubmitted != null && typeof data.isUserSubmitted !== 'boolean') return false;
+
+  return true;
+}
+
+function evaluateReviewUpdate(ctx) {
+  return ctx.isAdmin();
+}
+
+function evaluateReviewDelete(ctx) {
+  return ctx.isAdmin();
+}
+
+function evaluateReviewRead(ctx) {
+  return ctx.isAdmin();
+}
+
 
 // ---------------------------------------------------------------------------
 // TEST EXECUTION
@@ -429,6 +485,214 @@ console.log('\n--- 5. Public Logging Boundaries & Schema Bounds ---');
   assert(evaluateLogRead(ctxAnonRead) === false, 'Anonymous inspection/read of logs is DENIED');
 }
 
+
+// 6. Reviews Collection Security
+console.log('\n--- 6. Reviews Collection Security ---');
+{
+  const TEST_TIME = '2026-11-04T23:00:00Z';
+
+  // A. Valid Anonymous Review Submission with serverTimestamp (createdAt == request.time)
+  const ctxAnonReview = createEvaluationContext({
+    auth: null,
+    time: TEST_TIME,
+    proposedResource: {
+      userId: null,
+      userName: 'Aarav Patel',
+      userEmail: 'aarav@example.com',
+      rating: 5,
+      message: 'Great comparison platform! Found my zero balance debit card in seconds.',
+      category: 'General',
+      createdAt: TEST_TIME,
+      date: '5 Nov 2026',
+      isUserSubmitted: true
+    }
+  });
+  assert(evaluateReviewCreate(ctxAnonReview) === true, 'Valid anonymous review creation is allowed');
+
+  // B. Valid Authenticated User Review Submission with matching email and serverTimestamp
+  const ctxUserReview = createEvaluationContext({
+    auth: { uid: 'user_review_1', token: { email: 'user@example.com' } },
+    time: TEST_TIME,
+    proposedResource: {
+      userId: 'user_review_1',
+      userName: 'Priya Sharma',
+      userEmail: 'user@example.com',
+      rating: 4,
+      message: 'Helped me pick HDFC Millennia card.',
+      category: 'HDFC Millennia',
+      cardName: 'HDFC Millennia Debit Card',
+      role: 'Working Professional',
+      createdAt: TEST_TIME,
+      date: '5 Nov 2026',
+      isUserSubmitted: true
+    }
+  });
+  assert(evaluateReviewCreate(ctxUserReview) === true, 'Valid authenticated user review creation is allowed');
+
+  // C. Authenticated User with Mismatched/Spoofed Email -> BLOCKED
+  const ctxUserSpoofedEmail = createEvaluationContext({
+    auth: { uid: 'user_review_1', token: { email: 'actual_user@example.com' } },
+    time: TEST_TIME,
+    proposedResource: {
+      userId: 'user_review_1',
+      userName: 'Priya Sharma',
+      userEmail: 'victim_spoofed@example.com', // Mismatched email
+      rating: 5,
+      message: 'Trying to forge someone else email address.',
+      createdAt: TEST_TIME
+    }
+  });
+  assert(evaluateReviewCreate(ctxUserSpoofedEmail) === false, 'Authenticated user review with spoofed/mismatched email is BLOCKED');
+
+  // D. Authenticated User with null userEmail -> ALLOWED
+  const ctxUserNullEmail = createEvaluationContext({
+    auth: { uid: 'user_review_1', token: { email: 'user@example.com' } },
+    time: TEST_TIME,
+    proposedResource: {
+      userId: 'user_review_1',
+      userName: 'Priya Sharma',
+      userEmail: null,
+      rating: 5,
+      message: 'Valid review with null email provided.',
+      createdAt: TEST_TIME
+    }
+  });
+  assert(evaluateReviewCreate(ctxUserNullEmail) === true, 'Authenticated user review with null userEmail is allowed');
+
+  // E. Guest User with null userEmail -> ALLOWED
+  const ctxGuestNullEmail = createEvaluationContext({
+    auth: null,
+    time: TEST_TIME,
+    proposedResource: {
+      userId: null,
+      userName: 'Guest Visitor',
+      userEmail: null,
+      rating: 5,
+      message: 'Anonymous review without email.',
+      createdAt: TEST_TIME
+    }
+  });
+  assert(evaluateReviewCreate(ctxGuestNullEmail) === true, 'Guest user review with null userEmail is allowed');
+
+  // F. Guest User with Oversized Email (> 150 chars) -> BLOCKED
+  const ctxGuestOversizedEmail = createEvaluationContext({
+    auth: null,
+    time: TEST_TIME,
+    proposedResource: {
+      userId: null,
+      userName: 'Guest Visitor',
+      userEmail: 'a'.repeat(145) + '@bank.com', // > 150 chars
+      rating: 5,
+      message: 'Anonymous review with oversized email.',
+      createdAt: TEST_TIME
+    }
+  });
+  assert(evaluateReviewCreate(ctxGuestOversizedEmail) === false, 'Guest user review with oversized email (>150 chars) is BLOCKED');
+
+  // G. Client Supplying Arbitrary Past/Future Timestamp (createdAt != request.time) -> BLOCKED
+  const ctxArbitraryTime = createEvaluationContext({
+    auth: null,
+    time: TEST_TIME,
+    proposedResource: {
+      userId: null,
+      userName: 'Time Hacker',
+      rating: 5,
+      message: 'Attempting to spoof backdated or future review timestamp.',
+      createdAt: '2020-01-01T00:00:00Z' // Arbitrary timestamp != request.time
+    }
+  });
+  assert(evaluateReviewCreate(ctxArbitraryTime) === false, 'Review with arbitrary client timestamp (createdAt != request.time) is BLOCKED');
+
+  // H. Review Submitted Without createdAt -> BLOCKED
+  const ctxMissingTime = createEvaluationContext({
+    auth: null,
+    time: TEST_TIME,
+    proposedResource: {
+      userId: null,
+      userName: 'No Time User',
+      rating: 5,
+      message: 'Review without any createdAt timestamp field.'
+    }
+  });
+  assert(evaluateReviewCreate(ctxMissingTime) === false, 'Review missing createdAt timestamp is BLOCKED');
+
+  // I. Injected / Unwhitelisted Fields (e.g. status: "approved", role: "admin")
+  const ctxInjectedReview = createEvaluationContext({
+    auth: null,
+    time: TEST_TIME,
+    proposedResource: {
+      userName: 'Sneaky User',
+      rating: 5,
+      message: 'Trying to inject malicious admin field',
+      createdAt: TEST_TIME,
+      isAdmin: true,
+      status: 'approved'
+    }
+  });
+  assert(evaluateReviewCreate(ctxInjectedReview) === false, 'Review with unwhitelisted injected fields is BLOCKED');
+
+  // J. Spoofed userId (Unauthenticated user claiming another user\'s UID)
+  const ctxSpoofedUser = createEvaluationContext({
+    auth: null,
+    time: TEST_TIME,
+    proposedResource: {
+      userId: 'victim_user_uid',
+      userName: 'Attacker',
+      rating: 5,
+      message: 'Forged review claiming to be someone else.',
+      createdAt: TEST_TIME
+    }
+  });
+  assert(evaluateReviewCreate(ctxSpoofedUser) === false, 'Review with spoofed userId is BLOCKED');
+
+  // K. Invalid Rating (Out of bounds)
+  const ctxInvalidRating = createEvaluationContext({
+    auth: null,
+    time: TEST_TIME,
+    proposedResource: {
+      userName: 'Rater',
+      rating: 6,
+      message: 'Rating 6 is out of 1-5 bounds.',
+      createdAt: TEST_TIME
+    }
+  });
+  assert(evaluateReviewCreate(ctxInvalidRating) === false, 'Review with rating > 5 is BLOCKED');
+
+  // L. Message Too Short (< 5 chars)
+  const ctxShortMessage = createEvaluationContext({
+    auth: null,
+    time: TEST_TIME,
+    proposedResource: {
+      userName: 'Rater',
+      rating: 5,
+      message: 'Bad',
+      createdAt: TEST_TIME
+    }
+  });
+  assert(evaluateReviewCreate(ctxShortMessage) === false, 'Review with message shorter than 5 chars is BLOCKED');
+
+  // M. Unauthorized User Cannot Modify Other Users\' Reviews
+  const ctxAnonModify = createEvaluationContext({
+    auth: { uid: 'unauthorized_user', token: { email: 'anon@example.com' } },
+    databaseState: {}
+  });
+  assert(evaluateReviewUpdate(ctxAnonModify) === false, 'Unauthorized user cannot modify reviews (BLOCKED)');
+
+  // N. Unauthorized User Cannot Delete Reviews
+  assert(evaluateReviewDelete(ctxAnonModify) === false, 'Unauthorized user cannot delete reviews (BLOCKED)');
+
+  // O. Unauthorized User Cannot Read Reviews Directly (Protects Email Privacy)
+  assert(evaluateReviewRead(ctxAnonModify) === false, 'Unauthorized user cannot read reviews collection directly (BLOCKED)');
+
+  // P. DBA / Admin Access Allowed
+  const ctxAdmin = createEvaluationContext({
+    auth: { uid: 'adm_dba', token: { email: 'dba@dcard.website', email_verified: true } },
+    databaseState: { 'admins/adm_dba': { role: 'admin', active: true } }
+  });
+  assert(evaluateReviewRead(ctxAdmin) === true, 'DBA / Admin can read submitted reviews in Firestore');
+  assert(evaluateReviewUpdate(ctxAdmin) === true, 'DBA / Admin can manage/update reviews in Firestore');
+  assert(evaluateReviewDelete(ctxAdmin) === true, 'DBA / Admin can delete reviews in Firestore');
+}
 console.log('\n======================================================');
 console.log(`RELEASE-GATE RULES TEST SUMMARY: ${passed} Passed, ${failed} Failed`);
 console.log('======================================================\n');

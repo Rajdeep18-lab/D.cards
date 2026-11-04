@@ -1,34 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Star, CheckCircle2, AlertCircle } from 'lucide-react';
+import { useAuth } from '../hooks/useAuth';
+import { reviewService, getStoredReviews, saveStoredReview } from '../services/reviewService';
 
-const REVIEWS_STORAGE_KEY = 'dcard_user_reviews';
-
-/**
- * Storage helpers - modular so a database/backend API can easily replace this.
- */
-export function getStoredReviews() {
-  try {
-    const raw = localStorage.getItem(REVIEWS_STORAGE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch (e) {
-    console.warn('Could not read user reviews from localStorage:', e);
-    return [];
-  }
-}
-
-export function saveStoredReview(newReview) {
-  try {
-    const current = getStoredReviews();
-    const updated = [newReview, ...current].slice(0, 50);
-    localStorage.setItem(REVIEWS_STORAGE_KEY, JSON.stringify(updated));
-    return updated;
-  } catch (e) {
-    console.warn('Could not save user review to localStorage:', e);
-    return null;
-  }
-}
+// Re-export storage helpers for backward compatibility
+export { getStoredReviews, saveStoredReview };
 
 /**
  * Basic sensitive data pattern detector to protect user privacy.
@@ -57,6 +33,7 @@ function containsSensitiveData(text) {
 }
 
 function FooterUserReviews() {
+  const { user } = useAuth();
   const [reviews, setReviews] = useState([]);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -65,14 +42,28 @@ function FooterUserReviews() {
   const [reviewText, setReviewText] = useState('');
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Load reviews on mount
   useEffect(() => {
     setReviews(getStoredReviews());
   }, []);
 
-  const handleSubmit = (e) => {
+  // Pre-fill user details if logged in and fields are empty
+  useEffect(() => {
+    if (user) {
+      if (!name && (user.displayName || user.name)) {
+        setName(user.displayName || user.name || '');
+      }
+      if (!email && user.email) {
+        setEmail(user.email || '');
+      }
+    }
+  }, [user]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return;
     setError('');
 
     const trimmedName = name.trim();
@@ -116,40 +107,63 @@ function FooterUserReviews() {
       return;
     }
 
-    const newReview = {
-      id: `review-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-      name: trimmedName,
-      user: trimmedName,
-      rating: Number(rating),
-      text: trimmedReview,
-      // Date formatted cleanly, e.g. "15 Sep 2026"
-      date: new Date().toLocaleDateString('en-IN', {
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric'
-      }),
-      createdAt: new Date().toISOString()
-      // Note: User's optional email is intentionally NOT stored or exposed in public review object
-    };
+    setIsSubmitting(true);
+    try {
+      await reviewService.submitReview({
+        name: trimmedName,
+        email: trimmedEmail || user?.email || null,
+        rating: Number(rating),
+        message: trimmedReview,
+        category: 'General',
+        user
+      });
 
-    const updated = saveStoredReview(newReview);
-    if (updated) {
-      setReviews(updated);
-    } else {
-      setReviews((prev) => [newReview, ...prev]);
+      // Update local state with latest reviews
+      setReviews(getStoredReviews());
+
+      // Reset form state & notify
+      setName(user?.displayName || user?.name || '');
+      setEmail(user?.email || '');
+      setRating(5);
+      setHoverRating(0);
+      setReviewText('');
+      setSuccessMessage('Thanks for your review! Your feedback has been submitted.');
+
+      setTimeout(() => {
+        setSuccessMessage('');
+      }, 5000);
+    } catch (err) {
+      console.warn('Could not submit review to Cloud Firestore, falling back to local storage:', err);
+      // Graceful offline fallback to ensure user feedback is never lost
+      const fallbackReview = {
+        id: `review-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+        name: trimmedName,
+        user: trimmedName,
+        rating: Number(rating),
+        text: trimmedReview,
+        date: new Date().toLocaleDateString('en-IN', {
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric'
+        }),
+        createdAt: new Date().toISOString()
+      };
+      const updated = saveStoredReview(fallbackReview);
+      setReviews(updated || [fallbackReview, ...reviews]);
+
+      setName(user?.displayName || user?.name || '');
+      setEmail(user?.email || '');
+      setRating(5);
+      setHoverRating(0);
+      setReviewText('');
+      setSuccessMessage('Thanks for your review! Your feedback has been submitted.');
+
+      setTimeout(() => {
+        setSuccessMessage('');
+      }, 5000);
+    } finally {
+      setIsSubmitting(false);
     }
-
-    // Reset form state & notify
-    setName('');
-    setEmail('');
-    setRating(5);
-    setHoverRating(0);
-    setReviewText('');
-    setSuccessMessage('Thanks for your review! Your feedback has been submitted.');
-
-    setTimeout(() => {
-      setSuccessMessage('');
-    }, 5000);
   };
 
   return (
@@ -252,9 +266,17 @@ function FooterUserReviews() {
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:opacity-95 text-white font-semibold text-xs shadow-xs active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-1.5"
+          disabled={isSubmitting}
+          className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:opacity-95 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold text-xs shadow-xs active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-1.5"
         >
-          <span>Submit Review</span>
+          {isSubmitting ? (
+            <>
+              <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              <span>Submitting...</span>
+            </>
+          ) : (
+            <span>Submit Review</span>
+          )}
         </button>
       </form>
 
@@ -306,7 +328,7 @@ function FooterUserReviews() {
                   </div>
                 </div>
                 <p className="text-xs text-[#4B5563] dark:text-slate-300 font-normal leading-relaxed break-words">
-                  {rev.text}
+                  {rev.text || rev.message}
                 </p>
                 <div className="flex justify-end pt-0.5">
                   <span className="text-[10px] text-[#9CA3AF] dark:text-slate-500 font-medium">
