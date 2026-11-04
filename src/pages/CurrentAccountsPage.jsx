@@ -248,7 +248,7 @@ function CurrentAccountsPage({ onSelectDebitCard }) {
                             (requireDebitCard ? 1 : 0);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 space-y-8 select-none text-left">
+    <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 space-y-8 select-none text-left">
       {/* ── 1. HERO BANNER ── */}
       <div className="p-8 sm:p-10 rounded-[32px] bg-gradient-to-br from-[#0B3D91] via-[#1E3A8A] to-[#2563EB] text-white shadow-xl relative overflow-hidden">
         <div className="relative z-10 max-w-3xl space-y-3">
@@ -543,7 +543,7 @@ function CurrentAccountsPage({ onSelectDebitCard }) {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </main>
   );
 }
 

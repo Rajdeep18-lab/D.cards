@@ -33,7 +33,7 @@ function Footer({ onOpenLegal }) {
       {/* Background Soft Blue Ambient Glow */}
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-gradient-to-t from-[#2563EB]/10 via-[#3B82F6]/5 to-transparent blur-[100px] pointer-events-none z-0" />
 
-      <div className="mx-auto max-w-7xl grid grid-cols-1 md:grid-cols-4 gap-10 mb-12 text-left relative z-10 items-start">
+      <div className="mx-auto max-w-7xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10 mb-12 text-left relative z-10 items-start">
  
         {/* Logo & Description & Social Links */}
         <div className="space-y-4">

@@ -501,19 +501,23 @@ export default function CardOfTheMonthBanner({ activeCardsList = [], onViewDetai
           <div className="hidden lg:block absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#FFFFFF] dark:from-[#1E293B] to-transparent pointer-events-none" />
 
           {/* Carousel Pagination Indicator Dots */}
-          <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 z-20 flex items-center gap-1.5 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/40 dark:border-slate-700 shadow-sm">
+          <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 z-20 flex items-center gap-0.5 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md px-2 py-1 rounded-full border border-white/40 dark:border-slate-700 shadow-sm">
             {slides.map((_, idx) => (
               <button
                 key={idx}
                 type="button"
                 onClick={() => setCurrentSlideIndex(idx)}
                 aria-label={`Go to slide ${idx + 1}`}
-                className={`transition-all duration-300 rounded-full cursor-pointer ${
-                  currentSlideIndex === idx
-                    ? 'w-5 sm:w-6 h-2 bg-[#2563EB]'
-                    : 'w-2 h-2 bg-slate-300 dark:bg-slate-600 hover:bg-slate-400'
-                }`}
-              />
+                className="w-7 h-7 flex items-center justify-center cursor-pointer focus:outline-none"
+              >
+                <span
+                  className={`transition-all duration-300 rounded-full block ${
+                    currentSlideIndex === idx
+                      ? 'w-5 sm:w-6 h-2 bg-[#2563EB]'
+                      : 'w-2 h-2 bg-slate-300 dark:bg-slate-600 hover:bg-slate-400'
+                  }`}
+                />
+              </button>
             ))}
           </div>
 
