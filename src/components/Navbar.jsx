@@ -5,7 +5,8 @@ import {
   Sun, 
   Moon, 
   LogIn, 
-  Heart, 
+  Heart,
+  Bell, 
   Menu, 
   X, 
   User, 
@@ -199,14 +200,14 @@ function Navbar({
                 <span className="text-[15px] sm:text-lg xl:text-xl font-black tracking-tight leading-none text-[#111827] dark:text-white font-sans whitespace-nowrap">
                   D.<span className="text-[#2455A4] dark:text-[#60A5FA]">CARD</span>
                 </span>
-                <span className="hidden xl:block text-[8px] sm:text-[8.5px] font-bold text-[#6B7280] dark:text-slate-400 tracking-wider uppercase mt-0.5 leading-tight whitespace-nowrap">
+                <span className="hidden 2xl:block text-[8px] sm:text-[8.5px] font-bold text-[#6B7280] dark:text-slate-400 tracking-wider uppercase mt-0.5 leading-tight whitespace-nowrap">
                   {t('nav.tagline', 'COMPARE. CHOOSE. BENEFIT.')}
                 </span>
               </div>
               {/* Navbar Earthen Diya next to brand logo on desktop/tablet */}
               {FESTIVE_CONFIG.isFestiveEnabled && (
                 <div className="hidden sm:inline-flex items-center ml-1.5 shrink-0">
-                  <DiyaIllustration size={20} glow={false} animate={true} />
+                  <DiyaIllustration size={20} glow={true} animate={true} />
                 </div>
               )}
             </Link>
@@ -217,36 +218,36 @@ function Navbar({
              ══════════════════════════════════════════════ */}
           <nav 
             aria-label="Primary Navigation"
-            className="hidden lg:flex items-center justify-center gap-0.5 xl:gap-1 2xl:gap-1.5 flex-1 min-w-0 px-1"
+            className="hidden lg:flex items-center justify-center gap-1 xl:gap-1.5 2xl:gap-2.5 mx-auto shrink-0 px-1"
           >
             {/* 1. Home */}
             <NavLink
               to="/"
               end
               className={({ isActive }) =>
-                `px-2 xl:px-2.5 2xl:px-3 py-1.5 text-[12.5px] 2xl:text-[13px] font-semibold whitespace-nowrap transition-colors rounded-lg shrink-0 ${
+                `px-1.5 xl:px-2 py-1 text-[12px] xl:text-[12.5px] 2xl:text-[13px] font-semibold whitespace-nowrap transition-colors rounded-lg shrink-0 ${
                   isActive
-                    ? 'text-[#B8860B] dark:text-[#F5DFA8] font-bold border-b-2 border-[#D6A64B] pb-0.5'
-                    : 'text-[#111827] dark:text-slate-200 hover:text-[#B8860B] dark:hover:text-[#F5DFA8]'
+                    ? 'text-[#B8860B] dark:text-[#F5DFA8] font-bold border-b-2 border-[#D6A64B] pb-1'
+                    : 'text-[#1F2937] dark:text-slate-200 hover:text-[#B8860B] dark:hover:text-[#F5DFA8]'
                 }`
               }
             >
               {t('nav.home', "Home")}
             </NavLink>
 
-            {/* 2. Debit Cards */}
+            {/* 2. Debit Accounts */}
             <NavLink
               to="/cards"
               onClick={(e) => handleProtectedClick(e, '/cards', true)}
               className={({ isActive }) =>
-                `px-2 xl:px-2.5 2xl:px-3 py-1.5 text-[12.5px] 2xl:text-[13px] font-semibold whitespace-nowrap transition-colors rounded-lg shrink-0 ${
+                `px-1.5 xl:px-2 py-1 text-[12px] xl:text-[12.5px] 2xl:text-[13px] font-semibold whitespace-nowrap transition-colors rounded-lg shrink-0 ${
                   isActive
-                    ? 'text-[#B8860B] dark:text-[#F5DFA8] font-bold border-b-2 border-[#D6A64B] pb-0.5'
-                    : 'text-[#111827] dark:text-slate-200 hover:text-[#B8860B] dark:hover:text-[#F5DFA8]'
+                    ? 'text-[#B8860B] dark:text-[#F5DFA8] font-bold border-b-2 border-[#D6A64B] pb-1'
+                    : 'text-[#1F2937] dark:text-slate-200 hover:text-[#B8860B] dark:hover:text-[#F5DFA8]'
                 }`
               }
             >
-              {t('nav.debitCards', "Debit Cards")}
+              {t('nav.debitAccounts', isHindi ? 'डेबिट खाते' : 'Debit Accounts')}
             </NavLink>
 
             {/* 3. Savings Accounts */}
@@ -254,193 +255,95 @@ function Navbar({
               to="/savings-accounts"
               onClick={(e) => handleProtectedClick(e, '/savings-accounts', true)}
               className={({ isActive }) =>
-                `px-2 xl:px-2.5 2xl:px-3 py-1.5 text-[12.5px] 2xl:text-[13px] font-semibold whitespace-nowrap transition-colors rounded-lg shrink-0 ${
+                `px-1.5 xl:px-2 py-1 text-[12px] xl:text-[12.5px] 2xl:text-[13px] font-semibold whitespace-nowrap transition-colors rounded-lg shrink-0 ${
                   isActive
-                    ? 'text-[#B8860B] dark:text-[#F5DFA8] font-bold border-b-2 border-[#D6A64B] pb-0.5'
-                    : 'text-[#111827] dark:text-slate-200 hover:text-[#B8860B] dark:hover:text-[#F5DFA8]'
+                    ? 'text-[#B8860B] dark:text-[#F5DFA8] font-bold border-b-2 border-[#D6A64B] pb-1'
+                    : 'text-[#1F2937] dark:text-slate-200 hover:text-[#B8860B] dark:hover:text-[#F5DFA8]'
                 }`
               }
             >
-              {t('nav.savingsAccounts', "Savings Accounts")}
+              {t('nav.savingsAccounts', isHindi ? 'बचत खाते' : 'Savings Accounts')}
             </NavLink>
 
-            {/* 4. Current Accounts (Direct on screens >= 1600px; inside More on < 1600px) */}
-            <NavLink
-              to="/current-accounts"
-              onClick={(e) => handleProtectedClick(e, '/current-accounts', true)}
-              className={({ isActive }) =>
-                `hidden 2xl:flex px-2 xl:px-2.5 2xl:px-3 py-1.5 text-[12.5px] 2xl:text-[13px] font-semibold whitespace-nowrap transition-colors rounded-lg shrink-0 ${
-                  isActive
-                    ? 'text-[#B8860B] dark:text-[#F5DFA8] font-bold border-b-2 border-[#D6A64B] pb-0.5'
-                    : 'text-[#111827] dark:text-slate-200 hover:text-[#B8860B] dark:hover:text-[#F5DFA8]'
-                }`
-              }
-            >
-              {t('nav.currentAccounts', "Current Accounts")}
-            </NavLink>
-
-            {/* 5. Compare */}
+            {/* 4. Compare */}
             <NavLink
               to="/compare"
               onClick={(e) => handleProtectedClick(e, '/compare', true)}
               className={({ isActive }) =>
-                `px-2 xl:px-2.5 2xl:px-3 py-1.5 text-[12.5px] 2xl:text-[13px] font-semibold whitespace-nowrap transition-colors rounded-lg shrink-0 flex items-center gap-1 ${
+                `px-1.5 xl:px-2 py-1 text-[12px] xl:text-[12.5px] 2xl:text-[13px] font-semibold whitespace-nowrap transition-colors rounded-lg shrink-0 flex items-center gap-1 ${
                   isActive
-                    ? 'text-[#B8860B] dark:text-[#F5DFA8] font-bold border-b-2 border-[#D6A64B] pb-0.5'
-                    : 'text-[#111827] dark:text-slate-200 hover:text-[#B8860B] dark:hover:text-[#F5DFA8]'
+                    ? 'text-[#B8860B] dark:text-[#F5DFA8] font-bold border-b-2 border-[#D6A64B] pb-1'
+                    : 'text-[#1F2937] dark:text-slate-200 hover:text-[#B8860B] dark:hover:text-[#F5DFA8]'
                 }`
               }
             >
-              <span>{t('nav.compare', "Compare")}</span>
+              <span>{t('nav.compare', isHindi ? 'तुलना' : 'Compare')}</span>
               {compareCount > 0 && (
-                <span className="inline-flex items-center justify-center px-1.5 py-0.2 text-[10px] font-extrabold rounded-full bg-emerald-500 text-white leading-none shadow-xs ml-0.5 shrink-0">
+                <span className="inline-flex items-center justify-center px-1.5 py-0.2 text-[9.5px] font-extrabold rounded-full bg-emerald-500 text-white leading-none shadow-xs ml-0.5 shrink-0">
                   {compareCount}
                 </span>
               )}
             </NavLink>
 
-            {/* 6. Find My Bank (Direct on screens >= 1600px; inside More on < 1600px) */}
+            {/* 5. AI Assistance */}
             <NavLink
-              to="/find-my-bank"
+              to="/ai-advisor"
+              onClick={(e) => handleProtectedClick(e, '/ai-advisor', true)}
               className={({ isActive }) =>
-                `hidden 2xl:flex px-2 xl:px-2.5 2xl:px-3 py-1.5 text-[12.5px] 2xl:text-[13px] font-semibold whitespace-nowrap transition-colors rounded-lg shrink-0 ${
+                `px-1.5 xl:px-2 py-1 text-[12px] xl:text-[12.5px] 2xl:text-[13px] font-semibold whitespace-nowrap transition-colors rounded-lg shrink-0 ${
                   isActive
-                    ? 'text-[#B8860B] dark:text-[#F5DFA8] font-bold border-b-2 border-[#D6A64B] pb-0.5'
-                    : 'text-[#111827] dark:text-slate-200 hover:text-[#B8860B] dark:hover:text-[#F5DFA8]'
+                    ? 'text-[#B8860B] dark:text-[#F5DFA8] font-bold border-b-2 border-[#D6A64B] pb-1'
+                    : 'text-[#1F2937] dark:text-slate-200 hover:text-[#B8860B] dark:hover:text-[#F5DFA8]'
                 }`
               }
             >
-              {t('nav.findMyBank', "Find My Bank")}
+              {t('nav.aiAssistance', isHindi ? 'एआई सहायता' : 'AI Assistance')}
             </NavLink>
 
-            {/* ── INTERMEDIATE RESPONSIVE "MORE ▾" DROPDOWN (< 1600px) ── */}
-            <div className="relative shrink-0" ref={moreDropdownRef}>
-              <button
-                type="button"
-                onClick={() => setIsMoreDropdownOpen(!isMoreDropdownOpen)}
-                className={`px-2 xl:px-2.5 py-1.5 text-[12px] xl:text-[12.5px] font-semibold rounded-lg flex items-center gap-1 transition-colors cursor-pointer ${
-                  isMoreActive
-                    ? 'text-[#B8860B] dark:text-[#F5DFA8] font-bold border-b-2 border-[#D6A64B] pb-0.5'
-                    : 'text-[#111827] dark:text-slate-200 hover:text-[#B8860B] dark:hover:text-[#F5DFA8]'
-                }`}
-                aria-expanded={isMoreDropdownOpen}
-                aria-label="More navigation links"
-              >
-                <span>{isHindi ? 'अधिक' : 'More'}</span>
-                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isMoreDropdownOpen ? 'rotate-180' : ''}`} />
-              </button>
+            {/* 6. Banks */}
+            <NavLink
+              to="/banks"
+              onClick={(e) => handleProtectedClick(e, '/banks', true)}
+              className={({ isActive }) =>
+                `px-1.5 xl:px-2 py-1 text-[12px] xl:text-[12.5px] 2xl:text-[13px] font-semibold whitespace-nowrap transition-colors rounded-lg shrink-0 ${
+                  isActive
+                    ? 'text-[#B8860B] dark:text-[#F5DFA8] font-bold border-b-2 border-[#D6A64B] pb-1'
+                    : 'text-[#1F2937] dark:text-slate-200 hover:text-[#B8860B] dark:hover:text-[#F5DFA8]'
+                }`
+              }
+            >
+              {t('nav.banks', isHindi ? 'बैंक' : 'Banks')}
+            </NavLink>
 
-              {isMoreDropdownOpen && (
-                <div className="absolute top-full right-0 mt-2 w-52 rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E8D6B3] dark:border-slate-700 shadow-xl py-2 z-50 text-left animate-in fade-in zoom-in-95 duration-150">
-                  {/* Moved Links: AI Assistance, Banks, About Us */}
-                  <NavLink
-                    to="/ai-advisor"
-                    onClick={(e) => {
-                      setIsMoreDropdownOpen(false);
-                      handleProtectedClick(e, '/ai-advisor', true);
-                    }}
-                    className={({ isActive }) =>
-                      `flex items-center gap-2 px-4 py-2.5 text-xs font-semibold transition-colors ${
-                        isActive
-                          ? 'text-[#2455A4] bg-[#F7EEDC]/80 dark:bg-slate-700/60 dark:text-[#60A5FA] font-bold'
-                          : 'text-[#111827] dark:text-slate-200 hover:bg-amber-50/70 dark:hover:bg-slate-700/40'
-                      }`
-                    }
-                  >
-                    <Bot className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-                    <span>{t('nav.aiAssistance', 'AI Assistance')}</span>
-                  </NavLink>
+            {/* 7. Find My Bank */}
+            <NavLink
+              to="/find-my-bank"
+              className={({ isActive }) =>
+                `px-1.5 xl:px-2 py-1 text-[12px] xl:text-[12.5px] 2xl:text-[13px] font-semibold whitespace-nowrap transition-colors rounded-lg shrink-0 ${
+                  isActive
+                    ? 'text-[#B8860B] dark:text-[#F5DFA8] font-bold border-b-2 border-[#D6A64B] pb-1'
+                    : 'text-[#1F2937] dark:text-slate-200 hover:text-[#B8860B] dark:hover:text-[#F5DFA8]'
+                }`
+              }
+            >
+              {t('nav.findMyBank', isHindi ? 'मेरा बैंक ढूंढें' : 'Find My Bank')}
+            </NavLink>
 
-                  <NavLink
-                    to="/banks"
-                    onClick={(e) => {
-                      setIsMoreDropdownOpen(false);
-                      handleProtectedClick(e, '/banks', true);
-                    }}
-                    className={({ isActive }) =>
-                      `flex items-center gap-2 px-4 py-2.5 text-xs font-semibold transition-colors ${
-                        isActive
-                          ? 'text-[#2455A4] bg-[#F7EEDC]/80 dark:bg-slate-700/60 dark:text-[#60A5FA] font-bold'
-                          : 'text-[#111827] dark:text-slate-200 hover:bg-amber-50/70 dark:hover:bg-slate-700/40'
-                      }`
-                    }
-                  >
-                    <Building2 className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-                    <span>{t('nav.banks', 'Banks')}</span>
-                  </NavLink>
+            {/* 8. About */}
+            <NavLink
+              to="/about"
+              className={({ isActive }) =>
+                `px-1.5 xl:px-2 py-1 text-[12px] xl:text-[12.5px] 2xl:text-[13px] font-semibold whitespace-nowrap transition-colors rounded-lg shrink-0 ${
+                  isActive
+                    ? 'text-[#B8860B] dark:text-[#F5DFA8] font-bold border-b-2 border-[#D6A64B] pb-1'
+                    : 'text-[#1F2937] dark:text-slate-200 hover:text-[#B8860B] dark:hover:text-[#F5DFA8]'
+                }`
+              }
+            >
+              {t('nav.about', isHindi ? 'हमारे बारे में' : 'About')}
+            </NavLink>
 
-                  <NavLink
-                    to="/about"
-                    onClick={() => setIsMoreDropdownOpen(false)}
-                    className={({ isActive }) =>
-                      `flex items-center gap-2 px-4 py-2.5 text-xs font-semibold transition-colors ${
-                        isActive
-                          ? 'text-[#2455A4] bg-[#F7EEDC]/80 dark:bg-slate-700/60 dark:text-[#60A5FA] font-bold'
-                          : 'text-[#111827] dark:text-slate-200 hover:bg-amber-50/70 dark:hover:bg-slate-700/40'
-                      }`
-                    }
-                  >
-                    <Info className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-                    <span>{t('nav.aboutUs', t('nav.about', 'About Us'))}</span>
-                  </NavLink>
-                  <NavLink
-                    to="/current-accounts"
-                    onClick={(e) => {
-                      setIsMoreDropdownOpen(false);
-                      handleProtectedClick(e, '/current-accounts', true);
-                    }}
-                    className={({ isActive }) =>
-                      `flex items-center gap-2 px-4 py-2.5 text-xs font-semibold transition-colors ${
-                        isActive
-                          ? 'text-[#2455A4] bg-[#F7EEDC]/80 dark:bg-slate-700/60 dark:text-[#60A5FA] font-bold'
-                          : 'text-[#111827] dark:text-slate-200 hover:bg-amber-50/70 dark:hover:bg-slate-700/40'
-                      }`
-                    }
-                  >
-                    <Briefcase className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-                    <span>{t('nav.currentAccounts', 'Current Accounts')}</span>
-                  </NavLink>
-
-                  <NavLink
-                    to="/find-my-bank"
-                    onClick={() => setIsMoreDropdownOpen(false)}
-                    className={({ isActive }) =>
-                      `flex items-center gap-2 px-4 py-2.5 text-xs font-semibold transition-colors ${
-                        isActive
-                          ? 'text-[#2455A4] bg-[#F7EEDC]/80 dark:bg-slate-700/60 dark:text-[#60A5FA] font-bold'
-                          : 'text-[#111827] dark:text-slate-200 hover:bg-amber-50/70 dark:hover:bg-slate-700/40'
-                      }`
-                    }
-                  >
-                    <Compass className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-                    <span>{t('nav.findMyBank', 'Find My Bank')}</span>
-                  </NavLink>
-
-
-
-                  {/* Festive campaign link inside More for narrow desktop (< 1280px) */}
-                  {FESTIVE_CONFIG.isFestiveEnabled && FESTIVE_CONFIG.navbarFestiveBadgeEnabled && (
-                    <a
-                      href="#dhanteras-hero"
-                      onClick={(e) => {
-                        setIsMoreDropdownOpen(false);
-                        if (location.pathname === '/') {
-                          e.preventDefault();
-                          const el = document.getElementById('dhanteras-hero') || document.getElementById('home');
-                          if (el) el.scrollIntoView({ behavior: 'smooth' });
-                        }
-                      }}
-                      className="xl:hidden flex items-center gap-2 px-4 py-2.5 text-xs font-bold text-amber-700 dark:text-amber-300 hover:bg-amber-50/70 dark:hover:bg-slate-700/40 border-t border-amber-100 dark:border-slate-800"
-                    >
-                      <span>🪔</span>
-                      <span>{isHindi ? 'दिवाली स्पेशल' : 'Diwali Special'}</span>
-                    </a>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {/* 10. 🪔 Dhanteras/Diwali Campaign Link (Visible on >= 1280px, strictly separated) */}
+            {/* 9. 🪔 Diwali Special Campaign Pill */}
             {FESTIVE_CONFIG.isFestiveEnabled && FESTIVE_CONFIG.navbarFestiveBadgeEnabled && (
               <a
                 href="#dhanteras-hero"
@@ -451,7 +354,7 @@ function Navbar({
                     if (el) el.scrollIntoView({ behavior: 'smooth' });
                   }
                 }}
-                className="hidden xl:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-[#9A3412] via-[#C2410C] to-[#D97706] hover:from-[#C2410C] hover:to-[#9A3412] text-white border border-amber-300/40 text-[11px] font-bold tracking-wide shadow-sm hover:shadow-md hover:scale-105 transition-all cursor-pointer shrink-0 ml-1 2xl:ml-2 select-none"
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-[#9A3412] via-[#C2410C] to-[#D97706] hover:from-[#C2410C] hover:to-[#9A3412] text-white border border-amber-300/40 text-[11px] xl:text-[11.5px] font-bold tracking-wide shadow-xs hover:shadow-md hover:scale-105 transition-all cursor-pointer shrink-0 ml-1 select-none"
                 title={isHindi ? 'शुभ धनतेरस व दीपावली उत्सव' : 'Shubh Dhanteras & Diwali Special'}
               >
                 <span className="text-xs">🪔</span>
@@ -505,19 +408,21 @@ function Navbar({
               )}
             </button>
 
-            {/* 4. Saved Favourites Button (Heart Icon replacing old Bell icon) - accessible across mobile and desktop */}
+            {/* 4. Notifications / Saved Favourites Button (Bell Icon with notification indicator) */}
             <Link
               to="/saved-cards"
               onClick={(e) => handleProtectedClick(e, '/saved-cards', true)}
-              className="relative w-8 h-8 min-[380px]:w-9 min-[380px]:h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center text-[#4B5563] dark:text-slate-300 hover:text-rose-500 hover:bg-black/5 dark:hover:bg-white/5 transition-all group shrink-0 focus:outline-none focus:ring-2 focus:ring-rose-500/40"
-              title={t('nav.savedFavourites', 'Saved Favourites')}
-              aria-label={`Saved Favourites (${favoritesCount})`}
+              className="relative w-8 h-8 min-[380px]:w-9 min-[380px]:h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center text-[#4B5563] dark:text-slate-300 hover:text-amber-600 hover:bg-black/5 dark:hover:bg-white/5 transition-all group shrink-0 focus:outline-none focus:ring-2 focus:ring-amber-500/40"
+              title={t('nav.notifications', 'Notifications & Saved Cards')}
+              aria-label={`Notifications & Saved Cards (${favoritesCount})`}
             >
-              <Heart className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#4B5563] dark:text-slate-300 group-hover:text-rose-500 dark:group-hover:text-rose-400 group-hover:scale-110 transition-all shrink-0" strokeWidth={2} />
-              {favoritesCount > 0 && (
+              <Bell className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#4B5563] dark:text-slate-300 group-hover:text-amber-600 dark:group-hover:text-amber-400 group-hover:scale-110 transition-all shrink-0" strokeWidth={2} />
+              {favoritesCount > 0 ? (
                 <span className="absolute -top-1 -right-1 min-w-[15px] sm:min-w-[16px] h-[15px] sm:h-[16px] px-1 flex items-center justify-center text-[8.5px] sm:text-[9px] font-extrabold rounded-full bg-rose-500 text-white leading-none shadow-xs pointer-events-none animate-in zoom-in-75 duration-150">
                   {favoritesCount}
                 </span>
+              ) : (
+                <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-amber-500 ring-2 ring-white dark:ring-[#0B132B] pointer-events-none" />
               )}
             </Link>
 
@@ -599,10 +504,10 @@ function Navbar({
               <button
                 type="button"
                 onClick={handleAuthButtonClick}
-                className="h-8 min-[380px]:h-9 sm:h-10 px-2 min-[380px]:px-3.5 sm:px-4 rounded-lg sm:rounded-xl bg-gradient-to-r from-[#111827] via-[#1E293B] to-[#111827] hover:from-[#1E293B] hover:to-[#111827] text-white border border-[#D6A64B]/60 hover:border-[#D6A64B] text-xs font-semibold shadow-xs flex items-center justify-center gap-1.5 cursor-pointer transition-all active:scale-95 shrink-0 whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-amber-500"
+                className="h-8 min-[380px]:h-9 sm:h-10 px-2.5 min-[380px]:px-3.5 sm:px-4 rounded-lg sm:rounded-xl bg-[#0B1528] hover:bg-[#152342] text-white border border-amber-400/50 hover:border-amber-400 text-xs font-bold shadow-xs flex items-center justify-center gap-1.5 cursor-pointer transition-all active:scale-95 shrink-0 whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-amber-500"
                 title={t('nav.login', 'Login')}
               >
-                <LogIn className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400 shrink-0" />
+                <LogIn className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-300 shrink-0" />
                 <span className="hidden min-[380px]:inline">{t('nav.login', 'Login')}</span>
               </button>
             )}

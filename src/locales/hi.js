@@ -2,6 +2,7 @@ export const hi = {
   nav: {
     home: "होम",
     debitCards: "डेबिट कार्ड",
+    debitAccounts: "डेबिट खाते",
     savingsAccounts: "बचत खाते",
     currentAccounts: "चालू खाते",
     compare: "तुलना करें",

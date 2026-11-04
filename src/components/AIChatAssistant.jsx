@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Bot, User, Send, X, Minus, Maximize2, Trash2,
+  Bot, Briefcase, Sparkles, User, Send, X, Minus, Maximize2, Trash2,
   ShieldCheck, CreditCard, Plane, CheckCircle2,
   Heart, ChevronRight, Scale, Building2, RefreshCw,
   MapPin, Navigation, Compass, Mic, MicOff, ExternalLink, Map,
@@ -1214,11 +1214,11 @@ function AIChatAssistant({
           whileTap={{ scale: 0.95 }}
           onClick={() => setIsOpen(true)}
           aria-label="Open D.CARD AI Assistance"
-          className="flex items-center gap-2.5 px-4 py-3 rounded-full bg-[#2563EB] hover:bg-blue-700 text-white font-bold text-xs shadow-lg shadow-blue-500/25 border border-blue-500/30 cursor-pointer transition-all"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#0B1528] hover:bg-[#152342] text-white font-bold text-xs shadow-[0_8px_25px_rgba(11,21,40,0.6)] border border-amber-400/60 cursor-pointer transition-all group"
         >
-          <Bot className="w-4 h-4" />
+          <Briefcase className="w-4 h-4 text-amber-400 group-hover:scale-110 transition-transform" />
           <span>{isHindi ? 'D.CARD एआई सहायता' : 'D.CARD AI Assistance'}</span>
-          <span className="w-2 h-2 rounded-full bg-emerald-400 border border-white shadow-sm" title="Online" />
+          <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-pulse" />
         </motion.button>
       )}
 
