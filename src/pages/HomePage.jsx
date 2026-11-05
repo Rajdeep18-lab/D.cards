@@ -112,7 +112,7 @@ function HomePage({
         </section>
 
         {/* ── SPECIAL HOMEPAGE SECTION: 15-DAY AUDIT CYCLE ── */}
-        {FESTIVE_CONFIG.isFestiveEnabled && FESTIVE_CONFIG.auditCycleSectionEnabled && (
+        {FESTIVE_CONFIG.auditCycleSectionEnabled !== false && (
           <AuditCycleSection />
         )}
 
