@@ -41,10 +41,18 @@ export function formatDateHi(date) {
   return `${date.getDate()} ${MONTH_NAMES_HI[date.getMonth()]}, ${date.getFullYear()}`;
 }
 
+// In-memory memoization cache for banking dataset audit metadata
+let cachedDatasetMeta = null;
+
 /**
- * Inspect actual verification dates across debit cards and savings accounts
+ * Inspect actual verification dates across debit cards and savings accounts.
+ * Memoized to prevent expensive array filtering and Map iterations on every cycle check.
  */
-export function inspectDatasetVerification() {
+export function inspectDatasetVerification(forceRefresh = false) {
+  if (cachedDatasetMeta && !forceRefresh) {
+    return cachedDatasetMeta;
+  }
+
   const verifiedCards = (allMasterDebitCards || []).filter(
     c => c.lastVerified && c.lastVerified !== 'Not specified' && c.lastVerified !== 'Information not available in provided source.'
   );
@@ -86,7 +94,7 @@ export function inspectDatasetVerification() {
     }
   });
 
-  return {
+  cachedDatasetMeta = {
     totalCards,
     totalAccounts,
     totalBranches,
@@ -97,6 +105,8 @@ export function inspectDatasetVerification() {
     pendingCount: Math.max(0, (totalCards + totalAccounts) - (verifiedCards.length + verifiedAccounts.length)),
     bankStatusList: Array.from(bankStatusMap.values())
   };
+
+  return cachedDatasetMeta;
 }
 
 /**

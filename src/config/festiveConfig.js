@@ -109,6 +109,18 @@ export const FESTIVE_CONFIG = {
     badgeText: "Diwali & Dhanteras Special",
     badgeTextHi: "दिवाली व धनतेरस विशेष",
     targetId: "dhanteras-hero"
+  },
+
+  // Automatic Festive Welcome Popups (IST Asia/Kolkata)
+  festiveWelcomePopups: {
+    enabled: true,
+    dhanterasDate: "2026-11-06",
+    diwaliDate: "2026-11-08",
+    timeZone: "Asia/Kolkata",
+    storageKeys: {
+      dhanteras: "dcard_festive_seen_dhanteras_2026",
+      diwali: "dcard_festive_seen_diwali_2026"
+    }
   }
 };
 

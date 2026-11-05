@@ -8,26 +8,29 @@ import LoadingSkeleton from "./components/LoadingSkeleton";
 import Footer from "./components/Footer";
 import AuthModal from "./components/AuthModal";
 import WebsiteDisclaimerModal from "./components/WebsiteDisclaimerModal";
+import FestiveWelcomeModal from "./components/festive/FestiveWelcomeModal";
 
-// Pages
-import HomePage from "./pages/HomePage";
-import CardsPage from "./pages/CardsPage";
-import ComparePage from "./pages/ComparePage";
-import AIAdvisorPage from "./pages/AIAdvisorPage";
-import SavedCardsPage from "./pages/SavedCardsPage";
-import BanksPage from "./pages/BanksPage";
-import FindBanksPage from "./pages/FindBanksPage";
-import FindMyBankPage from "./pages/FindMyBankPage";
-import AboutPage from "./pages/AboutPage";
-import ContactPage from "./pages/ContactPage";
-import FoundersPage from "./pages/FoundersPage";
-import SavingsAccountsPage from "./pages/SavingsAccountsPage";
-import SavingsAccountsComparePage from "./pages/SavingsAccountsComparePage";
-import SavingsAccountDetailPage from "./pages/SavingsAccountDetailPage";
-import CurrentAccountsPage from "./pages/CurrentAccountsPage";
-import CurrentAccountsComparePage from "./pages/CurrentAccountsComparePage";
-import CurrentAccountDetailPage from "./pages/CurrentAccountDetailPage";
-import DebitCardDetailPage from "./pages/DebitCardDetailPage";
+import PageLoadingFallback from "./components/PageLoadingFallback";
+
+// Lazy-Loaded Page Routes (Phase 1 Route-Level Code Splitting)
+const HomePage = lazy(() => import("./pages/HomePage"));
+const CardsPage = lazy(() => import("./pages/CardsPage"));
+const ComparePage = lazy(() => import("./pages/ComparePage"));
+const AIAdvisorPage = lazy(() => import("./pages/AIAdvisorPage"));
+const SavedCardsPage = lazy(() => import("./pages/SavedCardsPage"));
+const BanksPage = lazy(() => import("./pages/BanksPage"));
+const FindBanksPage = lazy(() => import("./pages/FindBanksPage"));
+const FindMyBankPage = lazy(() => import("./pages/FindMyBankPage"));
+const AboutPage = lazy(() => import("./pages/AboutPage"));
+const ContactPage = lazy(() => import("./pages/ContactPage"));
+const FoundersPage = lazy(() => import("./pages/FoundersPage"));
+const SavingsAccountsPage = lazy(() => import("./pages/SavingsAccountsPage"));
+const SavingsAccountsComparePage = lazy(() => import("./pages/SavingsAccountsComparePage"));
+const SavingsAccountDetailPage = lazy(() => import("./pages/SavingsAccountDetailPage"));
+const CurrentAccountsPage = lazy(() => import("./pages/CurrentAccountsPage"));
+const CurrentAccountsComparePage = lazy(() => import("./pages/CurrentAccountsComparePage"));
+const CurrentAccountDetailPage = lazy(() => import("./pages/CurrentAccountDetailPage"));
+const DebitCardDetailPage = lazy(() => import("./pages/DebitCardDetailPage"));
 
 import { normalizeCard, deduplicateCards, parseAnnualFeeVal, parseCashbackVal, safeLower, safeIncludes, safeStr, safeMap } from "./utils/compareUtils";
 import { logRecentlyViewed } from "./utils/recentlyViewedUtils";
@@ -1009,6 +1012,7 @@ function AppContent() {
       />
 
       <div className="flex-1">
+        <Suspense fallback={<PageLoadingFallback />}>
         <Routes>
           {/* 1. PUBLIC ROUTES (Accessible without authentication) */}
           <Route 
@@ -1299,12 +1303,15 @@ function AppContent() {
             } 
           />
         </Routes>
+        <Footer onOpenLegal={(tab) => { setLegalTab(tab); setIsLegalOpen(true); }} />
+        </Suspense>
       </div>
-
-      <Footer onOpenLegal={(tab) => { setLegalTab(tab); setIsLegalOpen(true); }} />
 
       {/* Website First Visit Disclaimer Popup */}
       <WebsiteDisclaimerModal />
+
+      {/* Automatic Dhanteras (Nov 6) & Diwali (Nov 8) Welcome Popups */}
+      <FestiveWelcomeModal />
 
       {/* Global Modals */}
       <AuthModal 

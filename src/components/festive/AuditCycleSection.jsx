@@ -32,20 +32,43 @@ export default function AuditCycleSection() {
   const { isHindi } = useLanguage();
   const config = FESTIVE_CONFIG.auditCycle;
 
-  // Live metrics updated dynamically every second
-  const [metrics, setMetrics] = useState(() => calculateAuditCycleMetrics());
+  // Calculate base banking verification metrics once on mount (memoized)
+  const [baseMetrics] = useState(() => calculateAuditCycleMetrics());
+
+  // Fast countdown state updated every second via pure integer arithmetic (no dataset scanning)
+  const [countdown, setCountdown] = useState(() => {
+    const endMs = baseMetrics.nextAuditDate.getTime();
+    const remainingMs = Math.max(0, endMs - Date.now());
+    return {
+      daysRemaining: Math.max(0, Math.floor(remainingMs / 86400000)),
+      hoursRemaining: Math.max(0, Math.floor((remainingMs % 86400000) / 3600000)),
+      minutesRemaining: Math.max(0, Math.floor((remainingMs % 3600000) / 60000)),
+      secondsRemaining: Math.max(0, Math.floor((remainingMs % 60000) / 1000)),
+    };
+  });
 
   useEffect(() => {
-    // Immediate calculation
-    setMetrics(calculateAuditCycleMetrics());
-
-    // Update every second for live countdown precision
+    const endMs = baseMetrics.nextAuditDate.getTime();
+    
+    // Interval only computes countdown remainder; never re-filters the banking dataset
     const timer = setInterval(() => {
-      setMetrics(calculateAuditCycleMetrics());
+      const remainingMs = Math.max(0, endMs - Date.now());
+      setCountdown({
+        daysRemaining: Math.max(0, Math.floor(remainingMs / 86400000)),
+        hoursRemaining: Math.max(0, Math.floor((remainingMs % 86400000) / 3600000)),
+        minutesRemaining: Math.max(0, Math.floor((remainingMs % 3600000) / 60000)),
+        secondsRemaining: Math.max(0, Math.floor((remainingMs % 60000) / 1000)),
+      });
     }, 1000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [baseMetrics.nextAuditDate]);
+
+  // Combine stable base metrics with live countdown numbers
+  const metrics = useMemo(() => ({
+    ...baseMetrics,
+    ...countdown
+  }), [baseMetrics, countdown]);
 
   // Pre-calculate 15 circular segment positions on a 280x280 coordinate plane (radius = 108, center = 140, 140)
   const segments = useMemo(() => {

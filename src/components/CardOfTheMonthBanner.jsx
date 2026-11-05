@@ -490,12 +490,18 @@ export default function CardOfTheMonthBanner({ activeCardsList = [], onViewDetai
           </div>
 
           {/* Model Commercial Photo with Smooth Gradient Blend */}
-          <img
-            src="/assets/card-of-month-model.jpg"
-            alt="D.CARD Featured Debit Card Lifestyle Traveler in Festive Ethnic Attire"
-            className="w-full h-full object-cover object-top max-h-[380px] sm:max-h-[440px] lg:max-h-full filter contrast-[1.03]"
-            loading="lazy"
-          />
+          <picture className="w-full h-full block">
+            <source type="image/webp" srcSet="/assets/card-of-month-model.webp" />
+            <img
+              src="/assets/card-of-month-model.jpg"
+              alt="D.CARD Featured Debit Card Lifestyle Traveler in Festive Ethnic Attire"
+              width="820"
+              height="1024"
+              decoding="async"
+              fetchpriority="high"
+              className="w-full h-full object-cover object-top max-h-[380px] sm:max-h-[440px] lg:max-h-full filter contrast-[1.03]"
+            />
+          </picture>
 
           {/* Subtle blend gradient on the left edge (desktop only) */}
           <div className="hidden lg:block absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#FFFFFF] dark:from-[#1E293B] to-transparent pointer-events-none" />
