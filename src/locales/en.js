@@ -2,7 +2,6 @@ export const en = {
   nav: {
     home: "Home",
     debitCards: "Debit Cards",
-    debitAccounts: "Debit Accounts",
     savingsAccounts: "Savings Accounts",
     currentAccounts: "Current Accounts",
     compare: "Compare",

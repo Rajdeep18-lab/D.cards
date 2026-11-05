@@ -25,7 +25,6 @@ import { useAuth } from '../hooks/useAuth';
 import { useLanguage } from '../context/LanguageContext';
 import HeroFestiveAtmosphere from './festive/HeroFestiveAtmosphere';
 import DiyaIllustration from './festive/DiyaIllustration';
-
 import { FESTIVE_CONFIG } from '../config/festiveConfig';
 
 const HeroVisual = memo(({ isMobile }) => {
@@ -223,8 +222,6 @@ const HeroVisual = memo(({ isMobile }) => {
 
       </div>
 
-      
-
       {/* FLOATING BOTTOM BADGE */}
       <motion.div
         animate={{ y: [0, 4, 0] }}
@@ -355,7 +352,16 @@ function HeroSection({ query = '', setQuery = () => {}, onSearchSubmit = null, o
         <HeroVisual isMobile={isMobile} />
       </div>
 
-      
+      {/* ── Fixed Floating Bottom-Right D.CARD AI Assistance Pill ── */}
+      <Link
+        to="/ai-advisor"
+        className="fixed bottom-6 right-6 z-40 hidden sm:inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-gradient-to-r from-[#111827] via-[#291747] to-[#111827] text-[#F5DFA8] border border-[#D6A64B]/70 shadow-[0_8px_25px_rgba(41,23,71,0.5)] hover:shadow-[0_0_20px_rgba(214,166,75,0.5)] hover:scale-105 transition-all text-xs font-bold select-none cursor-pointer group"
+        title="D.CARD AI Assistance"
+      >
+        <Bot className="w-4 h-4 text-amber-400 group-hover:rotate-12 transition-transform" />
+        <span>{isHindi ? 'डी.कार्ड एआई सहायता' : 'D.CARD AI Assistance'}</span>
+        <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-pulse" />
+      </Link>
     </section>
   );
 }

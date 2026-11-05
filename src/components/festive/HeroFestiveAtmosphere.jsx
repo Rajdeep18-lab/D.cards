@@ -1,8 +1,7 @@
 import React, { useMemo } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import DiyaIllustration from './DiyaIllustration';
-import { GoldenMandala } from './MandalaWatermark';
-import DiwaliHeroRangoli from './DiwaliHeroRangoli';
+import { GoldenMandala, FestiveCornerRangoli } from './MandalaWatermark';
 import FloatingGoldCoin from './FloatingGoldCoin';
 import { AkashKandilLantern, MarigoldFlower } from './ToranGarland';
 import { FESTIVE_CONFIG } from '../../config/festiveConfig';
@@ -65,9 +64,8 @@ export default function HeroFestiveAtmosphere() {
         opacity={0.12} 
       />
       {/* Bottom-Left Colorful Indian Rangoli */}
-      {/* Bottom-Left Traditional Indian Rangoli with Centered Diya */}
-      <div className="absolute -bottom-12 -left-8 sm:-bottom-8 sm:-left-4 md:-bottom-4 md:left-0 z-20 pointer-events-none scale-90 sm:scale-100 origin-bottom-left">
-        <DiwaliHeroRangoli />
+      <div className="absolute -bottom-20 -left-12 z-10">
+        <FestiveCornerRangoli size={250} />
       </div>
 
       {/* ── 3. ANTIGRAVITY FLOATING 3D GOLD COINS (Dhanteras Prosperity Theme) ── */}
