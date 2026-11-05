@@ -10,10 +10,6 @@ import {
   HelpCircle,
   Info,
   Sparkles,
-  ChevronDown,
-  ChevronUp,
-  Layers,
-  Database
 } from 'lucide-react';
 import { FESTIVE_CONFIG } from '../../config/festiveConfig';
 import { useLanguage } from '../../context/LanguageContext';
@@ -38,7 +34,6 @@ export default function AuditCycleSection() {
 
   // Live metrics updated dynamically every second
   const [metrics, setMetrics] = useState(() => calculateAuditCycleMetrics());
-  const [showBreakdown, setShowBreakdown] = useState(false);
 
   useEffect(() => {
     // Immediate calculation
@@ -363,78 +358,7 @@ export default function AuditCycleSection() {
               </div>
             </div>
 
-            {/* Toggleable Verification Transparency Accordion */}
-            <div className="rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden bg-slate-50/50 dark:bg-slate-800/30">
-              <button
-                type="button"
-                onClick={() => setShowBreakdown(prev => !prev)}
-                className="w-full min-h-[44px] px-3.5 py-2.5 flex items-center justify-between text-left text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors cursor-pointer"
-                aria-expanded={showBreakdown}
-              >
-                <div className="flex items-center gap-2">
-                  <Database className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                  <span>
-                    {isHindi ? 'डेटा सत्यापन स्थिति विवरण देखें' : 'View Data Verification Breakdown'}
-                  </span>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/20 font-bold">
-                    {metrics.datasetMeta.totalVerifiedCount} Verified • {metrics.datasetMeta.pendingCount} In Queue
-                  </span>
-                </div>
-                {showBreakdown ? (
-                  <ChevronUp className="w-4 h-4 text-slate-400 shrink-0" />
-                ) : (
-                  <ChevronDown className="w-4 h-4 text-slate-400 shrink-0" />
-                )}
-              </button>
-
-              {showBreakdown && (
-                <div className="p-3.5 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 text-xs space-y-2">
-                  <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 font-medium pb-1 border-b border-slate-100 dark:border-slate-800">
-                    <span>{isHindi ? 'बैंक / संस्थान' : 'Bank Institution'}</span>
-                    <span>{isHindi ? 'सत्यापन स्थिति' : 'Verification Status'}</span>
-                  </div>
-
-                  <div className="max-h-48 overflow-y-auto space-y-1.5 custom-scrollbar pr-1">
-                    {metrics.datasetMeta.bankStatusList.map((item) => (
-                      <div key={item.bank} className="flex items-center justify-between text-xs py-1">
-                        <span className="font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[65%]">
-                          {item.bank}
-                        </span>
-                        {item.hasVerifiedCards ? (
-                          <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
-                            <CheckCircle2 className="w-3 h-3 shrink-0" />
-                            <span>{item.latestDate || 'Verified'}</span>
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1 text-[10px] font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full border border-slate-200 dark:border-slate-700">
-                            <Clock className="w-3 h-3 shrink-0 text-slate-400" />
-                            <span>{isHindi ? 'सत्यापन लंबित' : 'Pending Verification'}</span>
-                          </span>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-
-                  <p className="text-[10px] text-slate-500 dark:text-slate-400 italic pt-1 border-t border-slate-100 dark:border-slate-800">
-                    {isHindi 
-                      ? 'केवल आधिकारिक बैंक टैरिफ शेड्यूल से सत्यापित उत्पादों को ही "सत्यापित" चिह्नित किया जाता है।'
-                      : 'Only products directly cross-referenced with published bank tariff schedules are marked as verified.'}
-                  </p>
-                </div>
-              )}
             </div>
-
-            {/* Clear Governance Notice */}
-            <div className="flex items-start gap-2.5 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/70 dark:border-slate-800 text-[10.5px] sm:text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed font-normal">
-              <Info className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-              <span>
-                {isHindi 
-                  ? (config.disclaimerHi || 'यह सार्वजनिक रूप से प्रकाशित बैंक टैरिफ शेड्यूल और शुल्क तालिकाओं पर D.CARD के आंतरिक निर्धारित समीक्षा चक्र को दर्शाता है। स्वतंत्र बैंक इस प्लेटफॉर्म का सत्यापन नहीं करते हैं।') 
-                  : (config.disclaimer || "Represents D.CARD's internal scheduled review cycle across publicly published bank tariff schedules and schedule of charges. Independent banking institutions do not verify this platform.")}
-              </span>
-            </div>
-
-          </div>
 
         </div>
 
