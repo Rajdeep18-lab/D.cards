@@ -1,8 +1,19 @@
 import React, { useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Scale, ArrowRight, X, Sparkles } from 'lucide-react';
 import { normalizeCard, safeMap } from '../utils/compareUtils';
 import { useLanguage } from '../context/LanguageContext';
 
+/**
+ * ComparisonDock (Card Selection Panel)
+ * 
+ * Floating dock anchored within the viewport.
+ * - Guaranteed containment within mobile, tablet, and desktop viewports.
+ * - Responsive boundaries preventing overflow beyond right or bottom screen edges.
+ * - Scrollable card chip area for multiple selections.
+ * - Dedicated close button (✕) and accessible action buttons.
+ * - Styled with D.CARD's signature Burgundy (#800020), Gold (#D6A64B / #F59E0B), and Crisp White.
+ */
 function ComparisonDock({ compareQueue = [], onRemove, onCompareNow, onClear, onHeightChange }) {
   const queueList = safeMap(Array.isArray(compareQueue) ? compareQueue : [], normalizeCard);
   const dockRef = useRef(null);
@@ -51,67 +62,90 @@ function ComparisonDock({ compareQueue = [], onRemove, onCompareNow, onClear, on
     <AnimatePresence>
       <motion.div
         ref={dockRef}
-        initial={{ y: 100, opacity: 0, scale: 0.95 }}
+        initial={{ y: 80, opacity: 0, scale: 0.96 }}
         animate={{ y: 0, opacity: 1, scale: 1 }}
-        exit={{ y: 100, opacity: 0, scale: 0.95 }}
-        transition={{ type: 'spring', damping: 20, stiffness: 220 }}
-        style={{ bottom: 'calc(1.25rem + env(safe-area-inset-bottom, 0px))' }}
-        className="fixed left-1/2 -translate-x-1/2 z-40 w-[calc(100%-2rem)] max-w-3xl select-none box-border"
+        exit={{ y: 80, opacity: 0, scale: 0.96 }}
+        transition={{ type: 'spring', damping: 24, stiffness: 260 }}
+        style={{
+          bottom: 'max(0.75rem, env(safe-area-inset-bottom, 0.75rem))',
+          maxWidth: 'min(50rem, calc(100vw - 1.5rem))',
+        }}
+        className="fixed inset-x-3 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 z-[100] w-auto select-none box-border pointer-events-auto"
       >
-        <div className="rounded-[2rem] p-3.5 sm:p-4 border bg-white/90 dark:bg-black/90 backdrop-blur-2xl border-slate-200 dark:border-secondary/15 shadow-[0_20px_50px_rgba(122,15,82,0.2)] text-slate-800 dark:text-slate-100 w-full">
+        <div className="relative rounded-[22px] sm:rounded-[28px] p-3 sm:p-4 border-2 border-amber-400/40 dark:border-amber-400/30 bg-white/98 dark:bg-[#1A0A14]/98 backdrop-blur-2xl shadow-[0_15px_45px_rgba(128,0,32,0.22)] text-slate-800 dark:text-slate-100 w-full overflow-hidden flex flex-col max-h-[82vh]">
 
-          {/* Row 1: badges + card chips (wrap freely) */}
-          <div className="flex flex-wrap items-center gap-2">
-            {/* Count Chip */}
-            <div className="px-3 py-1 rounded-full text-xs font-black text-white bg-gradient-to-r from-primary to-secondary shadow-sm flex-shrink-0">
-              {isHindi ? `${queueList.length} / 3 चयनित` : `${queueList.length} / 3 QUEUED`}
+          {/* Top Row: Count Badge, Savings Pill, and Dedicated Close Button */}
+          <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-rose-100 dark:border-amber-900/20 flex-shrink-0">
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 min-w-0">
+              {/* Count Chip - D.CARD Burgundy & Gold */}
+              <div className="px-3 py-1 rounded-full text-xs font-black text-amber-200 bg-gradient-to-r from-[#800020] via-[#9F1239] to-[#800020] border border-amber-400/30 shadow-xs flex items-center gap-1.5 flex-shrink-0">
+                <Scale className="w-3.5 h-3.5 text-amber-300" />
+                <span>{isHindi ? `${queueList.length} / 3 चयनित` : `${queueList.length} / 3 QUEUED`}</span>
+              </div>
+
+              {/* Potential Savings Badge */}
+              {potentialSavings && (
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 text-[10px] sm:text-[11px] font-black border border-emerald-200 dark:border-emerald-800/60 shadow-xs tracking-wide flex-shrink-0">
+                  <span>💰</span>
+                  <span>{isHindi ? `अनुमानित बचत: ${potentialSavings}` : `EST. SAVINGS: ${potentialSavings}`}</span>
+                </span>
+              )}
             </div>
 
-            {/* Potential Savings Badge */}
-            {potentialSavings && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-[9px] font-black border border-white/20 shadow-[0_4px_12px_rgba(16,185,129,0.25)] animate-pulse tracking-wider leading-none flex-shrink-0">
-                {isHindi ? `💰 अनुमानित बचत: ${potentialSavings}` : `💰 EST. SAVINGS: ${potentialSavings}`}
-              </span>
-            )}
+            {/* Dedicated Accessible Close Button */}
+            <button
+              onClick={onClear}
+              aria-label={isHindi ? "तुलना चयन बंद करें" : "Close comparison selection"}
+              className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-rose-50 dark:bg-white/10 hover:bg-rose-100 dark:hover:bg-white/20 text-slate-500 hover:text-[#800020] dark:text-slate-300 dark:hover:text-white flex items-center justify-center transition-all cursor-pointer flex-shrink-0 border border-rose-100 dark:border-white/10 active:scale-90"
+              title={isHindi ? "पैनल बंद करें" : "Close panel"}
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
 
-            {/* Card Chips */}
+          {/* Middle Row: Scrollable Card Chips Container */}
+          <div className="py-2.5 flex flex-wrap items-center gap-2 overflow-y-auto max-h-[140px] sm:max-h-[180px] custom-scrollbar">
             {queueList.map((card, i) => (
               <div key={card.id || i} className="relative group flex-shrink-0">
-                <div className="rounded-xl px-2.5 py-1.5 text-xs font-bold flex items-center gap-1.5 bg-[#2563EB]/10 border border-[#2563EB]/20 text-[#2563EB] dark:text-[#60A5FA] shadow-sm max-w-[150px] sm:max-w-[200px]">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#2563EB] flex-shrink-0" />
+                <div className="rounded-xl px-2.5 sm:px-3 py-1.5 text-xs font-bold flex items-center gap-1.5 bg-rose-50/80 dark:bg-white/5 border border-rose-200 dark:border-white/10 text-[#800020] dark:text-amber-200 shadow-xs max-w-[150px] sm:max-w-[210px] hover:border-amber-400/50 transition-colors">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#800020] dark:bg-amber-400 flex-shrink-0" />
                   <span className="truncate">{card.cardName || (isHindi ? "डेबिट कार्ड" : "Debit Card")}</span>
                 </div>
                 <button
                   onClick={() => onRemove && onRemove(card.id)}
-                  className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full flex items-center justify-center text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity shadow-md cursor-pointer bg-gradient-to-r from-[#2563EB] to-[#3B82F6] border border-white/10"
+                  className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full flex items-center justify-center text-xs text-white bg-gradient-to-r from-[#800020] to-[#9F1239] hover:from-rose-700 hover:to-rose-800 border border-white/20 shadow-md cursor-pointer transition-transform hover:scale-110 active:scale-95"
                   title={isHindi ? "कार्ड हटाएं" : "Remove card"}
+                  aria-label={isHindi ? "कार्ड हटाएं" : "Remove card"}
                 >
-                  ×
+                  <X className="w-3 h-3" />
                 </button>
               </div>
             ))}
           </div>
 
-          {/* Row 2: action buttons — always right-aligned */}
-          <div className="flex items-center justify-end gap-3 mt-3 pt-3 border-t border-slate-100 dark:border-secondary/10">
+          {/* Bottom Row: Actions (Clear All & Compare Now) */}
+          <div className="flex items-center justify-between gap-3 pt-2.5 border-t border-rose-100 dark:border-amber-900/20 flex-shrink-0">
             <button
               onClick={onClear}
-              className="text-xs font-black text-slate-400 dark:text-slate-500 hover:text-secondary dark:hover:text-roseGold transition-colors cursor-pointer uppercase tracking-wider px-2 py-1"
+              className="text-xs font-black text-slate-500 dark:text-slate-400 hover:text-[#800020] dark:hover:text-amber-300 transition-colors cursor-pointer uppercase tracking-wider px-2 py-1.5 min-h-[36px]"
             >
-              {t('dock.clearAll')}
+              {isHindi ? "सब हटाएं" : "CLEAR ALL"}
             </button>
+
             <button
               onClick={onCompareNow}
               disabled={queueList.length < 2}
-              className={`px-5 py-2.5 rounded-xl text-xs font-black text-white transition-all shadow cursor-pointer whitespace-nowrap ${
+              className={`px-5 sm:px-7 py-2.5 rounded-xl text-xs sm:text-sm font-black transition-all shadow-md cursor-pointer flex items-center gap-2 active:scale-95 min-h-[40px] ${
                 queueList.length >= 2
-                  ? 'bg-gradient-to-r from-primary to-secondary hover:shadow-indigo'
-                  : 'bg-slate-100 dark:bg-secondary/5 border border-slate-200 dark:border-secondary/10 text-slate-400 dark:text-slate-500 cursor-not-allowed shadow-none'
+                  ? 'bg-gradient-to-r from-[#800020] via-[#9F1239] to-[#800020] hover:from-[#6B001B] hover:to-[#881337] text-white border border-amber-400/40 shadow-rose-900/25 hover:shadow-lg'
+                  : 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed shadow-none border border-transparent'
               }`}
             >
-              {t('dock.compareNow')}
+              <span>{isHindi ? "तुलना करें" : "Compare Now"}</span>
+              <ArrowRight className="w-4 h-4" />
             </button>
           </div>
+
         </div>
       </motion.div>
     </AnimatePresence>
