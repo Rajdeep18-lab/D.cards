@@ -336,10 +336,25 @@ function AppContent() {
   }, []);
   const [isLegalOpen, setIsLegalOpen] = useState(false);
   const [legalTab, setLegalTab] = useState("privacy");
-  const [compareQueue, setCompareQueue] = useState([]);
+  const [compareQueue, setCompareQueue] = useState(() => {
+    try {
+      const saved = sessionStorage.getItem('dcard_compare_queue');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
   const [savingsCompareQueue, setSavingsCompareQueue] = useState([]);
   const [currentCompareQueue, setCurrentCompareQueue] = useState([]);
   const [compareDockHeight, setCompareDockHeight] = useState(0);
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem('dcard_compare_queue', JSON.stringify(compareQueue));
+    } catch (e) {
+      console.warn('sessionStorage compare sync error:', e);
+    }
+  }, [compareQueue]);
   const [selectedCard, setSelectedCardRaw] = useState(null);
   // Thin wrapper: logs product to recently-viewed localStorage before showing detail modal
   const setSelectedCard = useCallback((card) => {
@@ -460,9 +475,7 @@ function AppContent() {
 
   const handleCloseAuthModal = useCallback(() => {
     setIsAuthModalOpen(false);
-    const protectedPrefixes = [
-      '/cards', '/debit-card', '/product', '/savings', '/current', '/compare', '/saved-cards', '/favorites', '/profile', '/banks'
-    ];
+    const protectedPrefixes = ['/profile', '/saved-cards', '/favorites'];
     const isProtected = protectedPrefixes.some(p => location.pathname.startsWith(p));
     if (!user && isProtected) {
       navigate('/', { replace: true });
@@ -1367,11 +1380,7 @@ function AppContent() {
         compareQueue={compareQueue}
         onRemove={(cardId) => setCompareQueue(prev => prev.filter(c => String(c.id) !== String(cardId)))}
         onCompareNow={() => {
-          if (!user) {
-            openAuthModal('login', '/compare');
-          } else {
-            navigate('/compare');
-          }
+          navigate('/compare');
         }}
         onClear={() => setCompareQueue([])}
         onHeightChange={setCompareDockHeight}

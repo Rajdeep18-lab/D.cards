@@ -204,7 +204,7 @@ export default function LoginForm() {
         <GoogleAuthButton
           onClick={handleGoogleSignIn}
           loading={isGoogleLoading}
-          disabled={isSubmitting || loginSuccess}
+          disabled={isSubmitting || loginSuccess || isGoogleLoading}
           text="Continue with Google"
           loadingText="Connecting to Google..."
         />

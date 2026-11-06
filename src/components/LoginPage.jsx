@@ -5,8 +5,9 @@ import { useAuth } from '../hooks/useAuth';
 import GoogleAuthButton, { AuthDivider } from './auth/GoogleAuthButton';
 
 function LoginPage({ onSwitchToSignup, onSwitchToForgot, onSuccess }) {
-  const { login, continueWithGoogle } = useAuth();
+  const { login, continueWithGoogle, isGoogleLoading: contextGoogleLoading } = useAuth();
   const [googleLoading, setGoogleLoading] = useState(false);
+  const isGoogleActive = googleLoading || contextGoogleLoading;
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(true);
@@ -36,7 +37,7 @@ function LoginPage({ onSwitchToSignup, onSwitchToForgot, onSuccess }) {
   const isEmailValid = email.length > 3 && email.includes('@') && email.includes('.');
 
   const handleGoogleSignIn = async () => {
-    if (googleLoading || loading) return;
+    if (isGoogleActive || loading) return;
     setErrorMsg('');
     setGoogleLoading(true);
 
@@ -152,8 +153,8 @@ function LoginPage({ onSwitchToSignup, onSwitchToForgot, onSuccess }) {
       <div className="mb-4">
         <GoogleAuthButton
           onClick={handleGoogleSignIn}
-          loading={googleLoading}
-          disabled={loading}
+          loading={isGoogleActive}
+          disabled={loading || isGoogleActive}
           text="Continue with Google"
           loadingText="Connecting to Google..."
         />

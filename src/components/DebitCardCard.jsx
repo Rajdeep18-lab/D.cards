@@ -314,19 +314,30 @@ function DebitCardCard({ card, onCompare, isQueued, onViewDetails, userProfile =
         </motion.button>
 
         <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
+          type="button"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           onClick={(e) => {
             e.stopPropagation();
             onCompare();
           }}
-          className={`px-3 py-2.5 rounded-xl text-xs font-semibold text-white transition-all shadow-sm cursor-pointer min-h-[44px] flex items-center justify-center ${
+          onTouchEnd={(e) => {
+            e.stopPropagation();
+          }}
+          title={isQueued ? (isHindi ? "तुलना से हटाएं" : "Remove from comparison") : (isHindi ? "तुलना के लिए जोड़ें" : "Add to comparison")}
+          aria-label={isQueued ? (isHindi ? "तुलना से हटाएं" : "Remove from comparison") : (isHindi ? "तुलना के लिए जोड़ें" : "Add to comparison")}
+          style={{ touchAction: 'manipulation' }}
+          className={`px-3 py-2.5 rounded-xl text-xs font-semibold text-white transition-all shadow-sm cursor-pointer min-h-[44px] min-w-[44px] flex items-center justify-center select-none ${
             isQueued
-              ? "bg-emerald-600"
+              ? "bg-emerald-600 hover:bg-emerald-700 ring-2 ring-emerald-400/40 shadow-emerald-900/20"
               : "bg-slate-800 dark:bg-slate-700 hover:bg-[#2563EB]"
           }`}
         >
-          <Scale className="w-3.5 h-3.5" />
+          {isQueued ? (
+            <CheckCircle2 className="w-4 h-4 text-white" />
+          ) : (
+            <Scale className="w-4 h-4" />
+          )}
         </motion.button>
       </div>
     </article>

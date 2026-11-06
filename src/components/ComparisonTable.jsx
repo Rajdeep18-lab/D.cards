@@ -1,4 +1,4 @@
-import { useMemo, memo } from "react";
+import { useState, useMemo, memo } from "react";
 import { Scale, CheckCircle2, XCircle, Star, Trophy, Bot, Plane, Globe } from "lucide-react";
 import DebitCardVisual from "./DebitCardVisual";
 import BankLogo from "./BankLogo";
@@ -16,6 +16,7 @@ import {
 
 function ComparisonTable({ cards = [] }) {
   const { isHindi, t } = useLanguage();
+  const [mobileView, setMobileView] = useState('table'); // 'table' | 'cards'
 
   // Normalize & deduplicate cards input
   const normalizedCards = useMemo(() => {
@@ -315,62 +316,146 @@ function ComparisonTable({ cards = [] }) {
 
   return (
     <div className="w-full space-y-6">
-      {/* ── MOBILE CARD COMPARISON VIEW (320px - 767px) ── */}
-      <div className="block md:hidden space-y-4">
-        <div className="text-center pb-2">
-          <span className="text-[11px] font-black uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA]">
-            {isHindi 
-              ? `आमने-सामने कार्ड तुलना (${normalizedCards.length})` 
-              : `Side-by-Side Mobile Comparison Cards (${normalizedCards.length})`}
-          </span>
+      {/* ── MOBILE CARD & MATRIX COMPARISON VIEW (320px - 767px) ── */}
+      <div className="block md:hidden space-y-3">
+        {/* Mobile View Toggle & Status Bar */}
+        <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-100 dark:border-slate-800">
+          <div className="text-left">
+            <span className="text-[11px] font-black uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA] block">
+              {isHindi ? `कार्ड तुलना (${normalizedCards.length})` : `Comparison Matrix (${normalizedCards.length})`}
+            </span>
+            <span className="text-[9.5px] font-medium text-slate-500 dark:text-slate-400">
+              {mobileView === 'table' ? (isHindi ? 'दाएं स्वाइप करें ↔️' : 'Swipe cards horizontally ↔️') : (isHindi ? 'कार्ड दृश्य' : 'Stacked card details')}
+            </span>
+          </div>
+
+          {/* Toggle Button */}
+          <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-xl border border-slate-200 dark:border-slate-700/80">
+            <button
+              type="button"
+              onClick={() => setMobileView('table')}
+              className={`px-2.5 py-1 text-[10.5px] font-extrabold rounded-lg transition-all cursor-pointer ${
+                mobileView === 'table'
+                  ? 'bg-white dark:bg-slate-900 text-[#2563EB] dark:text-[#60A5FA] shadow-xs'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'
+              }`}
+            >
+              📊 {isHindi ? 'तालिका' : 'Table'}
+            </button>
+            <button
+              type="button"
+              onClick={() => setMobileView('cards')}
+              className={`px-2.5 py-1 text-[10.5px] font-extrabold rounded-lg transition-all cursor-pointer ${
+                mobileView === 'cards'
+                  ? 'bg-white dark:bg-slate-900 text-[#2563EB] dark:text-[#60A5FA] shadow-xs'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'
+              }`}
+            >
+              🎴 {isHindi ? 'कार्ड' : 'Cards'}
+            </button>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-4">
-          {normalizedCards.map((card, idx) => (
-            <div 
-              key={card.id || idx}
-              className="p-5 rounded-3xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-800 shadow-soft space-y-4 text-left"
-            >
-              {/* Card Header & Visual */}
-              <div className="flex items-center gap-3 border-b border-slate-100 dark:border-slate-800 pb-3">
-                <div className="w-20 shrink-0">
-                  <DebitCardVisual mode="mini" card={card} />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-1.5 mb-0.5">
-                    <BankLogo bankName={card.bank} size="xs" />
-                    <span className="text-[10px] font-bold text-[#2563EB] dark:text-[#60A5FA] uppercase block truncate">
-                      {card.bank || "Bank"}
+        {/* 1. Mobile Swipeable Matrix Table with Sticky Feature Column */}
+        {mobileView === 'table' && (
+          <div className="overflow-x-auto touch-pan-x -webkit-overflow-scrolling-touch rounded-2xl border border-[#E5E7EB] dark:border-slate-800 bg-white dark:bg-[#1E293B] shadow-soft">
+            <table className="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr className="bg-[#F8FAFC] dark:bg-slate-900 border-b border-[#E5E7EB] dark:border-slate-800">
+                  <th className="sticky left-0 z-20 bg-[#F8FAFC] dark:bg-slate-900 px-3 py-3 text-[#6B7280] dark:text-slate-400 font-semibold uppercase text-[9.5px] tracking-wider min-w-[105px] max-w-[120px] border-r border-[#E5E7EB] dark:border-slate-800 shadow-[2px_0_4px_rgba(0,0,0,0.04)]">
+                    {isHindi ? 'सुविधा' : 'Feature'}
+                  </th>
+                  {normalizedCards.map((card, idx) => (
+                    <th key={card.id || idx} className="px-3 py-3 text-center min-w-[155px] max-w-[190px] align-top">
+                      <div className="flex justify-center mb-1.5 transform scale-90">
+                        <DebitCardVisual mode="mini" card={card} />
+                      </div>
+                      <div className="font-bold text-[#1F2937] dark:text-white text-xs truncate max-w-[150px]">
+                        {card.cardName}
+                      </div>
+                      <div className="text-[10px] font-semibold text-[#2563EB] dark:text-[#60A5FA] mt-0.5 flex items-center justify-center gap-1">
+                        <BankLogo bankName={card.bank} size="xs" />
+                        <span className="truncate max-w-[95px]">{card.bank}</span>
+                      </div>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#E5E7EB] dark:divide-slate-800">
+                {rowDefinitions.map((row) => (
+                  <tr key={row.key} className="hover:bg-[#F8FAFC] dark:hover:bg-slate-800/40 transition-colors">
+                    <td className="sticky left-0 z-10 bg-white dark:bg-[#1E293B] px-3 py-2.5 font-bold text-[#1F2937] dark:text-slate-300 text-[10px] uppercase tracking-wide border-r border-[#E5E7EB] dark:border-slate-800 shadow-[2px_0_4px_rgba(0,0,0,0.04)]">
+                      {row.label}
+                    </td>
+                    {normalizedCards.map((card, idx) => (
+                      <td key={card.id || idx} className="px-3 py-2.5 text-center min-w-[155px] align-middle text-xs">
+                        <div className="flex justify-center">
+                          {row.render(card)}
+                        </div>
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* 2. Mobile Stacked Cards View with clean 2-column grid and wide multi-line items */}
+        {mobileView === 'cards' && (
+          <div className="grid grid-cols-1 gap-4">
+            {normalizedCards.map((card, idx) => (
+              <div 
+                key={card.id || idx}
+                className="p-4 sm:p-5 rounded-3xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-800 shadow-soft space-y-4 text-left"
+              >
+                {/* Card Header & Visual */}
+                <div className="flex items-center gap-3 border-b border-slate-100 dark:border-slate-800 pb-3">
+                  <div className="w-20 shrink-0">
+                    <DebitCardVisual mode="mini" card={card} />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5 mb-0.5">
+                      <BankLogo bankName={card.bank} size="xs" />
+                      <span className="text-[10px] font-bold text-[#2563EB] dark:text-[#60A5FA] uppercase block truncate">
+                        {card.bank || "Bank"}
+                      </span>
+                    </div>
+                    <h4 className="text-sm font-extrabold text-[#1F2937] dark:text-white leading-tight truncate">
+                      {card.cardName}
+                    </h4>
+                    <span className="inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-bold bg-[#EFF6FF] dark:bg-slate-800 text-[#2563EB] dark:text-[#60A5FA]">
+                      {card.network || "Visa"}
                     </span>
                   </div>
-                  <h4 className="text-sm font-extrabold text-[#1F2937] dark:text-white leading-tight truncate">
-                    {card.cardName}
-                  </h4>
-                  <span className="inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-bold bg-[#EFF6FF] dark:bg-slate-800 text-[#2563EB] dark:text-[#60A5FA]">
-                    {card.network || "Visa"}
-                  </span>
+                </div>
+
+                {/* Metrics Grid */}
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  {rowDefinitions.map((row) => {
+                    if (row.key === 'bank' || row.key === 'cardName' || row.key === 'network') return null;
+                    const isWide = row.key === 'features' || row.key === 'rewards' || row.key === 'bestFor' || row.key === 'eligibility';
+                    return (
+                      <div 
+                        key={row.key} 
+                        className={`p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between ${
+                          isWide ? 'col-span-2' : ''
+                        }`}
+                      >
+                        <span className="text-[9.5px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5">
+                          {row.label}
+                        </span>
+                        <div className="text-xs font-semibold text-[#1F2937] dark:text-slate-200">
+                          {row.render(card)}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
-
-              {/* Metrics Grid */}
-              <div className="grid grid-cols-2 gap-2 text-xs">
-                {rowDefinitions.map((row) => {
-                  if (row.key === 'bank' || row.key === 'cardName' || row.key === 'network') return null;
-                  return (
-                    <div key={row.key} className="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between">
-                      <span className="text-[9.5px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5">
-                        {row.label}
-                      </span>
-                      <div className="text-xs font-semibold text-[#1F2937] dark:text-slate-200">
-                        {row.render(card)}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* ── DESKTOP MATRIX TABLE VIEW (>=768px) ── */}

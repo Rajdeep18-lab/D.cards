@@ -19,6 +19,9 @@ import {
   firebaseUpdatePassword
 } from '../lib/firebase';
 
+// Active in-flight Google Sign-In promise to debounce rapid taps and prevent auth/cancelled-popup-request
+let activeGoogleSignInPromise = null;
+
 export const firebaseAuthService = {
   /**
    * Register a new user with Firebase Authentication
@@ -226,34 +229,47 @@ export const firebaseAuthService = {
 
   /**
    * Authenticate with Google using Firebase GoogleAuthProvider
-   * Prompts user with Google's real account selection screen
+   * Prompts user with Google's real account selection screen.
+   * Debounces repeated taps to ensure single-tap success and prevent concurrent request conflicts.
    */
   async signInWithGoogle({ useRedirect = false } = {}) {
+    // If an authentication request is already executing, return the active promise
+    if (activeGoogleSignInPromise) {
+      return activeGoogleSignInPromise;
+    }
+
     const provider = new GoogleAuthProvider();
-    // Prompt user to select their account explicitly
     provider.setCustomParameters({ prompt: 'select_account' });
 
-    if (useRedirect) {
-      await signInWithRedirect(auth, provider);
-      return null;
-    }
-
-    try {
-      const userCredential = await signInWithPopup(auth, provider);
-      return await this.syncGoogleUserData(userCredential);
-    } catch (error) {
-      console.error('Firebase Google Sign-In Error:', error);
-      // If popup was blocked by browser, attempt redirect fallback
-      if (error.code === 'auth/popup-blocked') {
-        try {
+    activeGoogleSignInPromise = (async () => {
+      try {
+        if (useRedirect) {
           await signInWithRedirect(auth, provider);
           return null;
-        } catch (redirectError) {
+        }
+
+        try {
+          const userCredential = await signInWithPopup(auth, provider);
+          return await this.syncGoogleUserData(userCredential);
+        } catch (error) {
+          console.error('Firebase Google Sign-In Popup Error:', error);
+          // If popup was blocked by browser (common on strict mobile settings), attempt redirect fallback
+          if (error.code === 'auth/popup-blocked') {
+            try {
+              await signInWithRedirect(auth, provider);
+              return null;
+            } catch (redirectError) {
+              throw new Error(this.formatErrorMessage(redirectError));
+            }
+          }
           throw new Error(this.formatErrorMessage(error));
         }
+      } finally {
+        activeGoogleSignInPromise = null;
       }
-      throw new Error(this.formatErrorMessage(error));
-    }
+    })();
+
+    return activeGoogleSignInPromise;
   },
 
   /**
@@ -274,6 +290,19 @@ export const firebaseAuthService = {
 
   async logout() {
     try {
+      const currentUser = auth.currentUser;
+      if (currentUser?.uid) {
+        try {
+          localStorage.removeItem(`dcard_firebase_profile_${currentUser.uid}`);
+        } catch (e) {
+          // ignore
+        }
+      }
+      try {
+        sessionStorage.removeItem('dcard_auth_redirect');
+      } catch (e) {
+        // ignore
+      }
       await firebaseSignOut(auth);
     } catch (error) {
       console.error('Firebase Logout Error:', error);

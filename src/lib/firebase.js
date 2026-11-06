@@ -1,6 +1,9 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import {
   getAuth,
+  setPersistence,
+  browserLocalPersistence,
+  inMemoryPersistence,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut as firebaseSignOut,
@@ -62,6 +65,11 @@ const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 // Initialize Firebase Auth instance
 export const auth = getAuth(app);
 
+// Explicitly enforce browserLocalPersistence to guarantee user sessions persist across page refreshes and browser restarts
+setPersistence(auth, browserLocalPersistence).catch((error) => {
+  console.warn('[Firebase Auth] Persistence initialization notice:', error.message);
+});
+
 // Initialize Firestore Database instance
 export const db = getFirestore(app);
 
@@ -69,6 +77,9 @@ export const db = getFirestore(app);
 export const storage = getStorage(app);
 
 export {
+  setPersistence,
+  browserLocalPersistence,
+  inMemoryPersistence,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   firebaseSignOut,

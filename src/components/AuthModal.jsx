@@ -24,7 +24,8 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
     signUp, 
     forgotPassword,
     redirectTarget,
-    continueWithGoogle
+    continueWithGoogle,
+    isGoogleLoading: contextGoogleLoading
   } = useAuth();
   const { t } = useLanguage();
 
@@ -54,6 +55,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
 
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const isGoogleActive = googleLoading || contextGoogleLoading;
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
 
@@ -161,7 +163,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
   };
 
   const handleGoogleSignIn = async () => {
-    if (googleLoading || loading) return;
+    if (isGoogleActive || loading) return;
     setErrorMsg('');
     setSuccessMsg('');
     setGoogleLoading(true);
@@ -400,8 +402,8 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
           <div>
             <GoogleAuthButton
               onClick={handleGoogleSignIn}
-              loading={googleLoading}
-              disabled={loading}
+              loading={isGoogleActive}
+              disabled={loading || isGoogleActive}
               text={t('auth.googleSignIn', 'Continue with Google')}
               loadingText={t('auth.connectingGoogle', 'Connecting to Google...')}
             />
@@ -526,8 +528,8 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
           <div>
             <GoogleAuthButton
               onClick={handleGoogleSignIn}
-              loading={googleLoading}
-              disabled={loading}
+              loading={isGoogleActive}
+              disabled={loading || isGoogleActive}
               text={t('auth.googleSignIn', 'Continue with Google')}
               loadingText={t('auth.connectingGoogle', 'Connecting to Google...')}
             />

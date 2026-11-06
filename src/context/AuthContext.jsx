@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState, useCallback } from "react";
+import { createContext, useEffect, useState, useCallback, useRef } from "react";
 import { auth, onAuthStateChanged } from "../lib/firebase";
 import { firebaseAuthService } from "../services/firebaseAuthService";
 import { profileService } from "../services/profileService";
@@ -14,6 +14,8 @@ export function AuthProvider({ children }) {
   const [authModalInitialTab, setAuthModalInitialTab] = useState("login"); // "login" | "signup" | "forgot"
   const [redirectTarget, setRedirectTarget] = useState(null);
   const [isPasswordRecoveryActive, setIsPasswordRecoveryActive] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const isGoogleSigningInRef = useRef(false);
 
   const toast = useToast();
 
@@ -144,6 +146,13 @@ export function AuthProvider({ children }) {
   };
 
   const continueWithGoogle = async () => {
+    // Concurrency lock: prevent multiple rapid taps from firing duplicate Firebase popup requests
+    if (isGoogleSigningInRef.current || isGoogleLoading) {
+      return null;
+    }
+    isGoogleSigningInRef.current = true;
+    setIsGoogleLoading(true);
+
     try {
       const res = await firebaseAuthService.signInWithGoogle();
       if (!res) return null; // If redirect was initiated
@@ -178,6 +187,9 @@ export function AuthProvider({ children }) {
         toast(err.message || "Google sign-in failed. Please try again.", "error");
       }
       throw err;
+    } finally {
+      isGoogleSigningInRef.current = false;
+      setIsGoogleLoading(false);
     }
   };
 
@@ -256,6 +268,7 @@ export function AuthProvider({ children }) {
         login,
         continueWithGoogle,
         signInWithGoogle: continueWithGoogle,
+        isGoogleLoading,
         logout,
         forgotPassword,
         updateProfile,

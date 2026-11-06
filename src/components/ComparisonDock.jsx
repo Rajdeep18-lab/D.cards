@@ -68,9 +68,9 @@ function ComparisonDock({ compareQueue = [], onRemove, onCompareNow, onClear, on
         transition={{ type: 'spring', damping: 24, stiffness: 260 }}
         style={{
           bottom: 'max(0.75rem, env(safe-area-inset-bottom, 0.75rem))',
-          maxWidth: 'min(50rem, calc(100vw - 1.5rem))',
+          maxWidth: 'min(50rem, calc(100vw - 1rem))',
         }}
-        className="fixed inset-x-3 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 z-[100] w-auto select-none box-border pointer-events-auto"
+        className="fixed inset-x-2 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 z-[100] w-auto select-none box-border pointer-events-auto"
       >
         <div className="relative rounded-[22px] sm:rounded-[28px] p-3 sm:p-4 border-2 border-amber-400/40 dark:border-amber-400/30 bg-white/98 dark:bg-[#1A0A14]/98 backdrop-blur-2xl shadow-[0_15px_45px_rgba(128,0,32,0.22)] text-slate-800 dark:text-slate-100 w-full overflow-hidden flex flex-col max-h-[82vh]">
 
@@ -124,18 +124,22 @@ function ComparisonDock({ compareQueue = [], onRemove, onCompareNow, onClear, on
           </div>
 
           {/* Bottom Row: Actions (Clear All & Compare Now) */}
-          <div className="flex items-center justify-between gap-3 pt-2.5 border-t border-rose-100 dark:border-amber-900/20 flex-shrink-0">
+          <div className="flex items-center justify-between gap-2 sm:gap-3 pt-2.5 border-t border-rose-100 dark:border-amber-900/20 flex-shrink-0">
             <button
+              type="button"
               onClick={onClear}
-              className="text-xs font-black text-slate-500 dark:text-slate-400 hover:text-[#800020] dark:hover:text-amber-300 transition-colors cursor-pointer uppercase tracking-wider px-2 py-1.5 min-h-[36px]"
+              style={{ touchAction: 'manipulation' }}
+              className="text-xs font-black text-slate-500 dark:text-slate-400 hover:text-[#800020] dark:hover:text-amber-300 transition-colors cursor-pointer uppercase tracking-wider px-2 py-1.5 min-h-[40px] flex items-center"
             >
               {isHindi ? "सब हटाएं" : "CLEAR ALL"}
             </button>
 
             <button
+              type="button"
               onClick={onCompareNow}
               disabled={queueList.length < 2}
-              className={`px-5 sm:px-7 py-2.5 rounded-xl text-xs sm:text-sm font-black transition-all shadow-md cursor-pointer flex items-center gap-2 active:scale-95 min-h-[40px] ${
+              style={{ touchAction: 'manipulation' }}
+              className={`px-4 sm:px-7 py-2.5 rounded-xl text-xs sm:text-sm font-black transition-all shadow-md cursor-pointer flex items-center gap-2 active:scale-95 min-h-[40px] ${
                 queueList.length >= 2
                   ? 'bg-gradient-to-r from-[#800020] via-[#9F1239] to-[#800020] hover:from-[#6B001B] hover:to-[#881337] text-white border border-amber-400/40 shadow-rose-900/25 hover:shadow-lg'
                   : 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed shadow-none border border-transparent'

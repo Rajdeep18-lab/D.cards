@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Scale, ArrowRight, Trash2, CheckCircle2, CreditCard, Building2, Briefcase } from 'lucide-react';
 import ComparisonTable from '../components/ComparisonTable';
 import SavingsCalculator from '../components/SavingsCalculator';
@@ -42,6 +42,28 @@ function ComparePage({ compareQueue, setCompareQueue, setSelectedCard }) {
   });
 
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Restore queued cards from navigation state or sessionStorage if initial array is empty
+  useEffect(() => {
+    if (!compareQueue || compareQueue.length === 0) {
+      if (location.state?.queue && Array.isArray(location.state.queue) && location.state.queue.length > 0) {
+        setCompareQueue(location.state.queue);
+      } else {
+        try {
+          const saved = sessionStorage.getItem('dcard_compare_queue');
+          if (saved) {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              setCompareQueue(parsed);
+            }
+          }
+        } catch (e) {
+          // ignore
+        }
+      }
+    }
+  }, [compareQueue, location.state, setCompareQueue]);
 
   return (
     <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 relative z-20 space-y-8 text-left">

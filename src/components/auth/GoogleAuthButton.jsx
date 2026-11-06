@@ -60,13 +60,26 @@ export default function GoogleAuthButton({
 }) {
   const isActionDisabled = disabled || loading;
 
+  const handleClick = (e) => {
+    if (isActionDisabled) {
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
+    if (onClick) {
+      onClick(e);
+    }
+  };
+
   return (
     <button
       type="button"
-      onClick={onClick}
+      onClick={handleClick}
       disabled={isActionDisabled}
+      aria-busy={loading}
       aria-label={loading ? loadingText : text}
-      className={`w-full py-2.5 sm:py-3 px-4 rounded-xl sm:rounded-2xl border border-slate-200 dark:border-slate-700 bg-white hover:bg-slate-50 dark:bg-slate-900/80 dark:hover:bg-slate-800/90 text-slate-700 dark:text-slate-100 font-bold text-xs sm:text-sm shadow-xs hover:shadow-sm active:scale-[0.99] transition-all flex items-center justify-center gap-2.5 sm:gap-3 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed select-none group focus:outline-none focus:ring-2 focus:ring-[#2563EB]/40 ${className}`}
+      style={{ touchAction: 'manipulation' }}
+      className={`w-full py-2.5 sm:py-3 px-4 rounded-xl sm:rounded-2xl border border-slate-200 dark:border-slate-700 bg-white hover:bg-slate-50 dark:bg-slate-900/80 dark:hover:bg-slate-800/90 text-slate-700 dark:text-slate-100 font-bold text-xs sm:text-sm shadow-xs hover:shadow-sm active:scale-[0.99] transition-all flex items-center justify-center gap-2.5 sm:gap-3 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed select-none group focus:outline-none focus:ring-2 focus:ring-[#2563EB]/40 ${loading ? 'pointer-events-none cursor-wait' : ''} ${className}`}
     >
       {loading ? (
         <>
