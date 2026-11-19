@@ -296,8 +296,8 @@ export default function SignupForm() {
         {/* Terms notice */}
         <p className="text-[11px] text-slate-500 leading-relaxed pt-1">
           By clicking <span className="text-slate-400 font-semibold">Create Account</span>, you acknowledge that you have read and agree to D.CARD's{' '}
-          <Link to="/" className="text-blue-400 hover:underline">Terms of Service</Link>{' '}and{' '}
-          <Link to="/" className="text-blue-400 hover:underline">Privacy Policy</Link>.
+          <Link to="/" className="text-[#159B72] hover:underline">Terms of Service</Link>{' '}and{' '}
+          <Link to="/" className="text-[#159B72] hover:underline">Privacy Policy</Link>.
         </p>
 
         {/* Submit Button */}
@@ -320,7 +320,7 @@ export default function SignupForm() {
           <Link
             to="/login"
             state={location.state}
-            className="font-bold text-blue-400 hover:text-blue-300 transition-colors ml-1 focus:outline-none focus:underline"
+            className="font-bold text-[#159B72] hover:text-emerald-200 transition-colors ml-1 focus:outline-none focus:underline"
           >
             Sign in
           </Link>

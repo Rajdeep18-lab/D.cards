@@ -496,11 +496,11 @@ function AdminDashboardModal({ isOpen, onClose, currentUser }) {
 
     // 3. User Signups / Activity Grouped by Category
     const activityTypes = [
-      { label: "Signups", count: liveMetrics.totalUsers, color: "#10b981" },
+      { label: "Signups", count: liveMetrics.totalUsers, color: "#159B72" },
       { label: "Favorites", count: liveMetrics.totalFavorites, color: "#f43f5e" },
       { label: "Compares", count: liveMetrics.totalCompares, color: "#a855f7" },
       { label: "Support", count: liveMetrics.totalQueries, color: "#f59e0b" },
-      { label: "Imports", count: liveMetrics.totalImports, color: "#3b82f6" }
+      { label: "Imports", count: liveMetrics.totalImports, color: "#159B72" }
     ];
     const maxActivityCount = Math.max(...activityTypes.map(a => a.count), 1);
 
@@ -703,15 +703,15 @@ function AdminDashboardModal({ isOpen, onClose, currentUser }) {
                           { label: "New Today", val: liveMetrics.newUsersToday, icon: "🆕", color: "text-roseGold" },
                           { label: "New This Week", val: liveMetrics.newUsersThisWeek, icon: "📈", color: "text-secondary" },
                           { label: "Debit Cards", val: liveMetrics.totalCards, icon: "💳", color: "text-amber-300" },
-                          { label: "Total Banks", val: liveMetrics.totalBanks, icon: "🏦", color: "text-blue-400" },
+                          { label: "Total Banks", val: liveMetrics.totalBanks, icon: "🏦", color: "text-[#159B72]" },
                           { label: "Favorites", val: liveMetrics.totalFavorites, icon: "❤️", color: "text-rose-400" },
-                          { label: "Compares", val: liveMetrics.totalCompares, icon: "⚖️", color: "text-[#60A5FA]" },
-                          { label: "Searches", val: liveMetrics.totalSearches, icon: "🔍", color: "text-cyan-400" },
-                          { label: "Card Views", val: liveMetrics.totalCardViews, icon: "📄", color: "text-sky-300" },
-                          { label: "AI Chats", val: liveMetrics.totalConversations, icon: "🤖", color: "text-[#3B82F6]" },
+                          { label: "Compares", val: liveMetrics.totalCompares, icon: "⚖️", color: "text-[#159B72]" },
+                          { label: "Searches", val: liveMetrics.totalSearches, icon: "🔍", color: "text-[#159B72]" },
+                          { label: "Card Views", val: liveMetrics.totalCardViews, icon: "📄", color: "text-emerald-200" },
+                          { label: "AI Chats", val: liveMetrics.totalConversations, icon: "🤖", color: "text-[#159B72]" },
                           { label: "Contact Tickets", val: liveMetrics.totalQueries, icon: "📩", color: "text-amber-400" },
                           { label: "JSON Imports", val: liveMetrics.jsonImports, icon: "📂", color: "text-emerald-300" },
-                          { label: "CSV Imports", val: liveMetrics.csvImports, icon: "📊", color: "text-indigo-300" }
+                          { label: "CSV Imports", val: liveMetrics.csvImports, icon: "📊", color: "text-emerald-200" }
                         ].map((card, i) => (
                           <div key={i} className="p-3.5 rounded-2xl bg-white/5 border border-white/10 space-y-1 transition-all hover:border-white/25">
                             <div className="flex justify-between items-center text-[10px] text-gray-400 font-bold uppercase">

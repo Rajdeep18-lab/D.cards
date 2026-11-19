@@ -62,7 +62,7 @@ export default function FestivalInteractiveCanvas({ containerRef }) {
     // ── 2. HOLI COLOR SPLASH & DUST SYSTEM ──
     const holiMotes = [];
     const interactiveSplashes = [];
-    const holiColors = ['#E11D48', '#0D9488', '#F59E0B', '#6366F1', '#EC4899', '#10B981'];
+    const holiColors = ['#E11D48', '#0D9488', '#F59E0B', '#159B72', '#EC4899', '#159B72'];
 
     if (festivalId === 'holi') {
       const count = Math.min(25, Math.floor(width / 50));

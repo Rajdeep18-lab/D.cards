@@ -20,21 +20,21 @@ export default function TopDisclaimerTicker() {
   return (
     <aside
       aria-label="Important Bank Data Disclaimer"
-      className="w-full text-[11px] sm:text-xs py-2 overflow-hidden select-none relative z-10 shrink-0 shadow-2xs bg-[#EEF4EE] dark:bg-[#0C1813] text-[#14291F] dark:text-[#E2ECE5] border-b border-[#E0E6DC] dark:border-[#1F382B]"
+      className="w-full text-[11px] sm:text-xs py-2 overflow-hidden select-none relative z-10 shrink-0 shadow-2xs bg-[#EEF4EE] dark:bg-[#0C1813] text-[#123C30] dark:text-[#E2ECE5] border-b border-[#DCE9E1] dark:border-[#1F382B]"
     >
       <div className="flex w-max animate-marquee-continuous whitespace-nowrap items-center">
         {tickerItems.map((idx) => (
           <div key={idx} className="flex items-center gap-2.5 mx-6 sm:mx-10 shrink-0">
             <span
-              className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full font-bold text-[10px] uppercase tracking-wider shadow-2xs bg-[#0E5C3E] text-white border border-[#0E5C3E]"
+              className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full font-bold text-[10px] uppercase tracking-wider shadow-2xs bg-[#006B50] text-white border border-[#006B50]"
             >
               <AlertTriangle className="w-3 h-3 shrink-0 text-[#34D399]" />
               <span>{t('ticker.important', 'Important')}</span>
             </span>
-            <span className="font-medium tracking-normal leading-normal text-[#14291F] dark:text-[#E2ECE5]">
+            <span className="font-medium tracking-normal leading-normal text-[#123C30] dark:text-[#E2ECE5]">
               {disclaimerText}
             </span>
-            <span className="text-[#10B981] select-none font-black text-sm ml-4">
+            <span className="text-[#159B72] select-none font-black text-sm ml-4">
               ✦
             </span>
           </div>

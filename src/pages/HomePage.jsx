@@ -123,14 +123,14 @@ function HomePage({
             {/* ── 2. PRODUCT DISCOVERY SECTION (Explore Banking Products) ── */}
             <section id="product-categories" className="select-none scroll-mt-24">
           <div className="text-center max-w-2xl mx-auto space-y-2.5 mb-10">
-            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-[#EEF4EE] dark:bg-[#1A2E24] text-[#0E5C3E] dark:text-[#34D399] text-xs font-bold tracking-widest uppercase rounded-full border border-[#E0E6DC] dark:border-[#1F382B]">
-              <Sparkles className="w-3.5 h-3.5 text-[#0E5C3E] dark:text-[#34D399]" />
+            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-[#EEF4EE] dark:bg-[#1A2E24] text-[#006B50] dark:text-[#34D399] text-xs font-bold tracking-widest uppercase rounded-full border border-[#DCE9E1] dark:border-[#1F382B]">
+              <Sparkles className="w-3.5 h-3.5 text-[#006B50] dark:text-[#34D399]" />
               {t('home.categoriesBadge', 'BANKING PRODUCT DISCOVERY')}
             </span>
-            <h2 className="text-3xl sm:text-4xl font-bold text-[#14291F] dark:text-white tracking-tight font-serif">
+            <h2 className="text-3xl sm:text-4xl font-bold text-[#123C30] dark:text-white tracking-tight font-serif">
               {t('home.categoriesTitle', 'Explore Banking Products')}
             </h2>
-            <p className="text-xs sm:text-sm text-[#445B4D] dark:text-[#B8C9BF] font-normal">
+            <p className="text-xs sm:text-sm text-[#45534D] dark:text-[#B8C9BF] font-normal">
               {t('home.categoriesSubtitle', 'Find products based on the features, benefits and requirements that matter to you.')}
             </p>
           </div>
@@ -141,45 +141,45 @@ function HomePage({
               whileHover={{ y: -6, scale: 1.01 }}
               transition={{ type: "spring", stiffness: 350, damping: 25 }}
               onClick={() => handleNavigateProtected('/savings-accounts')}
-              className="p-8 rounded-3xl bg-white dark:bg-[#13241C] border border-[#E0E6DC] dark:border-[#1F382B] hover:border-[#0E5C3E] shadow-card hover:shadow-cardHover transition-all duration-300 cursor-pointer flex flex-col justify-between space-y-6"
+              className="p-8 rounded-3xl bg-white dark:bg-[#13241C] border border-[#DCE9E1] dark:border-[#1F382B] hover:border-[#006B50] shadow-card hover:shadow-cardHover transition-all duration-300 cursor-pointer flex flex-col justify-between space-y-6"
             >
               <div className="space-y-4">
-                <div className="w-14 h-14 rounded-2xl bg-[#EEF4EE] dark:bg-[#1A2E24] text-[#0E5C3E] dark:text-[#34D399] flex items-center justify-center text-2xl font-bold shadow-xs border border-[#E0E6DC] dark:border-[#1F382B]">
+                <div className="w-14 h-14 rounded-2xl bg-[#EEF4EE] dark:bg-[#1A2E24] text-[#006B50] dark:text-[#34D399] flex items-center justify-center text-2xl font-bold shadow-xs border border-[#DCE9E1] dark:border-[#1F382B]">
                   🏦
                 </div>
                 <div>
-                  <span className="text-[11px] font-bold text-[#0E5C3E] dark:text-[#34D399] uppercase tracking-wider block font-sans">
+                  <span className="text-[11px] font-bold text-[#006B50] dark:text-[#34D399] uppercase tracking-wider block font-sans">
                     {t('home.catSavingsTitle', 'Savings Accounts')}
                   </span>
-                  <h3 className="text-2xl font-bold text-[#14291F] dark:text-white mt-0.5 font-serif">
+                  <h3 className="text-2xl font-bold text-[#123C30] dark:text-white mt-0.5 font-serif">
                     {t('savings.title', 'Savings Accounts')}
                   </h3>
                 </div>
-                <p className="text-xs sm:text-sm text-[#445B4D] dark:text-[#B8C9BF] leading-relaxed font-normal">
+                <p className="text-xs sm:text-sm text-[#45534D] dark:text-[#B8C9BF] leading-relaxed font-normal">
                   {t('home.catSavingsDesc', 'Compare account types, balance requirements, benefits, eligibility and more.')}
                 </p>
 
-                <ul className="grid grid-cols-1 gap-2 pt-2 text-xs text-[#14291F] dark:text-[#FAF8F5] font-medium">
+                <ul className="grid grid-cols-1 gap-2 pt-2 text-xs text-[#123C30] dark:text-[#FAF9F4] font-medium">
                   <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[#0E5C3E] dark:text-[#34D399] shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-[#006B50] dark:text-[#34D399] shrink-0" />
                     <span>{t('savings.interestRate', 'Account types & interest rates')}</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[#0E5C3E] dark:text-[#34D399] shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-[#006B50] dark:text-[#34D399] shrink-0" />
                     <span>{t('savings.minimumBalance', 'Balance & waiver rules')}</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[#0E5C3E] dark:text-[#34D399] shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-[#006B50] dark:text-[#34D399] shrink-0" />
                     <span>{t('savings.linkedCard', 'Linked debit card perks')}</span>
                   </li>
                 </ul>
               </div>
 
-              <div className="pt-4 border-t border-[#E0E6DC] dark:border-[#1F382B] flex items-center justify-between">
+              <div className="pt-4 border-t border-[#DCE9E1] dark:border-[#1F382B] flex items-center justify-between">
                 <span className="text-xs font-semibold text-[#6B8074] dark:text-[#869C8E]">150+ Verified</span>
                 <button
                   onClick={(e) => { e.stopPropagation(); handleNavigateProtected('/savings-accounts'); }}
-                  className="px-5 py-2.5 rounded-xl bg-[#0E5C3E] hover:bg-[#0A4730] text-white font-bold text-xs transition-all shadow-sm flex items-center gap-1.5 cursor-pointer"
+                  className="px-5 py-2.5 rounded-xl bg-[#006B50] hover:bg-[#064E3B] text-white font-bold text-xs transition-all shadow-sm flex items-center gap-1.5 cursor-pointer"
                 >
                   <span>{t('home.exploreNow', 'Explore Savings')}</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -192,45 +192,45 @@ function HomePage({
               whileHover={{ y: -6, scale: 1.01 }}
               transition={{ type: "spring", stiffness: 350, damping: 25 }}
               onClick={() => handleNavigateProtected('/current-accounts')}
-              className="p-8 rounded-3xl bg-white dark:bg-[#13241C] border border-[#E0E6DC] dark:border-[#1F382B] hover:border-[#0E5C3E] shadow-card hover:shadow-cardHover transition-all duration-300 cursor-pointer flex flex-col justify-between space-y-6"
+              className="p-8 rounded-3xl bg-white dark:bg-[#13241C] border border-[#DCE9E1] dark:border-[#1F382B] hover:border-[#006B50] shadow-card hover:shadow-cardHover transition-all duration-300 cursor-pointer flex flex-col justify-between space-y-6"
             >
               <div className="space-y-4">
-                <div className="w-14 h-14 rounded-2xl bg-[#EEF4EE] dark:bg-[#1A2E24] text-[#0E5C3E] dark:text-[#34D399] flex items-center justify-center text-2xl font-bold shadow-xs border border-[#E0E6DC] dark:border-[#1F382B]">
+                <div className="w-14 h-14 rounded-2xl bg-[#EEF4EE] dark:bg-[#1A2E24] text-[#006B50] dark:text-[#34D399] flex items-center justify-center text-2xl font-bold shadow-xs border border-[#DCE9E1] dark:border-[#1F382B]">
                   💼
                 </div>
                 <div>
-                  <span className="text-[11px] font-bold text-[#0E5C3E] dark:text-[#34D399] uppercase tracking-wider block font-sans">
+                  <span className="text-[11px] font-bold text-[#006B50] dark:text-[#34D399] uppercase tracking-wider block font-sans">
                     {t('currentAccounts.badge', 'BUSINESS CATEGORY')}
                   </span>
-                  <h3 className="text-2xl font-bold text-[#14291F] dark:text-white mt-0.5 font-serif">
+                  <h3 className="text-2xl font-bold text-[#123C30] dark:text-white mt-0.5 font-serif">
                     {t('currentAccounts.title', 'Current Accounts')}
                   </h3>
                 </div>
-                <p className="text-xs sm:text-sm text-[#445B4D] dark:text-[#B8C9BF] leading-relaxed font-normal">
+                <p className="text-xs sm:text-sm text-[#45534D] dark:text-[#B8C9BF] leading-relaxed font-normal">
                   {t('home.catCurrentDesc', 'Compare commercial MAB, cash deposit limits, corporate banking and cheque rules.')}
                 </p>
 
-                <ul className="grid grid-cols-1 gap-2 pt-2 text-xs text-[#14291F] dark:text-[#FAF8F5] font-medium">
+                <ul className="grid grid-cols-1 gap-2 pt-2 text-xs text-[#123C30] dark:text-[#FAF9F4] font-medium">
                   <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[#0E5C3E] dark:text-[#34D399] shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-[#006B50] dark:text-[#34D399] shrink-0" />
                     <span>Proprietorships, LLPs &amp; Pvt Ltd</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[#0E5C3E] dark:text-[#34D399] shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-[#006B50] dark:text-[#34D399] shrink-0" />
                     <span>{t('currentAccounts.cashDepositLimit', 'Cash deposit & withdrawal slabs')}</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[#0E5C3E] dark:text-[#34D399] shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-[#006B50] dark:text-[#34D399] shrink-0" />
                     <span>{t('currentAccounts.freeChequeLeaves', 'Free monthly cheque leaves')}</span>
                   </li>
                 </ul>
               </div>
 
-              <div className="pt-4 border-t border-[#E0E6DC] dark:border-[#1F382B] flex items-center justify-between">
+              <div className="pt-4 border-t border-[#DCE9E1] dark:border-[#1F382B] flex items-center justify-between">
                 <span className="text-xs font-semibold text-[#6B8074] dark:text-[#869C8E]">Commercial Tiers</span>
                 <button
                   onClick={(e) => { e.stopPropagation(); handleNavigateProtected('/current-accounts'); }}
-                  className="px-5 py-2.5 rounded-xl bg-[#0E5C3E] hover:bg-[#0A4730] text-white font-bold text-xs transition-all shadow-sm flex items-center gap-1.5 cursor-pointer"
+                  className="px-5 py-2.5 rounded-xl bg-[#006B50] hover:bg-[#064E3B] text-white font-bold text-xs transition-all shadow-sm flex items-center gap-1.5 cursor-pointer"
                 >
                   <span>{t('home.exploreNow', 'Explore Current')}</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -243,45 +243,45 @@ function HomePage({
               whileHover={{ y: -6, scale: 1.01 }}
               transition={{ type: "spring", stiffness: 350, damping: 25 }}
               onClick={() => handleNavigateProtected('/cards')}
-              className="p-8 rounded-3xl bg-white dark:bg-[#13241C] border border-[#E0E6DC] dark:border-[#1F382B] hover:border-[#0E5C3E] shadow-card hover:shadow-cardHover transition-all duration-300 cursor-pointer flex flex-col justify-between space-y-6"
+              className="p-8 rounded-3xl bg-white dark:bg-[#13241C] border border-[#DCE9E1] dark:border-[#1F382B] hover:border-[#006B50] shadow-card hover:shadow-cardHover transition-all duration-300 cursor-pointer flex flex-col justify-between space-y-6"
             >
               <div className="space-y-4">
-                <div className="w-14 h-14 rounded-2xl bg-[#EEF4EE] dark:bg-[#1A2E24] text-[#0E5C3E] dark:text-[#34D399] flex items-center justify-center text-2xl font-bold shadow-xs border border-[#E0E6DC] dark:border-[#1F382B]">
+                <div className="w-14 h-14 rounded-2xl bg-[#EEF4EE] dark:bg-[#1A2E24] text-[#006B50] dark:text-[#34D399] flex items-center justify-center text-2xl font-bold shadow-xs border border-[#DCE9E1] dark:border-[#1F382B]">
                   💳
                 </div>
                 <div>
-                  <span className="text-[11px] font-bold text-[#0E5C3E] dark:text-[#34D399] uppercase tracking-wider block font-sans">
+                  <span className="text-[11px] font-bold text-[#006B50] dark:text-[#34D399] uppercase tracking-wider block font-sans">
                     {t('debitCards.badge', 'CARD CATEGORY')}
                   </span>
-                  <h3 className="text-2xl font-bold text-[#14291F] dark:text-white mt-0.5 font-serif">
+                  <h3 className="text-2xl font-bold text-[#123C30] dark:text-white mt-0.5 font-serif">
                     {t('debitCards.title', 'Debit Cards')}
                   </h3>
                 </div>
-                <p className="text-xs sm:text-sm text-[#445B4D] dark:text-[#B8C9BF] leading-relaxed font-normal">
+                <p className="text-xs sm:text-sm text-[#45534D] dark:text-[#B8C9BF] leading-relaxed font-normal">
                   {t('home.catCardsDesc', 'Compare fees, limits, rewards, lounge access and other card benefits.')}
                 </p>
 
-                <ul className="grid grid-cols-1 gap-2 pt-2 text-xs text-[#14291F] dark:text-[#FAF8F5] font-medium">
+                <ul className="grid grid-cols-1 gap-2 pt-2 text-xs text-[#123C30] dark:text-[#FAF9F4] font-medium">
                   <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[#0E5C3E] dark:text-[#34D399] shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-[#006B50] dark:text-[#34D399] shrink-0" />
                     <span>{t('debitCards.annualFee', 'Annual fees & spend waivers')}</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[#0E5C3E] dark:text-[#34D399] shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-[#006B50] dark:text-[#34D399] shrink-0" />
                     <span>{t('debitCards.dailyAtmLimit', 'Daily ATM & POS limits')}</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[#0E5C3E] dark:text-[#34D399] shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-[#006B50] dark:text-[#34D399] shrink-0" />
                     <span>{t('debitCards.loungeAccess', 'Airport lounge access')}</span>
                   </li>
                 </ul>
               </div>
 
-              <div className="pt-4 border-t border-[#E0E6DC] dark:border-[#1F382B] flex items-center justify-between">
+              <div className="pt-4 border-t border-[#DCE9E1] dark:border-[#1F382B] flex items-center justify-between">
                 <span className="text-xs font-semibold text-[#6B8074] dark:text-[#869C8E]">100+ Cards</span>
                 <button
                   onClick={(e) => { e.stopPropagation(); handleNavigateProtected('/cards'); }}
-                  className="px-5 py-2.5 rounded-xl bg-[#0E5C3E] hover:bg-[#0A4730] text-white font-bold text-xs transition-all shadow-sm flex items-center gap-1.5 cursor-pointer"
+                  className="px-5 py-2.5 rounded-xl bg-[#006B50] hover:bg-[#064E3B] text-white font-bold text-xs transition-all shadow-sm flex items-center gap-1.5 cursor-pointer"
                 >
                   <span>{t('home.exploreNow', 'Explore Cards')}</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -302,11 +302,11 @@ function HomePage({
         {/* ── 4. HOW D.CARD WORKS ── */}
         <section className="select-none text-left space-y-8">
           <div className="text-center max-w-2xl mx-auto space-y-2.5">
-            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-[#EEF4EE] dark:bg-[#1A2E24] text-[#0E5C3E] dark:text-[#34D399] text-xs font-bold tracking-widest uppercase rounded-full border border-[#E0E6DC] dark:border-[#1F382B]">
-              <ShieldCheck className="w-4 h-4 text-[#0E5C3E] dark:text-[#34D399]" />
+            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-[#EEF4EE] dark:bg-[#1A2E24] text-[#006B50] dark:text-[#34D399] text-xs font-bold tracking-widest uppercase rounded-full border border-[#DCE9E1] dark:border-[#1F382B]">
+              <ShieldCheck className="w-4 h-4 text-[#006B50] dark:text-[#34D399]" />
               SIMPLE 3-STEP PROCESS
             </span>
-            <h2 className="text-3xl sm:text-4xl font-bold text-[#14291F] dark:text-white tracking-tight font-serif">
+            <h2 className="text-3xl sm:text-4xl font-bold text-[#123C30] dark:text-white tracking-tight font-serif">
               How D.CARD Works
             </h2>
           </div>
@@ -331,33 +331,33 @@ function HomePage({
             ].map((st, idx) => (
               <div
                 key={idx}
-                className="p-8 rounded-3xl bg-white dark:bg-[#13241C] border border-[#E0E6DC] dark:border-[#1F382B] shadow-card space-y-3 relative overflow-hidden hover:border-[#0E5C3E] transition-all"
+                className="p-8 rounded-3xl bg-white dark:bg-[#13241C] border border-[#DCE9E1] dark:border-[#1F382B] shadow-card space-y-3 relative overflow-hidden hover:border-[#006B50] transition-all"
               >
-                <span className="text-4xl font-bold text-[#0E5C3E]/20 dark:text-[#34D399]/20 absolute right-6 top-6 font-serif">
+                <span className="text-4xl font-bold text-[#006B50]/20 dark:text-[#34D399]/20 absolute right-6 top-6 font-serif">
                   {st.step}
                 </span>
-                <h3 className="text-xl font-bold text-[#14291F] dark:text-white pt-2 font-serif">{st.title}</h3>
-                <p className="text-xs sm:text-sm text-[#445B4D] dark:text-[#B8C9BF] leading-relaxed font-normal">{st.desc}</p>
+                <h3 className="text-xl font-bold text-[#123C30] dark:text-white pt-2 font-serif">{st.title}</h3>
+                <p className="text-xs sm:text-sm text-[#45534D] dark:text-[#B8C9BF] leading-relaxed font-normal">{st.desc}</p>
               </div>
             ))}
           </div>
         </section>
 
         {/* ── 5. SIMPLE TRUST / DISCLAIMER ── */}
-        <section className="select-none text-left p-8 sm:p-10 rounded-3xl bg-white dark:bg-[#13241C] border border-[#E0E6DC] dark:border-[#1F382B] shadow-card space-y-4">
+        <section className="select-none text-left p-8 sm:p-10 rounded-3xl bg-white dark:bg-[#13241C] border border-[#DCE9E1] dark:border-[#1F382B] shadow-card space-y-4">
           <div className="space-y-2">
-            <span className="text-xs font-bold text-[#0E5C3E] dark:text-[#34D399] uppercase tracking-wider block font-sans">
+            <span className="text-xs font-bold text-[#006B50] dark:text-[#34D399] uppercase tracking-wider block font-sans">
               TRANSPARENT INFORMATION
             </span>
-            <h2 className="text-2xl sm:text-3xl font-bold text-[#14291F] dark:text-white font-serif">
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#123C30] dark:text-white font-serif">
               Banking Information, Made Simple
             </h2>
-            <p className="text-xs sm:text-sm text-[#445B4D] dark:text-[#B8C9BF] leading-relaxed font-normal">
+            <p className="text-xs sm:text-sm text-[#45534D] dark:text-[#B8C9BF] leading-relaxed font-normal">
               D.CARD organizes banking product information in a structured, verified format to help Indian consumers make intelligent financial choices.
             </p>
           </div>
 
-          <div className="pt-2 border-t border-[#E0E6DC] dark:border-[#1F382B]">
+          <div className="pt-2 border-t border-[#DCE9E1] dark:border-[#1F382B]">
             <p className="text-[11px] sm:text-xs text-[#6B8074] dark:text-[#869C8E] leading-relaxed font-normal italic">
               * Information shown is for comparison and informational purposes only. Savings Account and Debit Card features, fees, charges, eligibility, limits, and benefits may change. Please verify the latest details with the respective bank before making a decision.
             </p>

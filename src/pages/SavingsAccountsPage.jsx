@@ -652,7 +652,7 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
       <div className="border-b border-[#E8D6B3] dark:border-amber-900/40 pb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
           <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-900 dark:text-[#F5DFA8] border border-[#E8D6B3] dark:border-amber-900/40 text-xs font-extrabold tracking-widest uppercase rounded-full mb-2">
-            <Sparkles className="w-3.5 h-3.5 animate-pulse text-[#2563EB]" />
+            <Sparkles className="w-3.5 h-3.5 animate-pulse text-[#006B50]" />
             {isHindi ? "बचत खाता खोज इंजन" : "SAVINGS DISCOVERY ENGINE"}
           </span>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1F2937] dark:text-white tracking-tight">
@@ -669,7 +669,7 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
             onClick={() => setIsMobileFilterOpen(true)}
             className="lg:hidden px-4 py-2.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white font-extrabold text-xs flex items-center gap-2 shadow-xs cursor-pointer active:scale-95 transition-all"
           >
-            <SlidersHorizontal className="w-4 h-4 text-[#2563EB]" />
+            <SlidersHorizontal className="w-4 h-4 text-[#006B50]" />
             <span>{isHindi ? `फ़िल्टर ${activeFiltersCount > 0 ? `(${activeFiltersCount})` : ''}` : `Filters ${activeFiltersCount > 0 ? `(${activeFiltersCount})` : ''}`}</span>
           </button>
 
@@ -678,7 +678,7 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
             disabled={compareQueue.length === 0}
             className={`px-4 py-2.5 rounded-2xl font-extrabold text-xs flex items-center gap-2 transition-all cursor-pointer shadow-md ${
               compareQueue.length > 0
-                ? 'bg-gradient-to-r from-[#0B3D91] to-[#2563EB] text-white hover:shadow-indigo'
+                ? 'bg-gradient-to-r from-[#123C30] to-[#006B50] text-white hover:shadow-indigo'
                 : 'bg-slate-100 dark:bg-slate-800 text-slate-400 border border-slate-200 dark:border-slate-700 opacity-60 cursor-not-allowed'
             }`}
           >
@@ -697,7 +697,7 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={isHindi ? "बचत खाते, बैंक या सुविधाएं खोजें..." : "Search savings accounts, banks or features..."}
-            className="w-full pl-12 pr-10 py-3.5 rounded-2xl bg-[#F8FAFC] dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs sm:text-sm outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 transition-all font-medium text-slate-800 dark:text-white"
+            className="w-full pl-12 pr-10 py-3.5 rounded-2xl bg-[#FAF9F4] dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs sm:text-sm outline-none focus:border-[#006B50] focus:ring-2 focus:ring-[#006B50]/20 transition-all font-medium text-slate-800 dark:text-white"
           />
           {searchQuery && (
             <button
@@ -713,13 +713,13 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
 
       {/* Active Filter Chips Bar */}
       {activeFiltersCount > 0 && (
-        <div className="p-4 rounded-2xl bg-blue-50/60 dark:bg-slate-800/60 border border-blue-100 dark:border-slate-700 flex flex-wrap items-center gap-2 text-xs">
+        <div className="p-4 rounded-2xl bg-[#FAF9F4]/60 dark:bg-slate-800/60 border border-[#DCE9E1] dark:border-slate-700 flex flex-wrap items-center gap-2 text-xs">
           <span className="font-extrabold text-slate-500 uppercase tracking-wider text-[11px] mr-1">
             {isHindi ? `सक्रिय फ़िल्टर (${activeFiltersCount}):` : `Active Filters (${activeFiltersCount}):`}
           </span>
 
           {searchQuery && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white dark:bg-slate-900 border border-blue-200 dark:border-slate-700 font-bold text-slate-700 dark:text-slate-200 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white dark:bg-slate-900 border border-[#DCE9E1] dark:border-slate-700 font-bold text-slate-700 dark:text-slate-200 shadow-2xs">
               Search: "{searchQuery}"
               <button onClick={() => setSearchQuery('')} className="hover:text-rose-500 cursor-pointer">
                 <X className="w-3.5 h-3.5" />
@@ -728,7 +728,7 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
           )}
 
           {selectedBanks.map(b => (
-            <span key={b} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white dark:bg-slate-900 border border-blue-200 dark:border-slate-700 font-bold text-[#2563EB] dark:text-[#60A5FA] shadow-2xs">
+            <span key={b} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white dark:bg-slate-900 border border-[#DCE9E1] dark:border-slate-700 font-bold text-[#006B50] dark:text-[#159B72] shadow-2xs">
               {b}
               <button onClick={() => toggleBank(b)} className="hover:text-rose-500 cursor-pointer">
                 <X className="w-3.5 h-3.5" />
@@ -737,7 +737,7 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
           ))}
 
           {selectedAccountTypes.map(t => (
-            <span key={t} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white dark:bg-slate-900 border border-blue-200 dark:border-slate-700 font-bold text-indigo-600 dark:text-indigo-400 shadow-2xs">
+            <span key={t} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white dark:bg-slate-900 border border-[#DCE9E1] dark:border-slate-700 font-bold text-[#006B50] dark:text-[#159B72] shadow-2xs">
               {t}
               <button onClick={() => toggleAccountType(t)} className="hover:text-rose-500 cursor-pointer">
                 <X className="w-3.5 h-3.5" />
@@ -757,7 +757,7 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
           {selectedBalanceRanges.map(rId => {
             const opt = BALANCE_RANGE_OPTIONS.find(o => o.id === rId);
             return (
-              <span key={rId} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white dark:bg-slate-900 border border-blue-200 dark:border-slate-700 font-bold text-slate-700 dark:text-slate-300 shadow-2xs">
+              <span key={rId} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white dark:bg-slate-900 border border-[#DCE9E1] dark:border-slate-700 font-bold text-slate-700 dark:text-slate-300 shadow-2xs">
                 {opt?.label || rId}
                 <button onClick={() => toggleBalanceRange(rId)} className="hover:text-rose-500 cursor-pointer">
                   <X className="w-3.5 h-3.5" />
@@ -776,7 +776,7 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
           )}
 
           {selectedOpeningMethods.map(m => (
-            <span key={m} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white dark:bg-slate-900 border border-blue-200 dark:border-slate-700 font-bold text-slate-700 dark:text-slate-300 shadow-2xs">
+            <span key={m} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white dark:bg-slate-900 border border-[#DCE9E1] dark:border-slate-700 font-bold text-slate-700 dark:text-slate-300 shadow-2xs">
               Opening: {m}
               <button onClick={() => toggleOpeningMethod(m)} className="hover:text-rose-500 cursor-pointer">
                 <X className="w-3.5 h-3.5" />
@@ -785,7 +785,7 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
           ))}
 
           {selectedBankingFeatures.map(f => (
-            <span key={f} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white dark:bg-slate-900 border border-blue-200 dark:border-slate-700 font-bold text-slate-700 dark:text-slate-300 shadow-2xs">
+            <span key={f} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white dark:bg-slate-900 border border-[#DCE9E1] dark:border-slate-700 font-bold text-slate-700 dark:text-slate-300 shadow-2xs">
               Feature: {f}
               <button onClick={() => toggleBankingFeature(f)} className="hover:text-rose-500 cursor-pointer">
                 <X className="w-3.5 h-3.5" />
@@ -794,7 +794,7 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
           ))}
 
           {selectedDebitCardFilters.map(cf => (
-            <span key={cf} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white dark:bg-slate-900 border border-blue-200 dark:border-slate-700 font-bold text-purple-600 dark:text-purple-400 shadow-2xs">
+            <span key={cf} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white dark:bg-slate-900 border border-[#DCE9E1] dark:border-slate-700 font-bold text-purple-600 dark:text-purple-400 shadow-2xs">
               Card: {cf}
               <button onClick={() => toggleDebitCardFilter(cf)} className="hover:text-rose-500 cursor-pointer">
                 <X className="w-3.5 h-3.5" />
@@ -819,7 +819,7 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
           <div className="p-6 rounded-3xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-800 shadow-soft space-y-6 max-h-[calc(100vh-120px)] overflow-y-auto custom-scrollbar">
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
               <h3 className="font-extrabold text-sm text-[#1F2937] dark:text-white uppercase tracking-wider flex items-center gap-2">
-                <Filter className="w-4 h-4 text-[#2563EB]" />
+                <Filter className="w-4 h-4 text-[#006B50]" />
                 <span>Smart Filters</span>
               </h3>
               {activeFiltersCount > 0 && (
@@ -838,12 +838,12 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
               <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 block">Bank:</span>
               <div className="space-y-1.5 max-h-48 overflow-y-auto custom-scrollbar text-xs">
                 {BANK_OPTIONS.map(b => (
-                  <label key={b} className="flex items-center gap-2 cursor-pointer text-slate-700 dark:text-slate-300 font-medium hover:text-[#2563EB]">
+                  <label key={b} className="flex items-center gap-2 cursor-pointer text-slate-700 dark:text-slate-300 font-medium hover:text-[#006B50]">
                     <input
                       type="checkbox"
                       checked={selectedBanks.includes(b)}
                       onChange={() => toggleBank(b)}
-                      className="rounded text-[#2563EB] focus:ring-[#2563EB]"
+                      className="rounded text-[#006B50] focus:ring-[#006B50]"
                     />
                     <span>{b}</span>
                   </label>
@@ -856,12 +856,12 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
               <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 block">Account Type:</span>
               <div className="space-y-1.5 max-h-44 overflow-y-auto custom-scrollbar text-xs">
                 {ACCOUNT_TYPE_OPTIONS.map(t => (
-                  <label key={t} className="flex items-center gap-2 cursor-pointer text-slate-700 dark:text-slate-300 font-medium hover:text-[#2563EB]">
+                  <label key={t} className="flex items-center gap-2 cursor-pointer text-slate-700 dark:text-slate-300 font-medium hover:text-[#006B50]">
                     <input
                       type="checkbox"
                       checked={selectedAccountTypes.includes(t)}
                       onChange={() => toggleAccountType(t)}
-                      className="rounded text-[#2563EB] focus:ring-[#2563EB]"
+                      className="rounded text-[#006B50] focus:ring-[#006B50]"
                     />
                     <span>{t}</span>
                   </label>
@@ -909,7 +909,7 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
                   step="0.5"
                   value={minInterestRate}
                   onChange={(e) => setMinInterestRate(parseFloat(e.target.value))}
-                  className="w-full accent-[#2563EB] cursor-pointer"
+                  className="w-full accent-[#006B50] cursor-pointer"
                 />
               </div>
             </div>
@@ -919,12 +919,12 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
               <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 block">Minimum Balance:</span>
               <div className="space-y-1.5 text-xs">
                 {BALANCE_RANGE_OPTIONS.map(opt => (
-                  <label key={opt.id} className="flex items-center gap-2 cursor-pointer text-slate-700 dark:text-slate-300 font-medium hover:text-[#2563EB]">
+                  <label key={opt.id} className="flex items-center gap-2 cursor-pointer text-slate-700 dark:text-slate-300 font-medium hover:text-[#006B50]">
                     <input
                       type="checkbox"
                       checked={selectedBalanceRanges.includes(opt.id)}
                       onChange={() => toggleBalanceRange(opt.id)}
-                      className="rounded text-[#2563EB] focus:ring-[#2563EB]"
+                      className="rounded text-[#006B50] focus:ring-[#006B50]"
                     />
                     <span>{opt.label}</span>
                   </label>
@@ -947,7 +947,7 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
                     onClick={() => setZeroBalanceFilter(opt.id)}
                     className={`py-1.5 rounded-xl border font-bold cursor-pointer transition-all ${
                       zeroBalanceFilter === opt.id
-                        ? 'bg-[#2563EB] text-white border-[#2563EB]'
+                        ? 'bg-[#006B50] text-white border-[#006B50]'
                         : 'bg-slate-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800'
                     }`}
                   >
@@ -962,12 +962,12 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
               <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 block">Account Opening:</span>
               <div className="space-y-1.5 text-xs">
                 {OPENING_METHOD_OPTIONS.map(m => (
-                  <label key={m} className="flex items-center gap-2 cursor-pointer text-slate-700 dark:text-slate-300 font-medium hover:text-[#2563EB]">
+                  <label key={m} className="flex items-center gap-2 cursor-pointer text-slate-700 dark:text-slate-300 font-medium hover:text-[#006B50]">
                     <input
                       type="checkbox"
                       checked={selectedOpeningMethods.includes(m)}
                       onChange={() => toggleOpeningMethod(m)}
-                      className="rounded text-[#2563EB] focus:ring-[#2563EB]"
+                      className="rounded text-[#006B50] focus:ring-[#006B50]"
                     />
                     <span>{m}</span>
                   </label>
@@ -980,12 +980,12 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
               <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 block">Banking Features:</span>
               <div className="space-y-1.5 max-h-40 overflow-y-auto custom-scrollbar text-xs">
                 {BANKING_FEATURE_OPTIONS.map(f => (
-                  <label key={f} className="flex items-center gap-2 cursor-pointer text-slate-700 dark:text-slate-300 font-medium hover:text-[#2563EB]">
+                  <label key={f} className="flex items-center gap-2 cursor-pointer text-slate-700 dark:text-slate-300 font-medium hover:text-[#006B50]">
                     <input
                       type="checkbox"
                       checked={selectedBankingFeatures.includes(f)}
                       onChange={() => toggleBankingFeature(f)}
-                      className="rounded text-[#2563EB] focus:ring-[#2563EB]"
+                      className="rounded text-[#006B50] focus:ring-[#006B50]"
                     />
                     <span>{f}</span>
                   </label>
@@ -998,12 +998,12 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
               <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 block">Debit Card Features:</span>
               <div className="space-y-1.5 max-h-40 overflow-y-auto custom-scrollbar text-xs">
                 {DEBIT_CARD_FILTER_OPTIONS.map(cf => (
-                  <label key={cf} className="flex items-center gap-2 cursor-pointer text-slate-700 dark:text-slate-300 font-medium hover:text-[#2563EB]">
+                  <label key={cf} className="flex items-center gap-2 cursor-pointer text-slate-700 dark:text-slate-300 font-medium hover:text-[#006B50]">
                     <input
                       type="checkbox"
                       checked={selectedDebitCardFilters.includes(cf)}
                       onChange={() => toggleDebitCardFilter(cf)}
-                      className="rounded text-[#2563EB] focus:ring-[#2563EB]"
+                      className="rounded text-[#006B50] focus:ring-[#006B50]"
                     />
                     <span>{cf}</span>
                   </label>
@@ -1029,7 +1029,7 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 font-bold text-slate-800 dark:text-slate-200 text-xs outline-none focus:border-[#2563EB] cursor-pointer"
+                className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 font-bold text-slate-800 dark:text-slate-200 text-xs outline-none focus:border-[#006B50] cursor-pointer"
               >
                 {SORT_OPTIONS.map(opt => (
                   <option key={opt.id} value={opt.id}>
@@ -1054,7 +1054,7 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
               </p>
               <button
                 onClick={resetAllFilters}
-                className="px-6 py-2.5 rounded-full bg-[#2563EB] hover:bg-blue-700 text-white font-bold text-xs shadow-md cursor-pointer transition-colors"
+                className="px-6 py-2.5 rounded-full bg-[#006B50] hover:bg-[#064E3B] text-white font-bold text-xs shadow-md cursor-pointer transition-colors"
               >
                 Clear Filters
               </button>
@@ -1098,7 +1098,7 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
               <div className="space-y-6">
                 <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
                   <h3 className="font-extrabold text-base text-slate-800 dark:text-white flex items-center gap-2">
-                    <Filter className="w-5 h-5 text-[#2563EB]" />
+                    <Filter className="w-5 h-5 text-[#006B50]" />
                     <span>Account Filters</span>
                   </h3>
                   <button
@@ -1119,7 +1119,7 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
                           type="checkbox"
                           checked={selectedBanks.includes(b)}
                           onChange={() => toggleBank(b)}
-                          className="rounded text-[#2563EB]"
+                          className="rounded text-[#006B50]"
                         />
                         <span>{b}</span>
                       </label>
@@ -1137,7 +1137,7 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
                           type="checkbox"
                           checked={selectedAccountTypes.includes(t)}
                           onChange={() => toggleAccountType(t)}
-                          className="rounded text-[#2563EB]"
+                          className="rounded text-[#006B50]"
                         />
                         <span>{t}</span>
                       </label>
@@ -1158,7 +1158,7 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
                     step="0.5"
                     value={minInterestRate}
                     onChange={(e) => setMinInterestRate(parseFloat(e.target.value))}
-                    className="w-full accent-[#2563EB]"
+                    className="w-full accent-[#006B50]"
                   />
                 </div>
 
@@ -1172,7 +1172,7 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
                           type="checkbox"
                           checked={selectedBalanceRanges.includes(opt.id)}
                           onChange={() => toggleBalanceRange(opt.id)}
-                          className="rounded text-[#2563EB]"
+                          className="rounded text-[#006B50]"
                         />
                         <span>{opt.label}</span>
                       </label>
@@ -1190,7 +1190,7 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
                           type="checkbox"
                           checked={selectedOpeningMethods.includes(m)}
                           onChange={() => toggleOpeningMethod(m)}
-                          className="rounded text-[#2563EB]"
+                          className="rounded text-[#006B50]"
                         />
                         <span>{m}</span>
                       </label>
@@ -1208,7 +1208,7 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
                           type="checkbox"
                           checked={selectedBankingFeatures.includes(f)}
                           onChange={() => toggleBankingFeature(f)}
-                          className="rounded text-[#2563EB]"
+                          className="rounded text-[#006B50]"
                         />
                         <span>{f}</span>
                       </label>
@@ -1226,7 +1226,7 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
                           type="checkbox"
                           checked={selectedDebitCardFilters.includes(cf)}
                           onChange={() => toggleDebitCardFilter(cf)}
-                          className="rounded text-[#2563EB]"
+                          className="rounded text-[#006B50]"
                         />
                         <span>{cf}</span>
                       </label>
@@ -1239,7 +1239,7 @@ function SavingsAccountsPage({ onSelectDebitCard }) {
               <div className="pt-6 space-y-2 border-t border-slate-100 dark:border-slate-800 sticky bottom-0 bg-white dark:bg-[#0F172A]">
                 <button
                   onClick={() => setIsMobileFilterOpen(false)}
-                  className="w-full py-3 rounded-xl bg-[#2563EB] text-white text-xs font-bold shadow cursor-pointer active:scale-98 transition-transform"
+                  className="w-full py-3 rounded-xl bg-[#006B50] text-white text-xs font-bold shadow cursor-pointer active:scale-98 transition-transform"
                 >
                   Apply Filters ({activeFiltersCount})
                 </button>

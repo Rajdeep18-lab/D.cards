@@ -40,7 +40,7 @@ function getBankColor(bankName) {
       return color;
     }
   }
-  return '#2563eb';
+  return '#006B50';
 }
 
 function MapTilerMap({
@@ -199,15 +199,15 @@ function MapTilerMap({
       const userEl = document.createElement('div');
       userEl.className = 'relative flex items-center justify-center cursor-pointer group';
       userEl.innerHTML = `
-        <div class="absolute -inset-2 bg-blue-500/20 rounded-full animate-ping"></div>
-        <div class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg border-2 border-white font-bold text-xs">
+        <div class="absolute -inset-2 bg-[#159B72]/20 rounded-full animate-ping"></div>
+        <div class="w-8 h-8 rounded-full bg-[#006B50] text-white flex items-center justify-center shadow-lg border-2 border-white font-bold text-xs">
           📍
         </div>
       `;
 
       const userPopup = new window.maptilersdk.Popup({ offset: 25 }).setHTML(`
         <div class="p-2 text-xs font-sans">
-          <p class="font-extrabold text-blue-600">Your Detected Location</p>
+          <p class="font-extrabold text-[#006B50]">Your Detected Location</p>
           <p class="text-slate-600 mt-0.5 text-[11px]">${userCoords.lat.toFixed(4)}, ${userCoords.lng.toFixed(4)}</p>
         </div>
       `);
@@ -268,7 +268,7 @@ function MapTilerMap({
               href="${safeDirectionsUrl}" 
               target="_blank" 
               rel="noopener noreferrer" 
-              class="inline-flex items-center gap-1 px-2 py-1 bg-blue-600 text-white rounded text-[10px] font-bold hover:bg-blue-700 transition-colors"
+              class="inline-flex items-center gap-1 px-2 py-1 bg-[#006B50] text-white rounded text-[10px] font-bold hover:bg-[#064E3B] transition-colors"
             >
               Directions ↗
             </a>
@@ -346,7 +346,7 @@ function MapTilerMap({
         <button
           type="button"
           onClick={() => window.location.reload()}
-          className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition-colors"
+          className="mt-4 px-4 py-2 bg-[#006B50] hover:bg-[#064E3B] text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition-colors"
         >
           <RefreshCw className="w-3.5 h-3.5" />
           <span>Reload Page</span>
@@ -360,7 +360,7 @@ function MapTilerMap({
       {sdkStatus === 'loading' && (
         <div className="absolute inset-0 z-20 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs text-white text-xs font-bold">
           <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900/90 border border-slate-700 shadow-lg">
-            <div className="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-4 h-4 border-2 border-[#159B72] border-t-transparent rounded-full animate-spin"></div>
             <span>Loading Map...</span>
           </div>
         </div>

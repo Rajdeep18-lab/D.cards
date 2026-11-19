@@ -266,14 +266,14 @@ function CityBanksSection() {
 
       {/* Network / Error Notice */}
       {error && !loading && branches.length > 0 && (
-        <div className="mb-5 p-3.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-800 dark:text-blue-300 text-xs flex items-center justify-between">
+        <div className="mb-5 p-3.5 rounded-xl bg-[#159B72]/10 border border-[#159B72]/20 text-[#123C30] dark:text-emerald-200 text-xs flex items-center justify-between">
           <span className="flex items-center gap-2 font-medium">
             <span>ℹ️</span> {error}
           </span>
           <button
             type="button"
             onClick={() => loadNearbyBranches(userCoords.lat, userCoords.lng)}
-            className="px-3 py-1 bg-blue-600 text-white rounded-lg text-[11px] font-bold hover:bg-blue-700 transition-all cursor-pointer"
+            className="px-3 py-1 bg-[#006B50] text-white rounded-lg text-[11px] font-bold hover:bg-[#064E3B] transition-all cursor-pointer"
           >
             Refresh 🔄
           </button>

@@ -71,11 +71,11 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
               {/* Header */}
               <div className="p-4 sm:p-6 pb-3 sm:pb-4 flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80 flex-shrink-0 bg-slate-50/60 dark:bg-slate-900/50">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-br from-[#2563EB] to-[#3B82F6] flex items-center justify-center text-white text-lg sm:text-xl shadow-md shadow-[#2563EB]/25 flex-shrink-0">
+                  <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-br from-[#006B50] to-[#159B72] flex items-center justify-center text-white text-lg sm:text-xl shadow-md shadow-[#006B50]/25 flex-shrink-0">
                     ⚖️
                   </div>
                   <div className="text-left">
-                    <h2 className="text-lg sm:text-xl font-black text-[#0B3D91] dark:text-white tracking-tight leading-snug">
+                    <h2 className="text-lg sm:text-xl font-black text-[#123C30] dark:text-white tracking-tight leading-snug">
                       {isHindi ? 'D.Card कानूनी व अनुपालन केंद्र' : 'D.Card Trust Center'}
                     </h2>
                     <p className="text-[11px] sm:text-xs text-slate-600 dark:text-slate-400 font-semibold">
@@ -102,7 +102,7 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
                       onClick={() => setActiveTab(tab.id)}
                       className={`px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-extrabold transition-all duration-200 cursor-pointer flex items-center gap-1.5 flex-shrink-0 select-none ${
                         isActive
-                          ? 'bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white shadow-md shadow-[#2563EB]/25 border border-transparent'
+                          ? 'bg-gradient-to-r from-[#006B50] to-[#159B72] text-white shadow-md shadow-[#006B50]/25 border border-transparent'
                           : 'bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700/80 hover:bg-slate-200/80 dark:hover:bg-slate-700'
                       }`}
                     >
@@ -120,7 +120,7 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
               <div className="p-4 sm:p-6 overflow-y-auto flex-1 text-left text-xs sm:text-sm leading-relaxed text-slate-700 dark:text-slate-200 custom-scrollbar space-y-4">
                 {activeTab === 'privacy' && (
                   <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
-                    <h3 className="text-base sm:text-lg font-black text-[#0B3D91] dark:text-white mb-3">
+                    <h3 className="text-base sm:text-lg font-black text-[#123C30] dark:text-white mb-3">
                       {isHindi ? 'गोपनीयता नीति (Privacy Policy)' : 'Privacy Policy'}
                     </h3>
                     <p className="text-slate-700 dark:text-slate-300 mb-4 leading-relaxed font-medium">
@@ -135,7 +135,7 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
                       )}
                     </p>
 
-                    <h4 className="font-extrabold text-[#2563EB] dark:text-[#60A5FA] mt-5 mb-2 uppercase text-xs tracking-wider">
+                    <h4 className="font-extrabold text-[#006B50] dark:text-[#159B72] mt-5 mb-2 uppercase text-xs tracking-wider">
                       {isHindi ? '1. हमारे द्वारा एकत्रित जानकारी' : '1. Information We Collect'}
                     </h4>
                     <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed font-medium">
@@ -162,7 +162,7 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
                       </li>
                     </ul>
 
-                    <h4 className="font-extrabold text-[#2563EB] dark:text-[#60A5FA] mt-5 mb-2 uppercase text-xs tracking-wider">
+                    <h4 className="font-extrabold text-[#006B50] dark:text-[#159B72] mt-5 mb-2 uppercase text-xs tracking-wider">
                       {isHindi ? '2. Firebase में डेटा का सुरक्षित भंडारण' : '2. Data Stored Securely in Firebase'}
                     </h4>
                     <p className="text-slate-700 dark:text-slate-300 mb-4 leading-relaxed font-medium">
@@ -202,12 +202,12 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
                       </ul>
                     </div>
 
-                    <h4 className="font-extrabold text-[#2563EB] dark:text-[#60A5FA] mt-5 mb-2 uppercase text-xs tracking-wider">
+                    <h4 className="font-extrabold text-[#006B50] dark:text-[#159B72] mt-5 mb-2 uppercase text-xs tracking-wider">
                       {isHindi ? '3. हमसे संपर्क करें' : '3. Contacting Us & Privacy Inquiries'}
                     </h4>
                     <p className="text-slate-700 dark:text-slate-300 mb-2 font-medium">
                       {isHindi ? 'गोपनीयता संबंधी प्रश्नों या डेटा हटाने के अनुरोध के लिए, कृपया संपर्क करें:' : 'For privacy clarifications, data deletion requests, or compliance inquiries, please contact our team at'}{' '}
-                      <a href="mailto:dcard.website@gmail.com" className="text-[#2563EB] dark:text-[#60A5FA] font-bold hover:underline break-all">
+                      <a href="mailto:dcard.website@gmail.com" className="text-[#006B50] dark:text-[#159B72] font-bold hover:underline break-all">
                         dcard.website@gmail.com
                       </a>.
                     </p>
@@ -219,7 +219,7 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
 
                 {activeTab === 'terms' && (
                   <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
-                    <h3 className="text-base sm:text-lg font-black text-[#0B3D91] dark:text-white mb-3">
+                    <h3 className="text-base sm:text-lg font-black text-[#123C30] dark:text-white mb-3">
                       {isHindi ? 'नियम व शर्तें (Terms & Conditions)' : 'Terms & Conditions'}
                     </h3>
                     <p className="text-slate-700 dark:text-slate-300 mb-4 leading-relaxed font-medium">
@@ -234,7 +234,7 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
                       )}
                     </p>
 
-                    <h4 className="font-extrabold text-[#2563EB] dark:text-[#60A5FA] mt-5 mb-2 uppercase text-xs tracking-wider">
+                    <h4 className="font-extrabold text-[#006B50] dark:text-[#159B72] mt-5 mb-2 uppercase text-xs tracking-wider">
                       {isHindi ? '1. सेवा का दायरा' : '1. Scope of Service'}
                     </h4>
                     <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed font-medium">
@@ -243,7 +243,7 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
                         : 'D.CARD is an independent financial information and comparison platform for Savings Accounts and Debit Cards. D.CARD is not a bank, NBFC, financial institution, payment system operator, or representative of any bank unless explicitly stated. We do not approve applications, nor do we issue cards.'}
                     </p>
 
-                    <h4 className="font-extrabold text-[#2563EB] dark:text-[#60A5FA] mt-5 mb-2 uppercase text-xs tracking-wider">
+                    <h4 className="font-extrabold text-[#006B50] dark:text-[#159B72] mt-5 mb-2 uppercase text-xs tracking-wider">
                       {isHindi ? '2. उपयोगकर्ता आचरण' : '2. User Conduct & Accounts'}
                     </h4>
                     <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed font-medium">
@@ -252,7 +252,7 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
                         : 'You are solely responsible for maintaining the privacy of your account login information. You agree not to engage in malicious scraping of card rates, scraping database content, or deploying automated bots to query the platform features.'}
                     </p>
 
-                    <h4 className="font-extrabold text-[#2563EB] dark:text-[#60A5FA] mt-5 mb-2 uppercase text-xs tracking-wider">
+                    <h4 className="font-extrabold text-[#006B50] dark:text-[#159B72] mt-5 mb-2 uppercase text-xs tracking-wider">
                       {isHindi ? '3. तृतीय-पक्ष बैंकिंग सेवाएं' : '3. Third-Party Banking Services'}
                     </h4>
                     <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed font-medium">
@@ -261,7 +261,7 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
                         : 'Our platform references links and redirect coordinates to official banking pages. We have no authority over the service level agreements, underwriting guidelines, interest structures, or operations of third-party banks. Your relationships with external banks are governed strictly by their respective terms of service.'}
                     </p>
 
-                    <h4 className="font-extrabold text-[#2563EB] dark:text-[#60A5FA] mt-5 mb-2 uppercase text-xs tracking-wider">
+                    <h4 className="font-extrabold text-[#006B50] dark:text-[#159B72] mt-5 mb-2 uppercase text-xs tracking-wider">
                       {isHindi ? '4. देयता की सीमा' : '4. Limitation of Liability'}
                     </h4>
                     <p className="text-slate-700 dark:text-slate-300 mb-4 leading-relaxed font-medium">
@@ -278,7 +278,7 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
 
                 {activeTab === 'disclaimer' && (
                   <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
-                    <h3 className="text-base sm:text-lg font-black text-[#0B3D91] dark:text-white mb-3">
+                    <h3 className="text-base sm:text-lg font-black text-[#123C30] dark:text-white mb-3">
                       {isHindi ? 'नियामक एवं सूचना अस्वीकरण (Disclaimer)' : 'Regulatory & Information Disclaimer'}
                     </h3>
                     
@@ -293,7 +293,7 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
                       </p>
                     </div>
 
-                    <h4 className="font-extrabold text-[#2563EB] dark:text-[#60A5FA] mt-5 mb-2 uppercase text-xs tracking-wider">
+                    <h4 className="font-extrabold text-[#006B50] dark:text-[#159B72] mt-5 mb-2 uppercase text-xs tracking-wider">
                       {isHindi ? '1. सामान्य सूचनात्मक उद्देश्य' : '1. Standard Platform Disclaimer'}
                     </h4>
                     <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed font-medium">
@@ -302,7 +302,7 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
                         : 'The information displayed on D.CARD is provided for general informational and comparison purposes only. D.CARD does not guarantee product approval, eligibility, availability, pricing, benefits, or suitability for any individual. D.CARD does not provide personalized financial, investment, legal, or tax advice.'}
                     </p>
 
-                    <h4 className="font-extrabold text-[#2563EB] dark:text-[#60A5FA] mt-5 mb-2 uppercase text-xs tracking-wider">
+                    <h4 className="font-extrabold text-[#006B50] dark:text-[#159B72] mt-5 mb-2 uppercase text-xs tracking-wider">
                       {isHindi ? '2. बौद्धिक संपदा प्रकटीकरण' : '2. Intellectual Property Disclaimer'}
                     </h4>
                     <p className="text-slate-700 dark:text-slate-300 mb-3 leading-relaxed font-medium">
@@ -311,12 +311,12 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
                         : 'All bank brand logos, product tags, registered trademarks (Visa, Mastercard, RuPay, etc.) remain the exclusive property of their respective corporate owners. D.CARD does not claim ownership, nor does listing them imply any form of official bank sponsorship or direct financial compensation from primary banks listed here.'}
                     </p>
 
-                    <h4 className="font-extrabold text-[#2563EB] dark:text-[#60A5FA] mt-5 mb-2 uppercase text-xs tracking-wider">
+                    <h4 className="font-extrabold text-[#006B50] dark:text-[#159B72] mt-5 mb-2 uppercase text-xs tracking-wider">
                       {isHindi ? '3. त्रुटि सुधार संपर्क' : '3. Inquiries & Corrections Contact'}
                     </h4>
                     <p className="text-slate-700 dark:text-slate-300 mb-4 leading-relaxed font-medium">
                       {isHindi ? 'यदि आपको कोई अप्रचलित या गलत बैंकिंग जानकारी दिखाई दे, तो कृपया हमें रिपोर्ट करें:' : 'If you notice any outdated or inaccurate banking information, please report it to our team at'}{' '}
-                      <a href="mailto:dcard.website@gmail.com" className="text-[#2563EB] dark:text-[#60A5FA] font-bold hover:underline break-all">
+                      <a href="mailto:dcard.website@gmail.com" className="text-[#006B50] dark:text-[#159B72] font-bold hover:underline break-all">
                         dcard.website@gmail.com
                       </a>.
                     </p>
@@ -332,7 +332,7 @@ function LegalModal({ isOpen, onClose, initialTab = 'privacy' }) {
               <div className="p-4 sm:p-5 border-t border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/60 flex items-center justify-end flex-shrink-0">
                 <button
                   onClick={onClose}
-                  className="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:brightness-110 text-white font-bold text-xs sm:text-sm shadow-md shadow-[#2563EB]/25 cursor-pointer transition-all active:scale-95 select-none"
+                  className="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#006B50] to-[#159B72] hover:brightness-110 text-white font-bold text-xs sm:text-sm shadow-md shadow-[#006B50]/25 cursor-pointer transition-all active:scale-95 select-none"
                 >
                   {isHindi ? 'स्वीकार करें और बंद करें' : 'Close & Accept Terms'}
                 </button>

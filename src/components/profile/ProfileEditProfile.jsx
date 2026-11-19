@@ -56,7 +56,7 @@ export default function ProfileEditProfile({
       {/* Avatar picker */}
       <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-800 shadow-sm space-y-4">
         <div className="flex items-center gap-2 border-b border-[#F3F4F6] dark:border-slate-800 pb-3">
-          <Camera className="w-4 h-4 text-[#2563EB]" />
+          <Camera className="w-4 h-4 text-[#006B50]" />
           <h3 className="text-sm font-extrabold text-[#1F2937] dark:text-white">Profile Photo</h3>
           {profileImage && (
             <button
@@ -76,7 +76,7 @@ export default function ProfileEditProfile({
             onClick={() => setProfileImage('')}
             className={`w-14 h-14 rounded-2xl flex items-center justify-center font-black text-lg cursor-pointer border-2 transition-all shrink-0 ${
               !profileImage
-                ? 'border-[#2563EB] bg-[#2563EB]/10 text-[#2563EB] scale-105 shadow-md'
+                ? 'border-[#006B50] bg-[#006B50]/10 text-[#006B50] scale-105 shadow-md'
                 : 'border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-500 hover:border-slate-400'
             }`}
             title="Use initials monogram"
@@ -92,13 +92,13 @@ export default function ProfileEditProfile({
               onClick={() => setProfileImage(url)}
               className={`relative w-14 h-14 rounded-2xl overflow-hidden cursor-pointer border-2 transition-all shrink-0 ${
                 profileImage === url
-                  ? 'border-[#2563EB] scale-105 shadow-md ring-4 ring-[#2563EB]/15'
+                  ? 'border-[#006B50] scale-105 shadow-md ring-4 ring-[#006B50]/15'
                   : 'border-transparent opacity-70 hover:opacity-100 hover:scale-105'
               }`}
             >
               <img src={url} alt={`Avatar preset ${idx + 1}`} className="w-full h-full object-cover" />
               {profileImage === url && (
-                <div className="absolute inset-0 bg-[#2563EB]/20 flex items-center justify-center">
+                <div className="absolute inset-0 bg-[#006B50]/20 flex items-center justify-center">
                   <Check className="w-4 h-4 text-white stroke-[3]" />
                 </div>
               )}
@@ -110,7 +110,7 @@ export default function ProfileEditProfile({
       {/* Personal info form */}
       <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-800 shadow-sm space-y-5">
         <div className="flex items-center gap-2 border-b border-[#F3F4F6] dark:border-slate-800 pb-3">
-          <User className="w-4 h-4 text-[#2563EB]" />
+          <User className="w-4 h-4 text-[#006B50]" />
           <h3 className="text-sm font-extrabold text-[#1F2937] dark:text-white">Personal Information</h3>
         </div>
 
@@ -126,7 +126,7 @@ export default function ProfileEditProfile({
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               placeholder="Enter your name"
-              className="w-full px-4 py-2.5 rounded-xl border border-[#E5E7EB] dark:border-slate-700 bg-[#F8FAFC] dark:bg-slate-900 text-sm font-semibold text-[#1F2937] dark:text-white outline-none focus:border-[#2563EB] transition-colors"
+              className="w-full px-4 py-2.5 rounded-xl border border-[#E5E7EB] dark:border-slate-700 bg-[#FAF9F4] dark:bg-slate-900 text-sm font-semibold text-[#1F2937] dark:text-white outline-none focus:border-[#006B50] transition-colors"
             />
           </div>
 
@@ -153,7 +153,7 @@ export default function ProfileEditProfile({
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
               placeholder="+91 98765 43210"
-              className="w-full px-4 py-2.5 rounded-xl border border-[#E5E7EB] dark:border-slate-700 bg-[#F8FAFC] dark:bg-slate-900 text-sm font-semibold text-[#1F2937] dark:text-white outline-none focus:border-[#2563EB] transition-colors"
+              className="w-full px-4 py-2.5 rounded-xl border border-[#E5E7EB] dark:border-slate-700 bg-[#FAF9F4] dark:bg-slate-900 text-sm font-semibold text-[#1F2937] dark:text-white outline-none focus:border-[#006B50] transition-colors"
             />
           </div>
         </div>
@@ -181,7 +181,7 @@ export default function ProfileEditProfile({
               type="button"
               onClick={onSave}
               disabled={saving}
-              className="px-6 py-2.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs font-bold shadow-sm transition-all cursor-pointer flex items-center gap-2 disabled:opacity-60"
+              className="px-6 py-2.5 rounded-xl bg-[#006B50] hover:bg-[#064E3B] text-white text-xs font-bold shadow-sm transition-all cursor-pointer flex items-center gap-2 disabled:opacity-60"
             >
               {saving ? (
                 <>

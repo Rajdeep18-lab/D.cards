@@ -54,7 +54,7 @@ function CoveredBanksDirectory({ onSelectBank, customCardsList = null }) {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#E5E7EB] dark:border-slate-800 pb-5">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] text-xs font-semibold tracking-widest uppercase rounded-full">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#006B50]/10 text-[#006B50] dark:text-[#159B72] text-xs font-semibold tracking-widest uppercase rounded-full">
               <Building2 className="w-3.5 h-3.5" />
               DYNAMIC BANK DIRECTORY
             </span>
@@ -80,7 +80,7 @@ function CoveredBanksDirectory({ onSelectBank, customCardsList = null }) {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search Bank..."
-              className="w-full bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-700 rounded-xl pl-9 pr-8 py-2.5 text-xs text-[#1F2937] dark:text-white placeholder-[#9CA3AF] dark:placeholder-slate-400 focus:outline-none focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] transition-colors shadow-xs"
+              className="w-full bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-700 rounded-xl pl-9 pr-8 py-2.5 text-xs text-[#1F2937] dark:text-white placeholder-[#9CA3AF] dark:placeholder-slate-400 focus:outline-none focus:border-[#006B50] focus:ring-1 focus:ring-[#006B50] transition-colors shadow-xs"
             />
             {searchQuery && (
               <button
@@ -94,7 +94,7 @@ function CoveredBanksDirectory({ onSelectBank, customCardsList = null }) {
 
           {/* Sort Dropdown */}
           <div className="relative sm:w-52">
-            <div className="flex items-center bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-700 rounded-xl px-3 py-2.5 text-xs shadow-xs focus-within:border-[#2563EB]">
+            <div className="flex items-center bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-700 rounded-xl px-3 py-2.5 text-xs shadow-xs focus-within:border-[#006B50]">
               <ArrowUpDown className="w-3.5 h-3.5 text-[#6B7280] dark:text-slate-400 mr-2 flex-shrink-0" />
               <select
                 value={sortBy}
@@ -113,7 +113,7 @@ function CoveredBanksDirectory({ onSelectBank, customCardsList = null }) {
 
       {/* Results Count & Search Active Bar */}
       {searchQuery && (
-        <div className="flex items-center justify-between bg-[#EFF6FF] dark:bg-slate-800/60 border border-[#2563EB]/20 px-4 py-2 rounded-xl text-xs text-[#2563EB] dark:text-[#60A5FA]">
+        <div className="flex items-center justify-between bg-[#FAF9F4] dark:bg-slate-800/60 border border-[#006B50]/20 px-4 py-2 rounded-xl text-xs text-[#006B50] dark:text-[#159B72]">
           <span>Found <strong>{filteredAndSortedBanks.length}</strong> matching banks for "{searchQuery}"</span>
           <button 
             onClick={() => setSearchQuery('')}
@@ -153,7 +153,7 @@ function CoveredBanksDirectory({ onSelectBank, customCardsList = null }) {
           </p>
           <button
             onClick={() => setSearchQuery('')}
-            className="px-4 py-2 rounded-xl bg-[#2563EB] text-white text-xs font-semibold hover:opacity-90 transition-all cursor-pointer inline-block mt-2"
+            className="px-4 py-2 rounded-xl bg-[#006B50] text-white text-xs font-semibold hover:opacity-90 transition-all cursor-pointer inline-block mt-2"
           >
             Reset Search
           </button>

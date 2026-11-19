@@ -117,7 +117,7 @@ function ContactPage() {
     <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 relative z-20 space-y-12 text-left select-none">
       {/* Page Header */}
       <div className="border-b border-[#E5E7EB] dark:border-slate-800 pb-8">
-        <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] text-xs font-semibold tracking-widest uppercase border border-[#2563EB]/20 mb-2">
+        <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#006B50]/10 text-[#006B50] dark:text-[#159B72] text-xs font-semibold tracking-widest uppercase border border-[#006B50]/20 mb-2">
           <Phone className="w-3.5 h-3.5" />
           {isHindi ? 'ऑनलाइन सहायता एवं पूछताछ' : 'ONLINE SUPPORT & INQUIRIES'}
         </span>
@@ -134,8 +134,8 @@ function ContactPage() {
         <div className="lg:col-span-5 space-y-6 text-left">
           
           {/* Note Banner */}
-          <div className="p-5 rounded-3xl bg-[#EFF6FF] dark:bg-slate-800 border border-[#2563EB]/20 space-y-2">
-            <div className="flex items-center gap-2 text-[#2563EB] dark:text-[#60A5FA]">
+          <div className="p-5 rounded-3xl bg-[#FAF9F4] dark:bg-slate-800 border border-[#006B50]/20 space-y-2">
+            <div className="flex items-center gap-2 text-[#006B50] dark:text-[#159B72]">
               <ShieldCheck className="w-5 h-5" />
               <h4 className="text-xs font-bold uppercase tracking-wider">
                 {isHindi ? 'स्वतंत्र सहायता मंच' : 'Independent Support Platform'}
@@ -151,30 +151,30 @@ function ContactPage() {
           {/* Quick Channels */}
           <div className="p-6 sm:p-7 rounded-3xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-700 shadow-soft space-y-5">
             <h3 className="text-lg font-bold text-[#1F2937] dark:text-white tracking-tight flex items-center gap-2">
-              <Mail className="w-5 h-5 text-[#2563EB]" />
+              <Mail className="w-5 h-5 text-[#006B50]" />
               <span>{isHindi ? 'प्रत्यक्ष सहायता चैनल' : 'Direct Assistance Channels'}</span>
             </h3>
 
             <div className="space-y-4 pt-1">
               <a 
                 href="mailto:dcard.website@gmail.com"
-                className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-[#F8FAFC] dark:bg-slate-900 border border-[#E5E7EB] dark:border-slate-800 hover:border-[#2563EB]/50 transition-colors group cursor-pointer"
+                className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-[#FAF9F4] dark:bg-slate-900 border border-[#E5E7EB] dark:border-slate-800 hover:border-[#006B50]/50 transition-colors group cursor-pointer"
               >
-                <div className="w-10 h-10 rounded-xl bg-[#EFF6FF] dark:bg-slate-800 border border-[#2563EB]/20 flex items-center justify-center text-[#2563EB] dark:text-[#60A5FA] flex-shrink-0 group-hover:scale-105 transition-transform">
+                <div className="w-10 h-10 rounded-xl bg-[#FAF9F4] dark:bg-slate-800 border border-[#006B50]/20 flex items-center justify-center text-[#006B50] dark:text-[#159B72] flex-shrink-0 group-hover:scale-105 transition-transform">
                   <Mail className="w-5 h-5" />
                 </div>
                 <div className="min-w-0">
                   <p className="text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider">
                     {isHindi ? 'आधिकारिक ईमेल सहायता' : 'Official Email Support'}
                   </p>
-                  <p className="text-xs font-bold text-[#1F2937] dark:text-white group-hover:text-[#2563EB] dark:group-hover:text-[#60A5FA] transition-colors break-all">
+                  <p className="text-xs font-bold text-[#1F2937] dark:text-white group-hover:text-[#006B50] dark:group-hover:text-[#159B72] transition-colors break-all">
                     dcard.website@gmail.com
                   </p>
                 </div>
               </a>
 
-              <div className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-[#F8FAFC] dark:bg-slate-900 border border-[#E5E7EB] dark:border-slate-800">
-                <div className="w-10 h-10 rounded-xl bg-[#EFF6FF] dark:bg-slate-800 border border-[#2563EB]/20 flex items-center justify-center text-[#2563EB] dark:text-[#60A5FA] flex-shrink-0">
+              <div className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-[#FAF9F4] dark:bg-slate-900 border border-[#E5E7EB] dark:border-slate-800">
+                <div className="w-10 h-10 rounded-xl bg-[#FAF9F4] dark:bg-slate-800 border border-[#006B50]/20 flex items-center justify-center text-[#006B50] dark:text-[#159B72] flex-shrink-0">
                   <Clock className="w-5 h-5" />
                 </div>
                 <div>
@@ -187,15 +187,15 @@ function ContactPage() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-[#F8FAFC] dark:bg-slate-900 border border-[#E5E7EB] dark:border-slate-800">
-                <div className="w-10 h-10 rounded-xl bg-[#EFF6FF] dark:bg-slate-800 border border-[#2563EB]/20 flex items-center justify-center text-[#2563EB] dark:text-[#60A5FA] flex-shrink-0">
+              <div className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-[#FAF9F4] dark:bg-slate-900 border border-[#E5E7EB] dark:border-slate-800">
+                <div className="w-10 h-10 rounded-xl bg-[#FAF9F4] dark:bg-slate-800 border border-[#006B50]/20 flex items-center justify-center text-[#006B50] dark:text-[#159B72] flex-shrink-0">
                   <HelpCircle className="w-5 h-5" />
                 </div>
                 <div>
                   <p className="text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider">
                     {isHindi ? 'एआई त्वरित सहायक' : 'AI Instant Assistant'}
                   </p>
-                  <p className="text-xs font-bold text-[#2563EB] dark:text-[#60A5FA]">
+                  <p className="text-xs font-bold text-[#006B50] dark:text-[#159B72]">
                     {isHindi ? 'D.CARD AI द्वारा 24/7 उपलब्ध' : 'Available 24/7 via D.CARD AI Assistance'}
                   </p>
                 </div>
@@ -230,9 +230,9 @@ function ContactPage() {
                 </h3>
                 <p className="text-xs text-[#6B7280] dark:text-slate-300 max-w-md mx-auto leading-relaxed font-normal">
                   {isHindi ? (
-                    <>धन्यवाद, <strong>{submittedQuery.name}</strong>। संदर्भ संख्या: <span className="text-[#2563EB] dark:text-[#60A5FA] font-bold">{submittedQuery.id}</span>। हम {submittedQuery.email} पर अपडेट भेजेंगे।</>
+                    <>धन्यवाद, <strong>{submittedQuery.name}</strong>। संदर्भ संख्या: <span className="text-[#006B50] dark:text-[#159B72] font-bold">{submittedQuery.id}</span>। हम {submittedQuery.email} पर अपडेट भेजेंगे।</>
                   ) : (
-                    <>Thank you, <strong>{submittedQuery.name}</strong>. Reference ID: <span className="text-[#2563EB] dark:text-[#60A5FA] font-bold">{submittedQuery.id}</span>. We'll send an update to {submittedQuery.email}.</>
+                    <>Thank you, <strong>{submittedQuery.name}</strong>. Reference ID: <span className="text-[#006B50] dark:text-[#159B72] font-bold">{submittedQuery.id}</span>. We'll send an update to {submittedQuery.email}.</>
                   )}
                 </p>
               </motion.div>
@@ -248,8 +248,8 @@ function ContactPage() {
                       value={form.name}
                       onChange={(e) => handleChange('name', e.target.value)}
                       placeholder={isHindi ? 'उदा. राहुल शर्मा' : 'e.g. Rahul Sharma'}
-                      className={`w-full px-3.5 py-2.5 rounded-xl bg-[#F8FAFC] dark:bg-slate-900 border text-xs text-[#1F2937] dark:text-white outline-none transition-colors ${
-                        errors.name ? 'border-[#EF4444] ring-1 ring-[#EF4444]' : 'border-[#E5E7EB] dark:border-slate-700 focus:border-[#2563EB]'
+                      className={`w-full px-3.5 py-2.5 rounded-xl bg-[#FAF9F4] dark:bg-slate-900 border text-xs text-[#1F2937] dark:text-white outline-none transition-colors ${
+                        errors.name ? 'border-[#EF4444] ring-1 ring-[#EF4444]' : 'border-[#E5E7EB] dark:border-slate-700 focus:border-[#006B50]'
                       }`}
                     />
                     {errors.name && <p className="text-[10px] font-semibold text-[#EF4444] mt-1">{errors.name}</p>}
@@ -264,8 +264,8 @@ function ContactPage() {
                       value={form.email}
                       onChange={(e) => handleChange('email', e.target.value)}
                       placeholder="rahul@example.com"
-                      className={`w-full px-3.5 py-2.5 rounded-xl bg-[#F8FAFC] dark:bg-slate-900 border text-xs text-[#1F2937] dark:text-white outline-none transition-colors ${
-                        errors.email ? 'border-[#EF4444] ring-1 ring-[#EF4444]' : 'border-[#E5E7EB] dark:border-slate-700 focus:border-[#2563EB]'
+                      className={`w-full px-3.5 py-2.5 rounded-xl bg-[#FAF9F4] dark:bg-slate-900 border text-xs text-[#1F2937] dark:text-white outline-none transition-colors ${
+                        errors.email ? 'border-[#EF4444] ring-1 ring-[#EF4444]' : 'border-[#E5E7EB] dark:border-slate-700 focus:border-[#006B50]'
                       }`}
                     />
                     {errors.email && <p className="text-[10px] font-semibold text-[#EF4444] mt-1">{errors.email}</p>}
@@ -282,8 +282,8 @@ function ContactPage() {
                       value={form.mobile}
                       onChange={(e) => handleChange('mobile', e.target.value)}
                       placeholder="+91 9876543210"
-                      className={`w-full px-3.5 py-2.5 rounded-xl bg-[#F8FAFC] dark:bg-slate-900 border text-xs text-[#1F2937] dark:text-white outline-none transition-colors ${
-                        errors.mobile ? 'border-[#EF4444] ring-1 ring-[#EF4444]' : 'border-[#E5E7EB] dark:border-slate-700 focus:border-[#2563EB]'
+                      className={`w-full px-3.5 py-2.5 rounded-xl bg-[#FAF9F4] dark:bg-slate-900 border text-xs text-[#1F2937] dark:text-white outline-none transition-colors ${
+                        errors.mobile ? 'border-[#EF4444] ring-1 ring-[#EF4444]' : 'border-[#E5E7EB] dark:border-slate-700 focus:border-[#006B50]'
                       }`}
                     />
                     {errors.mobile && <p className="text-[10px] font-semibold text-[#EF4444] mt-1">{errors.mobile}</p>}
@@ -296,8 +296,8 @@ function ContactPage() {
                     <select
                       value={form.subject}
                       onChange={(e) => handleChange('subject', e.target.value)}
-                      className={`w-full px-3.5 py-2.5 rounded-xl bg-[#F8FAFC] dark:bg-slate-900 border text-xs font-semibold text-[#1F2937] dark:text-white outline-none transition-colors cursor-pointer ${
-                        errors.subject ? 'border-[#EF4444] ring-1 ring-[#EF4444]' : 'border-[#E5E7EB] dark:border-slate-700 focus:border-[#2563EB]'
+                      className={`w-full px-3.5 py-2.5 rounded-xl bg-[#FAF9F4] dark:bg-slate-900 border text-xs font-semibold text-[#1F2937] dark:text-white outline-none transition-colors cursor-pointer ${
+                        errors.subject ? 'border-[#EF4444] ring-1 ring-[#EF4444]' : 'border-[#E5E7EB] dark:border-slate-700 focus:border-[#006B50]'
                       }`}
                     >
                       <option value="Debit Card Eligibility & Offers">
@@ -332,8 +332,8 @@ function ContactPage() {
                     value={form.message}
                     onChange={(e) => handleChange('message', e.target.value)}
                     placeholder={isHindi ? 'अपनी पूछताछ या प्रश्न का विस्तार से वर्णन करें...' : 'Describe your inquiry or question in detail...'}
-                    className={`w-full px-3.5 py-2.5 rounded-xl bg-[#F8FAFC] dark:bg-slate-900 border text-xs text-[#1F2937] dark:text-white outline-none transition-colors resize-none ${
-                      errors.message ? 'border-[#EF4444] ring-1 ring-[#EF4444]' : 'border-[#E5E7EB] dark:border-slate-700 focus:border-[#2563EB]'
+                    className={`w-full px-3.5 py-2.5 rounded-xl bg-[#FAF9F4] dark:bg-slate-900 border text-xs text-[#1F2937] dark:text-white outline-none transition-colors resize-none ${
+                      errors.message ? 'border-[#EF4444] ring-1 ring-[#EF4444]' : 'border-[#E5E7EB] dark:border-slate-700 focus:border-[#006B50]'
                     }`}
                   />
                   {errors.message && <p className="text-[10px] font-semibold text-[#EF4444] mt-1">{errors.message}</p>}
@@ -342,7 +342,7 @@ function ContactPage() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:opacity-95 text-white font-semibold text-xs tracking-wider uppercase shadow-md active:scale-98 transition-all disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2"
+                  className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#006B50] to-[#159B72] hover:opacity-95 text-white font-semibold text-xs tracking-wider uppercase shadow-md active:scale-98 transition-all disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2"
                 >
                   <Send className="w-4 h-4" />
                   <span>

@@ -132,11 +132,11 @@ export default function KotakRightSideAd({ activeCardsList = [], onViewDetails }
       {/* Main Vertical Advertisement Card */}
       <div 
         onClick={handleSelect}
-        className="group relative w-full rounded-3xl bg-gradient-to-b from-[#0F172A] via-[#111C38] to-[#0A1024] border border-blue-900/40 dark:border-blue-800/40 hover:border-red-500/50 p-6 sm:p-7 shadow-2xl transition-all duration-300 cursor-pointer overflow-hidden text-left flex flex-col justify-between space-y-6"
+        className="group relative w-full rounded-3xl bg-gradient-to-b from-[#0F172A] via-[#111C38] to-[#0A1024] border border-[#064E3B]/40 dark:border-[#064E3B]/40 hover:border-red-500/50 p-6 sm:p-7 shadow-2xl transition-all duration-300 cursor-pointer overflow-hidden text-left flex flex-col justify-between space-y-6"
       >
         {/* Ambient Glows */}
         <div className="absolute -right-16 -top-16 w-48 h-48 rounded-full bg-[#ED1C24]/15 blur-3xl pointer-events-none" />
-        <div className="absolute -left-16 -bottom-16 w-48 h-48 rounded-full bg-[#2563EB]/15 blur-3xl pointer-events-none" />
+        <div className="absolute -left-16 -bottom-16 w-48 h-48 rounded-full bg-[#006B50]/15 blur-3xl pointer-events-none" />
 
         {/* 1. Header: Badge & Bank Identifier */}
         <div className="flex items-center justify-between z-10">
@@ -172,7 +172,7 @@ export default function KotakRightSideAd({ activeCardsList = [], onViewDetails }
               <span>Zero balance account friendly</span>
             </div>
             <div className="flex items-center gap-2 text-xs text-slate-300 font-medium">
-              <CreditCard className="w-3.5 h-3.5 text-[#60A5FA] shrink-0" />
+              <CreditCard className="w-3.5 h-3.5 text-[#159B72] shrink-0" />
               <span>Instant virtual & physical Visa card</span>
             </div>
             <div className="flex items-center gap-2 text-xs text-slate-300 font-medium">

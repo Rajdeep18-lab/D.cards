@@ -68,15 +68,15 @@ function ComparePage({ compareQueue, setCompareQueue, setSelectedCard }) {
   return (
     <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 relative z-20 space-y-8 text-left">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#E0E6DC] pb-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#DCE9E1] pb-6">
         <div>
-          <span className="text-xs font-semibold text-[#0E5C3E] tracking-widest uppercase block mb-1">
+          <span className="text-xs font-semibold text-[#006B50] tracking-widest uppercase block mb-1">
             {t('compare.badge', 'FEATURE COMPARISON ENGINE')}
           </span>
-          <h1 className="font-serif text-3xl font-bold text-[#14291F]">
+          <h1 className="font-serif text-3xl font-bold text-[#123C30]">
             {t('compare.title', 'Side-by-Side Card Comparison')}
           </h1>
-          <p className="text-xs sm:text-sm text-[#445B4D] mt-1 font-normal">
+          <p className="text-xs sm:text-sm text-[#45534D] mt-1 font-normal">
             {t('compare.subtitle', 'Detailed matrix comparing annual fees, lounge access, withdrawal limits, forex markup, and rewards')}
           </p>
         </div>
@@ -93,24 +93,24 @@ function ComparePage({ compareQueue, setCompareQueue, setSelectedCard }) {
       </div>
 
       {/* Comparison Category Switcher */}
-      <div className="flex flex-wrap items-center gap-2 p-1.5 rounded-2xl bg-[#F5F3EC] border border-[#E0E6DC] w-fit">
+      <div className="flex flex-wrap items-center gap-2 p-1.5 rounded-2xl bg-[#F5F3EC] border border-[#DCE9E1] w-fit">
         <button
           onClick={() => navigate('/compare')}
-          className="px-4 py-2 rounded-xl text-xs font-bold bg-[#0E5C3E] text-white border border-[#0E5C3E] shadow-sm cursor-pointer flex items-center gap-1.5"
+          className="px-4 py-2 rounded-xl text-xs font-bold bg-[#006B50] text-white border border-[#006B50] shadow-sm cursor-pointer flex items-center gap-1.5"
         >
           <CreditCard className="w-3.5 h-3.5" />
           <span>{t('compare.debitCardsTab', 'Debit Cards')}</span>
         </button>
         <button
           onClick={() => navigate('/compare-savings')}
-          className="px-4 py-2 rounded-xl text-xs font-bold text-[#445B4D] hover:text-[#14291F] transition-colors cursor-pointer flex items-center gap-1.5"
+          className="px-4 py-2 rounded-xl text-xs font-bold text-[#45534D] hover:text-[#123C30] transition-colors cursor-pointer flex items-center gap-1.5"
         >
           <Building2 className="w-3.5 h-3.5" />
           <span>{t('compare.savingsAccountsTab', 'Savings Accounts')}</span>
         </button>
         <button
           onClick={() => navigate('/compare-current')}
-          className="px-4 py-2 rounded-xl text-xs font-bold text-[#445B4D] hover:text-[#14291F] transition-colors cursor-pointer flex items-center gap-1.5"
+          className="px-4 py-2 rounded-xl text-xs font-bold text-[#45534D] hover:text-[#123C30] transition-colors cursor-pointer flex items-center gap-1.5"
         >
           <Briefcase className="w-3.5 h-3.5" />
           <span>{t('compare.currentAccountsTab', 'Current Accounts')}</span>
@@ -118,21 +118,21 @@ function ComparePage({ compareQueue, setCompareQueue, setSelectedCard }) {
       </div>
 
       {/* Main Comparison Section */}
-      <section className="bg-white rounded-3xl p-4 sm:p-8 shadow-sm border border-[#E0E6DC] transition-colors">
+      <section className="bg-white rounded-3xl p-4 sm:p-8 shadow-sm border border-[#DCE9E1] transition-colors">
         {compareQueue.length === 0 ? (
           <div className="py-16 px-6 text-center max-w-lg mx-auto space-y-5">
-            <div className="w-16 h-16 rounded-full bg-[#EEF4EE] text-[#0E5C3E] border border-[#C5D7C2] flex items-center justify-center text-3xl mx-auto shadow-sm">
-              <Scale className="w-8 h-8 text-[#0E5C3E]" />
+            <div className="w-16 h-16 rounded-full bg-[#EEF4EE] text-[#006B50] border border-[#DCE9E1] flex items-center justify-center text-3xl mx-auto shadow-sm">
+              <Scale className="w-8 h-8 text-[#006B50]" />
             </div>
-            <h2 className="text-xl font-bold text-[#14291F]">
+            <h2 className="text-xl font-bold text-[#123C30]">
               {t('compare.noCardsTitle', 'No Cards Selected for Comparison')}
             </h2>
-            <p className="text-xs sm:text-sm text-[#445B4D] leading-relaxed font-normal">
+            <p className="text-xs sm:text-sm text-[#45534D] leading-relaxed font-normal">
               {t('compare.noCardsDesc', 'You can add up to 3 debit cards to compare their annual fees, daily limits, lounge rules, and charges side by side.')}
             </p>
             <button
               onClick={() => navigate('/cards')}
-              className="px-6 py-3 rounded-xl bg-[#0E5C3E] hover:bg-[#0A4730] text-white font-bold text-xs tracking-wide uppercase shadow-md transition-all cursor-pointer inline-flex items-center gap-2"
+              className="px-6 py-3 rounded-xl bg-[#006B50] hover:bg-[#064E3B] text-white font-bold text-xs tracking-wide uppercase shadow-md transition-all cursor-pointer inline-flex items-center gap-2"
             >
               <span>{t('compare.browseCardsBtn', 'Browse & Select Cards')}</span>
               <ArrowRight className="w-4 h-4" />

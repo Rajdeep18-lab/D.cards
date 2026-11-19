@@ -48,7 +48,7 @@ export default function AuthButton({
         onClick={onClick}
         whileHover={isDisabled ? {} : { scale: 1.015 }}
         whileTap={isDisabled ? {} : { scale: 0.98 }}
-        className={`${base} bg-gradient-to-r from-[#1D4ED8] via-[#2563EB] to-[#3B82F6] text-white shadow-lg shadow-[#2563EB]/30 hover:shadow-xl hover:shadow-[#2563EB]/40 focus:ring-[#2563EB]/30`}
+        className={`${base} bg-gradient-to-r from-[#064E3B] via-[#006B50] to-[#159B72] text-white shadow-lg shadow-[#006B50]/30 hover:shadow-xl hover:shadow-[#006B50]/40 focus:ring-[#006B50]/30`}
       >
         {loading ? (
           <>

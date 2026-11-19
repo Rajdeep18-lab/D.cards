@@ -3,17 +3,17 @@ import React, { useState, useRef } from 'react';
 /* Premium Bank Brand Gradients & Color Accents */
 function getBankBrandSkin(bank) {
   const bankName = String(bank || '').toLowerCase();
-  let gradient = 'linear-gradient(135deg, #0B3D91 0%, #1E3A8A 50%, #2563EB 100%)';
-  let accent = '#2563EB';
+  let gradient = 'linear-gradient(135deg, #123C30 0%, #123C30 50%, #006B50 100%)';
+  let accent = '#006B50';
   let shadow = 'rgba(37, 99, 235, 0.4)';
 
   if (bankName.includes("hdfc")) {
-    gradient = 'linear-gradient(135deg, #0A2540 0%, #004B8D 60%, #2563EB 100%)';
-    accent = '#2563EB';
+    gradient = 'linear-gradient(135deg, #0A2540 0%, #004B8D 60%, #006B50 100%)';
+    accent = '#006B50';
     shadow = 'rgba(37, 99, 235, 0.35)';
   } else if (bankName.includes("icici")) {
     gradient = 'linear-gradient(135deg, #091936 0%, #152E66 60%, #2A66D9 100%)';
-    accent = '#3B82F6';
+    accent = '#159B72';
     shadow = 'rgba(59, 130, 246, 0.35)';
   } else if (bankName.includes("sbi") || bankName.includes("state bank")) {
     gradient = 'linear-gradient(135deg, #002244 0%, #003366 60%, #0077C8 100%)';

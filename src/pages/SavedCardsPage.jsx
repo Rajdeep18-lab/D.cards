@@ -162,7 +162,7 @@ function SavedCardsPage({ setSelectedCard, toggleCompareQueue, compareQueue, use
         </div>
 
         <div className="p-4 rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-800 shadow-xs flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] flex items-center justify-center flex-shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-[#006B50]/10 text-[#006B50] dark:text-[#159B72] flex items-center justify-center flex-shrink-0">
             <CreditCard className="w-5 h-5" />
           </div>
           <div>
@@ -204,7 +204,7 @@ function SavedCardsPage({ setSelectedCard, toggleCompareQueue, compareQueue, use
         </div>
 
         <div className="p-4 rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-800 shadow-xs flex items-center gap-3 col-span-2 sm:col-span-1">
-          <div className="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center flex-shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-[#159B72]/10 text-[#006B50] dark:text-[#159B72] flex items-center justify-center flex-shrink-0">
             <ShieldCheck className="w-5 h-5" />
           </div>
           <div>
@@ -228,7 +228,7 @@ function SavedCardsPage({ setSelectedCard, toggleCompareQueue, compareQueue, use
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder={t('saved.searchPlaceholder')}
-              className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-[#F8FAFC] dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs outline-none focus:border-[#2563EB] font-medium text-[#1F2937] dark:text-white"
+              className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-[#FAF9F4] dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs outline-none focus:border-[#006B50] font-medium text-[#1F2937] dark:text-white"
             />
           </div>
 
@@ -239,7 +239,7 @@ function SavedCardsPage({ setSelectedCard, toggleCompareQueue, compareQueue, use
                 onClick={() => setSelectedProductType(pt.key)}
                 className={`px-3.5 py-2 rounded-xl transition-all cursor-pointer ${
                   selectedProductType === pt.key
-                    ? 'bg-[#2563EB] text-white shadow-xs'
+                    ? 'bg-[#006B50] text-white shadow-xs'
                     : 'bg-slate-100 dark:bg-slate-900 text-[#6B7280] hover:text-[#1F2937] dark:hover:text-white'
                 }`}
               >
@@ -273,7 +273,7 @@ function SavedCardsPage({ setSelectedCard, toggleCompareQueue, compareQueue, use
           <div className="flex flex-wrap items-center justify-center gap-3">
             <button
               onClick={() => navigate('/cards')}
-              className="px-5 py-3 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white font-bold text-xs uppercase shadow-md transition-all cursor-pointer"
+              className="px-5 py-3 rounded-xl bg-gradient-to-r from-[#006B50] to-[#159B72] text-white font-bold text-xs uppercase shadow-md transition-all cursor-pointer"
             >
               {t('saved.exploreCards')}
             </button>

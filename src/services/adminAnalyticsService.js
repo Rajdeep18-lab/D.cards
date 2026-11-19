@@ -417,10 +417,10 @@ function escapeHtml(str) {
               <title>${escapeHtml(filename)}</title>
               <style>
                 body { font-family: 'Poppins', sans-serif; padding: 24px; color: #1F2937; }
-                h1 { color: #2563EB; border-bottom: 2px solid #2563EB; padding-bottom: 8px; }
+                h1 { color: #006B50; border-bottom: 2px solid #006B50; padding-bottom: 8px; }
                 table { width: 100%; border-collapse: collapse; margin-top: 16px; margin-bottom: 24px; }
                 th, td { border: 1px solid #E5E7EB; padding: 8px; text-align: left; font-size: 12px; }
-                th { background-color: #EFF6FF; color: #1E40AF; }
+                th { background-color: #FAF9F4; color: #064E3B; }
                 .meta { font-size: 12px; color: #6B7280; margin-bottom: 20px; }
               </style>
             </head>

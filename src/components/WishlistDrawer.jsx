@@ -38,7 +38,7 @@ function WishlistCardItem({ card, onViewDetails, onClose }) {
         </p>
         <div style={{ display: "flex", alignItems: "center", gap: "6px", margin: "2px 0 0" }}>
           <BankLogo bankName={card.bank} size="xs" />
-          <p style={{ fontSize: "11px", color: "#2563EB", margin: 0, fontWeight: 600 }}>{card.bank}</p>
+          <p style={{ fontSize: "11px", color: "#006B50", margin: 0, fontWeight: 600 }}>{card.bank}</p>
         </div>
         <div style={{ display: "flex", gap: "8px", marginTop: "4px" }}>
           <span style={{ fontSize: "10px", color: "#555", background: "rgba(37,99,235,0.08)", padding: "1px 6px", borderRadius: "99px" }}>
@@ -55,7 +55,7 @@ function WishlistCardItem({ card, onViewDetails, onClose }) {
         <button
           onClick={() => { onViewDetails(card); onClose(); }}
           style={{
-            fontSize: "10px", fontWeight: "600", color: "#2563EB",
+            fontSize: "10px", fontWeight: "600", color: "#006B50",
             background: "rgba(37,99,235,0.08)", border: "1px solid rgba(37,99,235,0.2)",
             borderRadius: "6px", padding: "3px 8px", cursor: "pointer",
             transition: "all 0.2s",
@@ -157,7 +157,7 @@ function WishlistDrawer({ isOpen, onClose, onViewDetails }) {
                   <div
                     style={{
                       width: "36px", height: "36px", borderRadius: "10px",
-                      background: "linear-gradient(135deg, #2563EB, #3B82F6)",
+                      background: "linear-gradient(135deg, #006B50, #159B72)",
                       display: "flex", alignItems: "center", justifyContent: "center",
                       fontSize: "18px", boxShadow: "0 4px 12px rgba(37,99,235,0.35)",
                       color: "white",
@@ -169,7 +169,7 @@ function WishlistDrawer({ isOpen, onClose, onViewDetails }) {
                     <h2 style={{ margin: 0, fontSize: "17px", fontWeight: "800", color: "#1F2937", fontFamily: "Poppins, sans-serif" }}>
                       Saved Cards
                     </h2>
-                    <p style={{ margin: 0, fontSize: "12px", color: "#2563EB" }}>
+                    <p style={{ margin: 0, fontSize: "12px", color: "#006B50" }}>
                       {wishlist.length} {wishlist.length === 1 ? "card" : "cards"} saved
                     </p>
                   </div>
@@ -180,7 +180,7 @@ function WishlistDrawer({ isOpen, onClose, onViewDetails }) {
                     width: "32px", height: "32px", borderRadius: "50%",
                     border: "1px solid rgba(37,99,235,0.2)",
                     background: "rgba(37,99,235,0.06)",
-                    color: "#2563EB", fontSize: "16px", cursor: "pointer",
+                    color: "#006B50", fontSize: "16px", cursor: "pointer",
                     display: "flex", alignItems: "center", justifyContent: "center",
                     transition: "all 0.2s",
                   }}
@@ -252,7 +252,7 @@ function WishlistDrawer({ isOpen, onClose, onViewDetails }) {
                   onClick={onClose}
                   style={{
                     flex: 2, padding: "10px", borderRadius: "12px", fontSize: "13px", fontWeight: "700",
-                    background: "linear-gradient(135deg, #2563EB, #3B82F6)",
+                    background: "linear-gradient(135deg, #006B50, #159B72)",
                     color: "white", border: "none", cursor: "pointer",
                     boxShadow: "0 6px 20px rgba(37,99,235,0.35)",
                     transition: "all 0.2s",

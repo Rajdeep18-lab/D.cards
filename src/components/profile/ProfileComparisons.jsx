@@ -46,7 +46,7 @@ function getCategoryStyle(log) {
     };
   return {
     label: '💳 Debit Card',
-    cls: 'bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] border-[#2563EB]/20',
+    cls: 'bg-[#006B50]/10 text-[#006B50] dark:text-[#159B72] border-[#006B50]/20',
     link: '/compare',
   };
 }
@@ -58,7 +58,7 @@ function ComparisonRow({ log, navigate }) {
   const dateStr = formatDate(log.created_at || log.comparedAt || log.timestamp);
 
   return (
-    <div className="p-4 sm:p-5 rounded-2xl bg-[#F8FAFC] dark:bg-slate-900/60 border border-[#E5E7EB] dark:border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 hover:border-[#2563EB]/30 dark:hover:border-[#2563EB]/30 transition-all">
+    <div className="p-4 sm:p-5 rounded-2xl bg-[#FAF9F4] dark:bg-slate-900/60 border border-[#E5E7EB] dark:border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 hover:border-[#006B50]/30 dark:hover:border-[#006B50]/30 transition-all">
       <div className="flex-1 min-w-0 space-y-1.5">
         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[9.5px] font-extrabold uppercase tracking-wider border ${cls}`}>
           {label}
@@ -74,7 +74,7 @@ function ComparisonRow({ log, navigate }) {
 
       <button
         onClick={() => navigate(link)}
-        className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-700 text-xs font-bold text-[#1F2937] dark:text-white hover:border-[#2563EB]/40 hover:text-[#2563EB] transition-all cursor-pointer shrink-0"
+        className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-700 text-xs font-bold text-[#1F2937] dark:text-white hover:border-[#006B50]/40 hover:text-[#006B50] transition-all cursor-pointer shrink-0"
       >
         View Comparison
         <ChevronRight className="w-3.5 h-3.5" />
@@ -107,11 +107,11 @@ export default function ProfileComparisons({ compareLogs, loading }) {
       {/* Content */}
       {loading ? (
         <div className="py-16 flex flex-col items-center gap-3 text-[#6B7280] dark:text-slate-400">
-          <Loader2 className="w-8 h-8 animate-spin text-[#2563EB]" />
+          <Loader2 className="w-8 h-8 animate-spin text-[#006B50]" />
           <span className="text-xs font-medium">Loading comparison history…</span>
         </div>
       ) : compareLogs.length === 0 ? (
-        <div className="py-16 text-center rounded-2xl bg-[#F8FAFC] dark:bg-slate-900/50 border border-dashed border-[#E5E7EB] dark:border-slate-700 space-y-3">
+        <div className="py-16 text-center rounded-2xl bg-[#FAF9F4] dark:bg-slate-900/50 border border-dashed border-[#E5E7EB] dark:border-slate-700 space-y-3">
           <div className="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto">
             <GitCompare className="w-6 h-6 text-slate-400 dark:text-slate-500" />
           </div>
@@ -123,7 +123,7 @@ export default function ProfileComparisons({ compareLogs, loading }) {
           </div>
           <button
             onClick={() => navigate('/compare')}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#2563EB] text-white text-xs font-bold hover:bg-[#1D4ED8] transition-all cursor-pointer shadow-sm"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#006B50] text-white text-xs font-bold hover:bg-[#064E3B] transition-all cursor-pointer shadow-sm"
           >
             <ExternalLink className="w-3.5 h-3.5" />
             Compare Products

@@ -35,7 +35,7 @@ function Toggle({ checked, onChange }) {
       type="button"
       onClick={onChange}
       className={`w-11 h-6 rounded-full p-0.5 transition-colors duration-200 flex items-center shrink-0 cursor-pointer ${
-        checked ? 'bg-[#2563EB] justify-end' : 'bg-slate-300 dark:bg-slate-700 justify-start'
+        checked ? 'bg-[#006B50] justify-end' : 'bg-slate-300 dark:bg-slate-700 justify-start'
       }`}
       role="switch"
       aria-checked={checked}
@@ -75,7 +75,7 @@ export default function ProfilePreferences({
       {/* Preferred Product Category */}
       <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-800 shadow-sm space-y-4">
         <div className="flex items-center gap-2 border-b border-[#F3F4F6] dark:border-slate-800 pb-3">
-          <SlidersHorizontal className="w-4 h-4 text-[#2563EB]" />
+          <SlidersHorizontal className="w-4 h-4 text-[#006B50]" />
           <h3 className="text-sm font-extrabold text-[#1F2937] dark:text-white">Preferred Product Category</h3>
         </div>
         <div className="flex flex-wrap gap-2.5">
@@ -85,8 +85,8 @@ export default function ProfilePreferences({
               onClick={() => setPreferredCategory(value)}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
                 preferredCategory === value
-                  ? 'bg-[#2563EB] text-white border-[#2563EB] shadow-sm'
-                  : 'bg-[#F8FAFC] dark:bg-slate-900 border-[#E5E7EB] dark:border-slate-700 text-[#374151] dark:text-slate-300 hover:border-[#2563EB]/40'
+                  ? 'bg-[#006B50] text-white border-[#006B50] shadow-sm'
+                  : 'bg-[#FAF9F4] dark:bg-slate-900 border-[#E5E7EB] dark:border-slate-700 text-[#374151] dark:text-slate-300 hover:border-[#006B50]/40'
               }`}
             >
               {label}
@@ -98,7 +98,7 @@ export default function ProfilePreferences({
       {/* Display Mode */}
       <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-800 shadow-sm space-y-4">
         <div className="flex items-center gap-2 border-b border-[#F3F4F6] dark:border-slate-800 pb-3">
-          <SlidersHorizontal className="w-4 h-4 text-[#2563EB]" />
+          <SlidersHorizontal className="w-4 h-4 text-[#006B50]" />
           <h3 className="text-sm font-extrabold text-[#1F2937] dark:text-white">Display Preferences</h3>
         </div>
         <div className="grid grid-cols-2 gap-3">
@@ -108,14 +108,14 @@ export default function ProfilePreferences({
               onClick={() => setDisplayMode(value)}
               className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
                 displayMode === value
-                  ? 'border-[#2563EB] bg-[#2563EB]/5 dark:bg-[#2563EB]/10'
-                  : 'border-[#E5E7EB] dark:border-slate-700 hover:border-[#2563EB]/40'
+                  ? 'border-[#006B50] bg-[#006B50]/5 dark:bg-[#006B50]/10'
+                  : 'border-[#E5E7EB] dark:border-slate-700 hover:border-[#006B50]/40'
               }`}
             >
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs font-extrabold text-[#1F2937] dark:text-white">{label}</span>
                 <div className={`w-4 h-4 rounded-full border-2 transition-colors ${
-                  displayMode === value ? 'border-[#2563EB] bg-[#2563EB]' : 'border-slate-300 dark:border-slate-600'
+                  displayMode === value ? 'border-[#006B50] bg-[#006B50]' : 'border-slate-300 dark:border-slate-600'
                 }`} />
               </div>
               <p className="text-[10.5px] text-[#6B7280] dark:text-slate-400">{desc}</p>
@@ -127,7 +127,7 @@ export default function ProfilePreferences({
       {/* Network & Goal Preferences */}
       <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-800 shadow-sm space-y-4">
         <div className="flex items-center gap-2 border-b border-[#F3F4F6] dark:border-slate-800 pb-3">
-          <SlidersHorizontal className="w-4 h-4 text-[#2563EB]" />
+          <SlidersHorizontal className="w-4 h-4 text-[#006B50]" />
           <h3 className="text-sm font-extrabold text-[#1F2937] dark:text-white">Banking Preferences</h3>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -140,8 +140,8 @@ export default function ProfilePreferences({
                   onClick={() => setPrimaryNetworkPref(n)}
                   className={`px-3 py-1.5 rounded-lg text-[10.5px] font-bold transition-all cursor-pointer border ${
                     primaryNetworkPref === n
-                      ? 'bg-[#2563EB] text-white border-[#2563EB]'
-                      : 'bg-[#F8FAFC] dark:bg-slate-900 border-[#E5E7EB] dark:border-slate-700 text-[#374151] dark:text-slate-300 hover:border-[#2563EB]/40'
+                      ? 'bg-[#006B50] text-white border-[#006B50]'
+                      : 'bg-[#FAF9F4] dark:bg-slate-900 border-[#E5E7EB] dark:border-slate-700 text-[#374151] dark:text-slate-300 hover:border-[#006B50]/40'
                   }`}
                 >
                   {n}
@@ -158,8 +158,8 @@ export default function ProfilePreferences({
                   onClick={() => setPrimaryGoalPref(g)}
                   className={`px-3 py-1.5 rounded-lg text-[10.5px] font-bold transition-all cursor-pointer border ${
                     primaryGoalPref === g
-                      ? 'bg-[#2563EB] text-white border-[#2563EB]'
-                      : 'bg-[#F8FAFC] dark:bg-slate-900 border-[#E5E7EB] dark:border-slate-700 text-[#374151] dark:text-slate-300 hover:border-[#2563EB]/40'
+                      ? 'bg-[#006B50] text-white border-[#006B50]'
+                      : 'bg-[#FAF9F4] dark:bg-slate-900 border-[#E5E7EB] dark:border-slate-700 text-[#374151] dark:text-slate-300 hover:border-[#006B50]/40'
                   }`}
                 >
                   {g}
@@ -173,18 +173,18 @@ export default function ProfilePreferences({
       {/* Notification Preferences */}
       <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-800 shadow-sm space-y-4">
         <div className="flex items-center gap-2 border-b border-[#F3F4F6] dark:border-slate-800 pb-3">
-          <Bell className="w-4 h-4 text-[#2563EB]" />
+          <Bell className="w-4 h-4 text-[#006B50]" />
           <h3 className="text-sm font-extrabold text-[#1F2937] dark:text-white">Notification Preferences</h3>
         </div>
         <div className="space-y-3">
           {NOTIFICATION_PREFS.map(({ key, label, desc, icon: Icon }) => (
             <div
               key={key}
-              className="flex items-center justify-between gap-4 p-4 rounded-xl bg-[#F8FAFC] dark:bg-slate-900/60 border border-[#E5E7EB] dark:border-slate-800 hover:border-[#2563EB]/30 transition-all cursor-pointer"
+              className="flex items-center justify-between gap-4 p-4 rounded-xl bg-[#FAF9F4] dark:bg-slate-900/60 border border-[#E5E7EB] dark:border-slate-800 hover:border-[#006B50]/30 transition-all cursor-pointer"
               onClick={() => onToggleNotification(key)}
             >
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 text-[#2563EB] dark:text-[#60A5FA] flex items-center justify-center shrink-0">
+                <div className="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 text-[#006B50] dark:text-[#159B72] flex items-center justify-center shrink-0">
                   <Icon className="w-4 h-4" />
                 </div>
                 <div>
@@ -203,7 +203,7 @@ export default function ProfilePreferences({
         <button
           onClick={onSave}
           disabled={saving}
-          className="px-6 py-2.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs font-bold transition-all cursor-pointer shadow-sm disabled:opacity-60 flex items-center gap-2"
+          className="px-6 py-2.5 rounded-xl bg-[#006B50] hover:bg-[#064E3B] text-white text-xs font-bold transition-all cursor-pointer shadow-sm disabled:opacity-60 flex items-center gap-2"
         >
           {saving ? 'Saving…' : 'Save Preferences'}
         </button>

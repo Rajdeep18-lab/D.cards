@@ -13,11 +13,11 @@ function IDFCCreditCardRelationship({ currentTier }) {
         <div className="p-6 rounded-3xl bg-gradient-to-br from-slate-900 via-[#1E293B] to-slate-900 text-white border border-slate-800 shadow-xl space-y-4 relative overflow-hidden">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-3">
             <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-2xl bg-[#2563EB]/20 text-[#60A5FA] border border-[#2563EB]/30 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-2xl bg-[#006B50]/20 text-[#159B72] border border-[#006B50]/30 flex items-center justify-center">
                 <CreditCard className="w-5 h-5" />
               </div>
               <div>
-                <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#60A5FA]">
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#159B72]">
                   SAVINGS TIER → ASSOCIATED CREDIT CARD
                 </span>
                 <h4 className="text-xl font-extrabold text-white">
@@ -40,7 +40,7 @@ function IDFCCreditCardRelationship({ currentTier }) {
             <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-200">
               {cardData.keyBenefits.map((b, i) => (
                 <li key={i} className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#60A5FA] shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-4 h-4 text-[#159B72] shrink-0 mt-0.5" />
                   <span>{b}</span>
                 </li>
               ))}

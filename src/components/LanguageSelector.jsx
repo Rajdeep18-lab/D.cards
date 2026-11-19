@@ -42,7 +42,7 @@ export default function LanguageSelector({ variant = 'dropdown', className = '' 
           onClick={() => handleSelect('en')}
           className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
             !isHindi
-              ? 'bg-[#2563EB] text-white border-[#2563EB] shadow-xs'
+              ? 'bg-[#006B50] text-white border-[#006B50] shadow-xs'
               : 'bg-white dark:bg-slate-800 text-[#4B5563] dark:text-slate-300 border-[#E5E7EB] dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700/60'
           }`}
           aria-pressed={!isHindi}
@@ -55,7 +55,7 @@ export default function LanguageSelector({ variant = 'dropdown', className = '' 
           onClick={() => handleSelect('hi')}
           className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
             isHindi
-              ? 'bg-[#2563EB] text-white border-[#2563EB] shadow-xs'
+              ? 'bg-[#006B50] text-white border-[#006B50] shadow-xs'
               : 'bg-white dark:bg-slate-800 text-[#4B5563] dark:text-slate-300 border-[#E5E7EB] dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700/60'
           }`}
           aria-pressed={isHindi}
@@ -78,11 +78,11 @@ export default function LanguageSelector({ variant = 'dropdown', className = '' 
         aria-expanded={isOpen}
         title={isHindi ? "भाषा बदलें (हिंदी / English)" : "Change Language (English / हिंदी)"}
       >
-        <Globe className="w-4 h-4 text-[#2563EB] dark:text-[#60A5FA] group-hover:scale-110 transition-transform shrink-0" />
+        <Globe className="w-4 h-4 text-[#006B50] dark:text-[#159B72] group-hover:scale-110 transition-transform shrink-0" />
         <span className="font-sans tracking-wide">
           {isHindi ? 'हिंदी' : 'EN'}
         </span>
-        <ChevronDown className={`w-3.5 h-3.5 text-gray-400 transition-transform duration-200 shrink-0 ${isOpen ? 'rotate-180 text-[#2563EB]' : ''}`} />
+        <ChevronDown className={`w-3.5 h-3.5 text-gray-400 transition-transform duration-200 shrink-0 ${isOpen ? 'rotate-180 text-[#006B50]' : ''}`} />
       </button>
 
       {isOpen && (
@@ -102,7 +102,7 @@ export default function LanguageSelector({ variant = 'dropdown', className = '' 
             onClick={() => handleSelect('en')}
             className={`w-full flex items-center justify-between px-3 py-2.5 min-h-[44px] text-xs font-semibold text-left transition-colors cursor-pointer ${
               !isHindi
-                ? 'bg-amber-50/80 dark:bg-slate-800 text-[#2563EB] dark:text-[#60A5FA] font-bold'
+                ? 'bg-amber-50/80 dark:bg-slate-800 text-[#006B50] dark:text-[#159B72] font-bold'
                 : 'text-[#1F2937] dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-800/60'
             }`}
           >
@@ -110,7 +110,7 @@ export default function LanguageSelector({ variant = 'dropdown', className = '' 
               <span className="text-sm">🇬🇧</span>
               <span>English</span>
             </div>
-            {!isHindi && <Check className="w-4 h-4 text-[#2563EB] dark:text-[#60A5FA]" />}
+            {!isHindi && <Check className="w-4 h-4 text-[#006B50] dark:text-[#159B72]" />}
           </button>
 
           <button
@@ -120,7 +120,7 @@ export default function LanguageSelector({ variant = 'dropdown', className = '' 
             onClick={() => handleSelect('hi')}
             className={`w-full flex items-center justify-between px-3 py-2.5 min-h-[44px] text-xs font-semibold text-left transition-colors cursor-pointer ${
               isHindi
-                ? 'bg-amber-50/80 dark:bg-slate-800 text-[#2563EB] dark:text-[#60A5FA] font-bold'
+                ? 'bg-amber-50/80 dark:bg-slate-800 text-[#006B50] dark:text-[#159B72] font-bold'
                 : 'text-[#1F2937] dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-800/60'
             }`}
           >
@@ -128,7 +128,7 @@ export default function LanguageSelector({ variant = 'dropdown', className = '' 
               <span className="text-sm">🇮🇳</span>
               <span>हिंदी</span>
             </div>
-            {isHindi && <Check className="w-4 h-4 text-[#2563EB] dark:text-[#60A5FA]" />}
+            {isHindi && <Check className="w-4 h-4 text-[#006B50] dark:text-[#159B72]" />}
           </button>
         </div>
       )}

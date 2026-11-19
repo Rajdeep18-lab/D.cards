@@ -58,7 +58,7 @@ function CurrentAccountsComparePage({ compareQueue = [], setCompareQueue, onSele
     <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 relative z-20 space-y-8 text-left select-none">
       <div className="flex items-center justify-between border-b border-[#E5E7EB] dark:border-slate-800 pb-6">
         <div>
-          <Link to="/current-accounts" className="text-xs font-bold text-[#2563EB] dark:text-[#60A5FA] flex items-center gap-1 mb-2 hover:underline">
+          <Link to="/current-accounts" className="text-xs font-bold text-[#006B50] dark:text-[#159B72] flex items-center gap-1 mb-2 hover:underline">
             <ArrowLeft className="w-3.5 h-3.5" /> {isHindi ? '← चालू खातों पर वापस जाएं' : 'Back to Current Accounts'}
           </Link>
           <h1 className="text-3xl font-extrabold text-[#1F2937] dark:text-white tracking-tight">
@@ -99,7 +99,7 @@ function CurrentAccountsComparePage({ compareQueue = [], setCompareQueue, onSele
         </button>
         <button
           onClick={() => navigate('/compare-current')}
-          className="px-4 py-2 rounded-xl text-xs font-bold bg-[#2563EB] text-white shadow-xs cursor-pointer flex items-center gap-1.5"
+          className="px-4 py-2 rounded-xl text-xs font-bold bg-[#006B50] text-white shadow-xs cursor-pointer flex items-center gap-1.5"
         >
           <Briefcase className="w-3.5 h-3.5" />
           <span>{t('compare.currentAccountsTab', 'Current Accounts')}</span>
@@ -119,7 +119,7 @@ function CurrentAccountsComparePage({ compareQueue = [], setCompareQueue, onSele
           </p>
           <Link
             to="/current-accounts"
-            className="inline-block px-6 py-2.5 rounded-full bg-[#2563EB] text-white font-bold text-xs shadow-md"
+            className="inline-block px-6 py-2.5 rounded-full bg-[#006B50] text-white font-bold text-xs shadow-md"
           >
             {isHindi ? 'चालू खाते देखें' : 'Browse Current Accounts'}
           </Link>
@@ -160,7 +160,7 @@ function CurrentAccountsComparePage({ compareQueue = [], setCompareQueue, onSele
                   {t('savings.accountType', 'Account Type')}
                 </td>
                 {queue.map(acc => (
-                  <td key={acc.id} className="p-4 text-center font-bold text-[#2563EB] dark:text-[#60A5FA]">
+                  <td key={acc.id} className="p-4 text-center font-bold text-[#006B50] dark:text-[#159B72]">
                     {acc.accountType}
                   </td>
                 ))}
@@ -254,7 +254,7 @@ function CurrentAccountsComparePage({ compareQueue = [], setCompareQueue, onSele
                     <td key={acc.id} className="p-4 text-center font-bold">
                       {card ? (
                         <div className="space-y-1">
-                          <span className="text-xs text-[#2563EB] dark:text-[#60A5FA] block">{card.name || card.card_name || card.cardName}</span>
+                          <span className="text-xs text-[#006B50] dark:text-[#159B72] block">{card.name || card.card_name || card.cardName}</span>
                           <span className="text-[10px] text-slate-400 block font-normal">
                             {isHindi ? 'शुल्क:' : 'Fee:'} {card.annualFee === 0 ? (isHindi ? 'निःशुल्क (₹0)' : 'Free') : `₹${card.annualFee}`}
                           </span>
@@ -276,7 +276,7 @@ function CurrentAccountsComparePage({ compareQueue = [], setCompareQueue, onSele
                 {queue.map(acc => (
                   <td key={acc.id} className="p-4 text-center text-xs text-slate-500">
                     {acc.officialSource ? (
-                      <a href={acc.officialSource} target="_blank" rel="noreferrer" className="text-[#2563EB] underline">
+                      <a href={acc.officialSource} target="_blank" rel="noreferrer" className="text-[#006B50] underline">
                         {isHindi ? 'आधिकारिक बैंक लिंक' : 'Official Bank Link'}
                       </a>
                     ) : (

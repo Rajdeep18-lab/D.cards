@@ -71,7 +71,7 @@ function InsightCard({ item, type, navigate, toggleWishlist, isWishlisted }) {
     <motion.div
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
-      className="p-4 rounded-2xl bg-white border border-gray-200/90 hover:border-[#2563EB]/40 hover:shadow-sm transition-all group space-y-3"
+      className="p-4 rounded-2xl bg-white border border-gray-200/90 hover:border-[#006B50]/40 hover:shadow-sm transition-all group space-y-3"
     >
       {/* Header */}
       <div className="flex items-start gap-3">
@@ -84,7 +84,7 @@ function InsightCard({ item, type, navigate, toggleWishlist, isWishlisted }) {
           className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wide border shrink-0 ${
             isAccount
               ? 'bg-emerald-50 border-emerald-200 text-emerald-600'
-              : 'bg-blue-50 border-blue-200 text-blue-600'
+              : 'bg-[#FAF9F4] border-[#DCE9E1] text-[#006B50]'
           }`}
         >
           {isAccount ? (isHindi ? 'बचत खाता' : 'Savings') : (isHindi ? 'डेबिट कार्ड' : 'Debit Card')}
@@ -109,7 +109,7 @@ function InsightCard({ item, type, navigate, toggleWishlist, isWishlisted }) {
       <div className="flex items-center gap-2 pt-1 border-t border-gray-100">
         <button
           onClick={() => navigate(href)}
-          className="flex-1 py-1.5 text-xs font-bold text-white bg-[#2563EB] hover:bg-blue-700 rounded-xl transition-all active:scale-95 shadow-xs"
+          className="flex-1 py-1.5 text-xs font-bold text-white bg-[#006B50] hover:bg-[#064E3B] rounded-xl transition-all active:scale-95 shadow-xs"
         >
           {isHindi ? 'विवरण देखें' : 'View Details'}
         </button>
@@ -142,7 +142,7 @@ function ProductInsightsPanel({ insights, navigate, toggleWishlist, isWishlisted
     return (
       <div className="flex flex-col h-full items-center justify-between p-6 text-center">
         <div className="flex-1 flex flex-col items-center justify-center space-y-4 max-w-[260px]">
-          <div className="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-[#2563EB]">
+          <div className="w-14 h-14 rounded-2xl bg-[#FAF9F4] border border-[#DCE9E1] flex items-center justify-center text-[#006B50]">
             <Sparkles className="w-6 h-6" />
           </div>
           <div className="space-y-1.5">
@@ -157,7 +157,7 @@ function ProductInsightsPanel({ insights, navigate, toggleWishlist, isWishlisted
           <div className="w-full space-y-1.5 pt-2">
             {[
               { icon: <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />, text: isHindi ? 'सत्यापित बैंक शुल्क संरचनाएं' : 'Verified bank fee structures' },
-              { icon: <ShieldCheck  className="w-3.5 h-3.5 text-blue-500 shrink-0"    />, text: isHindi ? 'सत्यापित शाखाएं व एटीएम' : 'Verified branches & ATMs' },
+              { icon: <ShieldCheck  className="w-3.5 h-3.5 text-[#159B72] shrink-0"    />, text: isHindi ? 'सत्यापित शाखाएं व एटीएम' : 'Verified branches & ATMs' },
               { icon: <Scale        className="w-3.5 h-3.5 text-purple-500 shrink-0"  />, text: isHindi ? 'सीधे दिशा-निर्देश और मानचित्र लिंक' : 'Direct directions & map links' },
             ].map(({ icon, text }, i) => (
               <div key={i} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-50 border border-gray-100/80 text-left">
@@ -185,10 +185,10 @@ function ProductInsightsPanel({ insights, navigate, toggleWishlist, isWishlisted
                 <Link
                   key={nav.href}
                   to={nav.href}
-                  className="flex items-center gap-2 px-2.5 py-2 rounded-xl bg-gray-50/80 border border-gray-200/80 hover:border-[#2563EB]/40 hover:bg-blue-50/60 text-gray-700 hover:text-[#2563EB] transition-all group"
+                  className="flex items-center gap-2 px-2.5 py-2 rounded-xl bg-gray-50/80 border border-gray-200/80 hover:border-[#006B50]/40 hover:bg-[#FAF9F4]/60 text-gray-700 hover:text-[#006B50] transition-all group"
                   aria-label={`Go to ${nav.label}`}
                 >
-                  <span className="text-gray-400 group-hover:text-[#2563EB] transition-colors shrink-0">{nav.icon}</span>
+                  <span className="text-gray-400 group-hover:text-[#006B50] transition-colors shrink-0">{nav.icon}</span>
                   <span className="text-[11px] font-semibold truncate">{labelMap[nav.label] || nav.label}</span>
                 </Link>
               );
@@ -209,7 +209,7 @@ function ProductInsightsPanel({ insights, navigate, toggleWishlist, isWishlisted
             <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">
               Verified Locations ({locations.length})
             </p>
-            <Link to="/find-banks" className="text-[10px] font-bold text-[#2563EB] hover:underline flex items-center gap-0.5">
+            <Link to="/find-banks" className="text-[10px] font-bold text-[#006B50] hover:underline flex items-center gap-0.5">
               Full Map <ChevronRight className="w-3 h-3" />
             </Link>
           </div>
@@ -228,7 +228,7 @@ function ProductInsightsPanel({ insights, navigate, toggleWishlist, isWishlisted
             <div 
               key={loc.id} 
               className={`p-3.5 rounded-2xl bg-white border transition-all space-y-2 text-xs shadow-xs ${
-                focusedLocation?.id === loc.id ? 'border-[#2563EB] ring-2 ring-blue-100' : 'border-gray-200 hover:border-blue-300'
+                focusedLocation?.id === loc.id ? 'border-[#006B50] ring-2 ring-[#DCE9E1]' : 'border-gray-200 hover:border-[#DCE9E1]'
               }`}
             >
               <div className="flex items-start justify-between gap-2">
@@ -237,7 +237,7 @@ function ProductInsightsPanel({ insights, navigate, toggleWishlist, isWishlisted
                   <p className="text-[11px] font-semibold text-gray-600 truncate">{loc.branch_name}</p>
                 </div>
                 <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wide border shrink-0 ${
-                  loc.branch_type === 'ATM' ? 'bg-amber-50 border-amber-200 text-amber-700' : 'bg-blue-50 border-blue-200 text-blue-700'
+                  loc.branch_type === 'ATM' ? 'bg-amber-50 border-amber-200 text-amber-700' : 'bg-[#FAF9F4] border-[#DCE9E1] text-[#064E3B]'
                 }`}>
                   {loc.branch_type === 'ATM' ? '🏧 ATM' : '🏦 Branch'}
                 </span>
@@ -256,7 +256,7 @@ function ProductInsightsPanel({ insights, navigate, toggleWishlist, isWishlisted
                   <button
                     type="button"
                     onClick={() => setFocusedLocation(loc)}
-                    className="font-bold text-[#2563EB] bg-blue-50 hover:bg-blue-100 px-2 py-1 rounded-lg transition-colors cursor-pointer"
+                    className="font-bold text-[#006B50] bg-[#FAF9F4] hover:bg-[#EEF4EE] px-2 py-1 rounded-lg transition-colors cursor-pointer"
                   >
                     Focus Map
                   </button>
@@ -275,7 +275,7 @@ function ProductInsightsPanel({ insights, navigate, toggleWishlist, isWishlisted
                       href={loc.source_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-semibold text-gray-500 hover:text-blue-600 px-1.5 py-1 rounded-lg transition-colors"
+                      className="font-semibold text-gray-500 hover:text-[#006B50] px-1.5 py-1 rounded-lg transition-colors"
                     >
                       Source 🌐
                     </a>
@@ -294,7 +294,7 @@ function ProductInsightsPanel({ insights, navigate, toggleWishlist, isWishlisted
             <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">
               Accounts ({accounts.length})
             </p>
-            <Link to="/savings-accounts" className="text-[10px] font-bold text-[#2563EB] hover:underline">
+            <Link to="/savings-accounts" className="text-[10px] font-bold text-[#006B50] hover:underline">
               View All
             </Link>
           </div>
@@ -318,7 +318,7 @@ function ProductInsightsPanel({ insights, navigate, toggleWishlist, isWishlisted
             <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">
               Debit Cards ({cards.length})
             </p>
-            <Link to="/debit-cards" className="text-[10px] font-bold text-[#2563EB] hover:underline">
+            <Link to="/debit-cards" className="text-[10px] font-bold text-[#006B50] hover:underline">
               View All
             </Link>
           </div>
@@ -435,7 +435,7 @@ function AIAdvisorPage({ onOpenContact, onSelectDebitCard, toggleCompareQueue, s
 
             <div className="flex items-center gap-2 shrink-0">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gray-100 border border-gray-200 text-gray-600 text-[10px] font-semibold">
-                <ShieldCheck className="w-3 h-3 text-[#2563EB]" />
+                <ShieldCheck className="w-3 h-3 text-[#006B50]" />
                 {isHindi ? 'सत्यापित बैंक डेटा · निष्पक्ष' : 'Verified Bank Data · No Bias'}
               </span>
             </div>
@@ -465,7 +465,7 @@ function AIAdvisorPage({ onOpenContact, onSelectDebitCard, toggleCompareQueue, s
             {/* Panel header */}
             <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between shrink-0 bg-white">
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center text-[#2563EB]">
+                <div className="w-6 h-6 rounded-lg bg-[#FAF9F4] border border-[#DCE9E1] flex items-center justify-center text-[#006B50]">
                   <BarChart3 className="w-3.5 h-3.5" aria-hidden />
                 </div>
                 <h2 className="text-xs font-black text-gray-900 uppercase tracking-wider">
@@ -474,7 +474,7 @@ function AIAdvisorPage({ onOpenContact, onSelectDebitCard, toggleCompareQueue, s
               </div>
               {totalInsights > 0 && (
                 <div className="flex items-center gap-2">
-                  <span className="px-2 py-0.5 rounded-full bg-blue-50 border border-blue-200 text-[#2563EB] text-[10px] font-black">
+                  <span className="px-2 py-0.5 rounded-full bg-[#FAF9F4] border border-[#DCE9E1] text-[#006B50] text-[10px] font-black">
                     {totalInsights} {isHindi ? 'परिणाम' : (totalInsights === 1 ? 'match' : 'matches')}
                   </span>
                   <button

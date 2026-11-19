@@ -61,7 +61,7 @@ export default function PasswordInput({
 
   const borderClass = hasError
     ? 'border-rose-400 dark:border-rose-500 focus:border-rose-400 focus:ring-rose-400/15'
-    : 'border-[#E5E7EB] dark:border-slate-700 focus:border-[#2563EB] focus:ring-[#2563EB]/15';
+    : 'border-[#E5E7EB] dark:border-slate-700 focus:border-[#006B50] focus:ring-[#006B50]/15';
 
   return (
     <div className="space-y-1.5">
@@ -119,7 +119,7 @@ export default function PasswordInput({
           type="button"
           onClick={() => setShowText((v) => !v)}
           aria-label={showText ? 'Hide password' : 'Show password'}
-          className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-[#2563EB] dark:hover:text-[#60A5FA] transition-colors rounded focus:outline-none focus:ring-2 focus:ring-[#2563EB]/40 cursor-pointer"
+          className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-[#006B50] dark:hover:text-[#159B72] transition-colors rounded focus:outline-none focus:ring-2 focus:ring-[#006B50]/40 cursor-pointer"
         >
           {showText ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
         </button>

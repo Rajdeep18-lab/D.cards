@@ -85,17 +85,17 @@ export const FESTIVALS = [
       { year: 2027, startDate: "2027-03-21", endDate: "2027-03-23" },
     ],
     theme: {
-      primaryColor: "#4338CA",      // Royal Indigo
+      primaryColor: "#064E3B",      // Royal Indigo
       secondaryColor: "#E11D48",    // Rose Magenta
       accentColor: "#0D9488",       // Vibrant Teal
       highlightColor: "#F59E0B",    // Golden Gulal
-      badgeGradient: "from-[#4338CA] via-[#E11D48] to-[#F59E0B]",
+      badgeGradient: "from-[#064E3B] via-[#E11D48] to-[#F59E0B]",
       badgeBorder: "border-pink-400/40",
       badgeText: "text-white",
       ambientGlow: "radial-gradient(ellipse_at_center, rgba(244,63,94,0.14) 0%, rgba(99,102,241,0.08) 50%, transparent 75%)",
       motifType: "holi_color_splash",
       cssVars: {
-        "--fest-primary": "#4338CA",
+        "--fest-primary": "#064E3B",
         "--fest-accent": "#E11D48",
         "--fest-glow": "rgba(225, 29, 72, 0.22)"
       }
@@ -127,7 +127,7 @@ export const FESTIVALS = [
       primaryColor: "#047857",      // Fir Emerald
       secondaryColor: "#DC2626",    // Holiday Crimson
       accentColor: "#F59E0B",       // Warm Gold
-      highlightColor: "#E0E7FF",    // Crisp Frost
+      highlightColor: "#EEF4EE",    // Crisp Frost
       badgeGradient: "from-[#047857] via-[#15803D] to-[#DC2626]",
       badgeBorder: "border-emerald-400/40",
       badgeText: "text-white",
@@ -251,7 +251,7 @@ export const FESTIVALS = [
       primaryColor: "#C2410C",      // Bonfire Orange
       secondaryColor: "#EA580C",    // Fiery Amber
       accentColor: "#F59E0B",       // Harvest Yellow
-      highlightColor: "#0284C7",    // Clear Kite Sky
+      highlightColor: "#006B50",    // Clear Kite Sky
       badgeGradient: "from-[#C2410C] via-[#EA580C] to-[#F59E0B]",
       badgeBorder: "border-orange-400/40",
       badgeText: "text-white",
@@ -289,7 +289,7 @@ export const FESTIVALS = [
     theme: {
       primaryColor: "#EA580C",      // India Saffron
       secondaryColor: "#15803D",    // India Green
-      accentColor: "#1E3A8A",       // Navy Ashoka Chakra
+      accentColor: "#123C30",       // Navy Ashoka Chakra
       highlightColor: "#FFFFFF",    // Pure White
       badgeGradient: "from-[#EA580C] via-[#FFFFFF] to-[#15803D]",
       badgeBorder: "border-orange-500/50",
@@ -328,7 +328,7 @@ export const FESTIVALS = [
     theme: {
       primaryColor: "#EA580C",      // Saffron
       secondaryColor: "#15803D",    // Green
-      accentColor: "#1E3A8A",       // Chakra Navy
+      accentColor: "#123C30",       // Chakra Navy
       highlightColor: "#FFFFFF",    // White
       badgeGradient: "from-[#EA580C] via-[#FFFFFF] to-[#15803D]",
       badgeBorder: "border-orange-500/50",
@@ -364,17 +364,17 @@ export const FESTIVALS = [
       { year: 2027, startDate: "2027-08-24", endDate: "2027-08-26" },
     ],
     theme: {
-      primaryColor: "#0284C7",      // Peacock Blue
+      primaryColor: "#006B50",      // Peacock Blue
       secondaryColor: "#0369A1",    // Deep Ocean Sapphire
       accentColor: "#EAB308",       // Luminous Gold
       highlightColor: "#059669",    // Feather Emerald
-      badgeGradient: "from-[#0284C7] via-[#059669] to-[#EAB308]",
-      badgeBorder: "border-sky-400/40",
+      badgeGradient: "from-[#006B50] via-[#059669] to-[#EAB308]",
+      badgeBorder: "border-[#159B72]/40",
       badgeText: "text-white",
       ambientGlow: "radial-gradient(ellipse_at_center, rgba(2,132,199,0.15) 0%, rgba(234,179,8,0.06) 50%, transparent 75%)",
       motifType: "janmashtami_peacock_feather",
       cssVars: {
-        "--fest-primary": "#0284C7",
+        "--fest-primary": "#006B50",
         "--fest-accent": "#EAB308",
         "--fest-glow": "rgba(2, 132, 199, 0.22)"
       }
@@ -594,17 +594,17 @@ export const FESTIVALS = [
     ],
     theme: {
       primaryColor: "#1E293B",      // Cosmic Blue
-      secondaryColor: "#0284C7",    // Neelkanth Blue
+      secondaryColor: "#006B50",    // Neelkanth Blue
       accentColor: "#D97706",       // Sacred Sandalwood Gold
-      highlightColor: "#E0E7FF",    // Bhasma Silver
-      badgeGradient: "from-[#1E293B] via-[#0284C7] to-[#D97706]",
-      badgeBorder: "border-sky-400/40",
-      badgeText: "text-sky-100",
+      highlightColor: "#EEF4EE",    // Bhasma Silver
+      badgeGradient: "from-[#1E293B] via-[#006B50] to-[#D97706]",
+      badgeBorder: "border-[#159B72]/40",
+      badgeText: "text-emerald-50",
       ambientGlow: "radial-gradient(ellipse_at_center, rgba(2,132,199,0.15) 0%, rgba(30,41,59,0.08) 50%, transparent 75%)",
       motifType: "trishul_damru_crescent",
       cssVars: {
         "--fest-primary": "#1E293B",
-        "--fest-accent": "#0284C7",
+        "--fest-accent": "#006B50",
         "--fest-glow": "rgba(2, 132, 199, 0.2)"
       }
     }

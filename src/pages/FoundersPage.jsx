@@ -223,7 +223,7 @@ function FoundersPage() {
       
       {/* ── 1. HERO BANNER ── */}
       <section className="border-b border-[#E5E7EB] dark:border-slate-800 pb-10">
-        <span className="text-xs font-semibold text-[#2563EB] dark:text-[#60A5FA] tracking-widest uppercase block mb-2">
+        <span className="text-xs font-semibold text-[#006B50] dark:text-[#159B72] tracking-widest uppercase block mb-2">
           {t('founders.badge')}
         </span>
         <h1 className="text-3xl sm:text-5xl font-bold text-[#1F2937] dark:text-white tracking-tight">
@@ -248,11 +248,11 @@ function FoundersPage() {
           >
             <div className="space-y-4">
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#2563EB] to-[#3B82F6] text-white flex items-center justify-center text-xl font-bold shadow-md shadow-[#2563EB]/25 flex-shrink-0">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#006B50] to-[#159B72] text-white flex items-center justify-center text-xl font-bold shadow-md shadow-[#006B50]/25 flex-shrink-0">
                   {person.initials}
                 </div>
                 <div>
-                  <span className="text-[10px] font-bold text-[#2563EB] dark:text-[#60A5FA] uppercase tracking-widest block mb-0.5">
+                  <span className="text-[10px] font-bold text-[#006B50] dark:text-[#159B72] uppercase tracking-widest block mb-0.5">
                     {person.roleLabel}
                   </span>
                   <h2 className="text-xl sm:text-2xl font-bold text-[#1F2937] dark:text-white leading-tight">
@@ -274,7 +274,7 @@ function FoundersPage() {
               </div>
 
               {person.vision && (
-                <div className="p-3.5 rounded-2xl bg-[#EFF6FF] dark:bg-slate-800/80 border border-[#2563EB]/20 text-xs text-[#2563EB] dark:text-[#60A5FA] font-semibold">
+                <div className="p-3.5 rounded-2xl bg-[#FAF9F4] dark:bg-slate-800/80 border border-[#006B50]/20 text-xs text-[#006B50] dark:text-[#159B72] font-semibold">
                   <span className="font-bold uppercase tracking-wider block text-[10px] mb-0.5">
                     {isHindi ? 'कार्यकारी दृष्टिकोण' : 'Executive Vision'}
                   </span>
@@ -290,7 +290,7 @@ function FoundersPage() {
               <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-[#1F2937] dark:text-slate-300 font-normal">
                 {person.responsibilities.map((resp, i) => (
                   <li key={i} className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#2563EB] flex-shrink-0" />
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#006B50] flex-shrink-0" />
                     <span>{resp}</span>
                   </li>
                 ))}
@@ -303,7 +303,7 @@ function FoundersPage() {
       {/* ── 3. OUR LEADERSHIP PHILOSOPHY ── */}
       <section className="p-8 sm:p-12 rounded-3xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-700 shadow-soft space-y-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-[#EFF6FF] dark:bg-slate-800 border border-[#2563EB]/20 flex items-center justify-center text-[#2563EB]">
+          <div className="w-10 h-10 rounded-2xl bg-[#FAF9F4] dark:bg-slate-800 border border-[#006B50]/20 flex items-center justify-center text-[#006B50]">
             <Lightbulb className="w-5 h-5" />
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold text-[#1F2937] dark:text-white tracking-tight">
@@ -325,7 +325,7 @@ function FoundersPage() {
       {/* ── 4. MEET OUR LEADERSHIP ── */}
       <section className="p-8 sm:p-12 rounded-3xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-700 shadow-soft space-y-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-[#EFF6FF] dark:bg-slate-800 border border-[#2563EB]/20 flex items-center justify-center text-[#2563EB]">
+          <div className="w-10 h-10 rounded-2xl bg-[#FAF9F4] dark:bg-slate-800 border border-[#006B50]/20 flex items-center justify-center text-[#006B50]">
             <Users className="w-5 h-5" />
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold text-[#1F2937] dark:text-white tracking-tight">
@@ -340,10 +340,10 @@ function FoundersPage() {
       </section>
 
       {/* ── 5. FOUNDER MESSAGE ── */}
-      <section className="p-8 sm:p-12 rounded-3xl bg-gradient-to-r from-[#EFF6FF] to-white dark:from-slate-800 dark:to-[#1E293B] border border-[#2563EB]/30 shadow-soft space-y-6 text-center sm:text-left relative overflow-hidden">
-        <Quote className="w-16 h-16 text-[#2563EB]/15 absolute right-6 top-6 pointer-events-none" />
+      <section className="p-8 sm:p-12 rounded-3xl bg-gradient-to-r from-[#FAF9F4] to-white dark:from-slate-800 dark:to-[#1E293B] border border-[#006B50]/30 shadow-soft space-y-6 text-center sm:text-left relative overflow-hidden">
+        <Quote className="w-16 h-16 text-[#006B50]/15 absolute right-6 top-6 pointer-events-none" />
         <div className="flex items-center gap-3 justify-center sm:justify-start">
-          <div className="w-10 h-10 rounded-2xl bg-[#2563EB] text-white flex items-center justify-center shadow-md">
+          <div className="w-10 h-10 rounded-2xl bg-[#006B50] text-white flex items-center justify-center shadow-md">
             <Quote className="w-5 h-5" />
           </div>
           <h2 className="text-xl sm:text-2xl font-bold text-[#1F2937] dark:text-white tracking-tight">
@@ -357,9 +357,9 @@ function FoundersPage() {
             : '"At D.CARD, our goal is to simplify banking decisions through transparency, technology, and trust. We believe every user deserves clear and unbiased financial information."'}
         </blockquote>
 
-        <div className="pt-2 border-t border-[#2563EB]/20 max-w-xs">
+        <div className="pt-2 border-t border-[#006B50]/20 max-w-xs">
           <p className="text-sm font-bold text-[#1F2937] dark:text-white">Ritik Raj</p>
-          <p className="text-xs text-[#2563EB] dark:text-[#60A5FA] font-semibold">
+          <p className="text-xs text-[#006B50] dark:text-[#159B72] font-semibold">
             {isHindi ? 'संस्थापक एवं सीईओ, D.CARD' : 'Founder & CEO, D.CARD'}
           </p>
         </div>
@@ -369,7 +369,7 @@ function FoundersPage() {
       <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-700 shadow-soft space-y-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#EFF6FF] dark:bg-slate-800 border border-[#2563EB]/20 flex items-center justify-center text-[#2563EB]">
+            <div className="w-10 h-10 rounded-2xl bg-[#FAF9F4] dark:bg-slate-800 border border-[#006B50]/20 flex items-center justify-center text-[#006B50]">
               <Users className="w-5 h-5" />
             </div>
             <h2 className="text-xl font-bold text-[#1F2937] dark:text-white">
@@ -385,7 +385,7 @@ function FoundersPage() {
 
         <div className="p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-700 shadow-soft space-y-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#EFF6FF] dark:bg-slate-800 border border-[#2563EB]/20 flex items-center justify-center text-[#2563EB]">
+            <div className="w-10 h-10 rounded-2xl bg-[#FAF9F4] dark:bg-slate-800 border border-[#006B50]/20 flex items-center justify-center text-[#006B50]">
               <Briefcase className="w-5 h-5" />
             </div>
             <h2 className="text-xl font-bold text-[#1F2937] dark:text-white">
@@ -403,7 +403,7 @@ function FoundersPage() {
       {/* ── 8. WHY OUR LEADERSHIP MATTERS ── */}
       <section className="space-y-8">
         <div>
-          <span className="text-xs font-semibold text-[#2563EB] dark:text-[#60A5FA] tracking-widest uppercase block mb-1">
+          <span className="text-xs font-semibold text-[#006B50] dark:text-[#159B72] tracking-widest uppercase block mb-1">
             {isHindi ? 'कार्यकारी प्रतिबद्धता' : 'EXECUTIVE COMMITMENT'}
           </span>
           <h2 className="text-3xl font-bold text-[#1F2937] dark:text-white tracking-tight">
@@ -420,7 +420,7 @@ function FoundersPage() {
                 whileHover={{ y: -4 }}
                 className="p-6 rounded-3xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-700 shadow-soft space-y-3"
               >
-                <div className="w-10 h-10 rounded-2xl bg-[#EFF6FF] dark:bg-slate-800 border border-[#2563EB]/20 flex items-center justify-center text-[#2563EB] dark:text-[#60A5FA]">
+                <div className="w-10 h-10 rounded-2xl bg-[#FAF9F4] dark:bg-slate-800 border border-[#006B50]/20 flex items-center justify-center text-[#006B50] dark:text-[#159B72]">
                   <IconComp className="w-5 h-5" />
                 </div>
                 <h3 className="text-base font-bold text-[#1F2937] dark:text-white">{item.title}</h3>
@@ -432,8 +432,8 @@ function FoundersPage() {
       </section>
 
       {/* ── 9. JOIN OUR JOURNEY (CTA) ── */}
-      <section className="p-8 sm:p-12 rounded-3xl bg-gradient-to-r from-[#0F172A] via-[#1E293B] to-[#2563EB] text-white text-center shadow-xl space-y-6 relative overflow-hidden">
-        <div className="absolute right-0 top-0 w-80 h-80 rounded-full bg-[#2563EB]/20 blur-3xl pointer-events-none" />
+      <section className="p-8 sm:p-12 rounded-3xl bg-gradient-to-r from-[#0F172A] via-[#1E293B] to-[#006B50] text-white text-center shadow-xl space-y-6 relative overflow-hidden">
+        <div className="absolute right-0 top-0 w-80 h-80 rounded-full bg-[#006B50]/20 blur-3xl pointer-events-none" />
         <div className="relative z-10 space-y-4 max-w-2xl mx-auto">
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
             {isHindi ? 'हमारी यात्रा में शामिल हों' : 'Join Our Journey'}
@@ -446,7 +446,7 @@ function FoundersPage() {
           <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
               onClick={() => navigate('/cards')}
-              className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:opacity-95 text-white font-semibold text-xs uppercase tracking-wider shadow-lg shadow-[#2563EB]/30 border border-white/20 cursor-pointer transition-all flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-gradient-to-r from-[#006B50] to-[#159B72] hover:opacity-95 text-white font-semibold text-xs uppercase tracking-wider shadow-lg shadow-[#006B50]/30 border border-white/20 cursor-pointer transition-all flex items-center justify-center gap-2"
             >
               <CreditCard className="w-4 h-4" />
               <span>{isHindi ? 'डेबिट कार्ड देखें' : 'Explore Debit Cards'}</span>

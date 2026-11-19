@@ -41,7 +41,7 @@ export default function AuthInput({
     ? 'border-rose-400 dark:border-rose-500 focus:border-rose-400 focus:ring-rose-400/15'
     : isValid
     ? 'border-emerald-400 dark:border-emerald-500 focus:border-emerald-400 focus:ring-emerald-400/15'
-    : 'border-[#E5E7EB] dark:border-slate-700 focus:border-[#2563EB] focus:ring-[#2563EB]/15';
+    : 'border-[#E5E7EB] dark:border-slate-700 focus:border-[#006B50] focus:ring-[#006B50]/15';
 
   return (
     <div className={`space-y-1.5 ${className}`}>

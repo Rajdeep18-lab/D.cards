@@ -76,7 +76,7 @@ function WebsiteDisclaimerModal() {
               </div>
               <button
                 onClick={handleReturn}
-                className="px-6 py-3 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-xs tracking-wider uppercase shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 mx-auto"
+                className="px-6 py-3 rounded-xl bg-[#006B50] hover:bg-[#064E3B] text-white font-bold text-xs tracking-wider uppercase shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 mx-auto"
               >
                 <RotateCcw className="w-4 h-4" />
                 <span>{isHindi ? 'वापस जाएं' : 'Return'}</span>
@@ -87,11 +87,11 @@ function WebsiteDisclaimerModal() {
             <div className="space-y-6">
               {/* Header */}
               <div className="flex items-center gap-3.5 pb-4 border-b border-[#E2E8F0] dark:border-slate-700">
-                <div className="w-12 h-12 rounded-2xl bg-[#EFF6FF] dark:bg-slate-800 border border-[#2563EB]/20 text-[#2563EB] dark:text-[#60A5FA] flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 rounded-2xl bg-[#FAF9F4] dark:bg-slate-800 border border-[#006B50]/20 text-[#006B50] dark:text-[#159B72] flex items-center justify-center flex-shrink-0">
                   <ShieldAlert className="w-6 h-6" />
                 </div>
                 <div>
-                  <span className="text-[10px] font-bold text-[#2563EB] dark:text-[#60A5FA] uppercase tracking-widest block">
+                  <span className="text-[10px] font-bold text-[#006B50] dark:text-[#159B72] uppercase tracking-widest block">
                     {isHindi ? 'स्वतंत्र मंच प्रकटीकरण' : 'INDEPENDENT PLATFORM DISCLOSURE'}
                   </span>
                   <h2 className="text-2xl font-bold text-[#0F172A] dark:text-white leading-tight">
@@ -156,7 +156,7 @@ function WebsiteDisclaimerModal() {
                 </button>
                 <button
                   onClick={handleAccept}
-                  className="w-full sm:w-auto px-8 py-3 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:opacity-95 text-white font-bold text-xs tracking-wider uppercase shadow-md transition-all cursor-pointer flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto px-8 py-3 rounded-xl bg-gradient-to-r from-[#006B50] to-[#159B72] hover:opacity-95 text-white font-bold text-xs tracking-wider uppercase shadow-md transition-all cursor-pointer flex items-center justify-center gap-2"
                 >
                   <CheckCircle className="w-4 h-4" />
                   <span>{isHindi ? 'स्वीकार करें और जारी रखें' : 'Accept & Continue'}</span>

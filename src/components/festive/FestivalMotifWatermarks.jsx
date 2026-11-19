@@ -19,7 +19,7 @@ export function HoliSplashMotif({ className = "", opacity = 0.12 }) {
           <circle cx="150" cy="140" r="110" fill="#E11D48" fillOpacity="0.7" />
           <circle cx="260" cy="180" r="100" fill="#0D9488" fillOpacity="0.65" />
           <circle cx="210" cy="270" r="90" fill="#F59E0B" fillOpacity="0.6" />
-          <circle cx="110" cy="240" r="85" fill="#6366F1" fillOpacity="0.65" />
+          <circle cx="110" cy="240" r="85" fill="#159B72" fillOpacity="0.65" />
         </g>
       </svg>
     </div>
@@ -109,7 +109,7 @@ export function LohriKiteMotif({ className = "", opacity = 0.16 }) {
         </g>
         {/* Smaller accent kite */}
         <g transform="translate(130, 30) rotate(18) scale(0.45)">
-          <polygon points="0,-45 40,0 0,45 -40,0" fill="#0284C7" stroke="#F59E0B" strokeWidth="2" />
+          <polygon points="0,-45 40,0 0,45 -40,0" fill="#006B50" stroke="#F59E0B" strokeWidth="2" />
         </g>
       </svg>
     </div>
@@ -121,9 +121,9 @@ export function AshokaChakraMotif({ className = "", opacity = 0.16 }) {
   return (
     <div className={`pointer-events-none select-none ${className}`} style={{ opacity }}>
       <svg width="340" height="340" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="100" cy="100" r="88" stroke="#1E3A8A" strokeWidth="4.5" />
-        <circle cx="100" cy="100" r="22" stroke="#1E3A8A" strokeWidth="3.5" fill="#FFFFFF" />
-        <circle cx="100" cy="100" r="8" fill="#1E3A8A" />
+        <circle cx="100" cy="100" r="88" stroke="#123C30" strokeWidth="4.5" />
+        <circle cx="100" cy="100" r="22" stroke="#123C30" strokeWidth="3.5" fill="#FFFFFF" />
+        <circle cx="100" cy="100" r="8" fill="#123C30" />
         {/* 24 Exact Spokes */}
         {Array.from({ length: 24 }).map((_, i) => (
           <line
@@ -132,7 +132,7 @@ export function AshokaChakraMotif({ className = "", opacity = 0.16 }) {
             y1="22"
             x2="100"
             y2="100"
-            stroke="#1E3A8A"
+            stroke="#123C30"
             strokeWidth="2"
             strokeLinecap="round"
             transform={`rotate(${i * 15} 100 100)`}
@@ -153,7 +153,7 @@ export function PeacockFeatherMotif({ className = "", opacity = 0.18 }) {
         {/* Outer Feather Eye (Teal/Emerald) */}
         <ellipse cx="80" cy="55" rx="42" ry="48" fill="#059669" />
         {/* Middle Eye (Peacock Royal Blue) */}
-        <ellipse cx="80" cy="55" rx="30" ry="34" fill="#0284C7" />
+        <ellipse cx="80" cy="55" rx="30" ry="34" fill="#006B50" />
         {/* Inner Luminous Ring (Gold) */}
         <ellipse cx="80" cy="58" rx="20" ry="22" fill="#EAB308" />
         {/* Deep Core (Midnight Sapphire) */}

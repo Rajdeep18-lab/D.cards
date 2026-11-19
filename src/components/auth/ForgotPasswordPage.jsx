@@ -160,7 +160,7 @@ export default function ForgotPasswordPage() {
 
               <Link
                 to="/login"
-                className="block text-xs font-semibold text-blue-400 hover:text-blue-300 transition-colors pt-2"
+                className="block text-xs font-semibold text-[#159B72] hover:text-emerald-200 transition-colors pt-2"
               >
                 Back to Sign In
               </Link>

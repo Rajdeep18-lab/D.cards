@@ -410,16 +410,16 @@ function generateBankBadges(bankName, cards = []) {
 
   if (hasCashback) badges.push({ text: "Best Cashback", icon: "⭐", bg: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20" });
   if (hasLowCharges) badges.push({ text: "Low Charges", icon: "💰", bg: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20" });
-  if (hasTravel) badges.push({ text: "Travel Friendly", icon: "✈", bg: "bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/20" });
+  if (hasTravel) badges.push({ text: "Travel Friendly", icon: "✈", bg: "bg-[#159B72]/10 text-[#006B50] dark:text-[#159B72] border-[#159B72]/20" });
   if (hasRewards) badges.push({ text: "Best Rewards", icon: "🎁", bg: "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20" });
-  if (hasPremium) badges.push({ text: "Premium", icon: "🏆", bg: "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20" });
-  if (trustScore >= 9.0) badges.push({ text: "Secure Banking", icon: "🛡", bg: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20" });
+  if (hasPremium) badges.push({ text: "Premium", icon: "🏆", bg: "bg-[#159B72]/10 text-[#006B50] dark:text-[#159B72] border-[#159B72]/20" });
+  if (trustScore >= 9.0) badges.push({ text: "Secure Banking", icon: "🛡", bg: "bg-[#159B72]/10 text-[#006B50] dark:text-[#159B72] border-[#159B72]/20" });
   if (cards.length >= 4 || bankName.includes("SBI") || bankName.includes("HDFC") || bankName.includes("ICICI") || bankName.includes("Axis")) {
     badges.push({ text: "Popular", icon: "🔥", bg: "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20" });
   }
 
   if (badges.length === 0) {
-    badges.push({ text: "Verified Bank", icon: "✅", bg: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20" });
+    badges.push({ text: "Verified Bank", icon: "✅", bg: "bg-[#159B72]/10 text-[#006B50] dark:text-[#159B72] border-[#159B72]/20" });
   }
 
   return badges.slice(0, 2);
@@ -443,10 +443,10 @@ export function getBankBrandTheme(rawName = "") {
     return {
       gradient: "from-[#004B8D] via-[#003366] to-[#002855]",
       brandColor: "#004B8D",
-      accentText: "text-[#004B8D] dark:text-[#60A5FA]",
+      accentText: "text-[#004B8D] dark:text-[#159B72]",
       accentBg: "bg-[#004B8D]/10 dark:bg-[#004B8D]/25",
       accentBorder: "border-[#004B8D]/30",
-      progressGradient: "from-[#004B8D] to-[#2563EB]"
+      progressGradient: "from-[#004B8D] to-[#006B50]"
     };
   }
   if (lower.includes("icici")) {
@@ -523,10 +523,10 @@ export function getBankBrandTheme(rawName = "") {
     return {
       gradient: "from-[#0072CE] via-[#00529B] to-[#00386B]",
       brandColor: "#0072CE",
-      accentText: "text-[#0072CE] dark:text-[#38BDF8]",
+      accentText: "text-[#0072CE] dark:text-[#159B72]",
       accentBg: "bg-[#0072CE]/10 dark:bg-[#0072CE]/25",
       accentBorder: "border-[#0072CE]/30",
-      progressGradient: "from-[#0072CE] to-[#0EA5E9]"
+      progressGradient: "from-[#0072CE] to-[#159B72]"
     };
   }
   if (lower.includes("au small") || lower.includes("au sfb")) {
@@ -546,17 +546,17 @@ export function getBankBrandTheme(rawName = "") {
       accentText: "text-[#059669] dark:text-[#34D399]",
       accentBg: "bg-[#00D084]/10 dark:bg-[#00D084]/25",
       accentBorder: "border-[#00D084]/30",
-      progressGradient: "from-[#00D084] to-[#10B981]"
+      progressGradient: "from-[#00D084] to-[#159B72]"
     };
   }
 
   return {
-    gradient: "from-[#2563EB] via-[#1D4ED8] to-[#1E40AF]",
-    brandColor: "#2563EB",
-    accentText: "text-[#2563EB] dark:text-[#60A5FA]",
-    accentBg: "bg-[#2563EB]/10 dark:bg-[#2563EB]/25",
-    accentBorder: "border-[#2563EB]/30",
-    progressGradient: "from-[#2563EB] to-[#60A5FA]"
+    gradient: "from-[#006B50] via-[#064E3B] to-[#064E3B]",
+    brandColor: "#006B50",
+    accentText: "text-[#006B50] dark:text-[#159B72]",
+    accentBg: "bg-[#006B50]/10 dark:bg-[#006B50]/25",
+    accentBorder: "border-[#006B50]/30",
+    progressGradient: "from-[#006B50] to-[#159B72]"
   };
 }
 

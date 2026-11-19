@@ -8,7 +8,7 @@ function FaqSection() {
   return (
     <section className="py-12 border-t border-[#E2E8F0] dark:border-slate-800 text-left">
       <div className="text-center max-w-2xl mx-auto mb-10 space-y-2">
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#1E5EFF]/10 text-[#1E5EFF] dark:text-[#60A5FA] text-xs font-bold tracking-widest uppercase rounded-full">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#1E5EFF]/10 text-[#1E5EFF] dark:text-[#159B72] text-xs font-bold tracking-widest uppercase rounded-full">
           <HelpCircle className="w-3.5 h-3.5" />
           KNOWLEDGE BASE & FAQS
         </span>
@@ -30,7 +30,7 @@ function FaqSection() {
             >
               <button
                 onClick={() => setOpenIdx(isOpen ? null : index)}
-                className="w-full p-5 text-left flex items-center justify-between gap-4 font-bold text-sm text-[#0F172A] dark:text-white hover:text-[#1E5EFF] dark:hover:text-[#60A5FA] transition-colors cursor-pointer"
+                className="w-full p-5 text-left flex items-center justify-between gap-4 font-bold text-sm text-[#0F172A] dark:text-white hover:text-[#1E5EFF] dark:hover:text-[#159B72] transition-colors cursor-pointer"
               >
                 <span className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-[#1E5EFF] flex-shrink-0" />

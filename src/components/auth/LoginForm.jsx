@@ -254,7 +254,7 @@ export default function LoginForm() {
               checked={formData.rememberMe}
               onChange={handleChange}
               disabled={isSubmitting || loginSuccess}
-              className="w-4 h-4 rounded border-slate-700 bg-slate-800/80 text-blue-600 focus:ring-blue-500 focus:ring-offset-slate-900 cursor-pointer"
+              className="w-4 h-4 rounded border-slate-700 bg-slate-800/80 text-[#006B50] focus:ring-[#006B50] focus:ring-offset-slate-900 cursor-pointer"
             />
             <span className="text-xs font-medium text-slate-300 group-hover:text-white transition-colors">
               Remember me
@@ -263,7 +263,7 @@ export default function LoginForm() {
 
           <Link
             to="/forgot-password"
-            className="text-xs font-semibold text-blue-400 hover:text-blue-300 transition-colors focus:outline-none focus:underline"
+            className="text-xs font-semibold text-[#159B72] hover:text-emerald-200 transition-colors focus:outline-none focus:underline"
           >
             Forgot password?
           </Link>
@@ -289,7 +289,7 @@ export default function LoginForm() {
           <Link
             to="/signup"
             state={location.state}
-            className="font-bold text-blue-400 hover:text-blue-300 transition-colors ml-1 focus:outline-none focus:underline"
+            className="font-bold text-[#159B72] hover:text-emerald-200 transition-colors ml-1 focus:outline-none focus:underline"
           >
             Create an account
           </Link>

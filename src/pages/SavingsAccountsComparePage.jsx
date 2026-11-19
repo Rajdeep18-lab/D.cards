@@ -53,7 +53,7 @@ function SavingsAccountsComparePage({ compareQueue = [], setCompareQueue, onSele
     <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 relative z-20 space-y-8 text-left select-none">
       <div className="flex items-center justify-between border-b border-[#E5E7EB] dark:border-slate-800 pb-6">
         <div>
-          <Link to="/savings-accounts" className="text-xs font-bold text-[#2563EB] dark:text-[#60A5FA] flex items-center gap-1 mb-2 hover:underline">
+          <Link to="/savings-accounts" className="text-xs font-bold text-[#006B50] dark:text-[#159B72] flex items-center gap-1 mb-2 hover:underline">
             <ArrowLeft className="w-3.5 h-3.5" /> {isHindi ? '← बचत खातों पर वापस जाएं' : 'Back to Savings Accounts'}
           </Link>
           <h1 className="text-3xl font-extrabold text-[#1F2937] dark:text-white tracking-tight">
@@ -87,7 +87,7 @@ function SavingsAccountsComparePage({ compareQueue = [], setCompareQueue, onSele
         </button>
         <button
           onClick={() => navigate('/compare-savings')}
-          className="px-4 py-2 rounded-xl text-xs font-bold bg-[#2563EB] text-white shadow-xs cursor-pointer flex items-center gap-1.5"
+          className="px-4 py-2 rounded-xl text-xs font-bold bg-[#006B50] text-white shadow-xs cursor-pointer flex items-center gap-1.5"
         >
           <Building2 className="w-3.5 h-3.5" />
           <span>{t('compare.savingsAccountsTab', 'Savings Accounts')}</span>
@@ -112,7 +112,7 @@ function SavingsAccountsComparePage({ compareQueue = [], setCompareQueue, onSele
           </p>
           <Link
             to="/savings-accounts"
-            className="inline-block px-6 py-2.5 rounded-full bg-[#2563EB] text-white font-bold text-xs shadow-md"
+            className="inline-block px-6 py-2.5 rounded-full bg-[#006B50] text-white font-bold text-xs shadow-md"
           >
             {t('compare.browseAccountsBtn', 'Browse Savings Accounts')}
           </Link>
@@ -151,7 +151,7 @@ function SavingsAccountsComparePage({ compareQueue = [], setCompareQueue, onSele
                   {t('savings.accountType', 'Account Type')}
                 </td>
                 {compareQueue.map(acc => (
-                  <td key={acc.id} className="p-4 text-center font-bold text-[#2563EB] dark:text-[#60A5FA]">
+                  <td key={acc.id} className="p-4 text-center font-bold text-[#006B50] dark:text-[#159B72]">
                     {acc.accountType}
                   </td>
                 ))}
@@ -226,7 +226,7 @@ function SavingsAccountsComparePage({ compareQueue = [], setCompareQueue, onSele
                   {isHindi ? 'ऑनलाइन वीडियो KYC' : 'Online Video KYC'}
                 </td>
                 {compareQueue.map(acc => (
-                  <td key={acc.id} className="p-4 text-center font-semibold text-indigo-600">
+                  <td key={acc.id} className="p-4 text-center font-semibold text-[#006B50]">
                     {acc.isOnlineOpening 
                       ? (isHindi ? "✓ तुरंत वीडियो KYC" : "✓ Instant Video KYC") 
                       : (isHindi ? "शाखा में जाएं" : "Branch Visit")}
@@ -246,7 +246,7 @@ function SavingsAccountsComparePage({ compareQueue = [], setCompareQueue, onSele
                 ))}
               </tr>
               <tr className="bg-slate-50 dark:bg-slate-900/60">
-                <td className="p-4 font-black text-[#0B3D91] dark:text-[#60A5FA] uppercase text-xs">
+                <td className="p-4 font-black text-[#123C30] dark:text-[#159B72] uppercase text-xs">
                   💳 {t('savings.linkedCard', 'Linked Debit Card')}
                 </td>
                 {compareQueue.map(acc => {
@@ -257,9 +257,9 @@ function SavingsAccountsComparePage({ compareQueue = [], setCompareQueue, onSele
                       {card ? (
                         <div className="p-3.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-left space-y-1.5 shadow-xs">
                           <div className="flex items-center justify-between">
-                            <span className="text-[10px] font-bold text-[#2563EB] uppercase">{card.network || 'Visa'}</span>
+                            <span className="text-[10px] font-bold text-[#006B50] uppercase">{card.network || 'Visa'}</span>
                             {cards.length > 1 && (
-                              <span className="px-1.5 py-0.5 rounded bg-blue-100 text-[#2563EB] font-bold text-[9px]">
+                              <span className="px-1.5 py-0.5 rounded bg-[#EEF4EE] text-[#006B50] font-bold text-[9px]">
                                 {cards.length} {isHindi ? 'कार्ड' : 'Cards'}
                               </span>
                             )}
@@ -274,7 +274,7 @@ function SavingsAccountsComparePage({ compareQueue = [], setCompareQueue, onSele
                           {onSelectDebitCard && (
                             <button
                               onClick={() => onSelectDebitCard(card)}
-                              className="w-full mt-2 py-1 rounded bg-[#2563EB]/10 hover:bg-[#2563EB] text-[#2563EB] hover:text-white font-bold text-[10.5px] transition-colors cursor-pointer text-center"
+                              className="w-full mt-2 py-1 rounded bg-[#006B50]/10 hover:bg-[#006B50] text-[#006B50] hover:text-white font-bold text-[10.5px] transition-colors cursor-pointer text-center"
                             >
                               {isHindi ? 'कार्ड विवरण देखें →' : 'View Card Specs →'}
                             </button>

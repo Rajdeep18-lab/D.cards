@@ -507,7 +507,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
       {/* ── TOP NAV / DUAL CALCULATOR MODE SWITCHER ── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 border-b border-[#E5E7EB] dark:border-slate-800 pb-5">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] text-xs font-bold uppercase tracking-wider mb-2 border border-[#2563EB]/20">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#006B50]/10 text-[#006B50] dark:text-[#159B72] text-xs font-bold uppercase tracking-wider mb-2 border border-[#006B50]/20">
             <Sparkles className="w-3.5 h-3.5" />
             <span>{isHindi ? 'वित्तीय नियोजन एवं विश्लेषण टूल' : 'FINANCIAL PLANNING & WEALTH ENGINE'}</span>
           </div>
@@ -532,7 +532,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
             onClick={() => setCalculatorMode('savings')}
             className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
               calculatorMode === 'savings'
-                ? 'bg-[#2563EB] text-white shadow-sm'
+                ? 'bg-[#006B50] text-white shadow-sm'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
@@ -543,7 +543,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
             onClick={() => setCalculatorMode('debitCards')}
             className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
               calculatorMode === 'debitCards'
-                ? 'bg-[#2563EB] text-white shadow-sm'
+                ? 'bg-[#006B50] text-white shadow-sm'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
@@ -563,7 +563,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
           <div className="bg-white dark:bg-[#1E293B] rounded-3xl p-5 border border-[#E5E7EB] dark:border-slate-700/80 shadow-soft">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
               <span className="text-xs font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-[#2563EB]" />
+                <Sparkles className="w-3.5 h-3.5 text-[#006B50]" />
                 {t('savingsAccounts.quickPresets', 'Quick Start Presets')}
               </span>
               <span className="text-[11px] text-slate-400 dark:text-slate-500 italic">
@@ -580,19 +580,19 @@ function SavingsCalculator({ onViewDetails, cards }) {
                     onClick={() => applyPreset(preset)}
                     className={`p-3 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
                       isSelected
-                        ? 'bg-[#2563EB]/10 dark:bg-[#2563EB]/20 border-[#2563EB] shadow-xs'
+                        ? 'bg-[#006B50]/10 dark:bg-[#006B50]/20 border-[#006B50] shadow-xs'
                         : 'bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
                     }`}
                   >
                     <div>
-                      <p className={`text-xs font-extrabold ${isSelected ? 'text-[#2563EB] dark:text-[#60A5FA]' : 'text-slate-800 dark:text-white'}`}>
+                      <p className={`text-xs font-extrabold ${isSelected ? 'text-[#006B50] dark:text-[#159B72]' : 'text-slate-800 dark:text-white'}`}>
                         {isHindi ? preset.titleHi : preset.title}
                       </p>
                       <p className="text-[10.5px] text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">
                         {isHindi ? preset.descriptionHi : preset.description}
                       </p>
                     </div>
-                    <span className={`text-[10px] font-bold mt-2 uppercase tracking-wider ${isSelected ? 'text-[#2563EB] dark:text-[#60A5FA]' : 'text-slate-400'}`}>
+                    <span className={`text-[10px] font-bold mt-2 uppercase tracking-wider ${isSelected ? 'text-[#006B50] dark:text-[#159B72]' : 'text-slate-400'}`}>
                       {isSelected ? '✓ Active' : 'Select →'}
                     </span>
                   </button>
@@ -612,7 +612,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
                   onClick={() => setIsAdvancedMode(false)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
                     !isAdvancedMode 
-                      ? 'bg-white dark:bg-slate-800 text-[#2563EB] dark:text-[#60A5FA] shadow-xs' 
+                      ? 'bg-white dark:bg-slate-800 text-[#006B50] dark:text-[#159B72] shadow-xs' 
                       : 'text-slate-500 hover:text-slate-800 dark:hover:text-white'
                   }`}
                 >
@@ -622,7 +622,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
                   onClick={() => setIsAdvancedMode(true)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer flex items-center gap-1 ${
                     isAdvancedMode 
-                      ? 'bg-white dark:bg-slate-800 text-[#2563EB] dark:text-[#60A5FA] shadow-xs' 
+                      ? 'bg-white dark:bg-slate-800 text-[#006B50] dark:text-[#159B72] shadow-xs' 
                       : 'text-slate-500 hover:text-slate-800 dark:hover:text-white'
                   }`}
                 >
@@ -644,7 +644,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
 
               <button
                 onClick={handleSavePlan}
-                className="px-3 py-1.5 rounded-xl text-xs font-bold bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] hover:bg-[#2563EB]/20 border border-[#2563EB]/20 transition-colors cursor-pointer inline-flex items-center gap-1"
+                className="px-3 py-1.5 rounded-xl text-xs font-bold bg-[#006B50]/10 text-[#006B50] dark:text-[#159B72] hover:bg-[#006B50]/20 border border-[#006B50]/20 transition-colors cursor-pointer inline-flex items-center gap-1"
               >
                 <Bookmark className="w-3.5 h-3.5" />
                 <span>{saveSuccessNotice ? (isHindi ? '✓ सहेजा गया!' : '✓ Saved!') : t('savingsAccounts.savePlan', 'Save Plan')}</span>
@@ -674,7 +674,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
             {/* ── LEFT COLUMN: INPUT CONTROLS (5 COLS) ── */}
             <div className="lg:col-span-6 space-y-5 bg-white dark:bg-[#1E293B] rounded-[32px] p-6 sm:p-7 border border-[#E5E7EB] dark:border-slate-700 shadow-soft">
               <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500 flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
-                <Calculator className="w-4 h-4 text-[#2563EB]" />
+                <Calculator className="w-4 h-4 text-[#006B50]" />
                 <span>{isHindi ? 'बचत योजना पैरामीटर्स' : 'YOUR SAVINGS PARAMETERS'}</span>
               </h3>
 
@@ -689,7 +689,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
                       </span>
                     )}
                   </label>
-                  <span className="text-xs font-bold text-[#2563EB] dark:text-[#60A5FA] bg-[#2563EB]/10 px-2.5 py-0.5 rounded-full border border-[#2563EB]/20">
+                  <span className="text-xs font-bold text-[#006B50] dark:text-[#159B72] bg-[#006B50]/10 px-2.5 py-0.5 rounded-full border border-[#006B50]/20">
                     ₹{initialDeposit.toLocaleString('en-IN')}
                   </span>
                 </div>
@@ -705,7 +705,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
                       setActivePreset('custom');
                     }}
                     placeholder="0"
-                    className="w-full pl-8 pr-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-bold text-slate-800 dark:text-white focus:outline-none focus:border-[#2563EB]"
+                    className="w-full pl-8 pr-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-bold text-slate-800 dark:text-white focus:outline-none focus:border-[#006B50]"
                   />
                 </div>
                 <div className="flex flex-wrap gap-1.5 pt-1">
@@ -719,7 +719,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
                       }}
                       className={`text-[11px] font-semibold px-2.5 py-1 rounded-xl border transition-colors cursor-pointer ${
                         initialDeposit === amt 
-                          ? 'bg-[#2563EB] text-white border-[#2563EB]' 
+                          ? 'bg-[#006B50] text-white border-[#006B50]' 
                           : 'bg-slate-50 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-slate-300'
                       }`}
                     >
@@ -740,7 +740,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
                       </span>
                     )}
                   </label>
-                  <span className="text-xs font-bold text-[#2563EB] dark:text-[#60A5FA] bg-[#2563EB]/10 px-2.5 py-0.5 rounded-full border border-[#2563EB]/20">
+                  <span className="text-xs font-bold text-[#006B50] dark:text-[#159B72] bg-[#006B50]/10 px-2.5 py-0.5 rounded-full border border-[#006B50]/20">
                     ₹{contribution.toLocaleString('en-IN')} {FREQUENCIES[frequency]?.shortLabel}
                   </span>
                 </div>
@@ -756,7 +756,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
                       setActivePreset('custom');
                     }}
                     placeholder="1000"
-                    className="w-full pl-8 pr-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-bold text-slate-800 dark:text-white focus:outline-none focus:border-[#2563EB]"
+                    className="w-full pl-8 pr-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-bold text-slate-800 dark:text-white focus:outline-none focus:border-[#006B50]"
                   />
                 </div>
 
@@ -772,7 +772,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
                       }}
                       className={`text-[11px] font-semibold px-2.5 py-1 rounded-xl border transition-colors cursor-pointer ${
                         contribution === amt 
-                          ? 'bg-[#2563EB] text-white border-[#2563EB]' 
+                          ? 'bg-[#006B50] text-white border-[#006B50]' 
                           : 'bg-slate-50 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-slate-300'
                       }`}
                     >
@@ -812,7 +812,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
                         }}
                         className={`py-2 px-1 text-center rounded-xl text-xs font-bold border transition-colors cursor-pointer ${
                           isSelected
-                            ? 'bg-[#2563EB] text-white border-[#2563EB] shadow-xs'
+                            ? 'bg-[#006B50] text-white border-[#006B50] shadow-xs'
                             : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-slate-300'
                         }`}
                       >
@@ -835,7 +835,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
                       onClick={() => setDurationUnit('months')}
                       className={`px-2 py-0.5 rounded-md text-[11px] font-bold transition-colors cursor-pointer ${
                         durationUnit === 'months' 
-                          ? 'bg-white dark:bg-slate-700 text-[#2563EB] dark:text-[#60A5FA] shadow-xs' 
+                          ? 'bg-white dark:bg-slate-700 text-[#006B50] dark:text-[#159B72] shadow-xs' 
                           : 'text-slate-500'
                       }`}
                     >
@@ -846,7 +846,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
                       onClick={() => setDurationUnit('years')}
                       className={`px-2 py-0.5 rounded-md text-[11px] font-bold transition-colors cursor-pointer ${
                         durationUnit === 'years' 
-                          ? 'bg-white dark:bg-slate-700 text-[#2563EB] dark:text-[#60A5FA] shadow-xs' 
+                          ? 'bg-white dark:bg-slate-700 text-[#006B50] dark:text-[#159B72] shadow-xs' 
                           : 'text-slate-500'
                       }`}
                     >
@@ -866,10 +866,10 @@ function SavingsCalculator({ onViewDetails, cards }) {
                       setDurationValue(Number(e.target.value));
                       setActivePreset('custom');
                     }}
-                    className="flex-1 accent-[#2563EB] cursor-pointer"
+                    className="flex-1 accent-[#006B50] cursor-pointer"
                   />
                   <div className="w-24 text-right">
-                    <span className="text-xs font-extrabold text-[#2563EB] dark:text-[#60A5FA] bg-[#2563EB]/10 px-2.5 py-1 rounded-xl border border-[#2563EB]/20">
+                    <span className="text-xs font-extrabold text-[#006B50] dark:text-[#159B72] bg-[#006B50]/10 px-2.5 py-1 rounded-xl border border-[#006B50]/20">
                       {durationValue} {durationUnit === 'months' ? (durationValue === 1 ? 'Month' : 'Months') : (durationValue === 1 ? 'Year' : 'Years')}
                     </span>
                   </div>
@@ -882,7 +882,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
                   <label className="text-xs font-bold text-slate-800 dark:text-slate-200">
                     {t('savingsAccounts.interestRate', 'Annual Interest Rate (% p.a.)')}
                   </label>
-                  <span className="text-xs font-bold text-[#2563EB] dark:text-[#60A5FA] bg-[#2563EB]/10 px-2.5 py-0.5 rounded-full border border-[#2563EB]/20">
+                  <span className="text-xs font-bold text-[#006B50] dark:text-[#159B72] bg-[#006B50]/10 px-2.5 py-0.5 rounded-full border border-[#006B50]/20">
                     {annualRate}% p.a.
                   </span>
                 </div>
@@ -898,7 +898,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
                       setSelectedBankNote(null);
                       setActivePreset('custom');
                     }}
-                    className="flex-1 accent-[#2563EB] cursor-pointer"
+                    className="flex-1 accent-[#006B50] cursor-pointer"
                   />
                   <div className="w-20">
                     <input
@@ -935,7 +935,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
                       }}
                       className={`text-[10.5px] font-semibold px-2 py-0.5 rounded-lg border transition-colors cursor-pointer ${
                         annualRate === b.rate 
-                          ? 'bg-[#2563EB] text-white border-[#2563EB]' 
+                          ? 'bg-[#006B50] text-white border-[#006B50]' 
                           : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-slate-300'
                       }`}
                     >
@@ -945,7 +945,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
                   <button
                     type="button"
                     onClick={() => setShowBankRates(!showBankRates)}
-                    className="text-[10.5px] font-bold text-[#2563EB] dark:text-[#60A5FA] underline ml-1 cursor-pointer"
+                    className="text-[10.5px] font-bold text-[#006B50] dark:text-[#159B72] underline ml-1 cursor-pointer"
                   >
                     {showBankRates ? 'Hide Verified Rates' : 'View Verified Bank Rates →'}
                   </button>
@@ -978,7 +978,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
                     value={targetAmount === 0 ? '' : targetAmount}
                     onChange={(e) => setTargetAmount(sanitizeNumber(e.target.value, 0))}
                     placeholder="e.g. 50000"
-                    className="w-full pl-8 pr-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-bold text-slate-800 dark:text-white focus:outline-none focus:border-[#2563EB]"
+                    className="w-full pl-8 pr-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-bold text-slate-800 dark:text-white focus:outline-none focus:border-[#006B50]"
                   />
                 </div>
                 <div className="flex flex-wrap gap-1.5 pt-1">
@@ -1002,7 +1002,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
               {/* ── ADVANCED SETTINGS PANEL ── */}
               {isAdvancedMode && (
                 <div className="pt-4 border-t-2 border-slate-200 dark:border-slate-700 space-y-4 bg-slate-50/70 dark:bg-slate-800/40 p-4 rounded-2xl">
-                  <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA] flex items-center gap-1.5">
+                  <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#006B50] dark:text-[#159B72] flex items-center gap-1.5">
                     <Layers className="w-3.5 h-3.5" />
                     <span>Advanced Assumptions & Research Parameters</span>
                   </h4>
@@ -1034,7 +1034,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
                         onClick={() => setTiming('end')}
                         className={`p-2 rounded-xl text-xs font-bold border transition-colors cursor-pointer ${
                           timing === 'end' 
-                            ? 'bg-[#2563EB] text-white border-[#2563EB]' 
+                            ? 'bg-[#006B50] text-white border-[#006B50]' 
                             : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
                         }`}
                       >
@@ -1045,7 +1045,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
                         onClick={() => setTiming('beginning')}
                         className={`p-2 rounded-xl text-xs font-bold border transition-colors cursor-pointer ${
                           timing === 'beginning' 
-                            ? 'bg-[#2563EB] text-white border-[#2563EB]' 
+                            ? 'bg-[#006B50] text-white border-[#006B50]' 
                             : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
                         }`}
                       >
@@ -1060,7 +1060,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
                       <label className="text-[11px] font-bold text-slate-700 dark:text-slate-300">
                         {t('savingsAccounts.stepUpRate', 'Annual Contribution Step-Up')}
                       </label>
-                      <span className="text-[11px] font-bold text-[#2563EB]">+{stepUpRate}% / yr</span>
+                      <span className="text-[11px] font-bold text-[#006B50]">+{stepUpRate}% / yr</span>
                     </div>
                     <input
                       type="range"
@@ -1069,7 +1069,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
                       step={1}
                       value={stepUpRate}
                       onChange={(e) => setStepUpRate(Number(e.target.value))}
-                      className="w-full accent-[#2563EB] cursor-pointer"
+                      className="w-full accent-[#006B50] cursor-pointer"
                     />
                     <p className="text-[10px] text-slate-400">
                       Simulates increasing your recurring savings each year in tandem with salary hikes.
@@ -1084,7 +1084,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
                           type="checkbox"
                           checked={enableInflation}
                           onChange={(e) => setEnableInflation(e.target.checked)}
-                          className="w-4 h-4 rounded text-[#2563EB] accent-[#2563EB] cursor-pointer"
+                          className="w-4 h-4 rounded text-[#006B50] accent-[#006B50] cursor-pointer"
                         />
                         <span>Adjust for Inflation (Real Purchasing Power)</span>
                       </label>
@@ -1120,7 +1120,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
                           type="checkbox"
                           checked={compareScenarios}
                           onChange={(e) => setCompareScenarios(e.target.checked)}
-                          className="w-4 h-4 rounded text-[#2563EB] accent-[#2563EB] cursor-pointer"
+                          className="w-4 h-4 rounded text-[#006B50] accent-[#006B50] cursor-pointer"
                         />
                         <span>Compare Interest Rate Scenarios (A, B, C)</span>
                       </label>
@@ -1138,7 +1138,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
                           />
                         </div>
                         <div>
-                          <span className="text-[10px] font-bold text-[#2563EB] block">Base Case</span>
+                          <span className="text-[10px] font-bold text-[#006B50] block">Base Case</span>
                           <input
                             type="number"
                             step={0.1}
@@ -1171,11 +1171,11 @@ function SavingsCalculator({ onViewDetails, cards }) {
               
               {/* Hero Results Summary Card */}
               <div className="bg-gradient-to-br from-[#1E293B] to-[#0F172A] text-white rounded-[32px] p-6 sm:p-7 shadow-lg border border-slate-800 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-[#2563EB]/10 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute top-0 right-0 w-64 h-64 bg-[#006B50]/10 rounded-full blur-3xl pointer-events-none" />
 
                 <div className="relative z-10">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-[11px] font-bold text-blue-400 uppercase tracking-widest flex items-center gap-1.5">
+                    <span className="text-[11px] font-bold text-[#159B72] uppercase tracking-widest flex items-center gap-1.5">
                       <TrendingUp className="w-3.5 h-3.5" />
                       {t('savingsAccounts.projectedBalance', 'Projected Final Balance')}
                     </span>
@@ -1283,7 +1283,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
 
                       <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
                         <span className="text-[10.5px] text-slate-400 uppercase font-bold block">Required Monthly Contribution</span>
-                        <span className="text-sm font-extrabold text-[#2563EB] dark:text-[#60A5FA] mt-0.5 block">
+                        <span className="text-sm font-extrabold text-[#006B50] dark:text-[#159B72] mt-0.5 block">
                           {projectionResult.goalProgress.requiredContribution !== null 
                             ? `${formatINR(projectionResult.goalProgress.requiredContribution)} / period`
                             : 'Adjust timeframe'}
@@ -1304,7 +1304,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-slate-100 dark:border-slate-800 pb-3">
                   <div>
                     <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-800 dark:text-white flex items-center gap-1.5">
-                      <TrendingUp className="w-3.5 h-3.5 text-[#2563EB]" />
+                      <TrendingUp className="w-3.5 h-3.5 text-[#006B50]" />
                       <span>Savings Growth Trajectory</span>
                     </h4>
                     <p className="text-[11px] text-slate-400">Contributions vs Compounded Final Balance over time</p>
@@ -1312,8 +1312,8 @@ function SavingsCalculator({ onViewDetails, cards }) {
                   
                   {/* Legend */}
                   <div className="flex items-center gap-3 text-[11px] font-bold">
-                    <span className="flex items-center gap-1 text-[#2563EB]">
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#2563EB]" /> Balance
+                    <span className="flex items-center gap-1 text-[#006B50]">
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#006B50]" /> Balance
                     </span>
                     <span className="flex items-center gap-1 text-slate-400">
                       <span className="w-2.5 h-2.5 rounded-full bg-slate-400" /> Contributed
@@ -1335,8 +1335,8 @@ function SavingsCalculator({ onViewDetails, cards }) {
                   >
                     <defs>
                       <linearGradient id="balanceGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#2563EB" stopOpacity="0.25" />
-                        <stop offset="100%" stopColor="#2563EB" stopOpacity="0.0" />
+                        <stop offset="0%" stopColor="#006B50" stopOpacity="0.25" />
+                        <stop offset="100%" stopColor="#006B50" stopOpacity="0.0" />
                       </linearGradient>
                       <linearGradient id="contribGrad" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="0%" stopColor="#94A3B8" stopOpacity="0.2" />
@@ -1388,7 +1388,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
 
                     {/* Lines */}
                     <path d={contributedPath} fill="none" stroke="#94A3B8" strokeWidth="2" strokeDasharray="4 4" />
-                    <path d={balancePath} fill="none" stroke="#2563EB" strokeWidth="3" />
+                    <path d={balancePath} fill="none" stroke="#006B50" strokeWidth="3" />
                     {enableInflation && (
                       <path d={realPath} fill="none" stroke="#F59E0B" strokeWidth="2" />
                     )}
@@ -1424,7 +1424,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
                         cx={p.x}
                         cy={p.yBal}
                         r={chartHoverIndex === i ? 6 : 3}
-                        fill={chartHoverIndex === i ? '#1D4ED8' : '#2563EB'}
+                        fill={chartHoverIndex === i ? '#064E3B' : '#006B50'}
                         stroke="#ffffff"
                         strokeWidth="1.5"
                         className="cursor-pointer transition-all"
@@ -1439,7 +1439,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
                 {activeHoverPoint && (
                   <div className="bg-slate-50 dark:bg-slate-900/60 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between text-xs gap-2">
                     <span className="font-bold text-slate-700 dark:text-slate-300">
-                      Period: <strong className="text-[#2563EB]">{activeHoverPoint.label}</strong>
+                      Period: <strong className="text-[#006B50]">{activeHoverPoint.label}</strong>
                     </span>
                     <span className="font-semibold text-slate-500">
                       Contributed: <strong className="text-slate-800 dark:text-white">₹{activeHoverPoint.contributed.toLocaleString('en-IN')}</strong>
@@ -1447,7 +1447,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
                     <span className="font-semibold text-emerald-600 dark:text-emerald-400">
                       Interest: <strong>+₹{activeHoverPoint.interest.toLocaleString('en-IN')}</strong>
                     </span>
-                    <span className="font-extrabold text-[#2563EB]">
+                    <span className="font-extrabold text-[#006B50]">
                       Balance: <strong>₹{activeHoverPoint.balance.toLocaleString('en-IN')}</strong>
                     </span>
                     {enableInflation && (
@@ -1466,7 +1466,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
                   className="flex items-center justify-between cursor-pointer select-none"
                 >
                   <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-800 dark:text-white flex items-center gap-1.5">
-                    <Calendar className="w-3.5 h-3.5 text-[#2563EB]" />
+                    <Calendar className="w-3.5 h-3.5 text-[#006B50]" />
                     <span>{t('savingsAccounts.milestones', 'Growth Milestones Breakdown')}</span>
                   </h4>
                   <button className="text-xs font-bold text-slate-400 flex items-center gap-1">
@@ -1499,7 +1499,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
                             <td className="py-2.5 px-3 text-emerald-600 dark:text-emerald-400 font-bold">
                               +₹{m.interest.toLocaleString('en-IN')}
                             </td>
-                            <td className="py-2.5 px-3 font-extrabold text-[#2563EB] dark:text-[#60A5FA]">
+                            <td className="py-2.5 px-3 font-extrabold text-[#006B50] dark:text-[#159B72]">
                               ₹{m.balance.toLocaleString('en-IN')}
                             </td>
                             {enableInflation && (
@@ -1520,14 +1520,14 @@ function SavingsCalculator({ onViewDetails, cards }) {
 
           {/* ── VERIFIED BANK SAVINGS RATES COMPARISON SECTION ── */}
           {showBankRates && (
-            <div className="bg-white dark:bg-[#1E293B] rounded-3xl p-6 border border-[#2563EB]/30 shadow-soft space-y-4">
+            <div className="bg-white dark:bg-[#1E293B] rounded-3xl p-6 border border-[#006B50]/30 shadow-soft space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
                 <div>
-                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#2563EB] block">
+                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#006B50] block">
                     VERIFIED D.CARD DATA
                   </span>
                   <h3 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-1.5 mt-0.5">
-                    <Building2 className="w-5 h-5 text-[#2563EB]" />
+                    <Building2 className="w-5 h-5 text-[#006B50]" />
                     <span>Compare Verified Savings Account Rates</span>
                   </h3>
                   <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
@@ -1546,7 +1546,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
                 {verifiedBanksList.map((b) => (
                   <div
                     key={b.id}
-                    className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 flex flex-col justify-between space-y-2 hover:border-[#2563EB] transition-colors"
+                    className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 flex flex-col justify-between space-y-2 hover:border-[#006B50] transition-colors"
                   >
                     <div>
                       <div className="flex items-center justify-between gap-1">
@@ -1566,7 +1566,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
                           setSelectedBankNote(`Loaded verified rate from ${b.bank} (${b.rateString}). Verified as of ${b.lastVerified}.`);
                           setShowBankRates(false);
                         }}
-                        className="text-xs font-bold text-[#2563EB] dark:text-[#60A5FA] hover:underline cursor-pointer"
+                        className="text-xs font-bold text-[#006B50] dark:text-[#159B72] hover:underline cursor-pointer"
                       >
                         Use This Rate →
                       </button>
@@ -1595,14 +1595,14 @@ function SavingsCalculator({ onViewDetails, cards }) {
 
           {/* Active Bank Benchmark Notice Banner */}
           {selectedBankNote && (
-            <div className="p-3 rounded-2xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/80 text-xs text-blue-800 dark:text-blue-300 font-medium flex items-center justify-between">
+            <div className="p-3 rounded-2xl bg-[#FAF9F4] dark:bg-[#064E3B]/40 border border-[#DCE9E1] dark:border-[#064E3B]/80 text-xs text-[#123C30] dark:text-emerald-200 font-medium flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Info className="w-4 h-4 text-[#2563EB] shrink-0" />
+                <Info className="w-4 h-4 text-[#006B50] shrink-0" />
                 <span>{selectedBankNote}</span>
               </div>
               <button 
                 onClick={() => setSelectedBankNote(null)}
-                className="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline cursor-pointer ml-3"
+                className="text-xs font-bold text-[#006B50] dark:text-[#159B72] hover:underline cursor-pointer ml-3"
               >
                 Dismiss
               </button>
@@ -1614,7 +1614,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
             <div className="bg-white dark:bg-[#1E293B] rounded-3xl p-5 border border-slate-200 dark:border-slate-700 shadow-soft space-y-3">
               <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5">
                 <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-800 dark:text-white flex items-center gap-1.5">
-                  <Bookmark className="w-3.5 h-3.5 text-[#2563EB]" />
+                  <Bookmark className="w-3.5 h-3.5 text-[#006B50]" />
                   <span>Locally Saved Calculations ({savedPlans.length})</span>
                 </h4>
                 <button
@@ -1639,7 +1639,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
                         <span className="text-xs font-bold text-slate-800 dark:text-white truncate">{plan.title}</span>
                         <span className="text-[10px] text-slate-400">{plan.date}</span>
                       </div>
-                      <p className="text-sm font-extrabold text-[#2563EB] dark:text-[#60A5FA] mt-1">
+                      <p className="text-sm font-extrabold text-[#006B50] dark:text-[#159B72] mt-1">
                         Final: {formatINR(plan.finalBalance)}
                       </p>
                       <p className="text-[10.5px] text-slate-500 mt-0.5">
@@ -1650,7 +1650,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
                     <div className="mt-3 pt-2 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between">
                       <button
                         onClick={() => handleLoadSavedPlan(plan)}
-                        className="text-xs font-bold text-[#2563EB] hover:underline cursor-pointer"
+                        className="text-xs font-bold text-[#006B50] hover:underline cursor-pointer"
                       >
                         Load Plan →
                       </button>
@@ -1671,7 +1671,7 @@ function SavingsCalculator({ onViewDetails, cards }) {
           {/* ── MANDATORY TRANSPARENCY & DISCLAIMER ── */}
           <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 text-xs leading-relaxed space-y-2">
             <div className="flex items-start gap-2">
-              <Info className="w-4 h-4 text-[#2563EB] shrink-0 mt-0.5" />
+              <Info className="w-4 h-4 text-[#006B50] shrink-0 mt-0.5" />
               <div>
                 <p className="font-semibold text-slate-700 dark:text-slate-300">
                   {t('savingsAccounts.disclaimerText', "This calculator provides illustrative estimates based on your inputs and the assumptions shown. Actual savings account interest and balances may differ according to the bank's terms, applicable rates, balance calculations, taxes, and interest-crediting rules. This tool does not guarantee returns or provide personalised financial advice.")}
@@ -1695,24 +1695,24 @@ function SavingsCalculator({ onViewDetails, cards }) {
           {/* Sliders Input Area */}
           <div className="space-y-4">
             <h3 className="text-xs font-bold text-[#1F2937] dark:text-white flex items-center gap-2 mb-2 select-none uppercase tracking-wider">
-              <CreditCard className="w-4 h-4 text-[#2563EB]" /> Your Monthly Spends
+              <CreditCard className="w-4 h-4 text-[#006B50]" /> Your Monthly Spends
             </h3>
 
             {[
-              { label: "Shopping Spends", val: sShopping, setVal: setShopping, max: 50000, icon: ShoppingBag, color: "from-[#2563EB] to-[#3B82F6]" },
-              { label: "Travel Spends (International / Domestic)", val: sTravel, setVal: setTravel, max: 50000, icon: Plane, color: "from-[#3B82F6] to-[#60A5FA]" },
+              { label: "Shopping Spends", val: sShopping, setVal: setShopping, max: 50000, icon: ShoppingBag, color: "from-[#006B50] to-[#159B72]" },
+              { label: "Travel Spends (International / Domestic)", val: sTravel, setVal: setTravel, max: 50000, icon: Plane, color: "from-[#159B72] to-[#159B72]" },
               { label: "Fuel Purchases", val: sFuel, setVal: setFuel, max: 20000, icon: Fuel, color: "from-amber-500 to-orange-600" },
               { label: "Food & Dining", val: sFood, setVal: setFood, max: 30000, icon: Utensils, color: "from-emerald-500 to-green-600" },
-              { label: "Online Spends / General Bills", val: sOnline, setVal: setOnline, max: 50000, icon: Laptop, color: "from-blue-600 to-indigo-600" },
+              { label: "Online Spends / General Bills", val: sOnline, setVal: setOnline, max: 50000, icon: Laptop, color: "from-[#006B50] to-[#064E3B]" },
             ].map(({ label, val, setVal, max, icon: IconComp, color }) => {
               const pct = Math.min(100, Math.max(0, (val / max) * 100));
               return (
-                <div key={label} className="bg-[#F8FAFC] dark:bg-slate-800/60 p-4 rounded-2xl border border-[#E5E7EB] dark:border-slate-700 transition-colors">
+                <div key={label} className="bg-[#FAF9F4] dark:bg-slate-800/60 p-4 rounded-2xl border border-[#E5E7EB] dark:border-slate-700 transition-colors">
                   <div className="flex justify-between items-center mb-2.5">
                     <span className="text-xs font-semibold text-[#1F2937] dark:text-slate-200 flex items-center gap-2">
-                      <IconComp className="w-4 h-4 text-[#2563EB]" />{label}
+                      <IconComp className="w-4 h-4 text-[#006B50]" />{label}
                     </span>
-                    <span className="text-xs font-bold text-[#2563EB] dark:text-[#60A5FA] bg-[#2563EB]/10 px-2.5 py-0.5 rounded-full select-none border border-[#2563EB]/20">
+                    <span className="text-xs font-bold text-[#006B50] dark:text-[#159B72] bg-[#006B50]/10 px-2.5 py-0.5 rounded-full select-none border border-[#006B50]/20">
                       ₹{val.toLocaleString('en-IN')}
                     </span>
                   </div>
@@ -1738,12 +1738,12 @@ function SavingsCalculator({ onViewDetails, cards }) {
           </div>
 
           {/* Dynamic Recommendation Panel */}
-          <div className="flex flex-col bg-[#F8FAFC] dark:bg-slate-900/80 p-6 rounded-3xl border border-[#E5E7EB] dark:border-slate-700 justify-between select-none shadow-sm">
+          <div className="flex flex-col bg-[#FAF9F4] dark:bg-slate-900/80 p-6 rounded-3xl border border-[#E5E7EB] dark:border-slate-700 justify-between select-none shadow-sm">
             <div className="text-center pb-6 border-b border-[#E5E7EB] dark:border-slate-700 flex-shrink-0">
-              <p className="text-[10px] sm:text-[11px] font-semibold text-[#2563EB] dark:text-[#60A5FA] uppercase tracking-widest">Estimated Annual Benefit</p>
+              <p className="text-[10px] sm:text-[11px] font-semibold text-[#006B50] dark:text-[#159B72] uppercase tracking-widest">Estimated Annual Benefit</p>
               <h4 className="text-3xl font-bold text-[#1F2937] dark:text-white mt-1 tracking-tight">₹{topBenefit.toLocaleString('en-IN')}</h4>
               <p className="text-xs text-[#6B7280] dark:text-slate-400 font-normal mt-1">Net yearly savings linked to top recommendation</p>
-              <div className="mt-4 py-2 px-3 bg-[#2563EB]/10 rounded-xl inline-flex items-center gap-1.5 border border-[#2563EB]/20 text-xs text-[#2563EB] dark:text-[#60A5FA] font-semibold uppercase tracking-wider">
+              <div className="mt-4 py-2 px-3 bg-[#006B50]/10 rounded-xl inline-flex items-center gap-1.5 border border-[#006B50]/20 text-xs text-[#006B50] dark:text-[#159B72] font-semibold uppercase tracking-wider">
                 <Calculator className="w-4 h-4" /> Monthly Spend Pool: ₹{totalMonthlySpend.toLocaleString('en-IN')}
               </div>
             </div>
@@ -1758,26 +1758,26 @@ function SavingsCalculator({ onViewDetails, cards }) {
                     <div 
                       key={rec.id || index}
                       onClick={() => onViewDetails && onViewDetails(rec)}
-                      className={`group p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between hover:border-[#2563EB] ${
+                      className={`group p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between hover:border-[#006B50] ${
                         index === 0 
-                          ? "bg-white dark:bg-slate-800 border-[#2563EB]/40 shadow-sm" 
+                          ? "bg-white dark:bg-slate-800 border-[#006B50]/40 shadow-sm" 
                           : "bg-white/60 dark:bg-slate-800/40 border-[#E5E7EB] dark:border-slate-700 text-[#1F2937] dark:text-slate-200"
                       }`}
                     >
                       <div className="min-w-0">
                         <div className="flex items-center gap-1.5">
                           <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full select-none ${
-                            index === 0 ? "bg-[#2563EB] text-white" : "bg-slate-200 dark:bg-slate-700 text-[#6B7280] dark:text-slate-300"
+                            index === 0 ? "bg-[#006B50] text-white" : "bg-slate-200 dark:bg-slate-700 text-[#6B7280] dark:text-slate-300"
                           }`}>
                             #{index + 1}
                           </span>
-                          <p className="text-xs font-bold text-[#1F2937] dark:text-white group-hover:text-[#2563EB] transition-colors truncate">{rec.cardName}</p>
+                          <p className="text-xs font-bold text-[#1F2937] dark:text-white group-hover:text-[#006B50] transition-colors truncate">{rec.cardName}</p>
                         </div>
                         <p className="text-[10.5px] text-[#6B7280] dark:text-slate-400 font-semibold mt-1 pl-5 uppercase tracking-wider">{rec.bank}</p>
                       </div>
                       
                       <div className="text-right flex-shrink-0 ml-3">
-                        <p className="text-xs font-bold text-[#2563EB] dark:text-[#60A5FA]">
+                        <p className="text-xs font-bold text-[#006B50] dark:text-[#159B72]">
                           +₹{monthlySavings.toLocaleString('en-IN')}/mo
                         </p>
                         <p className="text-[10px] text-[#6B7280] dark:text-slate-500 font-semibold mt-0.5 uppercase tracking-wider">Net Savings</p>

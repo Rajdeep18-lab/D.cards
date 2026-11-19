@@ -79,7 +79,7 @@ function AboutModal({ isOpen, onClose }) {
                     <h2 className="text-xl sm:text-2xl font-bold text-[#1F2937] dark:text-white leading-tight">
                       About D.CARD
                     </h2>
-                    <p className="text-xs text-[#2563EB] dark:text-[#60A5FA] font-semibold mt-0.5">
+                    <p className="text-xs text-[#006B50] dark:text-[#159B72] font-semibold mt-0.5">
                       India's Independent Savings Account & Debit Card Comparison Platform
                     </p>
                   </div>
@@ -87,7 +87,7 @@ function AboutModal({ isOpen, onClose }) {
 
                 <button
                   onClick={onClose}
-                  className="w-9 h-9 rounded-full border border-[#E5E7EB] dark:border-slate-700 bg-[#F8FAFC] dark:bg-slate-800 text-[#6B7280] dark:text-slate-300 hover:text-[#2563EB] dark:hover:text-[#60A5FA] flex items-center justify-center transition-colors outline-none cursor-pointer"
+                  className="w-9 h-9 rounded-full border border-[#E5E7EB] dark:border-slate-700 bg-[#FAF9F4] dark:bg-slate-800 text-[#6B7280] dark:text-slate-300 hover:text-[#006B50] dark:hover:text-[#159B72] flex items-center justify-center transition-colors outline-none cursor-pointer"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -96,7 +96,7 @@ function AboutModal({ isOpen, onClose }) {
               {/* Scrollable Content Area */}
               <div className="p-6 sm:p-8 overflow-y-auto text-left space-y-6 flex-grow custom-scrollbar">
                 {/* Who We Are */}
-                <div className="p-6 rounded-3xl bg-[#EFF6FF] dark:bg-slate-800/80 border border-[#2563EB]/20 space-y-2">
+                <div className="p-6 rounded-3xl bg-[#FAF9F4] dark:bg-slate-800/80 border border-[#006B50]/20 space-y-2">
                   <h3 className="text-base font-bold text-[#1F2937] dark:text-white">
                     Who We Are
                   </h3>
@@ -112,7 +112,7 @@ function AboutModal({ isOpen, onClose }) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-[#E5E7EB] dark:border-slate-800 shadow-sm space-y-2">
                     <div className="flex items-center gap-2">
-                      <Target className="w-5 h-5 text-[#2563EB]" />
+                      <Target className="w-5 h-5 text-[#006B50]" />
                       <h4 className="text-sm font-bold text-[#1F2937] dark:text-white">
                         Our Mission
                       </h4>
@@ -124,7 +124,7 @@ function AboutModal({ isOpen, onClose }) {
 
                   <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-[#E5E7EB] dark:border-slate-800 shadow-sm space-y-2">
                     <div className="flex items-center gap-2">
-                      <Globe className="w-5 h-5 text-[#2563EB]" />
+                      <Globe className="w-5 h-5 text-[#006B50]" />
                       <h4 className="text-sm font-bold text-[#1F2937] dark:text-white">
                         Our Vision
                       </h4>
@@ -142,8 +142,8 @@ function AboutModal({ isOpen, onClose }) {
                     {coreValues.map((v, i) => {
                       const IconC = v.icon;
                       return (
-                        <div key={i} className="p-3 rounded-xl bg-[#F8FAFC] dark:bg-slate-900 border border-[#E5E7EB] dark:border-slate-800 text-xs">
-                          <IconC className="w-4 h-4 text-[#2563EB] mb-1" />
+                        <div key={i} className="p-3 rounded-xl bg-[#FAF9F4] dark:bg-slate-900 border border-[#E5E7EB] dark:border-slate-800 text-xs">
+                          <IconC className="w-4 h-4 text-[#006B50] mb-1" />
                           <p className="font-bold text-[#1F2937] dark:text-white">{v.title}</p>
                           <p className="text-[10px] text-[#6B7280] dark:text-slate-400 mt-0.5">{v.desc}</p>
                         </div>
@@ -162,7 +162,7 @@ function AboutModal({ isOpen, onClose }) {
               <div className="p-5 sm:px-8 border-t border-[#E5E7EB] dark:border-slate-800 flex justify-end flex-shrink-0">
                 <button
                   onClick={onClose}
-                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white text-xs font-bold hover:opacity-95 transition-all shadow-md cursor-pointer"
+                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#006B50] to-[#159B72] text-white text-xs font-bold hover:opacity-95 transition-all shadow-md cursor-pointer"
                 >
                   Close
                 </button>

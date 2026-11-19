@@ -18,13 +18,13 @@ export default function ProfileHeader({
   return (
     <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-[#0B1329] via-[#0F1C3F] to-[#091124] p-6 sm:p-8 text-white shadow-xl border border-slate-700/50 mb-6">
       {/* Ambient glow blobs */}
-      <div className="absolute top-0 right-1/3 w-72 h-72 rounded-full bg-[#2563EB]/20 blur-[90px] pointer-events-none" />
+      <div className="absolute top-0 right-1/3 w-72 h-72 rounded-full bg-[#006B50]/20 blur-[90px] pointer-events-none" />
       <div className="absolute bottom-0 left-8 w-48 h-48 rounded-full bg-emerald-500/10 blur-[80px] pointer-events-none" />
 
       <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-5">
         {/* Avatar */}
         <div className="relative shrink-0">
-          <div className="w-20 h-20 rounded-2xl overflow-hidden bg-gradient-to-br from-[#2563EB] to-[#1D4ED8] flex items-center justify-center shadow-lg border-2 border-white/20">
+          <div className="w-20 h-20 rounded-2xl overflow-hidden bg-gradient-to-br from-[#006B50] to-[#064E3B] flex items-center justify-center shadow-lg border-2 border-white/20">
             {profileImage ? (
               <img
                 src={profileImage}
@@ -48,7 +48,7 @@ export default function ProfileHeader({
 
         {/* Text */}
         <div className="flex-1 min-w-0 space-y-1">
-          <p className="text-xs font-bold text-[#93C5FD] uppercase tracking-widest">
+          <p className="text-xs font-bold text-[#A3E3CE] uppercase tracking-widest">
             Welcome back to D.CARD
           </p>
           <h1 className="text-2xl sm:text-3xl font-black text-white leading-tight truncate">

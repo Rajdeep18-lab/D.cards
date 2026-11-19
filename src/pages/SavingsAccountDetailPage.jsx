@@ -135,7 +135,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
         <p className="text-sm text-slate-500">{error || (isHindi ? 'अनुरोधित बचत खाता नहीं मिला।' : 'The requested savings account could not be found.')}</p>
         <Link
           to="/savings-accounts"
-          className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#2563EB] text-white text-xs font-bold shadow-md hover:bg-blue-700"
+          className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#006B50] text-white text-xs font-bold shadow-md hover:bg-[#064E3B]"
         >
           <ArrowLeft className="w-4 h-4" /> {t('accountDetail.backToAccounts', 'Return to Savings Discovery')}
         </Link>
@@ -163,7 +163,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
       case 'provided':
         return { label: isHindi ? 'खाते के साथ प्रदान किया गया' : 'Provided with account', color: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/30' };
       case 'optional':
-        return { label: isHindi ? 'विकल्प के रूप में उपलब्ध' : 'Available as an option', color: 'bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/30' };
+        return { label: isHindi ? 'विकल्प के रूप में उपलब्ध' : 'Available as an option', color: 'bg-[#159B72]/10 text-[#064E3B] dark:text-[#159B72] border-[#159B72]/30' };
       case 'upgrade':
         return { label: isHindi ? 'अपग्रेड विकल्प' : 'Upgrade option', color: 'bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-500/30' };
       default:
@@ -177,7 +177,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
       <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
         <Link
           to="/savings-accounts"
-          className="text-xs font-bold text-[#2563EB] dark:text-[#60A5FA] flex items-center gap-1.5 hover:underline"
+          className="text-xs font-bold text-[#006B50] dark:text-[#159B72] flex items-center gap-1.5 hover:underline"
         >
           <ArrowLeft className="w-4 h-4" /> {t('accountDetail.backToAccounts', 'Back to Savings Accounts')}
         </Link>
@@ -199,7 +199,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
             onClick={() => onToggleCompare && onToggleCompare(account)}
             className={`px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 border transition-all cursor-pointer ${
               isCompared
-                ? 'bg-[#2563EB] text-white border-[#2563EB]'
+                ? 'bg-[#006B50] text-white border-[#006B50]'
                 : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100'
             }`}
           >
@@ -215,7 +215,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
           <div className="flex items-center gap-4">
             <BankLogo bankName={bankName} size="xl" />
             <div>
-              <span className="text-xs font-black uppercase tracking-widest text-[#2563EB] dark:text-[#60A5FA] block">
+              <span className="text-xs font-black uppercase tracking-widest text-[#006B50] dark:text-[#159B72] block">
                 🏦 {bankName}
               </span>
               <h1 className="text-2xl sm:text-3xl font-black text-[#1F2937] dark:text-white tracking-tight mt-0.5">
@@ -232,7 +232,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
               href={sourceInfo.sourceUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-6 py-3 rounded-2xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:shadow-lg hover:shadow-[#2563EB]/25 text-white font-extrabold text-xs transition-all shadow cursor-pointer active:scale-95 flex items-center gap-2"
+              className="px-6 py-3 rounded-2xl bg-gradient-to-r from-[#006B50] to-[#159B72] hover:shadow-lg hover:shadow-[#006B50]/25 text-white font-extrabold text-xs transition-all shadow cursor-pointer active:scale-95 flex items-center gap-2"
             >
               <span>{t('accountDetail.applyNow', 'Apply / Open Account')}</span>
               <ExternalLink className="w-4 h-4" />
@@ -242,7 +242,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
 
         {/* Badges Row */}
         <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
-          <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] border border-[#2563EB]/20">
+          <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-[#006B50]/10 text-[#006B50] dark:text-[#159B72] border border-[#006B50]/20">
             {isHindi ? 'श्रेणी' : 'Category'}: {account.account_type || account.accountType || (isHindi ? 'बचत' : 'Savings')}
           </span>
           {account.isZeroBalance && (
@@ -251,7 +251,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
             </span>
           )}
           {account.isOnlineOpening && (
-            <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
+            <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-[#159B72]/10 text-[#006B50] dark:text-[#159B72] border border-[#159B72]/20">
               ⚡ {t('accountDetail.digitalKyc', 'Instant Video KYC')}
             </span>
           )}
@@ -273,7 +273,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
       {/* 2. ELIGIBILITY SECTION */}
       <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-4">
         <h3 className="text-base font-black text-slate-800 dark:text-white flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
-          <UserCheck className="w-5 h-5 text-[#2563EB]" />
+          <UserCheck className="w-5 h-5 text-[#006B50]" />
           <span>{isHindi ? 'पात्रता मानदंड और लक्षित वर्ग' : 'Eligibility Criteria & Target Segment'}</span>
         </h3>
         {account.eligibility && (Array.isArray(account.eligibility) ? account.eligibility : [account.eligibility]).length > 0 ? (
@@ -293,13 +293,13 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
       {/* 3. BALANCE REQUIREMENTS SECTION */}
       <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-5">
         <h2 className="text-lg font-black text-[#1F2937] dark:text-white flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
-          <Sliders className="w-5 h-5 text-[#2563EB]" />
+          <Sliders className="w-5 h-5 text-[#006B50]" />
           <span>{isHindi ? 'न्यूनतम शेष आवश्यकताएं और रखरखाव नियम' : 'Balance Requirements & Maintenance Rules'}</span>
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="p-5 rounded-2xl bg-blue-50/50 dark:bg-blue-950/20 border border-blue-200/80 dark:border-blue-900/50 space-y-1">
-            <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA] block">
+          <div className="p-5 rounded-2xl bg-[#FAF9F4]/50 dark:bg-[#064E3B]/20 border border-[#DCE9E1]/80 dark:border-[#064E3B]/50 space-y-1">
+            <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#006B50] dark:text-[#159B72] block">
               {t('accountDetail.minimumBalance', 'Minimum Balance Requirement')}
             </span>
             <span className="text-2xl font-black text-[#1F2937] dark:text-white mt-1 block">
@@ -346,7 +346,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
       {/* 4. INTEREST / CHARGES SECTION */}
       <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-5">
         <h2 className="text-lg font-black text-[#1F2937] dark:text-white flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
-          <Percent className="w-5 h-5 text-[#2563EB]" />
+          <Percent className="w-5 h-5 text-[#006B50]" />
           <span>{isHindi ? 'ब्याज दरें और स्लैब' : 'Interest Rates & Credit Slabs'}</span>
         </h2>
 
@@ -423,7 +423,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
             <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 space-y-2 text-xs sm:text-sm">
               {account.interestSlabs.map((slab, i) => (
                 <div key={i} className="flex items-center gap-2 text-slate-700 dark:text-slate-300 font-medium">
-                  <span className="w-2 h-2 rounded-full bg-[#2563EB]" />
+                  <span className="w-2 h-2 rounded-full bg-[#006B50]" />
                   <span>{slab}</span>
                 </div>
               ))}
@@ -435,7 +435,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
       {/* 5. BANKING FACILITIES */}
       <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-5">
         <h2 className="text-lg font-black text-[#1F2937] dark:text-white flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
-          <Building2 className="w-5 h-5 text-[#2563EB]" />
+          <Building2 className="w-5 h-5 text-[#006B50]" />
           <span>{isHindi ? 'बैंकिंग सुविधाएं और सेवाएं' : 'Banking Facilities & Services'}</span>
         </h2>
 
@@ -473,7 +473,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
       {/* 6. TRANSACTION LIMITS */}
       <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-5">
         <h2 className="text-lg font-black text-[#1F2937] dark:text-white flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
-          <Zap className="w-5 h-5 text-[#2563EB]" />
+          <Zap className="w-5 h-5 text-[#006B50]" />
           <span>{isHindi ? 'लेनदेन सीमा और डिजिटल ट्रांसफर नियम' : 'Transaction Limits & Digital Transfer Rules'}</span>
         </h2>
 
@@ -504,14 +504,14 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
       {/* 7. BENEFITS & HIGHLIGHTS */}
       <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-4">
         <h3 className="text-base font-black text-slate-800 dark:text-white flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
-          <Gift className="w-5 h-5 text-[#2563EB]" />
+          <Gift className="w-5 h-5 text-[#006B50]" />
           <span>{isHindi ? 'खाते के प्रमुख लाभ एवं मुख्य विशेषताएं' : 'Account Benefits & Key Highlights'}</span>
         </h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {cleanBenefits.map((benefit, idx) => (
             <div key={idx} className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/80 dark:border-slate-800 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 flex items-start gap-2.5">
-              <Sparkles className="w-4 h-4 text-[#2563EB] shrink-0 mt-0.5" />
+              <Sparkles className="w-4 h-4 text-[#006B50] shrink-0 mt-0.5" />
               <span>{benefit}</span>
             </div>
           ))}
@@ -519,19 +519,19 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
       </div>
 
       {/* 4. DEDICATED SECTION: DEBIT CARD(S) AVAILABLE WITH THIS ACCOUNT */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-[#EFF6FF] via-[#DBEAFE]/30 to-white dark:from-slate-900 dark:via-slate-900/90 dark:to-slate-800 border-2 border-[#2563EB]/40 shadow-md space-y-6">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-[#2563EB]/20 pb-4">
+      <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-[#FAF9F4] via-[#EEF8F5]/30 to-white dark:from-slate-900 dark:via-slate-900/90 dark:to-slate-800 border-2 border-[#006B50]/40 shadow-md space-y-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-[#006B50]/20 pb-4">
           <div>
-            <span className="inline-flex items-center gap-1.5 px-3 py-0.5 bg-[#2563EB] text-white text-[10px] font-black uppercase tracking-widest rounded-full mb-1">
+            <span className="inline-flex items-center gap-1.5 px-3 py-0.5 bg-[#006B50] text-white text-[10px] font-black uppercase tracking-widest rounded-full mb-1">
               {isHindi ? 'सत्यापित बैंक डेबिट कार्ड लिंकेज' : 'SAME-BANK VERIFIED DEBIT LINK'}
             </span>
-            <h2 className="text-xl sm:text-2xl font-black text-[#0B3D91] dark:text-[#60A5FA] flex items-center gap-2">
-              <CreditCard className="w-6 h-6 text-[#2563EB]" />
+            <h2 className="text-xl sm:text-2xl font-black text-[#123C30] dark:text-[#159B72] flex items-center gap-2">
+              <CreditCard className="w-6 h-6 text-[#006B50]" />
               <span>{isHindi ? 'इस खाते के साथ उपलब्ध डेबिट कार्ड' : 'Debit Card(s) Available With This Account'}</span>
             </h2>
           </div>
 
-          <p className="text-xs text-[#2563EB] dark:text-[#60A5FA] font-bold">
+          <p className="text-xs text-[#006B50] dark:text-[#159B72] font-bold">
             {associatedCards.length > 0
               ? (isHindi ? `${associatedCards.length} सत्यापित डेबिट कार्ड विकल्प` : `${associatedCards.length} verified debit card option(s)`)
               : (isHindi ? 'डेबिट कार्ड संबद्धता स्थिति' : 'Debit card relationship status')}
@@ -561,7 +561,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
                       onClick={() => setActiveCardIndex(idx)}
                       className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all border cursor-pointer flex items-center gap-2 whitespace-nowrap ${
                         activeCardIndex === idx
-                          ? 'bg-[#2563EB] text-white border-[#2563EB] shadow-md'
+                          ? 'bg-[#006B50] text-white border-[#006B50] shadow-md'
                           : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-100'
                       }`}
                     >
@@ -597,9 +597,9 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
               return (
                 <div className="space-y-6">
                   {/* Card Main Banner Header */}
-                  <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-[#2563EB]/30 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                  <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-[#006B50]/30 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                     <div className="flex items-center gap-4">
-                      <div className="w-20 h-14 rounded-xl bg-gradient-to-br from-[#0B3D91] to-[#2563EB] text-white flex flex-col items-center justify-center font-bold text-xs shadow-md shrink-0">
+                      <div className="w-20 h-14 rounded-xl bg-gradient-to-br from-[#123C30] to-[#006B50] text-white flex flex-col items-center justify-center font-bold text-xs shadow-md shrink-0">
                         <CreditCard className="w-6 h-6 mb-1" />
                         <span>{network}</span>
                       </div>
@@ -622,7 +622,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
                     {onSelectDebitCard && (
                       <button
                         onClick={() => onSelectDebitCard(card)}
-                        className="px-5 py-2.5 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-extrabold transition-all flex items-center gap-1.5 shadow-md cursor-pointer active:scale-95"
+                        className="px-5 py-2.5 rounded-xl bg-[#006B50] hover:bg-[#064E3B] text-white text-xs font-extrabold transition-all flex items-center gap-1.5 shadow-md cursor-pointer active:scale-95"
                       >
                         <span>{isHindi ? 'पूरा कार्ड प्रोफाइल देखें →' : 'View Full Card Profile →'}</span>
                         <ChevronRight className="w-4 h-4" />
@@ -703,7 +703,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
                     {/* 9. Eligibility / Account Relationship */}
                     <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
                       <span className="text-[10px] font-bold text-slate-400 uppercase block">{isHindi ? 'पात्रता एवं खाता संबंध' : 'Eligibility & Relationship'}</span>
-                      <span className="font-extrabold text-[#2563EB] dark:text-[#60A5FA] text-sm mt-1 block">
+                      <span className="font-extrabold text-[#006B50] dark:text-[#159B72] text-sm mt-1 block">
                         {eligibilityText}
                       </span>
                     </div>
@@ -711,8 +711,8 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
 
                   {/* 10. Key Benefits */}
                   <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3">
-                    <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA] flex items-center gap-1.5">
-                      <Gift className="w-4 h-4 text-[#2563EB]" />
+                    <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#006B50] dark:text-[#159B72] flex items-center gap-1.5">
+                      <Gift className="w-4 h-4 text-[#006B50]" />
                       <span>{isHindi ? 'कार्ड के प्रमुख लाभ' : 'Card Key Benefits & Best For'}</span>
                     </h4>
                     {keyBenefits && (Array.isArray(keyBenefits) ? keyBenefits : [keyBenefits]).length > 0 ? (
@@ -732,7 +732,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
                   {/* Card Verification Info */}
                   <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
                     <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
-                      <Globe className="w-4 h-4 text-[#2563EB]" />
+                      <Globe className="w-4 h-4 text-[#006B50]" />
                       <span className="font-medium">{isHindi ? 'कार्ड सत्यापन स्थिति:' : 'Card Verification Status:'}</span>
                       <span className="font-bold text-slate-700 dark:text-slate-200">{verificationInfo}</span>
                     </div>
@@ -747,7 +747,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
       {/* 9. FEES & CHARGES DETAILED BREAKDOWN */}
       <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-5">
         <h2 className="text-lg font-black text-[#1F2937] dark:text-white flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
-          <FileText className="w-5 h-5 text-[#2563EB]" />
+          <FileText className="w-5 h-5 text-[#006B50]" />
           <span>{isHindi ? 'शुल्क, जुर्माना और मानक सेवा प्रभार' : 'Fees, Penalties & Standard Service Charges'}</span>
         </h2>
 
@@ -804,7 +804,7 @@ function SavingsAccountDetailPage({ onSelectDebitCard, onToggleCompare, isCompar
                 href={sourceInfo.sourceUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#2563EB] dark:text-[#60A5FA] font-extrabold hover:underline inline-flex items-center gap-1 mt-1 text-xs"
+                className="text-[#006B50] dark:text-[#159B72] font-extrabold hover:underline inline-flex items-center gap-1 mt-1 text-xs"
               >
                 <span>{isHindi ? 'आधिकारिक बैंक पेज देखें' : 'Visit Official Bank Page'}</span>
                 <ExternalLink className="w-3 h-3" />

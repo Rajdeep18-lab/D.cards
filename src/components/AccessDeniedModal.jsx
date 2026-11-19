@@ -57,7 +57,7 @@ function AccessDeniedModal({ isOpen, onClose, onOpenAuth }) {
           <div className="mt-6 flex flex-col sm:flex-row items-center gap-3">
             <button
               onClick={onClose}
-              className="w-full py-3 px-4 rounded-xl bg-[#F8FAFC] dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-[#1F2937] dark:text-slate-200 text-xs font-semibold transition-all cursor-pointer shadow-sm active:scale-95 flex items-center justify-center gap-1.5 border border-[#E5E7EB] dark:border-slate-700"
+              className="w-full py-3 px-4 rounded-xl bg-[#FAF9F4] dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-[#1F2937] dark:text-slate-200 text-xs font-semibold transition-all cursor-pointer shadow-sm active:scale-95 flex items-center justify-center gap-1.5 border border-[#E5E7EB] dark:border-slate-700"
             >
               <Home className="w-4 h-4" /> Return to Home
             </button>
@@ -68,7 +68,7 @@ function AccessDeniedModal({ isOpen, onClose, onOpenAuth }) {
                   onClose();
                   onOpenAuth();
                 }}
-                className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white text-xs font-semibold shadow-md hover:opacity-95 transition-all cursor-pointer active:scale-95 flex items-center justify-center gap-1.5"
+                className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-[#006B50] to-[#159B72] text-white text-xs font-semibold shadow-md hover:opacity-95 transition-all cursor-pointer active:scale-95 flex items-center justify-center gap-1.5"
               >
                 <Key className="w-4 h-4" /> Switch Account
               </button>

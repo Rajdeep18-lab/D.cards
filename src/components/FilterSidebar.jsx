@@ -408,7 +408,7 @@ function FilterSidebar({
         <div className="flex gap-2 w-full pt-1">
           {[
             { label: "RuPay", icon: "🇮🇳", color: "border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10" },
-            { label: "Visa", icon: "🌐", color: "border-blue-500 text-blue-600 dark:text-blue-400 bg-blue-500/10" },
+            { label: "Visa", icon: "🌐", color: "border-[#159B72] text-[#006B50] dark:text-[#159B72] bg-[#159B72]/10" },
             { label: "Mastercard", icon: "🔴", color: "border-secondary text-secondary dark:text-roseGold bg-secondary/10" }
           ].map(net => {
             const active = Array.isArray(selectedNetworks) && selectedNetworks.includes(net.label);

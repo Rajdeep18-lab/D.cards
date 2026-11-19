@@ -11,8 +11,8 @@ export default function AuthBrandPanel() {
     <div className="hidden lg:flex lg:w-[45%] xl:w-[42%] flex-col justify-between relative overflow-hidden bg-gradient-to-br from-[#0B1329] via-[#0F1C3F] to-[#091124] p-10 xl:p-12 text-white select-none">
 
       {/* Ambient glow blobs */}
-      <div className="absolute -left-24 -top-24 w-72 h-72 rounded-full bg-[#2563EB]/30 blur-[100px] pointer-events-none" />
-      <div className="absolute -right-16 top-1/2 w-64 h-64 rounded-full bg-[#3B82F6]/20 blur-[90px] pointer-events-none" />
+      <div className="absolute -left-24 -top-24 w-72 h-72 rounded-full bg-[#006B50]/30 blur-[100px] pointer-events-none" />
+      <div className="absolute -right-16 top-1/2 w-64 h-64 rounded-full bg-[#159B72]/20 blur-[90px] pointer-events-none" />
       <div className="absolute -bottom-20 left-1/4 w-56 h-56 rounded-full bg-emerald-500/10 blur-[80px] pointer-events-none" />
 
       {/* Dot mesh overlay */}
@@ -31,18 +31,18 @@ export default function AuthBrandPanel() {
           </div>
           <div>
             <span className="text-base font-black tracking-tight text-white block leading-tight">D.CARD</span>
-            <span className="text-[9.5px] font-bold text-[#93C5FD] uppercase tracking-widest">Banking Intelligence</span>
+            <span className="text-[9.5px] font-bold text-[#A3E3CE] uppercase tracking-widest">Banking Intelligence</span>
           </div>
         </div>
 
         {/* Headline + Sub */}
         <div className="space-y-3">
-          <p className="text-[10px] font-bold text-[#93C5FD] uppercase tracking-widest">
+          <p className="text-[10px] font-bold text-[#A3E3CE] uppercase tracking-widest">
             Smart Financial Decisions
           </p>
           <h1 className="text-3xl xl:text-4xl font-black leading-tight tracking-tight text-white">
             Compare.<br />Choose.<br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#60A5FA] to-[#34D399]">Bank Smarter.</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#159B72] to-[#34D399]">Bank Smarter.</span>
           </h1>
           <p className="text-sm text-slate-400 leading-relaxed font-normal max-w-xs">
             Discover and compare banking products in one place. Savings accounts, current accounts, and debit cards — all transparent.
@@ -62,7 +62,7 @@ export default function AuthBrandPanel() {
           ].map(({ icon: Icon, value, label, color = 'text-white' }) => (
             <div key={label} className="p-3 rounded-xl bg-white/8 border border-white/10 backdrop-blur-sm">
               <div className="flex items-center gap-1.5 mb-0.5">
-                <Icon className="w-3.5 h-3.5 text-[#60A5FA]" />
+                <Icon className="w-3.5 h-3.5 text-[#159B72]" />
               </div>
               <span className={`text-sm font-black block ${color}`}>{value}</span>
               <span className="text-[10px] text-slate-400 font-medium">{label}</span>
@@ -80,7 +80,7 @@ export default function AuthBrandPanel() {
           { icon: Award,       label: 'Verified Platform' },
         ].map(({ icon: Icon, label }) => (
           <div key={label} className="flex items-center gap-1.5 text-[10.5px] font-semibold text-slate-400">
-            <Icon className="w-3.5 h-3.5 text-[#60A5FA] shrink-0" />
+            <Icon className="w-3.5 h-3.5 text-[#159B72] shrink-0" />
             {label}
           </div>
         ))}
@@ -115,7 +115,7 @@ function BrandDebitCard() {
         transition={{ type: 'spring', stiffness: 400, damping: 30 }}
         className="w-full aspect-[1.586/1] rounded-2xl p-5 relative overflow-hidden border border-white/20 shadow-2xl flex flex-col justify-between cursor-pointer"
         style={{
-          background: 'linear-gradient(135deg, #0B3D91 0%, #1E3A8A 50%, #2563EB 100%)',
+          background: 'linear-gradient(135deg, #123C30 0%, #123C30 50%, #006B50 100%)',
           boxShadow: '0 20px 45px rgba(37,99,235,0.4)',
           transformStyle: 'preserve-3d',
         }}
@@ -128,7 +128,7 @@ function BrandDebitCard() {
         {/* Top row */}
         <div className="flex justify-between items-start z-10">
           <div className="flex items-center gap-1.5">
-            <Sparkles className="w-4 h-4 text-[#60A5FA]" />
+            <Sparkles className="w-4 h-4 text-[#159B72]" />
             <span className="text-[10.5px] font-black tracking-widest uppercase text-white/90">D.CARD INFINITE</span>
           </div>
           <span className="text-[9px] font-extrabold bg-white/20 backdrop-blur-sm px-2 py-0.5 rounded-full border border-white/25">RuPay Platinum</span>

@@ -36,8 +36,8 @@ function IDFCTierEligibilityCalculator() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
         <div>
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] text-xs font-bold uppercase tracking-wider border border-[#2563EB]/20 mb-1">
-            <Calculator className="w-3.5 h-3.5 text-[#2563EB]" />
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#006B50]/10 text-[#006B50] dark:text-[#159B72] text-xs font-bold uppercase tracking-wider border border-[#006B50]/20 mb-1">
+            <Calculator className="w-3.5 h-3.5 text-[#006B50]" />
             ELIGIBILITY ENGINE
           </span>
           <h3 className="text-xl sm:text-2xl font-extrabold text-slate-800 dark:text-white">
@@ -51,7 +51,7 @@ function IDFCTierEligibilityCalculator() {
         {(amb || salary || aum || orv) && (
           <button
             onClick={handleReset}
-            className="text-xs font-bold text-[#2563EB] dark:text-[#60A5FA] hover:underline cursor-pointer self-start sm:self-auto"
+            className="text-xs font-bold text-[#006B50] dark:text-[#159B72] hover:underline cursor-pointer self-start sm:self-auto"
           >
             Clear Fields
           </button>
@@ -69,7 +69,7 @@ function IDFCTierEligibilityCalculator() {
             value={amb}
             onChange={(e) => setAmb(e.target.value)}
             placeholder="e.g. 100000"
-            className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-800 dark:text-white outline-none focus:border-[#2563EB]"
+            className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-800 dark:text-white outline-none focus:border-[#006B50]"
           />
         </div>
 
@@ -82,7 +82,7 @@ function IDFCTierEligibilityCalculator() {
             value={salary}
             onChange={(e) => setSalary(e.target.value)}
             placeholder="e.g. 100000"
-            className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-800 dark:text-white outline-none focus:border-[#2563EB]"
+            className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-800 dark:text-white outline-none focus:border-[#006B50]"
           />
         </div>
 
@@ -95,7 +95,7 @@ function IDFCTierEligibilityCalculator() {
             value={aum}
             onChange={(e) => setAum(e.target.value)}
             placeholder="e.g. 500000"
-            className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-800 dark:text-white outline-none focus:border-[#2563EB]"
+            className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-800 dark:text-white outline-none focus:border-[#006B50]"
           />
         </div>
 
@@ -108,7 +108,7 @@ function IDFCTierEligibilityCalculator() {
             value={orv}
             onChange={(e) => setOrv(e.target.value)}
             placeholder="e.g. 1000000"
-            className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-800 dark:text-white outline-none focus:border-[#2563EB]"
+            className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-800 dark:text-white outline-none focus:border-[#006B50]"
           />
         </div>
       </div>
@@ -143,8 +143,8 @@ function IDFCTierEligibilityCalculator() {
       )}
 
       {/* Disclaimers */}
-      <div className="p-3.5 rounded-xl bg-blue-50/60 dark:bg-slate-900/40 border border-blue-100 dark:border-slate-800 flex items-start gap-2.5 text-[11px] text-slate-500 dark:text-slate-400 font-normal">
-        <Info className="w-4 h-4 text-[#2563EB] shrink-0 mt-0.5" />
+      <div className="p-3.5 rounded-xl bg-[#FAF9F4]/60 dark:bg-slate-900/40 border border-[#DCE9E1] dark:border-slate-800 flex items-start gap-2.5 text-[11px] text-slate-500 dark:text-slate-400 font-normal">
+        <Info className="w-4 h-4 text-[#006B50] shrink-0 mt-0.5" />
         <span>
           * Estimated eligibility based on provided criteria. Information shown is for comparison and informational purposes only. Savings Account and Debit Card features, fees, charges, eligibility, limits, and benefits may change. Please verify the latest details with IDFC FIRST Bank before making a decision.
         </span>

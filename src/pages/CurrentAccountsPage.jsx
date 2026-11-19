@@ -250,16 +250,16 @@ function CurrentAccountsPage({ onSelectDebitCard }) {
   return (
     <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 space-y-8 select-none text-left">
       {/* ── 1. HERO BANNER ── */}
-      <div className="p-8 sm:p-10 rounded-[32px] bg-gradient-to-br from-[#0B3D91] via-[#1E3A8A] to-[#2563EB] text-white shadow-xl relative overflow-hidden">
+      <div className="p-8 sm:p-10 rounded-[32px] bg-gradient-to-br from-[#123C30] via-[#123C30] to-[#006B50] text-white shadow-xl relative overflow-hidden">
         <div className="relative z-10 max-w-3xl space-y-3">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md text-xs font-extrabold border border-white/20">
-            <Briefcase className="w-3.5 h-3.5 text-blue-200" />
+            <Briefcase className="w-3.5 h-3.5 text-emerald-100" />
             <span>{isHindi ? 'व्यावसायिक एवं कॉर्पोरेट बैंकिंग' : 'BUSINESS & COMMERCIAL BANKING'}</span>
           </div>
           <h1 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight">
             {isHindi ? 'चालू खाते (Current Accounts)' : 'Current Accounts Discovery'}
           </h1>
-          <p className="text-sm sm:text-base text-blue-100/90 font-normal leading-relaxed">
+          <p className="text-sm sm:text-base text-emerald-50/90 font-normal leading-relaxed">
             {isHindi
               ? 'व्यावसायिक चालू खातों, मासिक औसत शेष (MAB) नियमों, नकद जमा सीमाओं और संबंधित व्यावसायिक डेबिट कार्डों की तुलना करें।'
               : 'Compare business accounts, Monthly Average Balance (MAB) rules, free cash deposit thresholds, multi-user net banking, and verified business debit cards.'}
@@ -267,7 +267,7 @@ function CurrentAccountsPage({ onSelectDebitCard }) {
 
           <div className="flex flex-wrap gap-4 pt-4 text-xs font-bold">
             <div className="flex items-center gap-2 bg-black/20 px-3.5 py-2 rounded-xl border border-white/10">
-              <Building2 className="w-4 h-4 text-blue-300" />
+              <Building2 className="w-4 h-4 text-emerald-200" />
               <span>
                 {isHindi
                   ? `${accounts.length} व्यावसायिक खाते सूचीबद्ध`
@@ -305,7 +305,7 @@ function CurrentAccountsPage({ onSelectDebitCard }) {
             onClick={() => setIsMobileFilterOpen(true)}
             className="sm:hidden px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-bold flex items-center gap-1.5 cursor-pointer"
           >
-            <Filter className="w-3.5 h-3.5 text-[#2563EB]" />
+            <Filter className="w-3.5 h-3.5 text-[#006B50]" />
             <span>
               {isHindi ? 'फ़िल्टर' : 'Filters'} {activeFilterCount > 0 ? `(${activeFilterCount})` : ''}
             </span>
@@ -344,7 +344,7 @@ function CurrentAccountsPage({ onSelectDebitCard }) {
           <div className="p-6 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-6">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
               <span className="text-xs font-black uppercase tracking-wider text-[#1F2937] dark:text-white flex items-center gap-1.5">
-                <Filter className="w-3.5 h-3.5 text-[#2563EB]" /> Filters
+                <Filter className="w-3.5 h-3.5 text-[#006B50]" /> Filters
               </span>
               {activeFilterCount > 0 && (
                 <button
@@ -372,13 +372,13 @@ function CurrentAccountsPage({ onSelectDebitCard }) {
                           prev.includes(bank) ? prev.filter(b => b !== bank) : [...prev, bank]
                         );
                       }}
-                      className="flex items-center gap-2 text-xs font-medium text-slate-700 dark:text-slate-300 hover:text-[#2563EB] cursor-pointer py-0.5"
+                      className="flex items-center gap-2 text-xs font-medium text-slate-700 dark:text-slate-300 hover:text-[#006B50] cursor-pointer py-0.5"
                     >
                       <input
                         type="checkbox"
                         checked={isChecked}
                         readOnly
-                        className="rounded text-[#2563EB] focus:ring-0 cursor-pointer"
+                        className="rounded text-[#006B50] focus:ring-0 cursor-pointer"
                       />
                       <span>{bank}</span>
                     </label>
@@ -403,13 +403,13 @@ function CurrentAccountsPage({ onSelectDebitCard }) {
                           prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]
                         );
                       }}
-                      className="flex items-center gap-2 text-xs font-medium text-slate-700 dark:text-slate-300 hover:text-[#2563EB] cursor-pointer py-0.5"
+                      className="flex items-center gap-2 text-xs font-medium text-slate-700 dark:text-slate-300 hover:text-[#006B50] cursor-pointer py-0.5"
                     >
                       <input
                         type="checkbox"
                         checked={isChecked}
                         readOnly
-                        className="rounded text-[#2563EB] focus:ring-0 cursor-pointer"
+                        className="rounded text-[#006B50] focus:ring-0 cursor-pointer"
                       />
                       <span>{type}</span>
                     </label>
@@ -428,14 +428,14 @@ function CurrentAccountsPage({ onSelectDebitCard }) {
                   <label
                     key={opt.id}
                     onClick={() => setSelectedBalanceRange(opt.id)}
-                    className="flex items-center gap-2 text-xs font-medium text-slate-700 dark:text-slate-300 hover:text-[#2563EB] cursor-pointer py-0.5"
+                    className="flex items-center gap-2 text-xs font-medium text-slate-700 dark:text-slate-300 hover:text-[#006B50] cursor-pointer py-0.5"
                   >
                     <input
                       type="radio"
                       name="balanceRangeDesktop"
                       checked={selectedBalanceRange === opt.id}
                       readOnly
-                      className="text-[#2563EB] focus:ring-0 cursor-pointer"
+                      className="text-[#006B50] focus:ring-0 cursor-pointer"
                     />
                     <span>{opt.label}</span>
                   </label>
@@ -453,7 +453,7 @@ function CurrentAccountsPage({ onSelectDebitCard }) {
                   type="checkbox"
                   checked={requireDebitCard}
                   readOnly
-                  className="rounded text-[#2563EB] focus:ring-0 cursor-pointer"
+                  className="rounded text-[#006B50] focus:ring-0 cursor-pointer"
                 />
                 <span>Includes Debit Card Linkage</span>
               </label>
@@ -476,7 +476,7 @@ function CurrentAccountsPage({ onSelectDebitCard }) {
               <p className="text-xs text-slate-500 max-w-sm mx-auto">Try adjusting or clearing your search filters to view available commercial banking options.</p>
               <button
                 onClick={handleResetFilters}
-                className="px-5 py-2.5 rounded-xl bg-[#2563EB] text-white font-bold text-xs"
+                className="px-5 py-2.5 rounded-xl bg-[#006B50] text-white font-bold text-xs"
               >
                 Reset All Filters
               </button>
@@ -518,7 +518,7 @@ function CurrentAccountsPage({ onSelectDebitCard }) {
             className="fixed bottom-6 left-4 right-4 sm:left-auto sm:right-6 z-50 p-4 rounded-2xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200 dark:border-slate-800 shadow-2xl flex items-center gap-4"
           >
             <div className="flex items-center gap-2">
-              <Scale className="w-5 h-5 text-[#2563EB]" />
+              <Scale className="w-5 h-5 text-[#006B50]" />
               <span className="text-xs font-black text-slate-800 dark:text-white">
                 Comparing ({compareQueue.length}/3)
               </span>
@@ -535,7 +535,7 @@ function CurrentAccountsPage({ onSelectDebitCard }) {
 
             <button
               onClick={() => navigate('/compare-current', { state: { queue: compareQueue } })}
-              className="px-4 py-2 rounded-xl bg-[#2563EB] text-white font-extrabold text-xs shadow-md hover:bg-blue-700 transition-colors flex items-center gap-1 cursor-pointer"
+              className="px-4 py-2 rounded-xl bg-[#006B50] text-white font-extrabold text-xs shadow-md hover:bg-[#064E3B] transition-colors flex items-center gap-1 cursor-pointer"
             >
               <span>Compare Now</span>
               <ArrowRight className="w-3.5 h-3.5" />

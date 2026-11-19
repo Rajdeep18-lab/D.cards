@@ -49,11 +49,11 @@ export default function ProfileOverview({
       icon: CreditCard,
       color: 'blue',
       section: 'saved-cards',
-      gradient: 'from-[#2563EB]/15 to-[#2563EB]/5',
-      border: 'border-[#2563EB]/25',
-      iconBg: 'bg-[#2563EB]/15',
-      iconColor: 'text-[#2563EB]',
-      valueColor: 'text-[#2563EB] dark:text-[#60A5FA]',
+      gradient: 'from-[#006B50]/15 to-[#006B50]/5',
+      border: 'border-[#006B50]/25',
+      iconBg: 'bg-[#006B50]/15',
+      iconColor: 'text-[#006B50]',
+      valueColor: 'text-[#006B50] dark:text-[#159B72]',
     },
     {
       label: 'Comparisons',
@@ -177,7 +177,7 @@ export default function ProfileOverview({
             </div>
           </div>
           <div className="text-center px-4">
-            <div className="text-xl font-black text-[#2563EB] dark:text-[#60A5FA]">
+            <div className="text-xl font-black text-[#006B50] dark:text-[#159B72]">
               {savedDebitCardsCount}
             </div>
             <div className="text-[10.5px] text-[#6B7280] dark:text-slate-400 mt-0.5 font-medium">
@@ -188,7 +188,7 @@ export default function ProfileOverview({
       </div>
 
       {totalSavedCount === 0 && comparisonsCount === 0 && recentlyViewedCount === 0 && (
-        <div className="p-6 rounded-2xl bg-gradient-to-r from-[#2563EB]/8 to-transparent border border-[#2563EB]/20 text-center space-y-2">
+        <div className="p-6 rounded-2xl bg-gradient-to-r from-[#006B50]/8 to-transparent border border-[#006B50]/20 text-center space-y-2">
           <p className="text-sm font-bold text-[#1F2937] dark:text-white">
             Your profile dashboard is ready.
           </p>

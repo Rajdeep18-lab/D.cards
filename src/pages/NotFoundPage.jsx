@@ -17,7 +17,7 @@ export default function NotFoundPage() {
   });
 
   return (
-    <main className="min-h-[75vh] flex items-center justify-center px-4 py-16 sm:py-24 bg-[#F8FAFC] dark:bg-[#0B1120] text-[#0F172A] dark:text-white transition-colors">
+    <main className="min-h-[75vh] flex items-center justify-center px-4 py-16 sm:py-24 bg-[#FAF9F4] dark:bg-[#0B1120] text-[#0F172A] dark:text-white transition-colors">
       <div className="max-w-2xl w-full text-center">
         {/* Animated 404 badge */}
         <motion.div
@@ -27,7 +27,7 @@ export default function NotFoundPage() {
           className="inline-flex items-center justify-center mb-6"
         >
           <div className="relative">
-            <span className="text-8xl sm:text-9xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-[#2563EB] via-[#3B82F6] to-indigo-600 select-none">
+            <span className="text-8xl sm:text-9xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-[#006B50] via-[#159B72] to-[#064E3B] select-none">
               404
             </span>
             <div className="absolute -top-2 -right-3 w-8 h-8 rounded-full bg-rose-500/10 border border-rose-500/30 flex items-center justify-center">
@@ -62,7 +62,7 @@ export default function NotFoundPage() {
         >
           <Link
             to="/"
-            className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:opacity-95 text-white font-bold text-sm shadow-md shadow-blue-500/20 active:scale-95 transition-all cursor-pointer"
+            className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-[#006B50] to-[#159B72] hover:opacity-95 text-white font-bold text-sm shadow-md shadow-emerald-900/20 active:scale-95 transition-all cursor-pointer"
           >
             <Home className="w-4 h-4" />
             <span>{isHindi ? 'होमपेज पर जाएं' : 'Back to Homepage'}</span>
@@ -91,9 +91,9 @@ export default function NotFoundPage() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <Link
               to="/cards"
-              className="flex items-center gap-3 p-3 rounded-xl bg-white dark:bg-slate-800/60 border border-gray-200 dark:border-slate-700/70 hover:border-[#2563EB] dark:hover:border-[#60A5FA] transition-all group"
+              className="flex items-center gap-3 p-3 rounded-xl bg-white dark:bg-slate-800/60 border border-gray-200 dark:border-slate-700/70 hover:border-[#006B50] dark:hover:border-[#159B72] transition-all group"
             >
-              <div className="w-9 h-9 rounded-lg bg-blue-50 dark:bg-blue-950/50 flex items-center justify-center text-[#2563EB] dark:text-[#60A5FA] group-hover:scale-105 transition-transform">
+              <div className="w-9 h-9 rounded-lg bg-[#FAF9F4] dark:bg-[#064E3B]/50 flex items-center justify-center text-[#006B50] dark:text-[#159B72] group-hover:scale-105 transition-transform">
                 <CreditCard className="w-4 h-4" />
               </div>
               <div className="min-w-0">
@@ -108,7 +108,7 @@ export default function NotFoundPage() {
 
             <Link
               to="/savings-accounts"
-              className="flex items-center gap-3 p-3 rounded-xl bg-white dark:bg-slate-800/60 border border-gray-200 dark:border-slate-700/70 hover:border-[#2563EB] dark:hover:border-[#60A5FA] transition-all group"
+              className="flex items-center gap-3 p-3 rounded-xl bg-white dark:bg-slate-800/60 border border-gray-200 dark:border-slate-700/70 hover:border-[#006B50] dark:hover:border-[#159B72] transition-all group"
             >
               <div className="w-9 h-9 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 flex items-center justify-center text-emerald-600 dark:text-emerald-400 group-hover:scale-105 transition-transform">
                 <Building2 className="w-4 h-4" />
@@ -125,7 +125,7 @@ export default function NotFoundPage() {
 
             <Link
               to="/find-my-bank"
-              className="flex items-center gap-3 p-3 rounded-xl bg-white dark:bg-slate-800/60 border border-gray-200 dark:border-slate-700/70 hover:border-[#2563EB] dark:hover:border-[#60A5FA] transition-all group"
+              className="flex items-center gap-3 p-3 rounded-xl bg-white dark:bg-slate-800/60 border border-gray-200 dark:border-slate-700/70 hover:border-[#006B50] dark:hover:border-[#159B72] transition-all group"
             >
               <div className="w-9 h-9 rounded-lg bg-amber-50 dark:bg-amber-950/50 flex items-center justify-center text-amber-600 dark:text-amber-400 group-hover:scale-105 transition-transform">
                 <Compass className="w-4 h-4" />

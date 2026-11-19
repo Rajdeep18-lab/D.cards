@@ -8,10 +8,10 @@ import { useLanguage } from '../context/LanguageContext';
  * ComparisonDock (Card Selection Panel)
  * 
  * Redesigned for D.CARD Editorial Luxury:
- * - Warm Cream & Soft Ivory background (#FAF8F5 / #F5F3EC)
- * - Deep Forest Green typography (#14291F)
- * - Rich Emerald Green accents and CTA (#0E5C3E)
- * - Subtle Sage borders (#E0E6DC)
+ * - Warm Cream & Soft Ivory background (#FAF9F4 / #F5F3EC)
+ * - Deep Forest Green typography (#123C30)
+ * - Rich Emerald Green accents and CTA (#006B50)
+ * - Subtle Sage borders (#DCE9E1)
  * - Compact, sleek layout with ZERO awkward whitespace
  * - Responsive single-line flow on desktop and neat multi-tier on mobile
  */
@@ -73,19 +73,19 @@ function ComparisonDock({ compareQueue = [], onRemove, onCompareNow, onClear, on
         }}
         className="fixed inset-x-2 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 z-[100] w-auto select-none box-border pointer-events-auto"
       >
-        <div className="relative rounded-2xl sm:rounded-3xl p-3 sm:p-3.5 border border-[#E0E6DC] bg-[#FAF8F5]/98 backdrop-blur-xl shadow-[0_16px_40px_rgba(20,41,31,0.12)] text-[#14291F] w-full overflow-hidden">
+        <div className="relative rounded-2xl sm:rounded-3xl p-3 sm:p-3.5 border border-[#DCE9E1] bg-[#FAF9F4]/98 backdrop-blur-xl shadow-[0_16px_40px_rgba(20,41,31,0.12)] text-[#123C30] w-full overflow-hidden">
           
           {/* DESKTOP LAYOUT (Single Row, sleek and tight) */}
           <div className="hidden md:flex items-center justify-between gap-3">
             {/* Left Badges */}
             <div className="flex items-center gap-2 flex-shrink-0">
-              <div className="px-3 py-1.5 rounded-full text-xs font-bold text-white bg-[#0E5C3E] shadow-sm flex items-center gap-1.5 flex-shrink-0">
+              <div className="px-3 py-1.5 rounded-full text-xs font-bold text-white bg-[#006B50] shadow-sm flex items-center gap-1.5 flex-shrink-0">
                 <Scale className="w-3.5 h-3.5 text-emerald-200" />
                 <span>{isHindi ? `${queueList.length} / 3 चयनित` : `${queueList.length} / 3 QUEUED`}</span>
               </div>
 
               {potentialSavings && (
-                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#EEF4EE] text-[#0E5C3E] text-xs font-semibold border border-[#C5D7C2] flex-shrink-0">
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#EEF4EE] text-[#006B50] text-xs font-semibold border border-[#DCE9E1] flex-shrink-0">
                   <span>💰</span>
                   <span>{isHindi ? `अनुमानित बचत: ${potentialSavings}` : `EST. SAVINGS: ${potentialSavings}`}</span>
                 </span>
@@ -96,13 +96,13 @@ function ComparisonDock({ compareQueue = [], onRemove, onCompareNow, onClear, on
             <div className="flex items-center gap-2 overflow-x-auto max-w-[380px] custom-scrollbar py-0.5 px-1">
               {queueList.map((card, i) => (
                 <div key={card.id || i} className="relative group flex-shrink-0">
-                  <div className="rounded-xl px-2.5 py-1.5 text-xs font-semibold flex items-center gap-1.5 bg-[#F5F3EC] border border-[#E0E6DC] text-[#14291F] shadow-xs max-w-[170px] hover:border-[#0E5C3E]/50 transition-colors">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#0E5C3E] flex-shrink-0" />
+                  <div className="rounded-xl px-2.5 py-1.5 text-xs font-semibold flex items-center gap-1.5 bg-[#F5F3EC] border border-[#DCE9E1] text-[#123C30] shadow-xs max-w-[170px] hover:border-[#006B50]/50 transition-colors">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#006B50] flex-shrink-0" />
                     <span className="truncate">{card.cardName || (isHindi ? "डेबिट कार्ड" : "Debit Card")}</span>
                   </div>
                   <button
                     onClick={() => onRemove && onRemove(card.id)}
-                    className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full flex items-center justify-center text-[10px] text-white bg-[#14291F] hover:bg-[#800020] border border-white shadow-xs cursor-pointer transition-transform hover:scale-110 active:scale-95"
+                    className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full flex items-center justify-center text-[10px] text-white bg-[#123C30] hover:bg-[#800020] border border-white shadow-xs cursor-pointer transition-transform hover:scale-110 active:scale-95"
                     title={isHindi ? "कार्ड हटाएं" : "Remove card"}
                     aria-label={isHindi ? "कार्ड हटाएं" : "Remove card"}
                   >
@@ -118,7 +118,7 @@ function ComparisonDock({ compareQueue = [], onRemove, onCompareNow, onClear, on
                 type="button"
                 onClick={onClear}
                 style={{ touchAction: 'manipulation' }}
-                className="text-xs font-bold text-[#445B4D] hover:text-[#14291F] transition-colors cursor-pointer uppercase tracking-wider px-2 py-1.5"
+                className="text-xs font-bold text-[#45534D] hover:text-[#123C30] transition-colors cursor-pointer uppercase tracking-wider px-2 py-1.5"
               >
                 {isHindi ? "सब हटाएं" : "CLEAR ALL"}
               </button>
@@ -130,8 +130,8 @@ function ComparisonDock({ compareQueue = [], onRemove, onCompareNow, onClear, on
                 style={{ touchAction: 'manipulation' }}
                 className={`px-5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm cursor-pointer flex items-center gap-1.5 active:scale-95 ${
                   queueList.length >= 2
-                    ? 'bg-[#0E5C3E] hover:bg-[#0A4730] text-white shadow-emerald-950/20 hover:shadow-md'
-                    : 'bg-[#EEF4EE] text-[#445B4D]/50 cursor-not-allowed shadow-none border border-[#E0E6DC]'
+                    ? 'bg-[#006B50] hover:bg-[#064E3B] text-white shadow-emerald-950/20 hover:shadow-md'
+                    : 'bg-[#EEF4EE] text-[#45534D]/50 cursor-not-allowed shadow-none border border-[#DCE9E1]'
                 }`}
               >
                 <span>{isHindi ? "तुलना करें" : "Compare Now"}</span>
@@ -141,7 +141,7 @@ function ComparisonDock({ compareQueue = [], onRemove, onCompareNow, onClear, on
               <button
                 onClick={onClear}
                 aria-label={isHindi ? "पैनल बंद करें" : "Close comparison panel"}
-                className="w-7 h-7 rounded-full bg-[#EEF4EE] hover:bg-[#E0E6DC] text-[#445B4D] hover:text-[#14291F] flex items-center justify-center transition-all cursor-pointer flex-shrink-0 border border-[#E0E6DC] active:scale-90 ml-1"
+                className="w-7 h-7 rounded-full bg-[#EEF4EE] hover:bg-[#DCE9E1] text-[#45534D] hover:text-[#123C30] flex items-center justify-center transition-all cursor-pointer flex-shrink-0 border border-[#DCE9E1] active:scale-90 ml-1"
                 title={isHindi ? "पैनल बंद करें" : "Close panel"}
               >
                 <X className="w-3.5 h-3.5" />
@@ -154,13 +154,13 @@ function ComparisonDock({ compareQueue = [], onRemove, onCompareNow, onClear, on
             {/* Top row: Badges + Close */}
             <div className="flex items-center justify-between gap-1.5">
               <div className="flex items-center gap-1.5 min-w-0 flex-wrap">
-                <div className="px-2.5 py-1 rounded-full text-[11px] font-bold text-white bg-[#0E5C3E] shadow-sm flex items-center gap-1">
+                <div className="px-2.5 py-1 rounded-full text-[11px] font-bold text-white bg-[#006B50] shadow-sm flex items-center gap-1">
                   <Scale className="w-3 h-3 text-emerald-200" />
                   <span>{queueList.length}/3</span>
                 </div>
 
                 {potentialSavings && (
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#EEF4EE] text-[#0E5C3E] text-[10px] font-semibold border border-[#C5D7C2]">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#EEF4EE] text-[#006B50] text-[10px] font-semibold border border-[#DCE9E1]">
                     <span>💰</span>
                     <span>{potentialSavings}</span>
                   </span>
@@ -170,7 +170,7 @@ function ComparisonDock({ compareQueue = [], onRemove, onCompareNow, onClear, on
               <button
                 onClick={onClear}
                 aria-label={isHindi ? "पैनल बंद करें" : "Close comparison panel"}
-                className="w-6 h-6 rounded-full bg-[#EEF4EE] hover:bg-[#E0E6DC] text-[#445B4D] flex items-center justify-center transition-all cursor-pointer flex-shrink-0 border border-[#E0E6DC]"
+                className="w-6 h-6 rounded-full bg-[#EEF4EE] hover:bg-[#DCE9E1] text-[#45534D] flex items-center justify-center transition-all cursor-pointer flex-shrink-0 border border-[#DCE9E1]"
               >
                 <X className="w-3 h-3" />
               </button>
@@ -180,13 +180,13 @@ function ComparisonDock({ compareQueue = [], onRemove, onCompareNow, onClear, on
             <div className="flex items-center gap-1.5 overflow-x-auto py-1 custom-scrollbar">
               {queueList.map((card, i) => (
                 <div key={card.id || i} className="relative group flex-shrink-0">
-                  <div className="rounded-lg px-2 py-1 text-[11px] font-medium flex items-center gap-1 bg-[#F5F3EC] border border-[#E0E6DC] text-[#14291F] max-w-[130px]">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#0E5C3E] flex-shrink-0" />
+                  <div className="rounded-lg px-2 py-1 text-[11px] font-medium flex items-center gap-1 bg-[#F5F3EC] border border-[#DCE9E1] text-[#123C30] max-w-[130px]">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#006B50] flex-shrink-0" />
                     <span className="truncate">{card.cardName || "Card"}</span>
                   </div>
                   <button
                     onClick={() => onRemove && onRemove(card.id)}
-                    className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full flex items-center justify-center text-[8px] text-white bg-[#14291F] border border-white"
+                    className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full flex items-center justify-center text-[8px] text-white bg-[#123C30] border border-white"
                   >
                     <X className="w-2 h-2" />
                   </button>
@@ -195,11 +195,11 @@ function ComparisonDock({ compareQueue = [], onRemove, onCompareNow, onClear, on
             </div>
 
             {/* Bottom Actions Row */}
-            <div className="flex items-center justify-between gap-2 pt-1 border-t border-[#E0E6DC]">
+            <div className="flex items-center justify-between gap-2 pt-1 border-t border-[#DCE9E1]">
               <button
                 type="button"
                 onClick={onClear}
-                className="text-[11px] font-bold text-[#445B4D] hover:text-[#14291F] uppercase tracking-wider px-1 py-1"
+                className="text-[11px] font-bold text-[#45534D] hover:text-[#123C30] uppercase tracking-wider px-1 py-1"
               >
                 {isHindi ? "हटाएं" : "Clear"}
               </button>
@@ -210,8 +210,8 @@ function ComparisonDock({ compareQueue = [], onRemove, onCompareNow, onClear, on
                 disabled={queueList.length < 2}
                 className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-1.5 ${
                   queueList.length >= 2
-                    ? 'bg-[#0E5C3E] text-white'
-                    : 'bg-[#EEF4EE] text-[#445B4D]/50 cursor-not-allowed border border-[#E0E6DC]'
+                    ? 'bg-[#006B50] text-white'
+                    : 'bg-[#EEF4EE] text-[#45534D]/50 cursor-not-allowed border border-[#DCE9E1]'
                 }`}
               >
                 <span>{isHindi ? "तुलना करें" : "Compare Now"}</span>

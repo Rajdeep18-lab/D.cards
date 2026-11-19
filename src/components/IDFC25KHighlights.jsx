@@ -4,12 +4,12 @@ import { Sparkles, CheckCircle2, ShieldCheck, Zap, HeartHandshake } from 'lucide
 
 function IDFC25KHighlights() {
   return (
-    <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-white via-slate-50 to-blue-50/50 dark:from-[#1E293B] dark:via-[#1E293B] dark:to-slate-900 border border-slate-200 dark:border-slate-800 shadow-soft space-y-6 text-left select-none">
+    <div className="p-6 sm:p-8 rounded-3xl bg-white border border-[#DCE9E1] shadow-soft space-y-6 text-left select-none">
       
       {/* Header */}
       <div className="space-y-1">
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] text-xs font-bold uppercase tracking-wider border border-[#2563EB]/20">
-          <Sparkles className="w-3.5 h-3.5 text-[#2563EB]" />
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#006B50]/10 text-[#006B50] dark:text-[#159B72] text-xs font-bold uppercase tracking-wider border border-[#006B50]/20">
+          <Sparkles className="w-3.5 h-3.5 text-[#006B50]" />
           ₹25K AMB SAVINGS FEATURE HIGHLIGHT
         </span>
         <h3 className="text-2xl font-extrabold text-slate-800 dark:text-white pt-1">
@@ -25,10 +25,10 @@ function IDFC25KHighlights() {
         {IDFC_7_AMAZING_BENEFITS.map((item) => (
           <div
             key={item.id}
-            className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs space-y-2 hover:border-[#2563EB]/40 transition-all flex flex-col justify-between"
+            className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs space-y-2 hover:border-[#006B50]/40 transition-all flex flex-col justify-between"
           >
             <div className="flex items-center justify-between">
-              <span className="w-7 h-7 rounded-xl bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] text-xs font-black flex items-center justify-center border border-[#2563EB]/20">
+              <span className="w-7 h-7 rounded-xl bg-[#006B50]/10 text-[#006B50] dark:text-[#159B72] text-xs font-black flex items-center justify-center border border-[#006B50]/20">
                 0{item.id}
               </span>
               <CheckCircle2 className="w-4 h-4 text-emerald-500" />

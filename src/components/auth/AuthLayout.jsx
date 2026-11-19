@@ -13,10 +13,10 @@ export default function AuthLayout({ children, mode = 'login' }) {
   const location = useLocation();
 
   return (
-    <div className="min-h-screen w-full flex bg-[#070b14] text-slate-100 selection:bg-blue-600 selection:text-white font-sans relative overflow-hidden">
+    <div className="min-h-screen w-full flex bg-[#FAF9F4] text-slate-100 selection:bg-[#006B50] selection:text-white font-sans relative overflow-hidden">
       {/* Background ambient lighting effects */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-3xl pointer-events-none -mr-48 -mt-48" />
-      <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-indigo-600/10 rounded-full blur-3xl pointer-events-none -mb-32" />
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#006B50]/10 rounded-full blur-3xl pointer-events-none -mr-48 -mt-48" />
+      <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-[#006B50]/10 rounded-full blur-3xl pointer-events-none -mb-32" />
 
       {/* Left Branding Panel (Desktop Only) */}
       <div className="hidden lg:flex lg:w-[48%] xl:w-[45%] flex-col relative z-10 border-r border-slate-800/80">
@@ -31,12 +31,12 @@ export default function AuthLayout({ children, mode = 'login' }) {
             to="/"
             className="flex items-center gap-2.5 group transition-transform duration-150 active:scale-95"
           >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-700 via-blue-600 to-indigo-500 flex items-center justify-center shadow-md shadow-blue-600/30 ring-1 ring-white/20">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#064E3B] via-[#064E3B] to-[#159B72] flex items-center justify-center shadow-md shadow-blue-600/30 ring-1 ring-white/20">
               <CreditCard className="w-5 h-5 text-white" />
             </div>
             <div>
-              <span className="text-xl font-black tracking-tight text-white group-hover:text-blue-400 transition-colors">
-                D.<span className="text-blue-500">CARD</span>
+              <span className="text-xl font-black tracking-tight text-white group-hover:text-[#159B72] transition-colors">
+                D.<span className="text-[#159B72]">CARD</span>
               </span>
               <span className="hidden sm:block text-[10px] font-semibold tracking-wider uppercase text-slate-400">
                 Banking & Card Intelligence
@@ -62,7 +62,7 @@ export default function AuthLayout({ children, mode = 'login' }) {
               state={location.state}
               className={`flex-1 py-2.5 text-center text-xs font-extrabold rounded-xl transition-all cursor-pointer ${
                 mode === 'login'
-                  ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                  ? 'bg-[#006B50] text-white shadow-md shadow-blue-600/30'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
@@ -73,7 +73,7 @@ export default function AuthLayout({ children, mode = 'login' }) {
               state={location.state}
               className={`flex-1 py-2.5 text-center text-xs font-extrabold rounded-xl transition-all cursor-pointer ${
                 mode === 'signup'
-                  ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                  ? 'bg-[#006B50] text-white shadow-md shadow-blue-600/30'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
@@ -96,11 +96,11 @@ export default function AuthLayout({ children, mode = 'login' }) {
         <div className="pt-6 border-t border-slate-800/60 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-slate-500 text-center sm:text-left">
           <span>&copy; {new Date().getFullYear()} D.CARD Financial Technologies. All rights reserved.</span>
           <div className="flex items-center gap-4 text-slate-400">
-            <Link to="/" className="hover:text-blue-400 transition-colors">Terms of Service</Link>
+            <Link to="/" className="hover:text-[#159B72] transition-colors">Terms of Service</Link>
             <span>&bull;</span>
-            <Link to="/" className="hover:text-blue-400 transition-colors">Privacy Policy</Link>
+            <Link to="/" className="hover:text-[#159B72] transition-colors">Privacy Policy</Link>
             <span>&bull;</span>
-            <Link to="/" className="hover:text-blue-400 transition-colors">Security</Link>
+            <Link to="/" className="hover:text-[#159B72] transition-colors">Security</Link>
           </div>
         </div>
       </div>

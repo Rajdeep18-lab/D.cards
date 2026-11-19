@@ -159,7 +159,7 @@ export default function FestivalCampaignSection() {
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           <div 
             className="absolute -top-28 -left-28 w-[420px] h-[420px] rounded-full blur-3xl opacity-35"
-            style={{ background: theme?.accentColor || '#3B82F6' }}
+            style={{ background: theme?.accentColor || '#159B72' }}
           />
           <div 
             className="absolute -bottom-28 -right-28 w-[420px] h-[420px] rounded-full blur-3xl opacity-30"

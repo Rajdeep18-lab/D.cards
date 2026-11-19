@@ -147,7 +147,7 @@ function SignupPage({ onSwitchToLogin, onSuccess }) {
           </p>
         </div>
         <div className="w-48 h-1.5 rounded-full bg-slate-200 dark:bg-slate-800 mx-auto overflow-hidden">
-          <div className="h-full bg-gradient-to-r from-[#2563EB] to-emerald-500 w-full animate-[marquee_1.8s_linear_infinite]" />
+          <div className="h-full bg-gradient-to-r from-[#006B50] to-emerald-500 w-full animate-[marquee_1.8s_linear_infinite]" />
         </div>
       </motion.div>
     );
@@ -172,7 +172,7 @@ function SignupPage({ onSwitchToLogin, onSuccess }) {
       </div>
 
       {/* ── 3-Step Progress Stepper ── */}
-      <div className="flex items-center justify-between gap-2 p-1 bg-[#F8FAFC] dark:bg-slate-900/60 rounded-2xl border border-[#E5E7EB] dark:border-slate-800">
+      <div className="flex items-center justify-between gap-2 p-1 bg-[#FAF9F4] dark:bg-slate-900/60 rounded-2xl border border-[#E5E7EB] dark:border-slate-800">
         {[
           { num: 1, title: 'Personal' },
           { num: 2, title: 'Profile' },
@@ -186,14 +186,14 @@ function SignupPage({ onSwitchToLogin, onSuccess }) {
             }}
             className={`flex-1 py-2 px-3 rounded-xl text-xs font-extrabold flex items-center justify-center gap-2 transition-all ${
               step === s.num
-                ? 'bg-[#2563EB] text-white shadow-md shadow-[#2563EB]/25'
+                ? 'bg-[#006B50] text-white shadow-md shadow-[#006B50]/25'
                 : step > s.num
                 ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
                 : 'text-[#6B7280] dark:text-slate-500'
             }`}
           >
             <span className={`w-5 h-5 rounded-full text-[10px] flex items-center justify-center font-black ${
-              step === s.num ? 'bg-white text-[#2563EB]' : step > s.num ? 'bg-emerald-500 text-white' : 'bg-slate-200 dark:bg-slate-800'
+              step === s.num ? 'bg-white text-[#006B50]' : step > s.num ? 'bg-emerald-500 text-white' : 'bg-slate-200 dark:bg-slate-800'
             }`}>
               {step > s.num ? '✓' : s.num}
             </span>
@@ -225,7 +225,7 @@ function SignupPage({ onSwitchToLogin, onSuccess }) {
                 required
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="w-full rounded-2xl border border-[#E5E7EB] dark:border-slate-800 bg-[#F8FAFC] dark:bg-slate-900/60 pl-11 pr-4 py-3 text-xs font-semibold text-[#1F2937] dark:text-white outline-none focus:border-[#2563EB] focus:ring-4 focus:ring-[#2563EB]/15 transition-all"
+                className="w-full rounded-2xl border border-[#E5E7EB] dark:border-slate-800 bg-[#FAF9F4] dark:bg-slate-900/60 pl-11 pr-4 py-3 text-xs font-semibold text-[#1F2937] dark:text-white outline-none focus:border-[#006B50] focus:ring-4 focus:ring-[#006B50]/15 transition-all"
                 placeholder="Rajdeep Singh"
               />
             </div>
@@ -242,7 +242,7 @@ function SignupPage({ onSwitchToLogin, onSuccess }) {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-2xl border border-[#E5E7EB] dark:border-slate-800 bg-[#F8FAFC] dark:bg-slate-900/60 pl-11 pr-4 py-3 text-xs font-semibold text-[#1F2937] dark:text-white outline-none focus:border-[#2563EB] focus:ring-4 focus:ring-[#2563EB]/15 transition-all"
+                className="w-full rounded-2xl border border-[#E5E7EB] dark:border-slate-800 bg-[#FAF9F4] dark:bg-slate-900/60 pl-11 pr-4 py-3 text-xs font-semibold text-[#1F2937] dark:text-white outline-none focus:border-[#006B50] focus:ring-4 focus:ring-[#006B50]/15 transition-all"
                 placeholder="rajdeep@example.com"
               />
             </div>
@@ -257,7 +257,7 @@ function SignupPage({ onSwitchToLogin, onSuccess }) {
                 aria-label="Country Code"
                 value={countryCode}
                 onChange={(e) => setCountryCode(e.target.value)}
-                className="rounded-2xl border border-[#E5E7EB] dark:border-slate-800 bg-[#F8FAFC] dark:bg-slate-900/60 px-3 py-3 text-xs font-bold text-[#1F2937] dark:text-white outline-none cursor-pointer"
+                className="rounded-2xl border border-[#E5E7EB] dark:border-slate-800 bg-[#FAF9F4] dark:bg-slate-900/60 px-3 py-3 text-xs font-bold text-[#1F2937] dark:text-white outline-none cursor-pointer"
               >
                 {COUNTRY_CODES.map((c) => (
                   <option key={c.code} value={c.code}>{c.flag} {c.code}</option>
@@ -269,7 +269,7 @@ function SignupPage({ onSwitchToLogin, onSuccess }) {
                   type="tel"
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
-                  className="w-full rounded-2xl border border-[#E5E7EB] dark:border-slate-800 bg-[#F8FAFC] dark:bg-slate-900/60 pl-11 pr-4 py-3 text-xs font-semibold text-[#1F2937] dark:text-white outline-none focus:border-[#2563EB] focus:ring-4 focus:ring-[#2563EB]/15 transition-all"
+                  className="w-full rounded-2xl border border-[#E5E7EB] dark:border-slate-800 bg-[#FAF9F4] dark:bg-slate-900/60 pl-11 pr-4 py-3 text-xs font-semibold text-[#1F2937] dark:text-white outline-none focus:border-[#006B50] focus:ring-4 focus:ring-[#006B50]/15 transition-all"
                   placeholder="9876543210"
                 />
               </div>
@@ -278,7 +278,7 @@ function SignupPage({ onSwitchToLogin, onSuccess }) {
 
           <button
             type="submit"
-            className="w-full mt-2 py-3.5 px-6 rounded-2xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-xs font-extrabold text-white uppercase tracking-wider shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full mt-2 py-3.5 px-6 rounded-2xl bg-gradient-to-r from-[#006B50] to-[#159B72] text-xs font-extrabold text-white uppercase tracking-wider shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
           >
             <span>Continue to Profile Setup</span>
             <ArrowRight className="w-4 h-4" />
@@ -301,7 +301,7 @@ function SignupPage({ onSwitchToLogin, onSuccess }) {
                     setCity(INDIAN_LOCATIONS[s][0]);
                   }
                 }}
-                className="w-full rounded-2xl border border-[#E5E7EB] dark:border-slate-800 bg-[#F8FAFC] dark:bg-slate-900/60 px-3.5 py-3 text-xs font-bold text-[#1F2937] dark:text-white outline-none cursor-pointer"
+                className="w-full rounded-2xl border border-[#E5E7EB] dark:border-slate-800 bg-[#FAF9F4] dark:bg-slate-900/60 px-3.5 py-3 text-xs font-bold text-[#1F2937] dark:text-white outline-none cursor-pointer"
               >
                 {Object.keys(INDIAN_LOCATIONS).map((s) => (
                   <option key={s} value={s}>{s}</option>
@@ -314,7 +314,7 @@ function SignupPage({ onSwitchToLogin, onSuccess }) {
               <select
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
-                className="w-full rounded-2xl border border-[#E5E7EB] dark:border-slate-800 bg-[#F8FAFC] dark:bg-slate-900/60 px-3.5 py-3 text-xs font-bold text-[#1F2937] dark:text-white outline-none cursor-pointer"
+                className="w-full rounded-2xl border border-[#E5E7EB] dark:border-slate-800 bg-[#FAF9F4] dark:bg-slate-900/60 px-3.5 py-3 text-xs font-bold text-[#1F2937] dark:text-white outline-none cursor-pointer"
               >
                 {availableCities.map((c) => (
                   <option key={c} value={c}>{c}</option>
@@ -330,7 +330,7 @@ function SignupPage({ onSwitchToLogin, onSuccess }) {
             <select
               value={userType}
               onChange={(e) => setUserType(e.target.value)}
-              className="w-full rounded-2xl border border-[#E5E7EB] dark:border-slate-800 bg-[#F8FAFC] dark:bg-slate-900/60 px-3.5 py-3 text-xs font-extrabold text-[#1F2937] dark:text-white outline-none cursor-pointer"
+              className="w-full rounded-2xl border border-[#E5E7EB] dark:border-slate-800 bg-[#FAF9F4] dark:bg-slate-900/60 px-3.5 py-3 text-xs font-extrabold text-[#1F2937] dark:text-white outline-none cursor-pointer"
             >
               <option value="Student">🎓 Student Cards</option>
               <option value="Working Professional">💼 Working Professional</option>
@@ -352,7 +352,7 @@ function SignupPage({ onSwitchToLogin, onSuccess }) {
             </button>
             <button
               type="submit"
-              className="flex-1 py-3.5 px-6 rounded-2xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-xs font-extrabold text-white uppercase tracking-wider shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
+              className="flex-1 py-3.5 px-6 rounded-2xl bg-gradient-to-r from-[#006B50] to-[#159B72] text-xs font-extrabold text-white uppercase tracking-wider shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               <span>Continue to Security</span>
               <ArrowRight className="w-4 h-4" />
@@ -375,13 +375,13 @@ function SignupPage({ onSwitchToLogin, onSuccess }) {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-2xl border border-[#E5E7EB] dark:border-slate-800 bg-[#F8FAFC] dark:bg-slate-900/60 pl-11 pr-11 py-3 text-xs font-semibold text-[#1F2937] dark:text-white outline-none focus:border-[#2563EB] focus:ring-4 focus:ring-[#2563EB]/15 transition-all"
+                className="w-full rounded-2xl border border-[#E5E7EB] dark:border-slate-800 bg-[#FAF9F4] dark:bg-slate-900/60 pl-11 pr-11 py-3 text-xs font-semibold text-[#1F2937] dark:text-white outline-none focus:border-[#006B50] focus:ring-4 focus:ring-[#006B50]/15 transition-all"
                 placeholder="••••••••"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#6B7280] hover:text-[#2563EB] p-1"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#6B7280] hover:text-[#006B50] p-1"
               >
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
@@ -414,7 +414,7 @@ function SignupPage({ onSwitchToLogin, onSuccess }) {
                 required
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full rounded-2xl border border-[#E5E7EB] dark:border-slate-800 bg-[#F8FAFC] dark:bg-slate-900/60 pl-11 pr-4 py-3 text-xs font-semibold text-[#1F2937] dark:text-white outline-none focus:border-[#2563EB] focus:ring-4 focus:ring-[#2563EB]/15 transition-all"
+                className="w-full rounded-2xl border border-[#E5E7EB] dark:border-slate-800 bg-[#FAF9F4] dark:bg-slate-900/60 pl-11 pr-4 py-3 text-xs font-semibold text-[#1F2937] dark:text-white outline-none focus:border-[#006B50] focus:ring-4 focus:ring-[#006B50]/15 transition-all"
                 placeholder="••••••••"
               />
             </div>
@@ -426,7 +426,7 @@ function SignupPage({ onSwitchToLogin, onSuccess }) {
                 type="checkbox"
                 checked={agreeTerms}
                 onChange={(e) => setAgreeTerms(e.target.checked)}
-                className="w-4 h-4 rounded border-gray-300 text-[#2563EB] focus:ring-[#2563EB] cursor-pointer"
+                className="w-4 h-4 rounded border-gray-300 text-[#006B50] focus:ring-[#006B50] cursor-pointer"
               />
               <span>I agree to D.CARD Terms & Conditions</span>
             </label>
@@ -436,7 +436,7 @@ function SignupPage({ onSwitchToLogin, onSuccess }) {
                 type="checkbox"
                 checked={agreePrivacy}
                 onChange={(e) => setAgreePrivacy(e.target.checked)}
-                className="w-4 h-4 rounded border-gray-300 text-[#2563EB] focus:ring-[#2563EB] cursor-pointer"
+                className="w-4 h-4 rounded border-gray-300 text-[#006B50] focus:ring-[#006B50] cursor-pointer"
               />
               <span>I agree to Privacy Policy</span>
             </label>
@@ -454,7 +454,7 @@ function SignupPage({ onSwitchToLogin, onSuccess }) {
             <button
               type="submit"
               disabled={loading || !agreeTerms || !agreePrivacy}
-              className="flex-1 py-3.5 px-6 rounded-2xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-xs font-extrabold text-white uppercase tracking-wider shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+              className="flex-1 py-3.5 px-6 rounded-2xl bg-gradient-to-r from-[#006B50] to-[#159B72] text-xs font-extrabold text-white uppercase tracking-wider shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
             >
               {loading ? (
                 <>
@@ -478,7 +478,7 @@ function SignupPage({ onSwitchToLogin, onSuccess }) {
         <button
           type="button"
           onClick={onSwitchToLogin}
-          className="text-[#2563EB] dark:text-[#60A5FA] font-bold hover:underline cursor-pointer"
+          className="text-[#006B50] dark:text-[#159B72] font-bold hover:underline cursor-pointer"
         >
           Sign In 🚀
         </button>

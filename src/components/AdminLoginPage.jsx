@@ -89,7 +89,7 @@ function AdminLoginPage({ isOpen, onClose, onSuccessAdminLogin }) {
                 <h2 className="text-xl font-bold text-[#1F2937] dark:text-white tracking-tight">
                   Admin Portal Login
                 </h2>
-                <p className="text-xs text-[#2563EB] dark:text-[#60A5FA] font-semibold tracking-wider uppercase">
+                <p className="text-xs text-[#006B50] dark:text-[#159B72] font-semibold tracking-wider uppercase">
                   Executive Access Controls
                 </p>
               </div>
@@ -115,7 +115,7 @@ function AdminLoginPage({ isOpen, onClose, onSuccessAdminLogin }) {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="ritikanshu072@gmail.com"
                 required
-                className="w-full rounded-xl bg-[#F8FAFC] dark:bg-slate-900 border border-[#E5E7EB] dark:border-slate-700 px-4 py-3 text-xs text-[#1F2937] dark:text-white placeholder-[#9CA3AF] outline-none focus:border-[#2563EB] transition-colors"
+                className="w-full rounded-xl bg-[#FAF9F4] dark:bg-slate-900 border border-[#E5E7EB] dark:border-slate-700 px-4 py-3 text-xs text-[#1F2937] dark:text-white placeholder-[#9CA3AF] outline-none focus:border-[#006B50] transition-colors"
               />
             </div>
 
@@ -130,7 +130,7 @@ function AdminLoginPage({ isOpen, onClose, onSuccessAdminLogin }) {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••••••"
                   required
-                  className="w-full rounded-xl bg-[#F8FAFC] dark:bg-slate-900 border border-[#E5E7EB] dark:border-slate-700 px-4 py-3 text-xs text-[#1F2937] dark:text-white placeholder-[#9CA3AF] outline-none focus:border-[#2563EB] transition-colors pr-10"
+                  className="w-full rounded-xl bg-[#FAF9F4] dark:bg-slate-900 border border-[#E5E7EB] dark:border-slate-700 px-4 py-3 text-xs text-[#1F2937] dark:text-white placeholder-[#9CA3AF] outline-none focus:border-[#006B50] transition-colors pr-10"
                 />
                 <button
                   type="button"
@@ -146,7 +146,7 @@ function AdminLoginPage({ isOpen, onClose, onSuccessAdminLogin }) {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:opacity-95 text-white font-semibold text-xs uppercase tracking-wider shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50 active:scale-98"
+                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#006B50] to-[#159B72] hover:opacity-95 text-white font-semibold text-xs uppercase tracking-wider shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50 active:scale-98"
               >
                 {loading ? (
                   <>

@@ -304,7 +304,7 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
                   <div className="space-y-2.5">
                     <div className="flex items-center justify-between">
                       <span className="text-[10.5px] font-extrabold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                        <Clock className="w-3.5 h-3.5 text-[#2563EB]" /> {t('search.recentSearches', "Recent Searches")}
+                        <Clock className="w-3.5 h-3.5 text-[#006B50]" /> {t('search.recentSearches', "Recent Searches")}
                       </span>
                       <button
                         onClick={clearAllRecentSearches}
@@ -319,7 +319,7 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
                         <div
                           key={idx}
                           onClick={() => handleSuggestionClick(item)}
-                          className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-[#EFF6FF] dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold border border-slate-200 dark:border-slate-700 transition-all cursor-pointer flex items-center gap-2 group"
+                          className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-[#FAF9F4] dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold border border-slate-200 dark:border-slate-700 transition-all cursor-pointer flex items-center gap-2 group"
                         >
                           <span>{item}</span>
                           <button
@@ -343,7 +343,7 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
                       <button
                         key={idx}
                         onClick={() => handleSuggestionClick(sug)}
-                        className="px-3 py-1.5 rounded-xl bg-[#EFF6FF] dark:bg-slate-800 text-[#2563EB] dark:text-[#60A5FA] font-bold border border-[#2563EB]/20 hover:bg-[#2563EB] hover:text-white transition-all cursor-pointer shadow-xs active:scale-95"
+                        className="px-3 py-1.5 rounded-xl bg-[#FAF9F4] dark:bg-slate-800 text-[#006B50] dark:text-[#159B72] font-bold border border-[#006B50]/20 hover:bg-[#006B50] hover:text-white transition-all cursor-pointer shadow-xs active:scale-95"
                       >
                         💡 {sug}
                       </button>
@@ -361,8 +361,8 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
                 {searchResults.banks.length > 0 && (
                   <div className="space-y-2">
                     <div className="flex items-center justify-between pb-1 border-b border-slate-100 dark:border-slate-800">
-                      <span className="text-[10.5px] font-black uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA] flex items-center gap-1.5">
-                        <Building2 className="w-4 h-4 text-[#2563EB]" /> {t('search.banks', 'Banks')} ({searchResults.banks.length})
+                      <span className="text-[10.5px] font-black uppercase tracking-wider text-[#006B50] dark:text-[#159B72] flex items-center gap-1.5">
+                        <Building2 className="w-4 h-4 text-[#006B50]" /> {t('search.banks', 'Banks')} ({searchResults.banks.length})
                       </span>
                     </div>
 
@@ -371,12 +371,12 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
                         <div
                           key={b.id}
                           onClick={() => handleItemSelect(() => navigate(`/banks/${b.id}`))}
-                          className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-[#2563EB] transition-all cursor-pointer flex items-center justify-between gap-3 group"
+                          className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-[#006B50] transition-all cursor-pointer flex items-center justify-between gap-3 group"
                         >
                           <div className="flex items-center gap-2.5">
                             <BankLogo bankName={b.name} size="sm" />
                             <div>
-                              <h4 className="font-extrabold text-slate-800 dark:text-white group-hover:text-[#2563EB] transition-colors leading-tight">
+                              <h4 className="font-extrabold text-slate-800 dark:text-white group-hover:text-[#006B50] transition-colors leading-tight">
                                 {b.name}
                               </h4>
                               <span className="text-[10px] text-slate-400 font-bold block">
@@ -395,8 +395,8 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
                 {searchResults.cards.length > 0 && (
                   <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
                     <div className="flex items-center justify-between pb-1 border-b border-slate-100 dark:border-slate-800">
-                      <span className="text-[10.5px] font-black uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA] flex items-center gap-1.5">
-                        <CreditCard className="w-4 h-4 text-[#2563EB]" /> {t('search.debitCards', 'Debit Cards')} ({searchResults.cards.length})
+                      <span className="text-[10.5px] font-black uppercase tracking-wider text-[#006B50] dark:text-[#159B72] flex items-center gap-1.5">
+                        <CreditCard className="w-4 h-4 text-[#006B50]" /> {t('search.debitCards', 'Debit Cards')} ({searchResults.cards.length})
                       </span>
                     </div>
 
@@ -408,18 +408,18 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
                             if (onViewDetails) onViewDetails(c);
                             else navigate('/cards');
                           })}
-                          className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-[#2563EB] transition-all cursor-pointer flex items-center justify-between gap-3 group"
+                          className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-[#006B50] transition-all cursor-pointer flex items-center justify-between gap-3 group"
                         >
                           <div className="flex items-center gap-3">
-                            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#0B3D91] to-[#2563EB] text-white flex items-center justify-center font-bold text-xs shrink-0">
+                            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#123C30] to-[#006B50] text-white flex items-center justify-center font-bold text-xs shrink-0">
                               <CreditCard className="w-4 h-4" />
                             </div>
                             <div>
                               <div className="flex items-center gap-2">
-                                <h4 className="font-extrabold text-slate-800 dark:text-white group-hover:text-[#2563EB] transition-colors leading-tight">
+                                <h4 className="font-extrabold text-slate-800 dark:text-white group-hover:text-[#006B50] transition-colors leading-tight">
                                   {c.cardName}
                                 </h4>
-                                <span className="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-[#2563EB]/10 text-[#2563EB]">
+                                <span className="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-[#006B50]/10 text-[#006B50]">
                                   {c.network || 'Visa'}
                                 </span>
                               </div>
@@ -429,7 +429,7 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
                             </div>
                           </div>
 
-                          <span className="text-[11px] font-extrabold text-[#2563EB] dark:text-[#60A5FA] group-hover:underline flex items-center gap-0.5 shrink-0">
+                          <span className="text-[11px] font-extrabold text-[#006B50] dark:text-[#159B72] group-hover:underline flex items-center gap-0.5 shrink-0">
                             {t('search.viewSpecs', 'Specs')} <ChevronRight className="w-3.5 h-3.5" />
                           </span>
                         </div>
@@ -498,8 +498,8 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
                 {searchResults.currentAccounts && searchResults.currentAccounts.length > 0 && (
                   <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
                     <div className="flex items-center justify-between pb-1 border-b border-slate-100 dark:border-slate-800">
-                      <span className="text-[10.5px] font-black uppercase tracking-wider text-blue-600 dark:text-blue-400 flex items-center gap-1.5">
-                        <Briefcase className="w-4 h-4 text-blue-500" /> {t('search.currentAccounts', 'Current Accounts')} ({searchResults.currentAccounts.length})
+                      <span className="text-[10.5px] font-black uppercase tracking-wider text-[#006B50] dark:text-[#159B72] flex items-center gap-1.5">
+                        <Briefcase className="w-4 h-4 text-[#159B72]" /> {t('search.currentAccounts', 'Current Accounts')} ({searchResults.currentAccounts.length})
                       </span>
                     </div>
 
@@ -517,18 +517,18 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
                                 handleItemSelect(() => navigate(`/current-accounts/${targetId}`));
                               }
                             }}
-                            className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-blue-500 transition-all cursor-pointer flex items-center justify-between gap-3 group"
+                            className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-[#159B72] transition-all cursor-pointer flex items-center justify-between gap-3 group"
                           >
                             <div className="flex items-center gap-3">
-                              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-xs shrink-0">
+                              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#006B50] to-[#064E3B] text-white flex items-center justify-center font-bold text-xs shrink-0">
                                 <Briefcase className="w-4 h-4" />
                               </div>
                               <div>
                                 <div className="flex items-center gap-2">
-                                  <h4 className="font-extrabold text-slate-800 dark:text-white group-hover:text-blue-600 transition-colors leading-tight">
+                                  <h4 className="font-extrabold text-slate-800 dark:text-white group-hover:text-[#006B50] transition-colors leading-tight">
                                     {c.accountName}
                                   </h4>
-                                  <span className="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-blue-500/10 text-blue-600 border border-blue-500/20">
+                                  <span className="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-[#159B72]/10 text-[#006B50] border border-[#159B72]/20">
                                     {t('nav.currentAccounts', 'Current Account')}
                                   </span>
                                 </div>
@@ -538,7 +538,7 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
                               </div>
                             </div>
 
-                            <span className="text-[11px] font-extrabold text-blue-600 dark:text-blue-400 group-hover:underline flex items-center gap-0.5 shrink-0">
+                            <span className="text-[11px] font-extrabold text-[#006B50] dark:text-[#159B72] group-hover:underline flex items-center gap-0.5 shrink-0">
                               {t('common.view', 'View')} <ChevronRight className="w-3.5 h-3.5" />
                             </span>
                           </div>
@@ -570,7 +570,7 @@ function GlobalSearchInput({ query = '', setQuery = () => {}, onSearchSubmit = n
                     <button
                       key={idx}
                       onClick={() => handleSuggestionClick(sug)}
-                      className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#EFF6FF] dark:bg-slate-800 text-[#2563EB] dark:text-[#60A5FA] border border-[#2563EB]/20 hover:bg-[#2563EB] hover:text-white transition-all cursor-pointer active:scale-95"
+                      className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#FAF9F4] dark:bg-slate-800 text-[#006B50] dark:text-[#159B72] border border-[#006B50]/20 hover:bg-[#006B50] hover:text-white transition-all cursor-pointer active:scale-95"
                     >
                       💡 {sug}
                     </button>

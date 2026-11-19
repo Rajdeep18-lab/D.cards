@@ -99,8 +99,8 @@ export const FESTIVE_CONFIG = {
       ctaLabel: "Explore Product Matrix",
       ctaLabelHi: "उत्पाद मैट्रिक्स देखें",
       ctaPath: "/compare",
-      accentColor: "from-blue-500/20 via-indigo-500/10 to-transparent",
-      borderColor: "border-blue-500/30"
+      accentColor: "from-[#006B50]/20 via-[#159B72]/10 to-transparent",
+      borderColor: "border-[#159B72]/30"
     }
   ],
 

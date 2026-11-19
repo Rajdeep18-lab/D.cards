@@ -26,8 +26,8 @@ const COLORS = {
   info: {
     bg: "linear-gradient(135deg, rgba(37,99,235,0.12), rgba(59,130,246,0.08))",
     border: "rgba(37,99,235,0.3)",
-    icon: "#2563EB",
-    text: "#1D4ED8",
+    icon: "#006B50",
+    text: "#064E3B",
   },
   warning: {
     bg: "linear-gradient(135deg, rgba(234,179,8,0.15), rgba(161,98,7,0.1))",

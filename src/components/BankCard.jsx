@@ -26,7 +26,7 @@ function BankCard({ bank, onSelect }) {
       whileHover={{ y: -8, rotate: 0.8 }}
       transition={{ type: "spring", stiffness: 350, damping: 25 }}
       onClick={() => onSelect && onSelect(bankName)}
-      className="group relative flex flex-col justify-between rounded-3xl p-6 glass-card-premium glass-card-hover border border-[#E5E7EB] dark:border-slate-800 hover:border-[#2563EB]/60 hover:shadow-[0_20px_50px_rgba(37,99,235,0.2)] transition-all duration-300 cursor-pointer text-left overflow-hidden select-none gpu-layer"
+      className="group relative flex flex-col justify-between rounded-3xl p-6 glass-card-premium glass-card-hover border border-[#E5E7EB] dark:border-slate-800 hover:border-[#006B50]/60 hover:shadow-[0_20px_50px_rgba(37,99,235,0.2)] transition-all duration-300 cursor-pointer text-left overflow-hidden select-none gpu-layer"
     >
       {/* Background Subtle Gradient Ambient Glow on Hover */}
       <div className={`absolute inset-0 bg-gradient-to-br ${brandTheme.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-300 pointer-events-none`} />
@@ -41,11 +41,11 @@ function BankCard({ bank, onSelect }) {
               className="w-12 h-12 shadow-md group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 shrink-0" 
             />
             <div>
-              <h3 className="text-base font-extrabold text-[#1F2937] dark:text-white group-hover:text-[#2563EB] dark:group-hover:text-[#60A5FA] transition-colors leading-snug">
+              <h3 className="text-base font-extrabold text-[#1F2937] dark:text-white group-hover:text-[#006B50] dark:group-hover:text-[#159B72] transition-colors leading-snug">
                 {bankName}
               </h3>
               <div className="flex items-center gap-2 text-[10.5px] font-bold text-[#6B7280] dark:text-slate-400 flex-wrap mt-0.5">
-                <span className="flex items-center gap-1 text-[#2563EB] dark:text-[#60A5FA]">
+                <span className="flex items-center gap-1 text-[#006B50] dark:text-[#159B72]">
                   <CreditCard className="w-3 h-3" /> {cardCount} Debit Cards
                 </span>
                 <span>•</span>
@@ -63,7 +63,7 @@ function BankCard({ bank, onSelect }) {
             {badges.map((b, idx) => (
               <span
                 key={idx}
-                className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${b.bg || 'bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] border-[#2563EB]/20'}`}
+                className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${b.bg || 'bg-[#006B50]/10 text-[#006B50] dark:text-[#159B72] border-[#006B50]/20'}`}
               >
                 <span>{b.icon}</span>
                 <span>{b.text}</span>
@@ -101,10 +101,10 @@ function BankCard({ bank, onSelect }) {
         </div>
 
         {/* Trust Rating Bar */}
-        <div className="p-3 rounded-2xl bg-[#F8FAFC] dark:bg-slate-900/90 border border-[#E5E7EB] dark:border-slate-800/80">
+        <div className="p-3 rounded-2xl bg-[#FAF9F4] dark:bg-slate-900/90 border border-[#E5E7EB] dark:border-slate-800/80">
           <div className="flex justify-between items-center text-xs font-bold text-[#1F2937] dark:text-slate-200 mb-1.5">
             <span className="flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#2563EB]" />
+              <ShieldCheck className="w-3.5 h-3.5 text-[#006B50]" />
               Trust Index
             </span>
             <span className={`${brandTheme.accentText} font-extrabold`}>
@@ -116,7 +116,7 @@ function BankCard({ bank, onSelect }) {
               initial={{ width: 0 }}
               animate={{ width: `${Math.min(100, Math.max(10, trustScore * 10))}%` }}
               transition={{ duration: 0.8, ease: "easeOut" }}
-              className={`h-full bg-gradient-to-r ${brandTheme.progressGradient || 'from-[#2563EB] to-[#60A5FA]'} rounded-full shadow-xs`} 
+              className={`h-full bg-gradient-to-r ${brandTheme.progressGradient || 'from-[#006B50] to-[#159B72]'} rounded-full shadow-xs`} 
             />
           </div>
         </div>

@@ -139,10 +139,10 @@ export default function AuditCycleSection() {
       aria-label="15-Day Audit Cycle"
       className="relative z-20 w-full select-none"
     >
-      <div className="relative rounded-3xl overflow-hidden bg-[#FAF8F5] border border-[#E0E6DC] shadow-[0_16px_40px_rgba(20,41,31,0.08)] p-4 sm:p-8 lg:p-10">
+      <div className="relative rounded-3xl overflow-hidden bg-[#FAF9F4] border border-[#DCE9E1] shadow-[0_16px_40px_rgba(20,41,31,0.08)] p-4 sm:p-8 lg:p-10">
         
         {/* Subtle Decorative Golden Gradient Top Trim */}
-        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#0E5C3E] via-[#10B981] to-[#0E5C3E]" />
+        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#006B50] via-[#159B72] to-[#006B50]" />
         
         {/* Ambient Warm Golden Corner Accents */}
         <div className="absolute -top-20 -right-20 w-56 h-56 sm:w-64 sm:h-64 rounded-full bg-amber-500/5 dark:bg-amber-400/5 blur-3xl pointer-events-none" />
@@ -151,8 +151,8 @@ export default function AuditCycleSection() {
         {/* ── Section Header ── */}
         <div className="text-center max-w-3xl mx-auto space-y-3 mb-8 sm:mb-10">
           <div className="flex flex-wrap items-center justify-center gap-2">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#EEF4EE] text-[#0E5C3E] text-xs font-bold tracking-widest uppercase rounded-full border border-[#C5D7C2]">
-              <RefreshCw className="w-3.5 h-3.5 text-[#0E5C3E] animate-[spin_10s_linear_infinite]" />
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#EEF4EE] text-[#006B50] text-xs font-bold tracking-widest uppercase rounded-full border border-[#DCE9E1]">
+              <RefreshCw className="w-3.5 h-3.5 text-[#006B50] animate-[spin_10s_linear_infinite]" />
               {isHindi ? (config.cycleLabelHi || 'आंतरिक डेटा समीक्षा चक्र') : (config.cycleLabel || 'Internal Information Audit Cycle')}
             </span>
 
@@ -164,11 +164,11 @@ export default function AuditCycleSection() {
             </span>
           </div>
 
-          <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-[#14291F] tracking-tight">
+          <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-[#123C30] tracking-tight">
             {isHindi ? (config.mainHeadingHi || '15-दिवसीय ऑडिट चक्र') : (config.mainHeading || '15-DAY AUDIT CYCLE')}
           </h2>
 
-          <p className="text-xs sm:text-sm text-[#445B4D] font-normal max-w-2xl mx-auto">
+          <p className="text-xs sm:text-sm text-[#45534D] font-normal max-w-2xl mx-auto">
             {isHindi 
               ? (config.supportingTextHi || 'आपकी बैंकिंग जानकारी नियमित सत्यापन की हकदार है।') 
               : (config.supportingText || 'Your banking information deserves regular verification.')}
@@ -192,8 +192,8 @@ export default function AuditCycleSection() {
                 <defs>
                   {/* Golden Gradient for Ring Arc */}
                   <linearGradient id="goldCycleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#0E5C3E" />
-                    <stop offset="50%" stopColor="#10B981" />
+                    <stop offset="0%" stopColor="#006B50" />
+                    <stop offset="50%" stopColor="#159B72" />
                     <stop offset="100%" stopColor="#34D399" />
                   </linearGradient>
 
@@ -236,7 +236,7 @@ export default function AuditCycleSection() {
                     key={seg.dayNum}
                     className={`absolute -translate-x-1/2 -translate-y-1/2 w-5 h-5 xs:w-6 xs:h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center text-[9px] xs:text-[10px] sm:text-[11px] font-black transition-all ${
                       seg.isCurrent
-                        ? 'bg-[#0E5C3E] text-white shadow-[0_0_12px_rgba(14,92,62,0.5)] ring-2 ring-[#10B981] scale-110 z-20 animate-pulse'
+                        ? 'bg-[#006B50] text-white shadow-[0_0_12px_rgba(14,92,62,0.5)] ring-2 ring-[#159B72] scale-110 z-20 animate-pulse'
                         : seg.isPastOrCurrent
                         ? 'bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/40 z-10'
                         : 'bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-600 border border-slate-200 dark:border-slate-700 z-0'

@@ -65,7 +65,7 @@ export default function FestivalHeroArtDirection({ cardType = 'debit' }) {
         <div 
           className="absolute -inset-1 rounded-3xl opacity-40 blur-md pointer-events-none z-0"
           style={{
-            background: 'linear-gradient(135deg, #E11D48, #0D9488, #F59E0B, #6366F1)'
+            background: 'linear-gradient(135deg, #E11D48, #0D9488, #F59E0B, #159B72)'
           }}
         />
         {cardType === 'debit' ? (
@@ -86,7 +86,7 @@ export default function FestivalHeroArtDirection({ cardType = 'debit' }) {
     return (
       <>
         {/* Frosted Snow Ridge along top edge */}
-        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-white/90 via-sky-100/90 to-white/90 rounded-t-3xl shadow-[0_2px_8px_rgba(255,255,255,0.7)] pointer-events-none z-20" />
+        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-white/90 via-emerald-50/90 to-white/90 rounded-t-3xl shadow-[0_2px_8px_rgba(255,255,255,0.7)] pointer-events-none z-20" />
         
         {/* Pine Sprig & Holly Berry Corner */}
         {cardType === 'debit' ? (

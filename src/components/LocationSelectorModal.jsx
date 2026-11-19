@@ -160,7 +160,7 @@ export default function LocationSelectorModal({ isOpen, onClose }) {
           <div className="px-5 sm:px-6 pt-5 pb-4 border-b border-gray-100 dark:border-slate-800/80 shrink-0">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-2xl bg-[#2563EB]/10 dark:bg-[#2563EB]/20 text-[#2563EB] dark:text-[#60A5FA] flex items-center justify-center shadow-xs">
+                <div className="w-9 h-9 rounded-2xl bg-[#006B50]/10 dark:bg-[#006B50]/20 text-[#006B50] dark:text-[#159B72] flex items-center justify-center shadow-xs">
                   <MapPin className="w-5 h-5" />
                 </div>
                 <div>
@@ -204,7 +204,7 @@ export default function LocationSelectorModal({ isOpen, onClose }) {
                   if (selectedStateFilter) setSelectedStateFilter('');
                 }}
                 placeholder={t('locationModal.searchPlaceholder', 'Search by city, alias, or state (e.g. Haridwar, Daltonganj, MP)...')}
-                className="w-full pl-10 pr-9 py-2.5 bg-gray-50 dark:bg-[#1E293B] border border-gray-200 dark:border-slate-700/80 rounded-2xl text-xs sm:text-sm font-medium text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#2563EB]/40 focus:border-[#2563EB] transition-all shadow-xs"
+                className="w-full pl-10 pr-9 py-2.5 bg-gray-50 dark:bg-[#1E293B] border border-gray-200 dark:border-slate-700/80 rounded-2xl text-xs sm:text-sm font-medium text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#006B50]/40 focus:border-[#006B50] transition-all shadow-xs"
               />
               {searchQuery && (
                 <button
@@ -240,7 +240,7 @@ export default function LocationSelectorModal({ isOpen, onClose }) {
                     <button
                       type="button"
                       onClick={() => handleSelect(ALL_INDIA_LOCATION)}
-                      className="mt-3 px-4 py-2 rounded-xl bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] font-bold text-xs hover:bg-[#2563EB]/20 transition-all cursor-pointer inline-flex items-center gap-1.5"
+                      className="mt-3 px-4 py-2 rounded-xl bg-[#006B50]/10 text-[#006B50] dark:text-[#159B72] font-bold text-xs hover:bg-[#006B50]/20 transition-all cursor-pointer inline-flex items-center gap-1.5"
                     >
                       <Globe className="w-3.5 h-3.5" />
                       <span>{t('locationModal.browseAllIndiaInstead', 'Browse All India Instead')}</span>
@@ -261,18 +261,18 @@ export default function LocationSelectorModal({ isOpen, onClose }) {
                           onClick={() => handleSelect(loc)}
                           className={`w-full text-left p-3 rounded-2xl border transition-all flex items-center justify-between gap-2.5 cursor-pointer ${
                             isSelected
-                              ? 'bg-[#EFF6FF] dark:bg-[#2563EB]/15 border-[#2563EB] text-[#2563EB] dark:text-[#60A5FA] shadow-xs ring-1 ring-[#2563EB]/40'
+                              ? 'bg-[#FAF9F4] dark:bg-[#006B50]/15 border-[#006B50] text-[#006B50] dark:text-[#159B72] shadow-xs ring-1 ring-[#006B50]/40'
                               : isHighlighted
-                                ? 'bg-blue-50/80 dark:bg-slate-800 border-[#2563EB]/70 ring-2 ring-[#2563EB]/30'
-                                : 'bg-white dark:bg-[#1E293B]/70 border-gray-200 dark:border-slate-800 hover:border-[#2563EB]/50 hover:bg-gray-50 dark:hover:bg-slate-800'
+                                ? 'bg-[#FAF9F4]/80 dark:bg-slate-800 border-[#006B50]/70 ring-2 ring-[#006B50]/30'
+                                : 'bg-white dark:bg-[#1E293B]/70 border-gray-200 dark:border-slate-800 hover:border-[#006B50]/50 hover:bg-gray-50 dark:hover:bg-slate-800'
                           }`}
                         >
                           <div className="flex items-center gap-2.5 min-w-0">
                             <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
                               isSelected
-                                ? 'bg-[#2563EB] text-white'
+                                ? 'bg-[#006B50] text-white'
                                 : isHighlighted
-                                  ? 'bg-[#2563EB]/20 text-[#2563EB] dark:text-[#60A5FA]'
+                                  ? 'bg-[#006B50]/20 text-[#006B50] dark:text-[#159B72]'
                                   : 'bg-gray-100 dark:bg-slate-800 text-gray-500 dark:text-slate-400'
                             }`}>
                               {loc.isAllIndia ? <Globe className="w-4 h-4" /> : <MapPin className="w-4 h-4" />}
@@ -294,7 +294,7 @@ export default function LocationSelectorModal({ isOpen, onClose }) {
                             </div>
                           </div>
                           {isSelected && (
-                            <Check className="w-4 h-4 text-[#2563EB] dark:text-[#60A5FA] shrink-0" />
+                            <Check className="w-4 h-4 text-[#006B50] dark:text-[#159B72] shrink-0" />
                           )}
                         </button>
                       );
@@ -312,12 +312,12 @@ export default function LocationSelectorModal({ isOpen, onClose }) {
                     onClick={() => handleSelect(ALL_INDIA_LOCATION)}
                     className={`w-full p-3.5 rounded-2xl border transition-all flex items-center justify-between gap-3 cursor-pointer ${
                       selectedLocation?.slug === 'all-india' || !selectedLocation
-                        ? 'bg-gradient-to-r from-[#EFF6FF] to-blue-50 dark:from-[#2563EB]/20 dark:to-slate-800/80 border-[#2563EB] shadow-xs'
-                        : 'bg-gray-50/80 dark:bg-[#1E293B]/70 border-gray-200 dark:border-slate-800 hover:border-[#2563EB]/40 hover:bg-gray-50'
+                        ? 'bg-gradient-to-r from-[#FAF9F4] to-[#EEF4EE] dark:from-[#006B50]/20 dark:to-slate-800/80 border-[#006B50] shadow-xs'
+                        : 'bg-gray-50/80 dark:bg-[#1E293B]/70 border-gray-200 dark:border-slate-800 hover:border-[#006B50]/40 hover:bg-gray-50'
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-2xl bg-[#2563EB] text-white flex items-center justify-center shadow-sm shrink-0">
+                      <div className="w-10 h-10 rounded-2xl bg-[#006B50] text-white flex items-center justify-center shadow-sm shrink-0">
                         <Globe className="w-5 h-5" />
                       </div>
                       <div className="text-left">
@@ -325,7 +325,7 @@ export default function LocationSelectorModal({ isOpen, onClose }) {
                           <span className="text-sm font-extrabold text-gray-900 dark:text-white">
                             {t('locationModal.allIndia', 'All India')}
                           </span>
-                          <span className="text-[10px] font-bold text-[#2563EB] dark:text-[#60A5FA] bg-[#2563EB]/10 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                          <span className="text-[10px] font-bold text-[#006B50] dark:text-[#159B72] bg-[#006B50]/10 px-2 py-0.5 rounded-full uppercase tracking-wider">
                             {t('locationModal.globalTag', 'Global')}
                           </span>
                         </div>
@@ -336,7 +336,7 @@ export default function LocationSelectorModal({ isOpen, onClose }) {
                     </div>
 
                     {(selectedLocation?.slug === 'all-india' || !selectedLocation) && (
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#2563EB] text-white text-[11px] font-bold shadow-xs">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#006B50] text-white text-[11px] font-bold shadow-xs">
                         <Check className="w-3.5 h-3.5" />
                         <span>{t('locationModal.active', 'Active')}</span>
                       </span>
@@ -349,7 +349,7 @@ export default function LocationSelectorModal({ isOpen, onClose }) {
                   <div className="space-y-2.5">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-                        <Clock className="w-3.5 h-3.5 text-[#2563EB]" />
+                        <Clock className="w-3.5 h-3.5 text-[#006B50]" />
                         {t('locationModal.recentLocations', 'Recent Locations')}
                       </span>
                       <button
@@ -371,11 +371,11 @@ export default function LocationSelectorModal({ isOpen, onClose }) {
                             onClick={() => handleSelect(loc)}
                             className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all flex items-center gap-1.5 cursor-pointer ${
                               isSelected
-                                ? 'bg-[#2563EB] text-white border-[#2563EB] shadow-xs'
-                                : 'bg-gray-100/80 dark:bg-slate-800 text-gray-700 dark:text-slate-300 border-gray-200 dark:border-slate-700 hover:border-[#2563EB]/50 hover:bg-gray-100'
+                                ? 'bg-[#006B50] text-white border-[#006B50] shadow-xs'
+                                : 'bg-gray-100/80 dark:bg-slate-800 text-gray-700 dark:text-slate-300 border-gray-200 dark:border-slate-700 hover:border-[#006B50]/50 hover:bg-gray-100'
                             }`}
                           >
-                            <MapPin className="w-3 h-3 text-[#2563EB] dark:text-[#60A5FA]" />
+                            <MapPin className="w-3 h-3 text-[#006B50] dark:text-[#159B72]" />
                             <span>{getCityDisplayName(loc)}</span>
                             {loc.stateCode && (
                               <span className="text-[10px] opacity-75">({loc.stateCode})</span>
@@ -406,8 +406,8 @@ export default function LocationSelectorModal({ isOpen, onClose }) {
                             onClick={() => handleSelect(city)}
                             className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
                               isSelected
-                                ? 'bg-[#EFF6FF] dark:bg-[#2563EB]/20 border-[#2563EB] text-[#2563EB] dark:text-[#60A5FA] shadow-xs'
-                                : 'bg-white dark:bg-[#1E293B]/70 border-gray-200 dark:border-slate-800 hover:border-[#2563EB]/40 hover:bg-gray-50 dark:hover:bg-slate-800'
+                                ? 'bg-[#FAF9F4] dark:bg-[#006B50]/20 border-[#006B50] text-[#006B50] dark:text-[#159B72] shadow-xs'
+                                : 'bg-white dark:bg-[#1E293B]/70 border-gray-200 dark:border-slate-800 hover:border-[#006B50]/40 hover:bg-gray-50 dark:hover:bg-slate-800'
                             }`}
                           >
                             <span className="text-xs font-bold text-gray-900 dark:text-white truncate">
@@ -426,14 +426,14 @@ export default function LocationSelectorModal({ isOpen, onClose }) {
                 <div className="space-y-3 pt-2 border-t border-gray-100 dark:border-slate-800">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-                      <Building2 className="w-3.5 h-3.5 text-[#2563EB]" />
+                      <Building2 className="w-3.5 h-3.5 text-[#006B50]" />
                       {t('locationModal.browseByState', 'Browse by State & Union Territory')}
                     </span>
                     {selectedStateFilter && (
                       <button
                         type="button"
                         onClick={() => setSelectedStateFilter('')}
-                        className="text-[11px] text-[#2563EB] dark:text-[#60A5FA] hover:underline font-bold cursor-pointer"
+                        className="text-[11px] text-[#006B50] dark:text-[#159B72] hover:underline font-bold cursor-pointer"
                       >
                         {t('locationModal.resetState', 'Reset State')}
                       </button>
@@ -445,7 +445,7 @@ export default function LocationSelectorModal({ isOpen, onClose }) {
                     <select
                       value={selectedStateFilter}
                       onChange={(e) => setSelectedStateFilter(e.target.value)}
-                      className="w-full appearance-none px-3.5 py-2.5 bg-gray-50 dark:bg-[#1E293B] border border-gray-200 dark:border-slate-700 rounded-2xl text-xs sm:text-sm font-semibold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#2563EB]/40 cursor-pointer pr-10"
+                      className="w-full appearance-none px-3.5 py-2.5 bg-gray-50 dark:bg-[#1E293B] border border-gray-200 dark:border-slate-700 rounded-2xl text-xs sm:text-sm font-semibold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#006B50]/40 cursor-pointer pr-10"
                     >
                       <option value="">{t('locationModal.selectStatePlaceholder', 'Select a State or Union Territory ({{count}} available)...', { count: allStates.length })}</option>
                       {allStates.map((s) => (
@@ -479,8 +479,8 @@ export default function LocationSelectorModal({ isOpen, onClose }) {
                               onClick={() => handleSelect(c)}
                               className={`p-2 rounded-xl text-left border transition-all text-xs cursor-pointer ${
                                 isSelected
-                                  ? 'bg-[#2563EB] text-white border-[#2563EB] font-bold shadow-xs'
-                                  : 'bg-white dark:bg-[#1E293B] border-gray-200 dark:border-slate-700 text-gray-800 dark:text-slate-200 hover:border-[#2563EB]/50'
+                                  ? 'bg-[#006B50] text-white border-[#006B50] font-bold shadow-xs'
+                                  : 'bg-white dark:bg-[#1E293B] border-gray-200 dark:border-slate-700 text-gray-800 dark:text-slate-200 hover:border-[#006B50]/50'
                               }`}
                             >
                               <p className="font-bold truncate">{getCityDisplayName(c)}</p>
@@ -502,7 +502,7 @@ export default function LocationSelectorModal({ isOpen, onClose }) {
           <div className="px-5 sm:px-6 py-3 bg-gray-50 dark:bg-[#1E293B]/90 border-t border-gray-100 dark:border-slate-800 flex items-center justify-between text-xs text-gray-500 dark:text-slate-400 shrink-0">
             <div className="flex items-center gap-1.5 truncate">
               <span className="font-semibold text-gray-700 dark:text-slate-300">{t('locationModal.active', 'Active')}:</span>
-              <span className="font-bold text-[#2563EB] dark:text-[#60A5FA] truncate">
+              <span className="font-bold text-[#006B50] dark:text-[#159B72] truncate">
                 {getFormattedLocation(selectedLocation)}
               </span>
             </div>

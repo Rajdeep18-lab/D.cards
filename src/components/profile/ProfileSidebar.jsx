@@ -48,11 +48,11 @@ export default function ProfileSidebar({
         <div className="rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-800 shadow-sm overflow-hidden">
 
           {/* User identity block */}
-          <div className="p-6 border-b border-[#E5E7EB] dark:border-slate-800 bg-gradient-to-br from-[#2563EB]/5 to-transparent">
+          <div className="p-6 border-b border-[#E5E7EB] dark:border-slate-800 bg-gradient-to-br from-[#006B50]/5 to-transparent">
             <div className="flex items-center gap-4">
               {/* Avatar */}
               <div className="relative shrink-0">
-                <div className="w-14 h-14 rounded-2xl overflow-hidden bg-gradient-to-br from-[#2563EB] to-[#3B82F6] flex items-center justify-center shadow-md border-2 border-white dark:border-slate-700">
+                <div className="w-14 h-14 rounded-2xl overflow-hidden bg-gradient-to-br from-[#006B50] to-[#159B72] flex items-center justify-center shadow-md border-2 border-white dark:border-slate-700">
                   {profileImage ? (
                     <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
                   ) : (
@@ -72,7 +72,7 @@ export default function ProfileSidebar({
                 </p>
                 <button
                   onClick={() => onSelectSection('edit')}
-                  className="mt-2 flex items-center gap-1 text-[10px] font-bold text-[#2563EB] dark:text-[#60A5FA] hover:underline cursor-pointer"
+                  className="mt-2 flex items-center gap-1 text-[10px] font-bold text-[#006B50] dark:text-[#159B72] hover:underline cursor-pointer"
                 >
                   <Pencil className="w-3 h-3" />
                   {isHindi ? 'प्रोफ़ाइल संपादित करें' : 'Edit Profile'}
@@ -91,7 +91,7 @@ export default function ProfileSidebar({
                   onClick={() => onSelectSection(id)}
                   className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer group ${
                     isActive
-                      ? 'bg-[#2563EB] text-white shadow-sm'
+                      ? 'bg-[#006B50] text-white shadow-sm'
                       : 'text-[#374151] dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-[#1F2937] dark:hover:text-white'
                   }`}
                 >
@@ -100,7 +100,7 @@ export default function ProfileSidebar({
                       className={`w-4 h-4 shrink-0 ${
                         isActive
                           ? 'text-white'
-                          : 'text-slate-400 dark:text-slate-500 group-hover:text-[#2563EB] dark:group-hover:text-[#60A5FA]'
+                          : 'text-slate-400 dark:text-slate-500 group-hover:text-[#006B50] dark:group-hover:text-[#159B72]'
                       }`}
                     />
                     {label}
@@ -140,8 +140,8 @@ export default function ProfileSidebar({
                 onClick={() => onSelectSection(id)}
                 className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap shrink-0 transition-all cursor-pointer ${
                   isActive
-                    ? 'bg-[#2563EB] text-white shadow-sm'
-                    : 'bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-700 text-[#374151] dark:text-slate-300 hover:border-[#2563EB]/40'
+                    ? 'bg-[#006B50] text-white shadow-sm'
+                    : 'bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-700 text-[#374151] dark:text-slate-300 hover:border-[#006B50]/40'
                 }`}
               >
                 <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-white' : 'text-slate-400'}`} />

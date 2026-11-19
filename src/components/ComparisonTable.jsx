@@ -32,14 +32,14 @@ function ComparisonTable({ cards = [] }) {
   // 1. Zero cards selected state
   if (normalizedCards.length === 0) {
     return (
-      <div className="text-center py-12 px-4 rounded-3xl border border-dashed border-[#E0E6DC] bg-[#EEF4EE]">
-        <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-[#EEF4EE] dark:bg-slate-800 text-[#0E5C3E] flex items-center justify-center text-2xl">
+      <div className="text-center py-12 px-4 rounded-3xl border border-dashed border-[#DCE9E1] bg-[#EEF4EE]">
+        <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-[#EEF4EE] dark:bg-slate-800 text-[#006B50] flex items-center justify-center text-2xl">
           <Scale className="w-6 h-6" />
         </div>
-        <h3 className="text-base font-bold text-[#14291F] mb-1">
+        <h3 className="text-base font-bold text-[#123C30] mb-1">
           {t('compare.noCardsTitle', 'No Cards Selected for Comparison')}
         </h3>
-        <p className="text-xs text-[#445B4D] max-w-md mx-auto leading-relaxed font-normal">
+        <p className="text-xs text-[#45534D] max-w-md mx-auto leading-relaxed font-normal">
           {isHindi 
             ? 'आमने-सामने तुलना देखने के लिए "तुलना करें" बटन का उपयोग करके अधिकतम 3 डेबिट कार्ड चुनें।'
             : 'Select up to 3 debit cards using the "Add to Compare" button to view side-by-side analytics.'}
@@ -53,13 +53,13 @@ function ComparisonTable({ cards = [] }) {
     const singleCard = normalizedCards[0];
     return (
       <div className="py-8 px-5 rounded-3xl border border-amber-500/25 bg-amber-500/5 text-center shadow-soft">
-        <div className="max-w-xs mx-auto mb-5 p-4 rounded-2xl border border-[#E0E6DC] bg-white shadow-sm flex items-center justify-center gap-3">
+        <div className="max-w-xs mx-auto mb-5 p-4 rounded-2xl border border-[#DCE9E1] bg-white shadow-sm flex items-center justify-center gap-3">
           <DebitCardVisual mode="mini" card={singleCard} />
           <div className="text-left">
-            <span className="text-[10px] font-semibold text-[#0E5C3E] uppercase tracking-wider block">
+            <span className="text-[10px] font-semibold text-[#006B50] uppercase tracking-wider block">
               {singleCard.bank || (isHindi ? 'डेबिट कार्ड' : "Debit Card")}
             </span>
-            <span className="text-xs font-bold text-[#14291F] block">
+            <span className="text-xs font-bold text-[#123C30] block">
               {singleCard.cardName || (isHindi ? 'चयनित कार्ड' : "Queued Card")}
             </span>
           </div>
@@ -79,7 +79,7 @@ function ComparisonTable({ cards = [] }) {
       render: (card) => (
         <div className="flex items-center justify-center gap-2">
           <BankLogo bankName={card.bank} size="xs" />
-          <span className="font-bold text-[#14291F]">
+          <span className="font-bold text-[#123C30]">
             {card.bank || "N/A"}
           </span>
         </div>
@@ -89,7 +89,7 @@ function ComparisonTable({ cards = [] }) {
       key: "cardName",
       label: t('compare.metricCardName', 'Card Name'),
       render: (card) => (
-        <span className="font-bold text-[#14291F]">
+        <span className="font-bold text-[#123C30]">
           {card.cardName || "N/A"}
         </span>
       )
@@ -98,7 +98,7 @@ function ComparisonTable({ cards = [] }) {
       key: "network",
       label: t('compare.metricNetwork', 'Network'),
       render: (card) => (
-        <span className="inline-block px-2.5 py-1 rounded-md text-[11px] font-semibold bg-[#EEF4EE] dark:bg-slate-800 text-[#0E5C3E]">
+        <span className="inline-block px-2.5 py-1 rounded-md text-[11px] font-semibold bg-[#EEF4EE] dark:bg-slate-800 text-[#006B50]">
           {card.network || "N/A"}
         </span>
       )
@@ -245,7 +245,7 @@ function ComparisonTable({ cards = [] }) {
         return (
           <div className="flex flex-wrap gap-1 justify-center">
             {list.map((item, idx) => (
-              <span key={idx} className="bg-[#EEF4EE] dark:bg-slate-800 text-[#0E5C3E] border border-[#0E5C3E]/15 text-[10px] font-semibold px-2 py-0.5 rounded-md">
+              <span key={idx} className="bg-[#EEF4EE] dark:bg-slate-800 text-[#006B50] border border-[#006B50]/15 text-[10px] font-semibold px-2 py-0.5 rounded-md">
                 {item}
               </span>
             ))}
@@ -269,7 +269,7 @@ function ComparisonTable({ cards = [] }) {
           );
         }
         return (
-          <span className="font-bold text-[#0E5C3E]">
+          <span className="font-bold text-[#006B50]">
             {score} / 100
           </span>
         );
@@ -304,7 +304,7 @@ function ComparisonTable({ cards = [] }) {
           <ul className="space-y-1 text-[11px] text-[#6B7280] dark:text-slate-300 text-left pl-2">
             {list.map((feat, idx) => (
               <li key={idx} className="flex items-start gap-1">
-                <span className="text-[#0E5C3E] font-bold">•</span>
+                <span className="text-[#006B50] font-bold">•</span>
                 <span>{feat}</span>
               </li>
             ))}
@@ -321,7 +321,7 @@ function ComparisonTable({ cards = [] }) {
         {/* Mobile View Toggle & Status Bar */}
         <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-100 dark:border-slate-800">
           <div className="text-left">
-            <span className="text-[11px] font-black uppercase tracking-wider text-[#0E5C3E] block">
+            <span className="text-[11px] font-black uppercase tracking-wider text-[#006B50] block">
               {isHindi ? `कार्ड तुलना (${normalizedCards.length})` : `Comparison Matrix (${normalizedCards.length})`}
             </span>
             <span className="text-[9.5px] font-medium text-slate-500 dark:text-slate-400">
@@ -336,7 +336,7 @@ function ComparisonTable({ cards = [] }) {
               onClick={() => setMobileView('table')}
               className={`px-2.5 py-1 text-[10.5px] font-extrabold rounded-lg transition-all cursor-pointer ${
                 mobileView === 'table'
-                  ? 'bg-white dark:bg-slate-900 text-[#0E5C3E] shadow-xs'
+                  ? 'bg-white dark:bg-slate-900 text-[#006B50] shadow-xs'
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'
               }`}
             >
@@ -347,7 +347,7 @@ function ComparisonTable({ cards = [] }) {
               onClick={() => setMobileView('cards')}
               className={`px-2.5 py-1 text-[10.5px] font-extrabold rounded-lg transition-all cursor-pointer ${
                 mobileView === 'cards'
-                  ? 'bg-white dark:bg-slate-900 text-[#0E5C3E] shadow-xs'
+                  ? 'bg-white dark:bg-slate-900 text-[#006B50] shadow-xs'
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'
               }`}
             >
@@ -358,11 +358,11 @@ function ComparisonTable({ cards = [] }) {
 
         {/* 1. Mobile Swipeable Matrix Table with Sticky Feature Column */}
         {mobileView === 'table' && (
-          <div className="overflow-x-auto touch-pan-x -webkit-overflow-scrolling-touch rounded-2xl border border-[#E0E6DC] bg-white shadow-soft">
+          <div className="overflow-x-auto touch-pan-x -webkit-overflow-scrolling-touch rounded-2xl border border-[#DCE9E1] bg-white shadow-soft">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="bg-[#EEF4EE] border-b border-[#E0E6DC]">
-                  <th className="sticky left-0 z-20 bg-[#EEF4EE] px-3 py-3 text-[#445B4D] font-semibold uppercase text-[9.5px] tracking-wider min-w-[105px] max-w-[120px] border-r border-[#E0E6DC] shadow-[2px_0_4px_rgba(0,0,0,0.04)]">
+                <tr className="bg-[#EEF4EE] border-b border-[#DCE9E1]">
+                  <th className="sticky left-0 z-20 bg-[#EEF4EE] px-3 py-3 text-[#45534D] font-semibold uppercase text-[9.5px] tracking-wider min-w-[105px] max-w-[120px] border-r border-[#DCE9E1] shadow-[2px_0_4px_rgba(0,0,0,0.04)]">
                     {isHindi ? 'सुविधा' : 'Feature'}
                   </th>
                   {normalizedCards.map((card, idx) => (
@@ -370,10 +370,10 @@ function ComparisonTable({ cards = [] }) {
                       <div className="flex justify-center mb-1.5 transform scale-90">
                         <DebitCardVisual mode="mini" card={card} />
                       </div>
-                      <div className="font-bold text-[#14291F] text-xs truncate max-w-[150px]">
+                      <div className="font-bold text-[#123C30] text-xs truncate max-w-[150px]">
                         {card.cardName}
                       </div>
-                      <div className="text-[10px] font-semibold text-[#0E5C3E] mt-0.5 flex items-center justify-center gap-1">
+                      <div className="text-[10px] font-semibold text-[#006B50] mt-0.5 flex items-center justify-center gap-1">
                         <BankLogo bankName={card.bank} size="xs" />
                         <span className="truncate max-w-[95px]">{card.bank}</span>
                       </div>
@@ -383,8 +383,8 @@ function ComparisonTable({ cards = [] }) {
               </thead>
               <tbody className="divide-y divide-[#E5E7EB] dark:divide-slate-800">
                 {rowDefinitions.map((row) => (
-                  <tr key={row.key} className="hover:bg-[#F8FAFC] dark:hover:bg-slate-800/40 transition-colors">
-                    <td className="sticky left-0 z-10 bg-white px-3 py-2.5 font-bold text-[#1F2937] dark:text-slate-300 text-[10px] uppercase tracking-wide border-r border-[#E0E6DC] shadow-[2px_0_4px_rgba(0,0,0,0.04)]">
+                  <tr key={row.key} className="hover:bg-[#FAF9F4] dark:hover:bg-slate-800/40 transition-colors">
+                    <td className="sticky left-0 z-10 bg-white px-3 py-2.5 font-bold text-[#1F2937] dark:text-slate-300 text-[10px] uppercase tracking-wide border-r border-[#DCE9E1] shadow-[2px_0_4px_rgba(0,0,0,0.04)]">
                       {row.label}
                     </td>
                     {normalizedCards.map((card, idx) => (
@@ -407,7 +407,7 @@ function ComparisonTable({ cards = [] }) {
             {normalizedCards.map((card, idx) => (
               <div 
                 key={card.id || idx}
-                className="p-4 sm:p-5 rounded-3xl bg-white border border-[#E0E6DC] shadow-soft space-y-4 text-left"
+                className="p-4 sm:p-5 rounded-3xl bg-white border border-[#DCE9E1] shadow-soft space-y-4 text-left"
               >
                 {/* Card Header & Visual */}
                 <div className="flex items-center gap-3 border-b border-slate-100 dark:border-slate-800 pb-3">
@@ -417,14 +417,14 @@ function ComparisonTable({ cards = [] }) {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-1.5 mb-0.5">
                       <BankLogo bankName={card.bank} size="xs" />
-                      <span className="text-[10px] font-bold text-[#0E5C3E] uppercase block truncate">
+                      <span className="text-[10px] font-bold text-[#006B50] uppercase block truncate">
                         {card.bank || "Bank"}
                       </span>
                     </div>
-                    <h4 className="text-sm font-extrabold text-[#14291F] leading-tight truncate">
+                    <h4 className="text-sm font-extrabold text-[#123C30] leading-tight truncate">
                       {card.cardName}
                     </h4>
-                    <span className="inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-bold bg-[#EEF4EE] dark:bg-slate-800 text-[#0E5C3E]">
+                    <span className="inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-bold bg-[#EEF4EE] dark:bg-slate-800 text-[#006B50]">
                       {card.network || "Visa"}
                     </span>
                   </div>
@@ -459,11 +459,11 @@ function ComparisonTable({ cards = [] }) {
       </div>
 
       {/* ── DESKTOP MATRIX TABLE VIEW (>=768px) ── */}
-      <div className="hidden md:block overflow-x-auto rounded-3xl border border-[#E0E6DC] bg-white shadow-soft">
+      <div className="hidden md:block overflow-x-auto rounded-3xl border border-[#DCE9E1] bg-white shadow-soft">
         <table className="w-full text-left text-xs text-[#1F2937] dark:text-slate-200 border-collapse min-w-[600px]">
           <thead>
-            <tr className="bg-[#EEF4EE] border-b border-[#E0E6DC]">
-              <th className="sticky left-0 z-20 bg-[#EEF4EE] px-4 py-4 text-[#445B4D] font-semibold uppercase text-[10px] tracking-wider min-w-[140px]">
+            <tr className="bg-[#EEF4EE] border-b border-[#DCE9E1]">
+              <th className="sticky left-0 z-20 bg-[#EEF4EE] px-4 py-4 text-[#45534D] font-semibold uppercase text-[10px] tracking-wider min-w-[140px]">
                 {isHindi ? 'सुविधा तुलना' : 'Features Matrix'}
               </th>
               {normalizedCards.map((card, idx) => (
@@ -471,10 +471,10 @@ function ComparisonTable({ cards = [] }) {
                   <div className="flex justify-center mb-2 transform hover:scale-105 transition-transform duration-300">
                     <DebitCardVisual mode="compare" card={card} />
                   </div>
-                  <div className="font-bold text-[#14291F] text-xs">
+                  <div className="font-bold text-[#123C30] text-xs">
                     {card.cardName}
                   </div>
-                  <div className="text-[10px] font-semibold text-[#0E5C3E] mt-0.5 flex items-center justify-center gap-1.5">
+                  <div className="text-[10px] font-semibold text-[#006B50] mt-0.5 flex items-center justify-center gap-1.5">
                     <BankLogo bankName={card.bank} size="xs" />
                     <span>{card.bank}</span>
                   </div>
@@ -484,8 +484,8 @@ function ComparisonTable({ cards = [] }) {
           </thead>
           <tbody className="divide-y divide-[#E5E7EB] dark:divide-slate-800">
             {rowDefinitions.map((row) => (
-              <tr key={row.key} className="hover:bg-[#F8FAFC] dark:hover:bg-slate-800/50 transition-colors">
-                <td className="sticky left-0 z-10 bg-white px-4 py-3.5 font-semibold text-[#1F2937] dark:text-slate-300 text-[11px] uppercase tracking-wide border-r border-[#E0E6DC]">
+              <tr key={row.key} className="hover:bg-[#FAF9F4] dark:hover:bg-slate-800/50 transition-colors">
+                <td className="sticky left-0 z-10 bg-white px-4 py-3.5 font-semibold text-[#1F2937] dark:text-slate-300 text-[11px] uppercase tracking-wide border-r border-[#DCE9E1]">
                   {row.label}
                 </td>
                 {normalizedCards.map((card, idx) => (

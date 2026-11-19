@@ -316,11 +316,11 @@ export default function CardOfTheMonthBanner({ activeCardsList = [], onViewDetai
       aria-label="Card of the Month"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
-      className="relative w-full rounded-[28px] sm:rounded-[36px] bg-gradient-to-br from-[#FFFFFF] via-[#FAF8F5] to-[#F5F3EC] border border-[#E0E6DC] shadow-[0_16px_40px_rgba(20,41,31,0.08)] overflow-hidden select-none text-left transition-all duration-300"
+      className="relative w-full rounded-[28px] sm:rounded-[36px] bg-gradient-to-br from-[#FFFFFF] via-[#FAF9F4] to-[#F5F3EC] border border-[#DCE9E1] shadow-[0_16px_40px_rgba(20,41,31,0.08)] overflow-hidden select-none text-left transition-all duration-300"
     >
       {/* Subtle Background Glows */}
-      <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#0E5C3E]/5 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-10 -left-10 w-72 h-72 bg-[#10B981]/5 rounded-full blur-2xl pointer-events-none" />
+      <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#006B50]/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-10 -left-10 w-72 h-72 bg-[#159B72]/5 rounded-full blur-2xl pointer-events-none" />
 
       {/* Main Grid: Left = Product Info & Benefits | Right = Traveler Advertising Model */}
       <div className="grid grid-cols-1 lg:grid-cols-12 items-stretch min-h-[440px]">
@@ -334,7 +334,7 @@ export default function CardOfTheMonthBanner({ activeCardsList = [], onViewDetai
           <div className="space-y-3">
             <div className="flex flex-wrap items-center gap-2.5">
               {/* Crown Badge — shows "AI-Selected" tag for dynamic slide */}
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EEF4EE] border border-[#C5D7C2] text-[#0E5C3E] font-black text-xs uppercase tracking-wider shadow-2xs">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EEF4EE] border border-[#DCE9E1] text-[#006B50] font-black text-xs uppercase tracking-wider shadow-2xs">
                 <span>👑</span>
                 <span>Card of the Month</span>
               </span>
@@ -348,7 +348,7 @@ export default function CardOfTheMonthBanner({ activeCardsList = [], onViewDetai
               )}
 
               {/* Bank Chip */}
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#F5F3EC] text-[#14291F] text-[11px] font-bold border border-[#E0E6DC]">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#F5F3EC] text-[#123C30] text-[11px] font-bold border border-[#DCE9E1]">
                 <BankLogo bankName={activeSlide.bankKey} size="xs" />
                 <span>{activeSlide.bankKey}</span>
               </span>
@@ -358,7 +358,7 @@ export default function CardOfTheMonthBanner({ activeCardsList = [], onViewDetai
                 <button
                   type="button"
                   onClick={handleSavingsClick}
-                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#0E5C3E] hover:underline cursor-pointer bg-[#EEF4EE] px-2.5 py-0.5 rounded-full border border-[#C5D7C2]"
+                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#006B50] hover:underline cursor-pointer bg-[#EEF4EE] px-2.5 py-0.5 rounded-full border border-[#DCE9E1]"
                   title="View linked savings account details"
                 >
                   <span>Linked Account:</span>
@@ -377,10 +377,10 @@ export default function CardOfTheMonthBanner({ activeCardsList = [], onViewDetai
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.25 }}
               >
-                <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-[#14291F] tracking-tight leading-tight">
+                <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-[#123C30] tracking-tight leading-tight">
                   {activeSlide.headline}
                 </h2>
-                <p className="text-xs sm:text-sm text-[#445B4D] font-normal leading-relaxed mt-1.5 max-w-xl">
+                <p className="text-xs sm:text-sm text-[#45534D] font-normal leading-relaxed mt-1.5 max-w-xl">
                   {activeSlide.subtitle}
                 </p>
               </motion.div>
@@ -412,14 +412,14 @@ export default function CardOfTheMonthBanner({ activeCardsList = [], onViewDetai
                     const IconComp = b.icon;
                     return (
                       <div key={i} className="flex items-start gap-2.5">
-                        <div className="w-7 h-7 rounded-xl bg-[#EEF4EE] border border-[#C5D7C2] text-[#0E5C3E] flex items-center justify-center shrink-0 shadow-2xs mt-0.5">
+                        <div className="w-7 h-7 rounded-xl bg-[#EEF4EE] border border-[#DCE9E1] text-[#006B50] flex items-center justify-center shrink-0 shadow-2xs mt-0.5">
                           <IconComp className="w-3.5 h-3.5" />
                         </div>
                         <div className="min-w-0">
-                          <h4 className="text-xs font-bold text-[#14291F] leading-tight">
+                          <h4 className="text-xs font-bold text-[#123C30] leading-tight">
                             {b.title}
                           </h4>
-                          <p className="text-[11px] text-[#445B4D] font-normal leading-tight mt-0.5 line-clamp-1">
+                          <p className="text-[11px] text-[#45534D] font-normal leading-tight mt-0.5 line-clamp-1">
                             {b.description}
                           </p>
                         </div>
@@ -432,11 +432,11 @@ export default function CardOfTheMonthBanner({ activeCardsList = [], onViewDetai
           </div>
 
           {/* Bottom Action Row: CTA Button + Prev/Next Controls */}
-          <div className="flex items-center justify-between pt-2 border-t border-[#E0E6DC]">
+          <div className="flex items-center justify-between pt-2 border-t border-[#DCE9E1]">
             <button
               type="button"
               onClick={handleCtaClick}
-              className="px-6 py-3 rounded-xl bg-[#0E5C3E] hover:bg-[#0A4730] text-white font-bold text-xs sm:text-sm tracking-wide shadow-sm hover:shadow-md transition-all flex items-center gap-2 cursor-pointer active:scale-95 min-h-[44px]"
+              className="px-6 py-3 rounded-xl bg-[#006B50] hover:bg-[#064E3B] text-white font-bold text-xs sm:text-sm tracking-wide shadow-sm hover:shadow-md transition-all flex items-center gap-2 cursor-pointer active:scale-95 min-h-[44px]"
             >
               <span>View Card Details</span>
               <ArrowRight className="w-4 h-4" />
@@ -448,12 +448,12 @@ export default function CardOfTheMonthBanner({ activeCardsList = [], onViewDetai
                 type="button"
                 onClick={handlePrev}
                 aria-label="Previous featured card"
-                className="w-8 h-8 rounded-full bg-white border border-[#E0E6DC] text-[#14291F] hover:bg-[#EEF4EE] hover:text-[#0E5C3E] flex items-center justify-center transition-all cursor-pointer shadow-2xs"
+                className="w-8 h-8 rounded-full bg-white border border-[#DCE9E1] text-[#123C30] hover:bg-[#EEF4EE] hover:text-[#006B50] flex items-center justify-center transition-all cursor-pointer shadow-2xs"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
 
-              <span className="text-[11px] font-bold text-[#445B4D] font-bold min-w-[32px] text-center">
+              <span className="text-[11px] font-bold text-[#45534D] font-bold min-w-[32px] text-center">
                 {currentSlideIndex + 1} / {slides.length}
               </span>
 
@@ -461,7 +461,7 @@ export default function CardOfTheMonthBanner({ activeCardsList = [], onViewDetai
                 type="button"
                 onClick={handleNext}
                 aria-label="Next featured card"
-                className="w-8 h-8 rounded-full bg-white border border-[#E0E6DC] text-[#14291F] hover:bg-[#EEF4EE] hover:text-[#0E5C3E] flex items-center justify-center transition-all cursor-pointer shadow-2xs"
+                className="w-8 h-8 rounded-full bg-white border border-[#DCE9E1] text-[#123C30] hover:bg-[#EEF4EE] hover:text-[#006B50] flex items-center justify-center transition-all cursor-pointer shadow-2xs"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
@@ -477,31 +477,30 @@ export default function CardOfTheMonthBanner({ activeCardsList = [], onViewDetai
 
           {/* Decorative Flight Path & Lifestyle Script Tag */}
           <div className="absolute top-5 right-6 sm:right-10 z-20 pointer-events-none">
-            <div className="flex items-center gap-1.5 text-[#0E5C3E]">
+            <div className="flex items-center gap-1.5 text-[#006B50]">
               <span className="text-base">✈</span>
               <span className="text-xs sm:text-sm font-black italic tracking-wide drop-shadow-xs">
                 {activeSlide.travelTag}
               </span>
             </div>
             {/* Curved Dotted Flight Trail SVG */}
-            <svg className="w-20 sm:w-28 h-8 sm:h-10 text-[#0E5C3E]/40 -mt-1 -ml-3" viewBox="0 0 100 40" fill="none">
+            <svg className="w-20 sm:w-28 h-8 sm:h-10 text-[#006B50]/40 -mt-1 -ml-3" viewBox="0 0 100 40" fill="none">
               <path d="M 5 35 Q 45 5 95 15" stroke="currentColor" strokeWidth="2" strokeDasharray="4 4" />
             </svg>
           </div>
 
           {/* Model Commercial Photo with Smooth Gradient Blend */}
-          <picture className="w-full h-full block">
-            <source type="image/webp" srcSet="/assets/card-of-month-model.webp" />
+          <div className="w-full h-full block">
             <img
               src="/assets/card-of-month-model.jpg"
-              alt="D.CARD Featured Debit Card Lifestyle Traveler in Festive Ethnic Attire"
+              alt="D.CARD Featured Debit Card Lifestyle Traveler"
               width="820"
               height="1024"
               decoding="async"
               fetchpriority="high"
               className="w-full h-full object-cover object-top max-h-[380px] sm:max-h-[440px] lg:max-h-full filter contrast-[1.03]"
             />
-          </picture>
+          </div>
 
           {/* Subtle blend gradient on the left edge (desktop only) */}
           <div className="hidden lg:block absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#FFFFFF] dark:from-[#1E293B] to-transparent pointer-events-none" />
@@ -519,7 +518,7 @@ export default function CardOfTheMonthBanner({ activeCardsList = [], onViewDetai
                 <span
                   className={`transition-all duration-300 rounded-full block ${
                     currentSlideIndex === idx
-                      ? 'w-5 sm:w-6 h-2 bg-[#0E5C3E]'
+                      ? 'w-5 sm:w-6 h-2 bg-[#006B50]'
                       : 'w-2 h-2 bg-slate-300 dark:bg-slate-600 hover:bg-slate-400'
                   }`}
                 />

@@ -13,7 +13,7 @@ function EmptyState({ type, navigate }) {
   const paths = { savings: '/savings-accounts', current: '/current-accounts' };
   const labels = { savings: 'Savings Accounts', current: 'Current Accounts' };
   return (
-    <div className="py-16 text-center rounded-2xl bg-[#F8FAFC] dark:bg-slate-900/50 border border-dashed border-[#E5E7EB] dark:border-slate-700 space-y-3">
+    <div className="py-16 text-center rounded-2xl bg-[#FAF9F4] dark:bg-slate-900/50 border border-dashed border-[#E5E7EB] dark:border-slate-700 space-y-3">
       <div className="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto">
         <Landmark className="w-6 h-6 text-slate-400 dark:text-slate-500" />
       </div>
@@ -27,7 +27,7 @@ function EmptyState({ type, navigate }) {
       </div>
       <button
         onClick={() => navigate(paths[type])}
-        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#2563EB] text-white text-xs font-bold hover:bg-[#1D4ED8] transition-all cursor-pointer shadow-sm"
+        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#006B50] text-white text-xs font-bold hover:bg-[#064E3B] transition-all cursor-pointer shadow-sm"
       >
         <ExternalLink className="w-3.5 h-3.5" />
         Explore {labels[type]}
@@ -115,7 +115,7 @@ function AccountCard({ item, onRemove, onViewDetails, type }) {
       <div className="pt-3 border-t border-[#F3F4F6] dark:border-slate-800 flex items-center justify-between gap-2">
         <button
           onClick={() => onViewDetails(item)}
-          className="flex items-center gap-1 text-xs font-bold text-[#2563EB] dark:text-[#60A5FA] hover:underline cursor-pointer"
+          className="flex items-center gap-1 text-xs font-bold text-[#006B50] dark:text-[#159B72] hover:underline cursor-pointer"
         >
           View Details
           <ChevronRight className="w-3.5 h-3.5" />
@@ -170,7 +170,7 @@ export default function ProfileSavedAccounts({
             <span
               className={`text-[10px] px-1.5 py-0.5 rounded-full font-extrabold ${
                 activeTab === tab.id
-                  ? 'bg-[#2563EB] text-white'
+                  ? 'bg-[#006B50] text-white'
                   : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
               }`}
             >

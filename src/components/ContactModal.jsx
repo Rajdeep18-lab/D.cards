@@ -112,7 +112,7 @@ function ContactModal({ isOpen, onClose }) {
           {/* Close Button */}
           <button
             onClick={onClose}
-            className="absolute top-5 right-5 w-8 h-8 rounded-full bg-[#F8FAFC] dark:bg-slate-800 border border-[#E5E7EB] dark:border-slate-700 flex items-center justify-center text-[#6B7280] dark:text-slate-300 hover:text-[#2563EB] transition-all cursor-pointer"
+            className="absolute top-5 right-5 w-8 h-8 rounded-full bg-[#FAF9F4] dark:bg-slate-800 border border-[#E5E7EB] dark:border-slate-700 flex items-center justify-center text-[#6B7280] dark:text-slate-300 hover:text-[#006B50] transition-all cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -131,10 +131,10 @@ function ContactModal({ isOpen, onClose }) {
                 Query Received!
               </h3>
               <p className="text-xs text-[#6B7280] dark:text-slate-300 max-w-sm mx-auto leading-relaxed font-normal">
-                Thank you <strong className="text-[#2563EB] dark:text-[#60A5FA]">{submittedQuery.name}</strong>. Reference ID:
+                Thank you <strong className="text-[#006B50] dark:text-[#159B72]">{submittedQuery.name}</strong>. Reference ID:
               </p>
 
-              <div className="inline-block px-4 py-2 rounded-xl bg-[#2563EB]/10 border border-[#2563EB]/30 text-[#2563EB] dark:text-[#60A5FA] text-xs font-bold">
+              <div className="inline-block px-4 py-2 rounded-xl bg-[#006B50]/10 border border-[#006B50]/30 text-[#006B50] dark:text-[#159B72] text-xs font-bold">
                 {submittedQuery.query_id}
               </div>
 
@@ -147,7 +147,7 @@ function ContactModal({ isOpen, onClose }) {
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Header */}
               <div className="flex items-center gap-3.5 pb-3 border-b border-[#E5E7EB] dark:border-slate-800">
-                <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#2563EB] to-[#3B82F6] flex items-center justify-center text-white text-xl shadow-md shadow-[#2563EB]/20 flex-shrink-0">
+                <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#006B50] to-[#159B72] flex items-center justify-center text-white text-xl shadow-md shadow-[#006B50]/20 flex-shrink-0">
                   <Mail className="w-5 h-5" />
                 </div>
                 <div>
@@ -172,8 +172,8 @@ function ContactModal({ isOpen, onClose }) {
                     value={form.name}
                     onChange={(e) => handleChange('name', e.target.value)}
                     placeholder="e.g. Rahul Sharma"
-                    className={`w-full px-3.5 py-2.5 rounded-xl text-xs bg-[#F8FAFC] dark:bg-slate-900 border text-[#1F2937] dark:text-white outline-none transition-all ${
-                      errors.name ? 'border-[#EF4444] ring-1 ring-[#EF4444]' : 'border-[#E5E7EB] dark:border-slate-700 focus:border-[#2563EB]'
+                    className={`w-full px-3.5 py-2.5 rounded-xl text-xs bg-[#FAF9F4] dark:bg-slate-900 border text-[#1F2937] dark:text-white outline-none transition-all ${
+                      errors.name ? 'border-[#EF4444] ring-1 ring-[#EF4444]' : 'border-[#E5E7EB] dark:border-slate-700 focus:border-[#006B50]'
                     }`}
                   />
                   {errors.name && <p className="text-[10px] text-[#EF4444] font-semibold">{errors.name}</p>}
@@ -189,8 +189,8 @@ function ContactModal({ isOpen, onClose }) {
                     value={form.email}
                     onChange={(e) => handleChange('email', e.target.value)}
                     placeholder="rahul@example.com"
-                    className={`w-full px-3.5 py-2.5 rounded-xl text-xs bg-[#F8FAFC] dark:bg-slate-900 border text-[#1F2937] dark:text-white outline-none transition-all ${
-                      errors.email ? 'border-[#EF4444] ring-1 ring-[#EF4444]' : 'border-[#E5E7EB] dark:border-slate-700 focus:border-[#2563EB]'
+                    className={`w-full px-3.5 py-2.5 rounded-xl text-xs bg-[#FAF9F4] dark:bg-slate-900 border text-[#1F2937] dark:text-white outline-none transition-all ${
+                      errors.email ? 'border-[#EF4444] ring-1 ring-[#EF4444]' : 'border-[#E5E7EB] dark:border-slate-700 focus:border-[#006B50]'
                     }`}
                   />
                   {errors.email && <p className="text-[10px] text-[#EF4444] font-semibold">{errors.email}</p>}
@@ -206,8 +206,8 @@ function ContactModal({ isOpen, onClose }) {
                     value={form.mobile}
                     onChange={(e) => handleChange('mobile', e.target.value)}
                     placeholder="+91 98765 43210"
-                    className={`w-full px-3.5 py-2.5 rounded-xl text-xs bg-[#F8FAFC] dark:bg-slate-900 border text-[#1F2937] dark:text-white outline-none transition-all ${
-                      errors.mobile ? 'border-[#EF4444] ring-1 ring-[#EF4444]' : 'border-[#E5E7EB] dark:border-slate-700 focus:border-[#2563EB]'
+                    className={`w-full px-3.5 py-2.5 rounded-xl text-xs bg-[#FAF9F4] dark:bg-slate-900 border text-[#1F2937] dark:text-white outline-none transition-all ${
+                      errors.mobile ? 'border-[#EF4444] ring-1 ring-[#EF4444]' : 'border-[#E5E7EB] dark:border-slate-700 focus:border-[#006B50]'
                     }`}
                   />
                   {errors.mobile && <p className="text-[10px] text-[#EF4444] font-semibold">{errors.mobile}</p>}
@@ -221,8 +221,8 @@ function ContactModal({ isOpen, onClose }) {
                   <select
                     value={form.subject}
                     onChange={(e) => handleChange('subject', e.target.value)}
-                    className={`w-full px-3.5 py-2.5 rounded-xl text-xs bg-[#F8FAFC] dark:bg-slate-900 border text-[#1F2937] dark:text-white outline-none transition-all cursor-pointer font-semibold ${
-                      errors.subject ? 'border-[#EF4444] ring-1 ring-[#EF4444]' : 'border-[#E5E7EB] dark:border-slate-700 focus:border-[#2563EB]'
+                    className={`w-full px-3.5 py-2.5 rounded-xl text-xs bg-[#FAF9F4] dark:bg-slate-900 border text-[#1F2937] dark:text-white outline-none transition-all cursor-pointer font-semibold ${
+                      errors.subject ? 'border-[#EF4444] ring-1 ring-[#EF4444]' : 'border-[#E5E7EB] dark:border-slate-700 focus:border-[#006B50]'
                     }`}
                   >
                     <option value="Debit Card Eligibility & Offers">Debit Card Eligibility & Offers</option>
@@ -246,8 +246,8 @@ function ContactModal({ isOpen, onClose }) {
                   value={form.message}
                   onChange={(e) => handleChange('message', e.target.value)}
                   placeholder="Describe your inquiry or question in detail..."
-                  className={`w-full px-3.5 py-2.5 rounded-xl text-xs bg-[#F8FAFC] dark:bg-slate-900 border text-[#1F2937] dark:text-white outline-none transition-all resize-none ${
-                    errors.message ? 'border-[#EF4444] ring-1 ring-[#EF4444]' : 'border-[#E5E7EB] dark:border-slate-700 focus:border-[#2563EB]'
+                  className={`w-full px-3.5 py-2.5 rounded-xl text-xs bg-[#FAF9F4] dark:bg-slate-900 border text-[#1F2937] dark:text-white outline-none transition-all resize-none ${
+                    errors.message ? 'border-[#EF4444] ring-1 ring-[#EF4444]' : 'border-[#E5E7EB] dark:border-slate-700 focus:border-[#006B50]'
                   }`}
                 />
                 {errors.message && <p className="text-[10px] text-[#EF4444] font-semibold">{errors.message}</p>}
@@ -258,14 +258,14 @@ function ContactModal({ isOpen, onClose }) {
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-5 py-2.5 rounded-xl border border-[#E5E7EB] dark:border-slate-700 text-[#6B7280] dark:text-slate-300 text-xs font-semibold hover:bg-[#F8FAFC] dark:hover:bg-slate-800 transition-all cursor-pointer"
+                  className="px-5 py-2.5 rounded-xl border border-[#E5E7EB] dark:border-slate-700 text-[#6B7280] dark:text-slate-300 text-xs font-semibold hover:bg-[#FAF9F4] dark:hover:bg-slate-800 transition-all cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white text-xs font-semibold hover:opacity-95 shadow-md transition-all cursor-pointer disabled:opacity-50 flex items-center gap-2"
+                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#006B50] to-[#159B72] text-white text-xs font-semibold hover:opacity-95 shadow-md transition-all cursor-pointer disabled:opacity-50 flex items-center gap-2"
                 >
                   <Send className="w-3.5 h-3.5" />
                   <span>{submitting ? 'Submitting...' : 'Submit Inquiry'}</span>

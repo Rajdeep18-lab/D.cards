@@ -194,7 +194,7 @@ function FooterUserReviews() {
             }}
             placeholder="Enter your name"
             maxLength={60}
-            className="w-full text-xs px-3 py-2 rounded-xl border border-[#E5E7EB] dark:border-slate-700 bg-[#F8FAFC] dark:bg-slate-900 outline-none text-[#1F2937] dark:text-white placeholder-[#9CA3AF] dark:placeholder-slate-500 focus:border-[#2563EB] transition-colors"
+            className="w-full text-xs px-3 py-2 rounded-xl border border-[#E5E7EB] dark:border-slate-700 bg-[#FAF9F4] dark:bg-slate-900 outline-none text-[#1F2937] dark:text-white placeholder-[#9CA3AF] dark:placeholder-slate-500 focus:border-[#006B50] transition-colors"
           />
 
           <input
@@ -206,7 +206,7 @@ function FooterUserReviews() {
             }}
             placeholder="Enter email (optional)"
             maxLength={80}
-            className="w-full text-xs px-3 py-2 rounded-xl border border-[#E5E7EB] dark:border-slate-700 bg-[#F8FAFC] dark:bg-slate-900 outline-none text-[#1F2937] dark:text-white placeholder-[#9CA3AF] dark:placeholder-slate-500 focus:border-[#2563EB] transition-colors"
+            className="w-full text-xs px-3 py-2 rounded-xl border border-[#E5E7EB] dark:border-slate-700 bg-[#FAF9F4] dark:bg-slate-900 outline-none text-[#1F2937] dark:text-white placeholder-[#9CA3AF] dark:placeholder-slate-500 focus:border-[#006B50] transition-colors"
           />
         </div>
 
@@ -236,7 +236,7 @@ function FooterUserReviews() {
                 />
               </button>
             ))}
-            <span className="text-xs font-extrabold text-[#2563EB] dark:text-[#60A5FA] ml-1 min-w-[20px] text-right">
+            <span className="text-xs font-extrabold text-[#006B50] dark:text-[#159B72] ml-1 min-w-[20px] text-right">
               {hoverRating || rating}★
             </span>
           </div>
@@ -252,7 +252,7 @@ function FooterUserReviews() {
           }}
           placeholder="Write your review about D.CARD..."
           maxLength={500}
-          className="w-full text-xs px-3 py-2 rounded-xl border border-[#E5E7EB] dark:border-slate-700 bg-[#F8FAFC] dark:bg-slate-900 outline-none text-[#1F2937] dark:text-white placeholder-[#9CA3AF] dark:placeholder-slate-500 focus:border-[#2563EB] transition-colors resize-none leading-relaxed"
+          className="w-full text-xs px-3 py-2 rounded-xl border border-[#E5E7EB] dark:border-slate-700 bg-[#FAF9F4] dark:bg-slate-900 outline-none text-[#1F2937] dark:text-white placeholder-[#9CA3AF] dark:placeholder-slate-500 focus:border-[#006B50] transition-colors resize-none leading-relaxed"
         />
 
         {/* Validation Error Message */}
@@ -267,7 +267,7 @@ function FooterUserReviews() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:opacity-95 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold text-xs shadow-xs active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-1.5"
+          className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-[#006B50] to-[#159B72] hover:opacity-95 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold text-xs shadow-xs active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-1.5"
         >
           {isSubmitting ? (
             <>
@@ -293,7 +293,7 @@ function FooterUserReviews() {
       {/* 5. Reviews Display */}
       <div className="space-y-2">
         {reviews.length === 0 ? (
-          <div className="p-3.5 rounded-2xl bg-[#F8FAFC] dark:bg-slate-800/40 border border-dashed border-[#E5E7EB] dark:border-slate-700/80 text-center">
+          <div className="p-3.5 rounded-2xl bg-[#FAF9F4] dark:bg-slate-800/40 border border-dashed border-[#E5E7EB] dark:border-slate-700/80 text-center">
             <p className="text-xs text-[#6B7280] dark:text-slate-400 font-normal leading-relaxed">
               No reviews yet. Be the first to share your experience!
             </p>
@@ -307,7 +307,7 @@ function FooterUserReviews() {
               >
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-1.5 min-w-0">
-                    <div className="w-5 h-5 rounded-full bg-gradient-to-br from-[#2563EB] to-[#3B82F6] text-white flex items-center justify-center text-[10px] font-extrabold shrink-0 shadow-xs">
+                    <div className="w-5 h-5 rounded-full bg-gradient-to-br from-[#006B50] to-[#159B72] text-white flex items-center justify-center text-[10px] font-extrabold shrink-0 shadow-xs">
                       {rev.name?.charAt(0).toUpperCase() || 'U'}
                     </div>
                     <span className="text-xs font-bold text-[#1F2937] dark:text-white truncate">

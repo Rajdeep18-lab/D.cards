@@ -80,7 +80,7 @@ function ProductMiniCard({ item, type, onView, onCompare, onSave, wishlisted }) 
     : (item.cashWithdrawalLimit || item.atm_limit         || '—');
 
   return (
-    <div className="flex items-center gap-3 p-3 rounded-xl bg-white border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all">
+    <div className="flex items-center gap-3 p-3 rounded-xl bg-white border border-gray-200 hover:border-[#DCE9E1] hover:shadow-sm transition-all">
       <BankLogo bankName={bankName} size="sm" className="shrink-0" />
       <div className="flex-1 min-w-0">
         <p className="text-[9px] font-black text-gray-400 uppercase tracking-wider truncate">{bankName}</p>
@@ -96,7 +96,7 @@ function ProductMiniCard({ item, type, onView, onCompare, onSave, wishlisted }) 
       <div className="flex items-center gap-1 shrink-0">
         <button
           onClick={onView}
-          className="px-2.5 py-1 text-[10px] font-bold text-[#2563EB] bg-blue-50 rounded-lg hover:bg-[#2563EB] hover:text-white transition-all active:scale-95"
+          className="px-2.5 py-1 text-[10px] font-bold text-[#006B50] bg-[#FAF9F4] rounded-lg hover:bg-[#006B50] hover:text-white transition-all active:scale-95"
         >
           {isHindi ? 'देखें' : 'View'}
         </button>
@@ -104,7 +104,7 @@ function ProductMiniCard({ item, type, onView, onCompare, onSave, wishlisted }) 
           <button
             onClick={onCompare}
             title={isHindi ? "तुलना में जोड़ें" : "Add to compare"}
-            className="p-1 text-gray-300 hover:text-[#2563EB] transition-colors"
+            className="p-1 text-gray-300 hover:text-[#006B50] transition-colors"
           >
             <Scale className="w-3.5 h-3.5" />
           </button>
@@ -129,7 +129,7 @@ function LocationMiniCard({ location, onNavigate }) {
   const isAtm = location.branch_type === 'ATM';
 
   return (
-    <div className="p-3.5 rounded-2xl bg-white border border-gray-200/90 hover:border-blue-400 hover:shadow-xs transition-all space-y-2.5 text-left">
+    <div className="p-3.5 rounded-2xl bg-white border border-gray-200/90 hover:border-[#159B72] hover:shadow-xs transition-all space-y-2.5 text-left">
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-2 min-w-0">
           <BankLogo bankName={location.bank_name} size="sm" className="shrink-0" />
@@ -139,7 +139,7 @@ function LocationMiniCard({ location, onNavigate }) {
           </div>
         </div>
         <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0 ${
-          isAtm ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-blue-50 text-blue-700 border border-blue-200'
+          isAtm ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-[#FAF9F4] text-[#064E3B] border border-[#DCE9E1]'
         }`}>
           {isAtm ? (isHindi ? '🏧 एटीएम' : '🏧 ATM') : (isHindi ? '🏦 शाखा' : '🏦 Branch')}
         </span>
@@ -169,7 +169,7 @@ function LocationMiniCard({ location, onNavigate }) {
           <button
             type="button"
             onClick={() => onNavigate(`/find-banks?search=${encodeURIComponent(location.city || location.bank_name)}`)}
-            className="px-2 py-1 text-[10px] font-bold text-[#2563EB] bg-blue-50 hover:bg-blue-100 rounded-lg transition-all cursor-pointer"
+            className="px-2 py-1 text-[10px] font-bold text-[#006B50] bg-[#FAF9F4] hover:bg-[#EEF4EE] rounded-lg transition-all cursor-pointer"
           >
             {isHindi ? 'नक्शे पर देखें' : 'View on Map'}
           </button>
@@ -188,7 +188,7 @@ function LocationMiniCard({ location, onNavigate }) {
               href={location.source_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-2 py-1 text-[10px] font-bold text-gray-500 hover:text-blue-600 rounded-lg transition-all"
+              className="px-2 py-1 text-[10px] font-bold text-gray-500 hover:text-[#006B50] rounded-lg transition-all"
             >
               {isHindi ? 'स्रोत 🌐' : 'Source 🌐'}
             </a>
@@ -208,7 +208,7 @@ function TypingIndicator() {
       animate={{ opacity: 1, y: 0 }}
       className="flex items-start gap-3"
     >
-      <div className="w-8 h-8 rounded-xl bg-[#2563EB] flex items-center justify-center shrink-0 shadow-sm">
+      <div className="w-8 h-8 rounded-xl bg-[#006B50] flex items-center justify-center shrink-0 shadow-sm">
         <Bot className="w-4 h-4 text-white" />
       </div>
       <div className="px-4 py-3 rounded-2xl rounded-tl-sm bg-white border border-gray-200 shadow-sm inline-flex items-center gap-3">
@@ -216,7 +216,7 @@ function TypingIndicator() {
           {[0, 150, 300].map(delay => (
             <span
               key={delay}
-              className="w-2 h-2 rounded-full bg-[#2563EB] animate-bounce"
+              className="w-2 h-2 rounded-full bg-[#006B50] animate-bounce"
               style={{ animationDelay: `${delay}ms` }}
             />
           ))}
@@ -257,7 +257,7 @@ function WelcomeState({ onPromptClick }) {
       className="flex flex-col items-center justify-center h-full py-12 px-6 space-y-6 text-center max-w-lg mx-auto"
     >
       {/* Bot Icon */}
-      <div className="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-[#2563EB] shadow-xs">
+      <div className="w-12 h-12 rounded-2xl bg-[#FAF9F4] border border-[#DCE9E1] flex items-center justify-center text-[#006B50] shadow-xs">
         <Bot className="w-6 h-6" />
       </div>
 
@@ -279,9 +279,9 @@ function WelcomeState({ onPromptClick }) {
           <button
             key={idx}
             onClick={() => onPromptClick(sp.query)}
-            className="p-3 rounded-xl bg-white border border-gray-200 hover:border-[#2563EB]/40 hover:bg-blue-50/30 hover:shadow-xs transition-all group flex flex-col justify-between gap-1 text-left active:scale-98"
+            className="p-3 rounded-xl bg-white border border-gray-200 hover:border-[#006B50]/40 hover:bg-[#FAF9F4]/30 hover:shadow-xs transition-all group flex flex-col justify-between gap-1 text-left active:scale-98"
           >
-            <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider group-hover:text-[#2563EB] transition-colors">
+            <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider group-hover:text-[#006B50] transition-colors">
               {sp.label}
             </span>
             <span className="text-xs font-semibold text-gray-700 leading-snug">
@@ -808,10 +808,10 @@ function AIChatAssistant({
             <div
               className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 shadow-sm mt-0.5 ${
                 isUser
-                  ? 'bg-[#2563EB]'
+                  ? 'bg-[#006B50]'
                   : isError
                   ? 'bg-amber-50 border border-amber-200'
-                  : 'bg-[#2563EB]'
+                  : 'bg-[#006B50]'
               }`}
             >
               {isUser
@@ -829,7 +829,7 @@ function AIChatAssistant({
               <div
                 className={`rounded-2xl px-4 py-3 text-[13px] leading-relaxed ${
                   isUser
-                    ? 'bg-[#2563EB] text-white rounded-tr-sm shadow-sm'
+                    ? 'bg-[#006B50] text-white rounded-tr-sm shadow-sm'
                     : isError
                     ? 'bg-amber-50 border border-amber-200 text-amber-900 rounded-tl-sm'
                     : 'bg-white border border-gray-200 text-gray-800 rounded-tl-sm shadow-sm'
@@ -924,7 +924,7 @@ function AIChatAssistant({
                     </p>
                     <button
                       onClick={() => navigate('/find-banks')}
-                      className="text-[10px] font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                      className="text-[10px] font-bold text-[#006B50] hover:text-[#064E3B] flex items-center gap-1"
                     >
                       {isHindi ? 'बैंक खोजें खोलें' : 'Open Find Banks'} <Map className="w-3 h-3" />
                     </button>
@@ -941,7 +941,7 @@ function AIChatAssistant({
                   {msg.matchedLocations.length > 3 && (
                     <button
                       onClick={() => navigate('/find-banks')}
-                      className="text-[10px] text-blue-600 font-semibold px-0.5 hover:underline block text-left"
+                      className="text-[10px] text-[#006B50] font-semibold px-0.5 hover:underline block text-left"
                     >
                       {isHindi ? `+${msg.matchedLocations.length - 3} और सत्यापित शाखाएं मिलीं। सभी देखें →` : `+${msg.matchedLocations.length - 3} more verified locations found. View all on Find Banks →`}
                     </button>
@@ -958,9 +958,9 @@ function AIChatAssistant({
                         <button
                           key={actIdx}
                           onClick={handleUseMyLocation}
-                          className="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-blue-50 text-[#2563EB] border border-blue-200 hover:bg-blue-100 flex items-center gap-1.5 transition-colors active:scale-95 shadow-xs"
+                          className="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-[#FAF9F4] text-[#006B50] border border-[#DCE9E1] hover:bg-[#EEF4EE] flex items-center gap-1.5 transition-colors active:scale-95 shadow-xs"
                         >
-                          <Compass className="w-3.5 h-3.5 text-[#2563EB]" />
+                          <Compass className="w-3.5 h-3.5 text-[#006B50]" />
                           {action.label}
                         </button>
                       );
@@ -978,7 +978,7 @@ function AIChatAssistant({
                           }}
                           className="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200 flex items-center gap-1.5 transition-colors active:scale-95 shadow-xs"
                         >
-                          <MapPin className="w-3.5 h-3.5 text-[#2563EB]" />
+                          <MapPin className="w-3.5 h-3.5 text-[#006B50]" />
                           {action.label}
                         </button>
                       );
@@ -996,7 +996,7 @@ function AIChatAssistant({
               )}
 
               {/* Timestamp */}
-              <p className={`text-[10px] font-medium px-0.5 ${isUser ? 'text-blue-200' : 'text-gray-400'}`}>
+              <p className={`text-[10px] font-medium px-0.5 ${isUser ? 'text-emerald-100' : 'text-gray-400'}`}>
                 {msg.timestamp}
               </p>
             </div>
@@ -1016,7 +1016,7 @@ function AIChatAssistant({
           key={act.label}
           onClick={() => handleSendMessage(act.query)}
           disabled={isSearching}
-          className="px-3 py-1.5 rounded-full text-[11px] font-semibold whitespace-nowrap bg-[#F8FAFC] border border-gray-200 text-gray-600 hover:border-[#2563EB]/40 hover:text-[#2563EB] hover:bg-blue-50 transition-all active:scale-95 disabled:opacity-50 shrink-0"
+          className="px-3 py-1.5 rounded-full text-[11px] font-semibold whitespace-nowrap bg-[#FAF9F4] border border-gray-200 text-gray-600 hover:border-[#006B50]/40 hover:text-[#006B50] hover:bg-[#FAF9F4] transition-all active:scale-95 disabled:opacity-50 shrink-0"
         >
           {act.label}
         </button>
@@ -1041,10 +1041,10 @@ function AIChatAssistant({
           }}
           placeholder={isHindi ? "खातों, कार्डों, खरड़ एसबीआई एटीएम या चंडीगढ़ शाखा के बारे में पूछें..." : "Ask about accounts, cards, Kharar SBI ATM, Chandigarh branch..."}
           disabled={isSearching}
-          className={`flex-1 rounded-full bg-[#F8FAFC] border px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 outline-none transition-all disabled:opacity-60 min-w-0 ${
+          className={`flex-1 rounded-full bg-[#FAF9F4] border px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 outline-none transition-all disabled:opacity-60 min-w-0 ${
             isListening
               ? 'border-red-400 ring-2 ring-red-400/20 bg-white'
-              : 'border-gray-200 focus:border-[#2563EB] focus:bg-white'
+              : 'border-gray-200 focus:border-[#006B50] focus:bg-white'
           }`}
           aria-label="Type your banking question"
         />
@@ -1072,7 +1072,7 @@ function AIChatAssistant({
           className={`px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider transition-colors shrink-0 ${
             voiceLang === 'hi-IN'
               ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30'
-              : 'bg-blue-50 text-[#2563EB] border border-blue-200'
+              : 'bg-[#FAF9F4] text-[#006B50] border border-[#DCE9E1]'
           }`}
           aria-label="Switch voice recognition language"
         >
@@ -1095,7 +1095,7 @@ function AIChatAssistant({
               ? 'bg-red-500 border-red-600 text-white animate-pulse shadow-md shadow-red-500/30 ring-2 ring-red-300'
               : voiceState === 'recognized'
               ? 'bg-emerald-50 border-emerald-300 text-emerald-600'
-              : 'border-gray-200 bg-[#F8FAFC] hover:bg-blue-50 hover:border-blue-200 text-gray-500 hover:text-blue-600'
+              : 'border-gray-200 bg-[#FAF9F4] hover:bg-[#FAF9F4] hover:border-[#DCE9E1] text-gray-500 hover:text-[#006B50]'
           }`}
           aria-label="Voice input"
         >
@@ -1119,7 +1119,7 @@ function AIChatAssistant({
             type="button"
             onClick={handleClearChat}
             title={isHindi ? "बातचीत साफ़ करें" : "Clear conversation"}
-            className="w-9 h-9 rounded-full border border-gray-200 bg-[#F8FAFC] hover:bg-red-50 hover:border-red-200 text-gray-400 hover:text-red-400 flex items-center justify-center transition-all shrink-0 active:scale-95 cursor-pointer"
+            className="w-9 h-9 rounded-full border border-gray-200 bg-[#FAF9F4] hover:bg-red-50 hover:border-red-200 text-gray-400 hover:text-red-400 flex items-center justify-center transition-all shrink-0 active:scale-95 cursor-pointer"
             aria-label="Clear conversation"
           >
             <Trash2 className="w-3.5 h-3.5" />
@@ -1130,7 +1130,7 @@ function AIChatAssistant({
           type="submit"
           disabled={!inputValue.trim() || isSearching}
           title={isSearching ? (isHindi ? 'सोच रहा है...' : 'Thinking…') : (isHindi ? 'संदेश भेजें' : 'Send message')}
-          className="w-10 h-10 rounded-full bg-[#2563EB] hover:bg-blue-700 text-white flex items-center justify-center shadow-sm disabled:opacity-40 active:scale-95 transition-all shrink-0 cursor-pointer"
+          className="w-10 h-10 rounded-full bg-[#006B50] hover:bg-[#064E3B] text-white flex items-center justify-center shadow-sm disabled:opacity-40 active:scale-95 transition-all shrink-0 cursor-pointer"
           aria-label="Send message"
         >
           <Send className="w-4 h-4" />
@@ -1151,7 +1151,7 @@ function AIChatAssistant({
                 ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
                 : voiceNotice.type === 'error'
                 ? 'bg-rose-50 border-rose-200 text-rose-700'
-                : 'bg-blue-50 border-blue-200 text-blue-700'
+                : 'bg-[#FAF9F4] border-[#DCE9E1] text-[#064E3B]'
             }`}
           >
             <div className="flex items-center gap-1.5 min-w-0">
@@ -1163,7 +1163,7 @@ function AIChatAssistant({
               )}
               {voiceNotice.type === 'success' && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />}
               {voiceNotice.type === 'error' && <AlertCircle className="w-3.5 h-3.5 text-rose-600 shrink-0" />}
-              {voiceNotice.type === 'info' && <Info className="w-3.5 h-3.5 text-blue-600 shrink-0" />}
+              {voiceNotice.type === 'info' && <Info className="w-3.5 h-3.5 text-[#006B50] shrink-0" />}
               <span className="break-words leading-tight text-[11px] font-medium">{voiceNotice.text}</span>
             </div>
             <button
@@ -1214,7 +1214,7 @@ function AIChatAssistant({
           whileTap={{ scale: 0.95 }}
           onClick={() => setIsOpen(true)}
           aria-label="Open D.CARD AI Assistance"
-          className="flex items-center gap-2.5 px-4 py-3 rounded-full bg-[#2563EB] hover:bg-blue-700 text-white font-bold text-xs shadow-lg shadow-blue-500/25 border border-blue-500/30 cursor-pointer transition-all"
+          className="flex items-center gap-2.5 px-4 py-3 rounded-full bg-[#006B50] hover:bg-[#064E3B] text-white font-bold text-xs shadow-lg shadow-emerald-900/25 border border-[#159B72]/30 cursor-pointer transition-all"
         >
           <Bot className="w-4 h-4" />
           <span>{isHindi ? 'D.CARD एआई सहायता' : 'D.CARD AI Assistance'}</span>
@@ -1238,16 +1238,16 @@ function AIChatAssistant({
             className="w-[calc(100vw-16px)] max-w-[400px] sm:w-[460px] rounded-2xl bg-white border border-gray-200 shadow-2xl flex flex-col overflow-hidden"
           >
             {/* Header */}
-            <div className="px-4 py-3 bg-[#2563EB] flex items-center justify-between shrink-0">
+            <div className="px-4 py-3 bg-[#006B50] flex items-center justify-between shrink-0">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-blue-500/60 border border-blue-400/40 flex items-center justify-center shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-[#159B72]/60 border border-[#159B72]/40 flex items-center justify-center shrink-0">
                   <Bot className="w-4 h-4 text-white" />
                 </div>
                 <div>
                   <h3 className="text-[13px] font-black text-white leading-none">
                     {isHindi ? 'D.CARD एआई सहायता' : 'D.CARD AI Assistance'}
                   </h3>
-                  <p className="text-[10px] text-blue-200 font-semibold mt-0.5 flex items-center gap-1.5">
+                  <p className="text-[10px] text-emerald-100 font-semibold mt-0.5 flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                     {isHindi ? 'बैंकिंग उत्पाद एवं शाखा खोज' : 'Banking & Location Discovery'}
                   </p>
@@ -1257,7 +1257,7 @@ function AIChatAssistant({
                 <button
                   onClick={() => setIsMinimized(!isMinimized)}
                   title={isMinimized ? 'Maximize' : 'Minimize'}
-                  className="w-7 h-7 rounded-full bg-blue-500/60 hover:bg-blue-400/80 flex items-center justify-center text-white transition-colors"
+                  className="w-7 h-7 rounded-full bg-[#159B72]/60 hover:bg-[#159B72]/80 flex items-center justify-center text-white transition-colors"
                   aria-label={isMinimized ? 'Maximize chat' : 'Minimize chat'}
                 >
                   {isMinimized ? <Maximize2 className="w-3.5 h-3.5" /> : <Minus className="w-3.5 h-3.5" />}
@@ -1265,7 +1265,7 @@ function AIChatAssistant({
                 <button
                   onClick={() => setIsOpen(false)}
                   title="Close"
-                  className="w-7 h-7 rounded-full bg-blue-500/60 hover:bg-blue-400/80 flex items-center justify-center text-white transition-colors"
+                  className="w-7 h-7 rounded-full bg-[#159B72]/60 hover:bg-[#159B72]/80 flex items-center justify-center text-white transition-colors"
                   aria-label="Close AI Assistance"
                 >
                   <X className="w-3.5 h-3.5" />

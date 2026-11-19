@@ -40,11 +40,11 @@ function SavingsAccountComparisonModal({ isOpen, onClose, compareQueue = [], onR
           {/* Header */}
           <div className="p-5 sm:p-6 pb-4 border-b border-slate-100 dark:border-slate-800/80 flex items-center justify-between flex-shrink-0 bg-slate-50/60 dark:bg-slate-900/50">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#0B3D91] to-[#2563EB] text-white flex items-center justify-center font-bold text-lg shadow-md shadow-[#2563EB]/25">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#123C30] to-[#006B50] text-white flex items-center justify-center font-bold text-lg shadow-md shadow-[#006B50]/25">
                 <Scale className="w-5 h-5" />
               </div>
               <div>
-                <h2 className="text-lg sm:text-xl font-extrabold text-[#0B3D91] dark:text-white tracking-tight leading-snug">
+                <h2 className="text-lg sm:text-xl font-extrabold text-[#123C30] dark:text-white tracking-tight leading-snug">
                   Savings Accounts Comparison Matrix
                 </h2>
                 <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
@@ -75,7 +75,7 @@ function SavingsAccountComparisonModal({ isOpen, onClose, compareQueue = [], onR
                 {/* ── MOBILE COMPARISON CARDS (320px - 767px) ── */}
                 <div className="block md:hidden space-y-4">
                   <div className="text-center pb-1">
-                    <span className="text-[11px] font-black uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA]">
+                    <span className="text-[11px] font-black uppercase tracking-wider text-[#006B50] dark:text-[#159B72]">
                       Queued Accounts ({compareQueue.length})
                     </span>
                   </div>
@@ -106,7 +106,7 @@ function SavingsAccountComparisonModal({ isOpen, onClose, compareQueue = [], onR
                           <div className="grid grid-cols-2 gap-2 text-xs pt-1">
                             <div className="p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
                               <span className="text-[9.5px] font-bold text-slate-400 uppercase block">Account Type</span>
-                              <span className="font-bold text-[#2563EB] dark:text-[#60A5FA]">{acc.accountType}</span>
+                              <span className="font-bold text-[#006B50] dark:text-[#159B72]">{acc.accountType}</span>
                             </div>
 
                             <div className="p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
@@ -130,7 +130,7 @@ function SavingsAccountComparisonModal({ isOpen, onClose, compareQueue = [], onR
                           {/* Associated Card preview */}
                           {associatedCard && (
                             <div className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-left space-y-1">
-                              <span className="text-[9.5px] font-bold text-[#2563EB] dark:text-[#60A5FA] uppercase block">
+                              <span className="text-[9.5px] font-bold text-[#006B50] dark:text-[#159B72] uppercase block">
                                 💳 Provided Card: {associatedCard.card_name || associatedCard.cardName}
                               </span>
                               <div className="text-[10.5px] text-slate-600 dark:text-slate-300">
@@ -179,7 +179,7 @@ function SavingsAccountComparisonModal({ isOpen, onClose, compareQueue = [], onR
                         <td className="p-3.5 font-bold text-slate-700 dark:text-slate-300 sticky left-0 bg-white dark:bg-[#0F172A] z-10">Account Type</td>
                         {compareQueue.map((acc) => (
                           <td key={acc.id} className="p-3.5 text-center font-semibold">
-                            <span className="px-2.5 py-1 rounded-full text-xs bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] font-bold">
+                            <span className="px-2.5 py-1 rounded-full text-xs bg-[#006B50]/10 text-[#006B50] dark:text-[#159B72] font-bold">
                               {acc.accountType}
                             </span>
                           </td>
@@ -261,7 +261,7 @@ function SavingsAccountComparisonModal({ isOpen, onClose, compareQueue = [], onR
                         {compareQueue.map((acc) => (
                           <td key={acc.id} className="p-3.5 text-center">
                             {acc.isOnlineOpening ? (
-                              <span className="text-indigo-600 dark:text-indigo-400 font-bold">✓ Instant Video KYC</span>
+                              <span className="text-[#006B50] dark:text-[#159B72] font-bold">✓ Instant Video KYC</span>
                             ) : (
                               <span className="text-slate-400">Branch Visit</span>
                             )}
@@ -270,7 +270,7 @@ function SavingsAccountComparisonModal({ isOpen, onClose, compareQueue = [], onR
                       </tr>
 
                       <tr className="bg-slate-50 dark:bg-slate-900/60">
-                        <td className="p-3.5 font-black text-[#0B3D91] dark:text-[#60A5FA] uppercase text-[11px] tracking-wider sticky left-0 bg-slate-50 dark:bg-slate-900 z-10">
+                        <td className="p-3.5 font-black text-[#123C30] dark:text-[#159B72] uppercase text-[11px] tracking-wider sticky left-0 bg-slate-50 dark:bg-slate-900 z-10">
                           💳 Associated Debit Card
                         </td>
                         {compareQueue.map((acc) => {
@@ -281,11 +281,11 @@ function SavingsAccountComparisonModal({ isOpen, onClose, compareQueue = [], onR
                               {associatedCard ? (
                                 <div className="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-left space-y-1.5 shadow-xs">
                                   <div className="flex items-center justify-between">
-                                    <span className="text-[9.5px] font-bold text-[#2563EB] dark:text-[#60A5FA] uppercase tracking-wider block">
+                                    <span className="text-[9.5px] font-bold text-[#006B50] dark:text-[#159B72] uppercase tracking-wider block">
                                       {associatedCard.network || 'Visa'}
                                     </span>
                                     {cards.length > 1 && (
-                                      <span className="px-1.5 py-0.5 rounded bg-blue-100 dark:bg-slate-700 text-[#2563EB] dark:text-blue-300 font-bold text-[9px]">
+                                      <span className="px-1.5 py-0.5 rounded bg-[#EEF4EE] dark:bg-slate-700 text-[#006B50] dark:text-emerald-200 font-bold text-[9px]">
                                         {cards.length} Cards
                                       </span>
                                     )}
@@ -305,7 +305,7 @@ function SavingsAccountComparisonModal({ isOpen, onClose, compareQueue = [], onR
                                         onClose();
                                         onSelectDebitCard(associatedCard);
                                       }}
-                                      className="w-full mt-2 py-1 rounded bg-[#2563EB]/10 hover:bg-[#2563EB] text-[#2563EB] hover:text-white font-bold text-[10px] transition-colors cursor-pointer text-center block"
+                                      className="w-full mt-2 py-1 rounded bg-[#006B50]/10 hover:bg-[#006B50] text-[#006B50] hover:text-white font-bold text-[10px] transition-colors cursor-pointer text-center block"
                                     >
                                       View Specs →
                                     </button>

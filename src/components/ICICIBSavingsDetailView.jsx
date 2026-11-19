@@ -131,9 +131,9 @@ const PRIVILEGE_TIERS = [
     id: "select",
     name: "Select Banking",
     tagline: "Privilege Banking Tier",
-    badgeColor: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20",
-    accentBorder: "border-blue-500/30",
-    headerGradient: "from-[#0B3D91] to-[#2563EB]",
+    badgeColor: "bg-[#159B72]/10 text-[#006B50] dark:text-[#159B72] border-[#159B72]/20",
+    accentBorder: "border-[#159B72]/30",
+    headerGradient: "from-[#123C30] to-[#006B50]",
     eligibilityRoutes: [
       {
         routeTitle: "CASA + Deposits Route",
@@ -345,15 +345,15 @@ function ICICIBSavingsDetailView({ onSelectDebitCard }) {
       
       {/* ── 0. BREADCRUMB & TOP NAV ── */}
       <nav className="flex items-center gap-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
-        <Link to="/" className="hover:text-[#2563EB] transition-colors">Home</Link>
+        <Link to="/" className="hover:text-[#006B50] transition-colors">Home</Link>
         <span>/</span>
-        <Link to="/savings-accounts" className="hover:text-[#2563EB] transition-colors">Savings Accounts</Link>
+        <Link to="/savings-accounts" className="hover:text-[#006B50] transition-colors">Savings Accounts</Link>
         <span>/</span>
         <span className="text-slate-900 dark:text-white font-extrabold">ICICI Bank</span>
       </nav>
 
       {/* ── PAGE HEADER / HERO TITLE BANNER ── */}
-      <div className="p-6 sm:p-10 rounded-[32px] bg-gradient-to-br from-[#0B3D91] via-[#1E3A8A] to-[#0F172A] text-white shadow-2xl relative overflow-hidden border border-slate-700/80 space-y-6">
+      <div className="p-6 sm:p-10 rounded-[32px] bg-gradient-to-br from-[#123C30] via-[#123C30] to-[#0F172A] text-white shadow-2xl relative overflow-hidden border border-slate-700/80 space-y-6">
         <div className="absolute top-0 right-0 w-96 h-96 bg-[#F37021]/15 rounded-full blur-3xl pointer-events-none" />
 
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
@@ -407,7 +407,7 @@ function ICICIBSavingsDetailView({ onSelectDebitCard }) {
       <section className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-6">
         <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] flex items-center justify-center font-bold">
+            <div className="w-9 h-9 rounded-xl bg-[#006B50]/10 text-[#006B50] dark:text-[#159B72] flex items-center justify-center font-bold">
               <Building2 className="w-5 h-5" />
             </div>
             <div>
@@ -420,7 +420,7 @@ function ICICIBSavingsDetailView({ onSelectDebitCard }) {
             </div>
           </div>
 
-          <span className="text-[11px] font-black uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA] bg-[#2563EB]/10 px-3 py-1 rounded-full border border-[#2563EB]/20 hidden sm:inline">
+          <span className="text-[11px] font-black uppercase tracking-wider text-[#006B50] dark:text-[#159B72] bg-[#006B50]/10 px-3 py-1 rounded-full border border-[#006B50]/20 hidden sm:inline">
             Standard ICICI Tier
           </span>
         </div>
@@ -429,8 +429,8 @@ function ICICIBSavingsDetailView({ onSelectDebitCard }) {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
           
           {/* Card 1: Monthly Average Balance (MAB) */}
-          <div className="p-5 rounded-2xl bg-[#F8FAFC] dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1.5 text-left">
-            <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA] block">
+          <div className="p-5 rounded-2xl bg-[#FAF9F4] dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1.5 text-left">
+            <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#006B50] dark:text-[#159B72] block">
               Monthly Average Balance (MAB)
             </span>
             <h4 className="text-lg font-black text-slate-900 dark:text-white">
@@ -444,7 +444,7 @@ function ICICIBSavingsDetailView({ onSelectDebitCard }) {
           </div>
 
           {/* Card 2: 3-in-1 Account */}
-          <div className="p-5 rounded-2xl bg-[#F8FAFC] dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1.5 text-left">
+          <div className="p-5 rounded-2xl bg-[#FAF9F4] dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1.5 text-left">
             <span className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block">
               3-in-1 Integrated Account
             </span>
@@ -457,7 +457,7 @@ function ICICIBSavingsDetailView({ onSelectDebitCard }) {
           </div>
 
           {/* Card 3: Debit Card Tiering */}
-          <div className="p-5 rounded-2xl bg-[#F8FAFC] dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1.5 text-left">
+          <div className="p-5 rounded-2xl bg-[#FAF9F4] dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1.5 text-left">
             <span className="text-[10px] font-extrabold uppercase tracking-wider text-purple-600 dark:text-purple-400 block">
               Debit Card Tiering Options
             </span>
@@ -470,7 +470,7 @@ function ICICIBSavingsDetailView({ onSelectDebitCard }) {
           </div>
 
           {/* Card 4: 24x7 iMobile App Banking */}
-          <div className="p-5 rounded-2xl bg-[#F8FAFC] dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1.5 text-left">
+          <div className="p-5 rounded-2xl bg-[#FAF9F4] dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1.5 text-left">
             <span className="text-[10px] font-extrabold uppercase tracking-wider text-amber-600 dark:text-amber-400 block">
               24×7 Digital Banking
             </span>
@@ -483,7 +483,7 @@ function ICICIBSavingsDetailView({ onSelectDebitCard }) {
           </div>
 
           {/* Card 5: Air Accidental Death Insurance Cover */}
-          <div className="p-5 rounded-2xl bg-[#F8FAFC] dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1.5 text-left sm:col-span-2 lg:col-span-2">
+          <div className="p-5 rounded-2xl bg-[#FAF9F4] dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1.5 text-left sm:col-span-2 lg:col-span-2">
             <span className="text-[10px] font-extrabold uppercase tracking-wider text-rose-600 dark:text-rose-400 block">
               Insurance Protection
             </span>
@@ -526,10 +526,10 @@ function ICICIBSavingsDetailView({ onSelectDebitCard }) {
           {PRIVILEGE_TIERS.map((tier) => (
             <div
               key={tier.id}
-              className={`rounded-3xl p-6 bg-[#F8FAFC] dark:bg-slate-900 border ${tier.accentBorder} flex flex-col justify-between space-y-6 relative text-left shadow-soft hover:shadow-xl transition-all duration-300`}
+              className={`rounded-3xl p-6 bg-[#FAF9F4] dark:bg-slate-900 border ${tier.accentBorder} flex flex-col justify-between space-y-6 relative text-left shadow-soft hover:shadow-xl transition-all duration-300`}
             >
               {tier.isRecommended && (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-[10px] font-black uppercase tracking-widest shadow-md">
+                <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-gradient-to-r from-purple-600 to-[#064E3B] text-white text-[10px] font-black uppercase tracking-widest shadow-md">
                   Most Popular Tier
                 </span>
               )}
@@ -545,7 +545,7 @@ function ICICIBSavingsDetailView({ onSelectDebitCard }) {
                   <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider border ${tier.badgeColor}`}>
                     {tier.tagline}
                   </span>
-                  <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#0B3D91] to-[#2563EB] text-white flex items-center justify-center font-bold text-xs">
+                  <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#123C30] to-[#006B50] text-white flex items-center justify-center font-bold text-xs">
                     {tier.name.charAt(6) || 'P'}
                   </div>
                 </div>
@@ -558,7 +558,7 @@ function ICICIBSavingsDetailView({ onSelectDebitCard }) {
               {/* Qualification Routes Box */}
               <div className="p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 space-y-3">
                 <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-2">
-                  <span className="text-[10.5px] font-extrabold uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA]">
+                  <span className="text-[10.5px] font-extrabold uppercase tracking-wider text-[#006B50] dark:text-[#159B72]">
                     Programme Eligibility Routes
                   </span>
                   <span className="text-[9.5px] font-bold text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded">
@@ -583,31 +583,31 @@ function ICICIBSavingsDetailView({ onSelectDebitCard }) {
               {/* Standard Features Breakdown */}
               <div className="space-y-2 text-xs border-t border-slate-200/80 dark:border-slate-800 pt-4 text-slate-700 dark:text-slate-300 font-medium">
                 <div className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-4 h-4 text-[#006B50] shrink-0 mt-0.5" />
                   <span><strong>3-in-1 Account:</strong> {tier.features.threeInOne}</span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-4 h-4 text-[#006B50] shrink-0 mt-0.5" />
                   <span><strong>Debit Card:</strong> {tier.features.debitCard}</span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-4 h-4 text-[#006B50] shrink-0 mt-0.5" />
                   <span><strong>Lounge Access:</strong> {tier.features.loungeAccess}</span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-4 h-4 text-[#006B50] shrink-0 mt-0.5" />
                   <span><strong>RM Access:</strong> {tier.features.relationshipManager}</span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-4 h-4 text-[#006B50] shrink-0 mt-0.5" />
                   <span><strong>Family Banking:</strong> {tier.features.familyBanking}</span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-4 h-4 text-[#006B50] shrink-0 mt-0.5" />
                   <span><strong>Air Insurance:</strong> {tier.features.airAccidentInsurance}</span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-4 h-4 text-[#006B50] shrink-0 mt-0.5" />
                   <span><strong>Personal Accident:</strong> {tier.features.personalAccidentInsurance}</span>
                 </div>
               </div>
@@ -659,7 +659,7 @@ function ICICIBSavingsDetailView({ onSelectDebitCard }) {
           
           {/* Item 1: Digital Banking */}
           <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2 text-left">
-            <div className="w-8 h-8 rounded-xl bg-blue-500/10 text-[#2563EB] flex items-center justify-center font-bold">
+            <div className="w-8 h-8 rounded-xl bg-[#159B72]/10 text-[#006B50] flex items-center justify-center font-bold">
               <Smartphone className="w-4 h-4" />
             </div>
             <h4 className="font-extrabold text-sm text-slate-900 dark:text-white">
@@ -730,7 +730,7 @@ function ICICIBSavingsDetailView({ onSelectDebitCard }) {
 
           {/* Item 6: Investment Solutions */}
           <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2 text-left">
-            <div className="w-8 h-8 rounded-xl bg-cyan-500/10 text-cyan-600 flex items-center justify-center font-bold">
+            <div className="w-8 h-8 rounded-xl bg-[#159B72]/10 text-[#006B50] flex items-center justify-center font-bold">
               <TrendingUp className="w-4 h-4" />
             </div>
             <h4 className="font-extrabold text-sm text-slate-900 dark:text-white">
@@ -748,7 +748,7 @@ function ICICIBSavingsDetailView({ onSelectDebitCard }) {
       <section className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-6">
         <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-blue-500/10 text-[#2563EB] flex items-center justify-center font-bold">
+            <div className="w-9 h-9 rounded-xl bg-[#159B72]/10 text-[#006B50] flex items-center justify-center font-bold">
               <Scale className="w-5 h-5" />
             </div>
             <div>
@@ -821,7 +821,7 @@ function ICICIBSavingsDetailView({ onSelectDebitCard }) {
       <section className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 shadow-soft space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-4">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-[#2563EB]/10 text-[#2563EB] flex items-center justify-center font-bold">
+            <div className="w-9 h-9 rounded-xl bg-[#006B50]/10 text-[#006B50] flex items-center justify-center font-bold">
               <Search className="w-5 h-5" />
             </div>
             <div>
@@ -848,7 +848,7 @@ function ICICIBSavingsDetailView({ onSelectDebitCard }) {
               value={chargesSearchQuery}
               onChange={(e) => setChargesSearchQuery(e.target.value)}
               placeholder="Search charges (e.g. 'MAB', 'IMPS', 'ATM', 'DD', 'SMS')..."
-              className="w-full pl-9 pr-8 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs text-slate-800 dark:text-white outline-none focus:border-[#2563EB]"
+              className="w-full pl-9 pr-8 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs text-slate-800 dark:text-white outline-none focus:border-[#006B50]"
             />
             {chargesSearchQuery && (
               <button onClick={() => setChargesSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
@@ -864,8 +864,8 @@ function ICICIBSavingsDetailView({ onSelectDebitCard }) {
                 onClick={() => setChargesCategoryFilter(cat)}
                 className={`px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                   chargesCategoryFilter === cat
-                    ? 'bg-[#2563EB] text-white shadow-xs'
-                    : 'bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:border-[#2563EB]'
+                    ? 'bg-[#006B50] text-white shadow-xs'
+                    : 'bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:border-[#006B50]'
                 }`}
               >
                 {cat}
@@ -881,7 +881,7 @@ function ICICIBSavingsDetailView({ onSelectDebitCard }) {
               <tr className="bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 font-extrabold text-slate-800 dark:text-white">
                 <th className="p-3.5 w-1/4">Category</th>
                 <th className="p-3.5 w-1/4">Service / Feature</th>
-                <th className="p-3.5 w-1/3 bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA]">
+                <th className="p-3.5 w-1/3 bg-[#006B50]/10 text-[#006B50] dark:text-[#159B72]">
                   One Savings Account Charges
                 </th>
                 <th className="p-3.5 w-1/6">Senior Citizen Special Tier</th>
@@ -899,7 +899,7 @@ function ICICIBSavingsDetailView({ onSelectDebitCard }) {
                   <tr key={idx} className="hover:bg-slate-50/60 dark:hover:bg-slate-800/40">
                     <td className="p-3.5 text-slate-500 dark:text-slate-400 font-semibold">{item.category}</td>
                     <td className="p-3.5 font-bold text-slate-900 dark:text-white">{item.feature}</td>
-                    <td className="p-3.5 bg-[#2563EB]/5 font-semibold text-slate-800 dark:text-slate-100">{item.value}</td>
+                    <td className="p-3.5 bg-[#006B50]/5 font-semibold text-slate-800 dark:text-slate-100">{item.value}</td>
                     <td className="p-3.5 text-emerald-600 dark:text-emerald-400 font-bold">{item.seniorValue}</td>
                   </tr>
                 ))
@@ -932,11 +932,11 @@ function ICICIBSavingsDetailView({ onSelectDebitCard }) {
           {CONNECTED_ICICI_DEBIT_CARDS.map((card) => (
             <div
               key={card.id}
-              className="p-5 rounded-2xl bg-[#F8FAFC] dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3 flex flex-col justify-between text-left shadow-xs hover:border-[#2563EB] transition-colors"
+              className="p-5 rounded-2xl bg-[#FAF9F4] dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3 flex flex-col justify-between text-left shadow-xs hover:border-[#006B50] transition-colors"
             >
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-[9.5px] font-extrabold uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA]">
+                  <span className="text-[9.5px] font-extrabold uppercase tracking-wider text-[#006B50] dark:text-[#159B72]">
                     {card.network}
                   </span>
                   <span className="text-[9.5px] font-bold text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded">
@@ -960,7 +960,7 @@ function ICICIBSavingsDetailView({ onSelectDebitCard }) {
               {onSelectDebitCard && (
                 <button
                   onClick={() => onSelectDebitCard(card)}
-                  className="w-full mt-2 py-2 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white font-bold text-xs transition-colors cursor-pointer text-center block"
+                  className="w-full mt-2 py-2 rounded-xl bg-[#006B50] hover:bg-[#064E3B] text-white font-bold text-xs transition-colors cursor-pointer text-center block"
                 >
                   View Card Specs →
                 </button>

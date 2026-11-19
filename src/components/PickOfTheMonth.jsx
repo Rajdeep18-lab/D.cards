@@ -41,10 +41,10 @@ function PickOfTheMonth({ card, onViewDetails }) {
       
       {/* Container */}
       <div 
-        className="w-full rounded-3xl bg-gradient-to-br from-[#0F172A] via-[#1E293B] to-[#2563EB] border border-slate-700 px-6 py-10 md:p-12 relative overflow-hidden shadow-xl flex flex-col lg:flex-row items-center gap-10 md:gap-12"
+        className="w-full rounded-3xl bg-gradient-to-br from-[#0F172A] via-[#1E293B] to-[#006B50] border border-slate-700 px-6 py-10 md:p-12 relative overflow-hidden shadow-xl flex flex-col lg:flex-row items-center gap-10 md:gap-12"
       >
         {/* Soft Ambient Internal Glows */}
-        <div className="absolute top-0 right-0 w-[400px] h-[400px] rounded-full bg-[#2563EB]/15 blur-[90px] pointer-events-none" />
+        <div className="absolute top-0 right-0 w-[400px] h-[400px] rounded-full bg-[#006B50]/15 blur-[90px] pointer-events-none" />
         
         {/* Left Content Panel */}
         <div className="flex-1 text-left relative z-10 w-full space-y-5">
@@ -61,7 +61,7 @@ function PickOfTheMonth({ card, onViewDetails }) {
             </h2>
             <div className="flex items-center gap-2 mt-1">
               <BankLogo bankName={card.bank} size="xs" />
-              <p className="text-xs font-semibold text-[#60A5FA] uppercase tracking-widest">
+              <p className="text-xs font-semibold text-[#159B72] uppercase tracking-widest">
                 {card.bank}
               </p>
             </div>
@@ -80,7 +80,7 @@ function PickOfTheMonth({ card, onViewDetails }) {
               "Global Forex Friendly Perks"
             ].map((perk, i) => (
               <div key={i} className="flex items-center gap-2 text-xs text-slate-200 font-normal">
-                <CheckCircle2 className="w-4 h-4 text-[#60A5FA] flex-shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-[#159B72] flex-shrink-0" />
                 <span>{perk}</span>
               </div>
             ))}
@@ -90,7 +90,7 @@ function PickOfTheMonth({ card, onViewDetails }) {
           <div className="pt-4 flex flex-wrap gap-3 select-none">
             <button
               onClick={() => onViewDetails && onViewDetails(card)}
-              className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:opacity-95 text-white font-semibold text-xs tracking-wide uppercase shadow-md transition-all cursor-pointer flex items-center gap-2 active:scale-95"
+              className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#006B50] to-[#159B72] hover:opacity-95 text-white font-semibold text-xs tracking-wide uppercase shadow-md transition-all cursor-pointer flex items-center gap-2 active:scale-95"
             >
               <span>View Full Specs</span>
               <ArrowRight className="w-4 h-4" />
@@ -118,7 +118,7 @@ function PickOfTheMonth({ card, onViewDetails }) {
               transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
               transition: "transform 0.1s ease-out"
             }}
-            className="w-[280px] sm:w-[320px] h-[175px] sm:h-[200px] rounded-3xl bg-gradient-to-br from-[#0F172A] via-[#1E293B] to-[#2563EB] border border-amber-400/40 shadow-2xl p-6 flex flex-col justify-between relative overflow-hidden cursor-pointer text-left"
+            className="w-[280px] sm:w-[320px] h-[175px] sm:h-[200px] rounded-3xl bg-gradient-to-br from-[#0F172A] via-[#1E293B] to-[#006B50] border border-amber-400/40 shadow-2xl p-6 flex flex-col justify-between relative overflow-hidden cursor-pointer text-left"
             onClick={() => onViewDetails && onViewDetails(card)}
           >
             <div className="flex justify-between items-start">

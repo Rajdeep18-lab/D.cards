@@ -96,7 +96,7 @@ function BannerItem({ card, onSelectCard }) {
             e.stopPropagation();
             onSelectCard();
           }}
-          className="px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:from-[#1D4ED8] hover:to-[#2563EB] text-white font-extrabold text-[10px] sm:text-xs tracking-wider uppercase shadow-md hover:shadow-lg transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 whitespace-nowrap"
+          className="px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-gradient-to-r from-[#006B50] to-[#159B72] hover:from-[#064E3B] hover:to-[#006B50] text-white font-extrabold text-[10px] sm:text-xs tracking-wider uppercase shadow-md hover:shadow-lg transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 whitespace-nowrap"
         >
           <span>View Card</span>
           <ArrowRight className="w-3 sm:w-3.5 h-3 sm:h-3.5" />
@@ -139,7 +139,7 @@ export default function KotakContinuousBanner({ activeCardsList = [], onViewDeta
   return (
     <aside 
       aria-label="Card of the Month Continuous Advertisement Banner"
-      className="w-full bg-[#080E21] dark:bg-[#060B18] border-b border-blue-900/40 py-2 sm:py-3 overflow-hidden select-none relative z-30 shadow-md"
+      className="w-full bg-[#080E21] dark:bg-[#060B18] border-b border-[#064E3B]/40 py-2 sm:py-3 overflow-hidden select-none relative z-30 shadow-md"
     >
       {/* Subtle edge fade overlays for professional marquee finish */}
       <div className="absolute left-0 top-0 bottom-0 w-8 sm:w-16 bg-gradient-to-r from-[#080E21] dark:from-[#060B18] to-transparent z-10 pointer-events-none" />

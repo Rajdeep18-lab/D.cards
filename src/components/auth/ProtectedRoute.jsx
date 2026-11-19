@@ -35,7 +35,7 @@ export default function ProtectedRoute({ children }) {
     return (
       <div className="min-h-[70vh] flex flex-col items-center justify-center bg-[#F8FBFF] dark:bg-[#0F172A] select-none">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-9 h-9 border-3 border-blue-600 border-t-transparent rounded-full animate-spin" />
+          <div className="w-9 h-9 border-3 border-[#006B50] border-t-transparent rounded-full animate-spin" />
           <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
             Checking authentication...
           </span>

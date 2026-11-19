@@ -648,10 +648,10 @@ export default function AIAssistanceSection({
       aria-label="D.CARD AI Assistance"
       className="select-none text-left"
     >
-      <div className="rounded-3xl bg-gradient-to-br from-[#F8FAFC] via-[#EFF6FF]/70 to-[#F1F5F9] dark:from-[#0B1528] dark:via-[#111F38] dark:to-[#0F172A] border border-blue-200/80 dark:border-slate-800 shadow-xl overflow-hidden p-6 sm:p-8 lg:p-10 relative">
+      <div className="rounded-3xl bg-gradient-to-br from-[#FAF9F4] via-[#FAF9F4]/70 to-[#F1F5F9] dark:from-[#0B1528] dark:via-[#111F38] dark:to-[#0F172A] border border-[#DCE9E1]/80 dark:border-slate-800 shadow-xl overflow-hidden p-6 sm:p-8 lg:p-10 relative">
         {/* Subtle background ambient glow */}
-        <div className="absolute top-0 right-1/4 w-96 h-96 bg-blue-500/10 dark:bg-blue-600/15 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-10 w-80 h-80 bg-indigo-500/10 dark:bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#159B72]/10 dark:bg-[#006B50]/15 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-10 w-80 h-80 bg-[#159B72]/10 dark:bg-[#006B50]/10 rounded-full blur-3xl pointer-events-none" />
 
         {/* ═══ TOP 3-PANEL WIREFRAME / LAYOUT ═══ */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch relative z-10">
@@ -660,7 +660,7 @@ export default function AIAssistanceSection({
           <div className="lg:col-span-3 hidden md:flex flex-col justify-between p-5 rounded-2xl bg-white/90 dark:bg-slate-900/90 border border-slate-200/90 dark:border-slate-800 shadow-sm backdrop-blur-md">
             <div>
               <div className="flex items-center gap-2 pb-3 mb-4 border-b border-slate-100 dark:border-slate-800">
-                <div className="w-7 h-7 rounded-lg bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-900 flex items-center justify-center text-[#2563EB]">
+                <div className="w-7 h-7 rounded-lg bg-[#FAF9F4] dark:bg-[#064E3B]/60 border border-[#DCE9E1] dark:border-[#064E3B] flex items-center justify-center text-[#006B50]">
                   <Sparkles className="w-4 h-4" />
                 </div>
                 <h3 className="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-white">
@@ -673,7 +673,7 @@ export default function AIAssistanceSection({
                   const Icon = item.icon;
                   return (
                     <div key={idx} className="flex items-start gap-2.5">
-                      <div className="w-6 h-6 rounded-lg bg-blue-50 dark:bg-blue-950/70 border border-blue-100 dark:border-blue-900/70 flex items-center justify-center text-[#2563EB] shrink-0 mt-0.5">
+                      <div className="w-6 h-6 rounded-lg bg-[#FAF9F4] dark:bg-[#064E3B]/70 border border-[#DCE9E1] dark:border-[#064E3B]/70 flex items-center justify-center text-[#006B50] shrink-0 mt-0.5">
                         <Icon className="w-3.5 h-3.5" />
                       </div>
                       <div className="min-w-0">
@@ -704,7 +704,7 @@ export default function AIAssistanceSection({
             
             {/* Header with Title and Description */}
             <div className="space-y-2 text-left">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-600/10 dark:bg-blue-500/20 text-[#2563EB] dark:text-[#60A5FA] text-xs font-extrabold uppercase tracking-wider border border-blue-500/20">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#006B50]/10 dark:bg-[#159B72]/20 text-[#006B50] dark:text-[#159B72] text-xs font-extrabold uppercase tracking-wider border border-[#159B72]/20">
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>D.CARD AI Assistance</span>
               </div>
@@ -713,7 +713,7 @@ export default function AIAssistanceSection({
                 D.CARD AI Assistance
               </h2>
 
-              <p className="text-xs sm:text-sm font-semibold text-[#2563EB] dark:text-[#60A5FA]">
+              <p className="text-xs sm:text-sm font-semibold text-[#006B50] dark:text-[#159B72]">
                 Your AI-Powered Banking Product Assistant
               </p>
 
@@ -727,11 +727,11 @@ export default function AIAssistanceSection({
               <div className={`p-2 sm:p-2.5 rounded-2xl bg-white dark:bg-slate-900 border-2 transition-all duration-200 shadow-lg flex items-center gap-2 ${
                 isListening 
                   ? 'border-red-500 ring-4 ring-red-500/20 dark:ring-red-500/30' 
-                  : 'border-blue-500/30 hover:border-blue-500 focus-within:border-[#2563EB] focus-within:ring-4 focus-within:ring-blue-500/15'
+                  : 'border-[#159B72]/30 hover:border-[#159B72] focus-within:border-[#006B50] focus-within:ring-4 focus-within:ring-[#006B50]/15'
               }`}>
                 {/* Search Icon */}
                 <div className="pl-2 text-slate-400 dark:text-slate-500 shrink-0">
-                  <Search className="w-5 h-5 text-[#2563EB]" />
+                  <Search className="w-5 h-5 text-[#006B50]" />
                 </div>
 
                 {/* Text Input */}
@@ -779,7 +779,7 @@ export default function AIAssistanceSection({
                   className={`px-2 py-1.5 rounded-xl font-black text-[10px] tracking-wider transition-all flex items-center gap-1 shrink-0 cursor-pointer ${
                     voiceLang === 'hi-IN'
                       ? 'bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 hover:bg-amber-500/20'
-                      : 'bg-blue-50 dark:bg-blue-950/60 text-[#2563EB] dark:text-[#60A5FA] border border-blue-200 dark:border-blue-900 hover:bg-blue-100'
+                      : 'bg-[#FAF9F4] dark:bg-[#064E3B]/60 text-[#006B50] dark:text-[#159B72] border border-[#DCE9E1] dark:border-[#064E3B] hover:bg-[#EEF4EE]'
                   }`}
                   aria-label="Switch voice recognition language"
                 >
@@ -802,7 +802,7 @@ export default function AIAssistanceSection({
                       ? 'bg-red-500 text-white animate-pulse shadow-lg shadow-red-500/40 ring-4 ring-red-400/30' 
                       : voiceState === 'recognized'
                       ? 'bg-emerald-50 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 border border-emerald-400'
-                      : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-blue-50 hover:text-[#2563EB] dark:hover:bg-blue-950/80 dark:hover:text-[#60A5FA]'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-[#FAF9F4] hover:text-[#006B50] dark:hover:bg-[#064E3B]/80 dark:hover:text-[#159B72]'
                   }`}
                   aria-label="Voice input button"
                 >
@@ -828,7 +828,7 @@ export default function AIAssistanceSection({
                   className={`p-2.5 sm:px-4 sm:py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 shrink-0 cursor-pointer shadow-md active:scale-95 ${
                     loading || !inputValue.trim()
                       ? 'bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed shadow-none'
-                      : 'bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] hover:from-[#1D4ED8] hover:to-[#1E40AF] text-white shadow-blue-500/30'
+                      : 'bg-gradient-to-r from-[#006B50] to-[#064E3B] hover:from-[#064E3B] hover:to-[#064E3B] text-white shadow-emerald-900/30'
                   }`}
                   aria-label="Send AI Query"
                 >
@@ -857,7 +857,7 @@ export default function AIAssistanceSection({
                         ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-900/60 text-emerald-700 dark:text-emerald-300'
                         : speechNotice.type === 'error'
                         ? 'bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-900/60 text-rose-700 dark:text-rose-300'
-                        : 'bg-blue-50 dark:bg-slate-900 border-blue-200 dark:border-blue-900 text-blue-700 dark:text-blue-300'
+                        : 'bg-[#FAF9F4] dark:bg-slate-900 border-[#DCE9E1] dark:border-[#064E3B] text-[#064E3B] dark:text-emerald-200'
                     }`}
                   >
                     <div className="flex items-center gap-2 min-w-0">
@@ -869,7 +869,7 @@ export default function AIAssistanceSection({
                       )}
                       {speechNotice.type === 'success' && <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />}
                       {speechNotice.type === 'error' && <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />}
-                      {speechNotice.type === 'info' && <Info className="w-4 h-4 text-blue-600 shrink-0" />}
+                      {speechNotice.type === 'info' && <Info className="w-4 h-4 text-[#006B50] shrink-0" />}
                       <span className="break-words leading-tight text-xs font-medium">{speechNotice.text}</span>
                     </div>
                     <button
@@ -896,7 +896,7 @@ export default function AIAssistanceSection({
                     key={qIdx}
                     type="button"
                     onClick={() => handleSearch(question)}
-                    className="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50/50 dark:hover:bg-blue-950/30 text-slate-700 dark:text-slate-200 text-xs font-medium transition-all shadow-xs active:scale-95 text-left cursor-pointer"
+                    className="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 hover:border-[#159B72] dark:hover:border-[#159B72] hover:bg-[#FAF9F4]/50 dark:hover:bg-[#064E3B]/30 text-slate-700 dark:text-slate-200 text-xs font-medium transition-all shadow-xs active:scale-95 text-left cursor-pointer"
                   >
                     {question}
                   </button>
@@ -917,7 +917,7 @@ export default function AIAssistanceSection({
                     onClick={() => handleSearch(ex)}
                     className="px-2.5 py-1 rounded-lg bg-slate-100/90 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-[11px] font-medium transition-colors cursor-pointer flex items-center gap-1"
                   >
-                    <Search className="w-2.5 h-2.5 text-blue-500 shrink-0" />
+                    <Search className="w-2.5 h-2.5 text-[#159B72] shrink-0" />
                     <span>{ex}</span>
                   </button>
                 ))}
@@ -930,7 +930,7 @@ export default function AIAssistanceSection({
             <div>
               {/* How It Works Header */}
               <div className="flex items-center gap-2 pb-3 mb-4 border-b border-slate-100 dark:border-slate-800">
-                <div className="w-7 h-7 rounded-lg bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-900 flex items-center justify-center text-[#2563EB]">
+                <div className="w-7 h-7 rounded-lg bg-[#FAF9F4] dark:bg-[#064E3B]/60 border border-[#DCE9E1] dark:border-[#064E3B] flex items-center justify-center text-[#006B50]">
                   <Zap className="w-4 h-4" />
                 </div>
                 <h3 className="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-white">
@@ -942,7 +942,7 @@ export default function AIAssistanceSection({
               <div className="space-y-3">
                 {HOW_IT_WORKS_STEPS.map((stepItem, sIdx) => (
                   <div key={sIdx} className="flex items-start gap-2.5">
-                    <span className="w-5 h-5 rounded-full bg-[#2563EB] text-white font-black text-[10px] flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
+                    <span className="w-5 h-5 rounded-full bg-[#006B50] text-white font-black text-[10px] flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
                       {stepItem.step}
                     </span>
                     <div>
@@ -961,16 +961,16 @@ export default function AIAssistanceSection({
             {/* AI Assistant Robot Visual + Message Bubble */}
             <div className="pt-4 mt-4 border-t border-slate-100 dark:border-slate-800 flex flex-col items-center text-center space-y-3">
               {/* Speech bubble */}
-              <div className="w-full p-2.5 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-100 dark:border-blue-900/60 text-left relative shadow-xs">
-                <p className="text-xs font-bold text-blue-900 dark:text-blue-200 leading-snug">
+              <div className="w-full p-2.5 rounded-xl bg-[#FAF9F4] dark:bg-[#064E3B]/60 border border-[#DCE9E1] dark:border-[#064E3B]/60 text-left relative shadow-xs">
+                <p className="text-xs font-bold text-[#123C30] dark:text-emerald-100 leading-snug">
                   "Hi! I'm D.CARD AI Assistance. Ask me anything about banking products."
                 </p>
-                <div className="w-2.5 h-2.5 bg-blue-50 dark:bg-blue-950/60 border-b border-l border-blue-100 dark:border-blue-900/60 transform -rotate-45 absolute -bottom-1.5 left-6" />
+                <div className="w-2.5 h-2.5 bg-[#FAF9F4] dark:bg-[#064E3B]/60 border-b border-l border-[#DCE9E1] dark:border-[#064E3B]/60 transform -rotate-45 absolute -bottom-1.5 left-6" />
               </div>
 
               {/* Robot Assistant Graphic */}
               <div className="flex items-center justify-center gap-3 w-full">
-                <div className="relative w-16 h-16 rounded-2xl bg-gradient-to-tr from-[#2563EB] to-[#60A5FA] flex items-center justify-center shadow-lg shadow-blue-500/20">
+                <div className="relative w-16 h-16 rounded-2xl bg-gradient-to-tr from-[#006B50] to-[#159B72] flex items-center justify-center shadow-lg shadow-emerald-900/20">
                   <Bot className="w-9 h-9 text-white" />
                   <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-emerald-400 border-2 border-white dark:border-slate-900" />
                 </div>
@@ -1025,7 +1025,7 @@ export default function AIAssistanceSection({
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
                 <div className="space-y-0.5">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-black tracking-widest text-[#2563EB] dark:text-[#60A5FA] uppercase">
+                    <span className="text-[10px] font-black tracking-widest text-[#006B50] dark:text-[#159B72] uppercase">
                       D.CARD AI RESULTS
                     </span>
                     <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-700" />
@@ -1054,7 +1054,7 @@ export default function AIAssistanceSection({
 
                   <button
                     onClick={() => navigate('/ai-advisor')}
-                    className="px-3.5 py-1.5 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-sm flex items-center gap-1.5"
+                    className="px-3.5 py-1.5 rounded-xl bg-[#006B50] hover:bg-[#064E3B] text-white text-xs font-bold transition-all shadow-sm flex items-center gap-1.5"
                   >
                     <span>Full Workspace</span>
                     <ExternalLink className="w-3.5 h-3.5" />
@@ -1064,8 +1064,8 @@ export default function AIAssistanceSection({
 
               {/* ── SIMPLE INFORMATION CARD (Only for conceptual queries e.g. "What is MAB?") ── */}
               {result.infoCard && (
-                <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-blue-200 dark:border-blue-900 shadow-sm flex items-start gap-3.5">
-                  <div className="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-950 text-[#2563EB] flex items-center justify-center shrink-0 mt-0.5">
+                <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-[#DCE9E1] dark:border-[#064E3B] shadow-sm flex items-start gap-3.5">
+                  <div className="w-9 h-9 rounded-xl bg-[#FAF9F4] dark:bg-[#064E3B] text-[#006B50] flex items-center justify-center shrink-0 mt-0.5">
                     <HelpCircle className="w-5 h-5" />
                   </div>
                   <div className="space-y-1 min-w-0">
@@ -1086,8 +1086,8 @@ export default function AIAssistanceSection({
                     onClick={() => setActiveTab('all')}
                     className={`px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
                       activeTab === 'all'
-                        ? 'bg-[#2563EB] text-white shadow-xs'
-                        : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:border-blue-400'
+                        ? 'bg-[#006B50] text-white shadow-xs'
+                        : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:border-[#159B72]'
                     }`}
                   >
                     All Products ({totalProductCount})
@@ -1098,8 +1098,8 @@ export default function AIAssistanceSection({
                       onClick={() => setActiveTab('savings')}
                       className={`px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer flex items-center gap-1.5 ${
                         activeTab === 'savings'
-                          ? 'bg-[#2563EB] text-white shadow-xs'
-                          : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:border-blue-400'
+                          ? 'bg-[#006B50] text-white shadow-xs'
+                          : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:border-[#159B72]'
                       }`}
                     >
                       <Landmark className="w-3.5 h-3.5" />
@@ -1112,8 +1112,8 @@ export default function AIAssistanceSection({
                       onClick={() => setActiveTab('cards')}
                       className={`px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer flex items-center gap-1.5 ${
                         activeTab === 'cards'
-                          ? 'bg-[#2563EB] text-white shadow-xs'
-                          : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:border-blue-400'
+                          ? 'bg-[#006B50] text-white shadow-xs'
+                          : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:border-[#159B72]'
                       }`}
                     >
                       <CreditCard className="w-3.5 h-3.5" />
@@ -1126,8 +1126,8 @@ export default function AIAssistanceSection({
                       onClick={() => setActiveTab('current')}
                       className={`px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer flex items-center gap-1.5 ${
                         activeTab === 'current'
-                          ? 'bg-[#2563EB] text-white shadow-xs'
-                          : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:border-blue-400'
+                          ? 'bg-[#006B50] text-white shadow-xs'
+                          : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:border-[#159B72]'
                       }`}
                     >
                       <Briefcase className="w-3.5 h-3.5" />
@@ -1140,8 +1140,8 @@ export default function AIAssistanceSection({
                       onClick={() => setActiveTab('locations')}
                       className={`px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer flex items-center gap-1.5 ${
                         activeTab === 'locations'
-                          ? 'bg-[#2563EB] text-white shadow-xs'
-                          : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:border-blue-400'
+                          ? 'bg-[#006B50] text-white shadow-xs'
+                          : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:border-[#159B72]'
                       }`}
                     >
                       <MapPin className="w-3.5 h-3.5" />
@@ -1165,7 +1165,7 @@ export default function AIAssistanceSection({
                     <div
                       key={`savings-${acc.id}`}
                       onClick={() => handleSavingsDetails(acc)}
-                      className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-[#2563EB]/50 shadow-md hover:shadow-xl transition-all flex flex-col justify-between space-y-4 cursor-pointer group"
+                      className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-[#006B50]/50 shadow-md hover:shadow-xl transition-all flex flex-col justify-between space-y-4 cursor-pointer group"
                     >
                       <div className="space-y-3.5">
                         {/* Top: Bank Logo + Save Heart */}
@@ -1192,7 +1192,7 @@ export default function AIAssistanceSection({
 
                         {/* Account Name & Type */}
                         <div>
-                          <h4 className="text-base font-extrabold text-slate-900 dark:text-white leading-snug group-hover:text-[#2563EB] transition-colors">
+                          <h4 className="text-base font-extrabold text-slate-900 dark:text-white leading-snug group-hover:text-[#006B50] transition-colors">
                             {acc.accountName}
                           </h4>
                           <span className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-500 dark:text-slate-400 mt-1">
@@ -1245,7 +1245,7 @@ export default function AIAssistanceSection({
                           <button
                             type="button"
                             onClick={(e) => { e.stopPropagation(); handleSavingsDetails(acc); }}
-                            className="flex-1 py-2 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-bold transition-all text-center shadow-xs"
+                            className="flex-1 py-2 rounded-xl bg-[#006B50] hover:bg-[#064E3B] text-white text-xs font-bold transition-all text-center shadow-xs"
                           >
                             View Details
                           </button>
@@ -1267,7 +1267,7 @@ export default function AIAssistanceSection({
                               target="_blank"
                               rel="noopener noreferrer"
                               onClick={(e) => e.stopPropagation()}
-                              className="text-[#2563EB] dark:text-[#60A5FA] font-bold hover:underline flex items-center gap-1"
+                              className="text-[#006B50] dark:text-[#159B72] font-bold hover:underline flex items-center gap-1"
                             >
                               Official Source <ExternalLink className="w-2.5 h-2.5" />
                             </a>
@@ -1290,7 +1290,7 @@ export default function AIAssistanceSection({
                     <div
                       key={`card-${card.id}`}
                       onClick={() => handleCardClick(card)}
-                      className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-[#2563EB]/50 shadow-md hover:shadow-xl transition-all flex flex-col justify-between space-y-4 cursor-pointer group"
+                      className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-[#006B50]/50 shadow-md hover:shadow-xl transition-all flex flex-col justify-between space-y-4 cursor-pointer group"
                     >
                       <div className="space-y-3.5">
                         {/* Top: Bank Logo + Save Heart */}
@@ -1324,7 +1324,7 @@ export default function AIAssistanceSection({
 
                         {/* Debit Card Name & Network */}
                         <div>
-                          <h4 className="text-base font-extrabold text-slate-900 dark:text-white leading-snug group-hover:text-[#2563EB] transition-colors">
+                          <h4 className="text-base font-extrabold text-slate-900 dark:text-white leading-snug group-hover:text-[#006B50] transition-colors">
                             {card.cardName}
                           </h4>
                           <span className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-500 dark:text-slate-400 mt-1">
@@ -1348,7 +1348,7 @@ export default function AIAssistanceSection({
                           </div>
                           <div className="flex items-center justify-between py-1 border-b border-slate-50 dark:border-slate-800/60">
                             <span className="text-slate-500 dark:text-slate-400 font-medium">Airport Lounge</span>
-                            <span className="font-extrabold text-[#2563EB] dark:text-[#60A5FA] truncate max-w-[140px]" title={card.loungeAccess}>
+                            <span className="font-extrabold text-[#006B50] dark:text-[#159B72] truncate max-w-[140px]" title={card.loungeAccess}>
                               {card.loungeAccess || 'Not available'}
                             </span>
                           </div>
@@ -1367,7 +1367,7 @@ export default function AIAssistanceSection({
                           <button
                             type="button"
                             onClick={(e) => { e.stopPropagation(); handleCardClick(card); }}
-                            className="flex-1 py-2 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-bold transition-all text-center shadow-xs"
+                            className="flex-1 py-2 rounded-xl bg-[#006B50] hover:bg-[#064E3B] text-white text-xs font-bold transition-all text-center shadow-xs"
                           >
                             View Details
                           </button>
@@ -1393,7 +1393,7 @@ export default function AIAssistanceSection({
                               target="_blank"
                               rel="noopener noreferrer"
                               onClick={(e) => e.stopPropagation()}
-                              className="text-[#2563EB] dark:text-[#60A5FA] font-bold hover:underline flex items-center gap-1"
+                              className="text-[#006B50] dark:text-[#159B72] font-bold hover:underline flex items-center gap-1"
                             >
                               Official Source <ExternalLink className="w-2.5 h-2.5" />
                             </a>
@@ -1531,7 +1531,7 @@ export default function AIAssistanceSection({
                   return (
                     <div
                       key={`loc-${loc.id}`}
-                      className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-blue-400 shadow-md hover:shadow-xl transition-all flex flex-col justify-between space-y-4"
+                      className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-[#159B72] shadow-md hover:shadow-xl transition-all flex flex-col justify-between space-y-4"
                     >
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
@@ -1539,7 +1539,7 @@ export default function AIAssistanceSection({
                             {loc.bank_name}
                           </span>
                           <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wide border ${
-                            loc.branch_type === 'ATM' ? 'bg-amber-50 border-amber-200 text-amber-700' : 'bg-blue-50 border-blue-200 text-blue-700'
+                            loc.branch_type === 'ATM' ? 'bg-amber-50 border-amber-200 text-amber-700' : 'bg-[#FAF9F4] border-[#DCE9E1] text-[#064E3B]'
                           }`}>
                             {loc.branch_type || 'Branch'}
                           </span>
@@ -1551,7 +1551,7 @@ export default function AIAssistanceSection({
                           {loc.address}, {loc.city}, {loc.state} - {loc.pincode}
                         </p>
                         {loc.distanceKm != null && (
-                          <div className="text-xs font-bold text-blue-600 dark:text-blue-400">
+                          <div className="text-xs font-bold text-[#006B50] dark:text-[#159B72]">
                             📍 {loc.distanceKm} km away
                           </div>
                         )}
@@ -1572,7 +1572,7 @@ export default function AIAssistanceSection({
                           <button
                             type="button"
                             onClick={() => navigate(`/find-banks?bank=${encodeURIComponent(loc.bank_name || '')}&city=${encodeURIComponent(loc.city || '')}&highlight=${loc.id}`)}
-                            className="flex-1 py-2 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-bold transition-all text-center shadow-xs"
+                            className="flex-1 py-2 rounded-xl bg-[#006B50] hover:bg-[#064E3B] text-white text-xs font-bold transition-all text-center shadow-xs"
                           >
                             View on Map
                           </button>
@@ -1595,7 +1595,7 @@ export default function AIAssistanceSection({
                               href={loc.source_url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-[#2563EB] font-bold hover:underline flex items-center gap-1"
+                              className="text-[#006B50] font-bold hover:underline flex items-center gap-1"
                             >
                               Official Source <ExternalLink className="w-2.5 h-2.5" />
                             </a>

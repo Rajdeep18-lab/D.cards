@@ -332,7 +332,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
             <img src="/logo-mark.png" alt="D.CARD" className="w-full h-full object-contain" />
           </div>
           <h2 className="text-xl sm:text-2xl font-black tracking-tight text-[#111827] dark:text-white leading-none">
-            D.<span className="text-[#2455A4] dark:text-[#60A5FA]">CARD</span>
+            D.<span className="text-[#2455A4] dark:text-[#159B72]">CARD</span>
           </h2>
           <p className="text-[9.5px] sm:text-[10px] font-bold text-amber-800/70 dark:text-amber-400/70 uppercase tracking-widest mt-1">
             {t('nav.tagline', 'COMPARE. CHOOSE. BENEFIT.')}
@@ -427,7 +427,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
                   value={signInEmail}
                   onChange={(e) => setSignInEmail(e.target.value)}
                   placeholder="name@example.com"
-                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 pl-10 pr-4 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 outline-none focus:border-[#2563EB] focus:ring-3 focus:ring-[#2563EB]/15 transition-all"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 pl-10 pr-4 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 outline-none focus:border-[#006B50] focus:ring-3 focus:ring-[#006B50]/15 transition-all"
                 />
               </div>
             </div>
@@ -449,7 +449,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
                   value={signInPassword}
                   onChange={(e) => setSignInPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 pl-10 pr-10 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 outline-none focus:border-[#2563EB] focus:ring-3 focus:ring-[#2563EB]/15 transition-all"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 pl-10 pr-10 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 outline-none focus:border-[#006B50] focus:ring-3 focus:ring-[#006B50]/15 transition-all"
                 />
                 <button
                   type="button"
@@ -469,7 +469,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
                   type="checkbox"
                   checked={signInRemember}
                   onChange={(e) => setSignInRemember(e.target.checked)}
-                  className="w-3.5 h-3.5 rounded border-slate-300 text-[#2563EB] focus:ring-[#2563EB] cursor-pointer"
+                  className="w-3.5 h-3.5 rounded border-slate-300 text-[#006B50] focus:ring-[#006B50] cursor-pointer"
                 />
                 <span>{t('auth.rememberMe', 'Remember Me')}</span>
               </label>
@@ -554,7 +554,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
                   value={signUpName}
                   onChange={(e) => setSignUpName(e.target.value)}
                   placeholder={t('auth.namePlaceholder', 'Your Full Name')}
-                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 pl-10 pr-4 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 outline-none focus:border-[#2563EB] focus:ring-3 focus:ring-[#2563EB]/15 transition-all"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 pl-10 pr-4 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 outline-none focus:border-[#006B50] focus:ring-3 focus:ring-[#006B50]/15 transition-all"
                 />
               </div>
             </div>
@@ -576,7 +576,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
                   value={signUpEmail}
                   onChange={(e) => setSignUpEmail(e.target.value)}
                   placeholder="name@example.com"
-                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 pl-10 pr-4 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 outline-none focus:border-[#2563EB] focus:ring-3 focus:ring-[#2563EB]/15 transition-all"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 pl-10 pr-4 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 outline-none focus:border-[#006B50] focus:ring-3 focus:ring-[#006B50]/15 transition-all"
                 />
               </div>
             </div>
@@ -598,7 +598,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
                   value={signUpPassword}
                   onChange={(e) => setSignUpPassword(e.target.value)}
                   placeholder={t('auth.min6Chars', 'At least 6 characters')}
-                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 pl-10 pr-10 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 outline-none focus:border-[#2563EB] focus:ring-3 focus:ring-[#2563EB]/15 transition-all"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 pl-10 pr-10 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 outline-none focus:border-[#006B50] focus:ring-3 focus:ring-[#006B50]/15 transition-all"
                 />
                 <button
                   type="button"
@@ -628,7 +628,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
                   value={signUpConfirmPassword}
                   onChange={(e) => setSignUpConfirmPassword(e.target.value)}
                   placeholder={t('auth.repeatPassword', 'Repeat your password')}
-                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 pl-10 pr-10 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 outline-none focus:border-[#2563EB] focus:ring-3 focus:ring-[#2563EB]/15 transition-all"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 pl-10 pr-10 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 outline-none focus:border-[#006B50] focus:ring-3 focus:ring-[#006B50]/15 transition-all"
                 />
                 <button
                   type="button"
@@ -715,7 +715,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
                 <button
                   type="button"
                   onClick={() => setActiveTab('login')}
-                  className="mt-2 text-xs font-bold text-[#2563EB] dark:text-[#60A5FA] underline cursor-pointer"
+                  className="mt-2 text-xs font-bold text-[#006B50] dark:text-[#159B72] underline cursor-pointer"
                 >
                   {t('auth.returnToSignIn', 'Return to Sign In')}
                 </button>
@@ -738,7 +738,7 @@ export default function AuthModal({ isOpen, onClose, onSuccessAction }) {
                       value={forgotEmail}
                       onChange={(e) => setForgotEmail(e.target.value)}
                       placeholder="name@example.com"
-                      className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 pl-10 pr-4 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 outline-none focus:border-[#2563EB] focus:ring-3 focus:ring-[#2563EB]/15 transition-all"
+                      className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 pl-10 pr-4 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 outline-none focus:border-[#006B50] focus:ring-3 focus:ring-[#006B50]/15 transition-all"
                     />
                   </div>
                 </div>

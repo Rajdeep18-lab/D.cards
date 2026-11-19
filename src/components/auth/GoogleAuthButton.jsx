@@ -79,12 +79,12 @@ export default function GoogleAuthButton({
       aria-busy={loading}
       aria-label={loading ? loadingText : text}
       style={{ touchAction: 'manipulation' }}
-      className={`w-full py-2.5 sm:py-3 px-4 rounded-xl sm:rounded-2xl border border-slate-200 dark:border-slate-700 bg-white hover:bg-slate-50 dark:bg-slate-900/80 dark:hover:bg-slate-800/90 text-slate-700 dark:text-slate-100 font-bold text-xs sm:text-sm shadow-xs hover:shadow-sm active:scale-[0.99] transition-all flex items-center justify-center gap-2.5 sm:gap-3 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed select-none group focus:outline-none focus:ring-2 focus:ring-[#2563EB]/40 ${loading ? 'pointer-events-none cursor-wait' : ''} ${className}`}
+      className={`w-full py-2.5 sm:py-3 px-4 rounded-xl sm:rounded-2xl border border-slate-200 dark:border-slate-700 bg-white hover:bg-slate-50 dark:bg-slate-900/80 dark:hover:bg-slate-800/90 text-slate-700 dark:text-slate-100 font-bold text-xs sm:text-sm shadow-xs hover:shadow-sm active:scale-[0.99] transition-all flex items-center justify-center gap-2.5 sm:gap-3 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed select-none group focus:outline-none focus:ring-2 focus:ring-[#006B50]/40 ${loading ? 'pointer-events-none cursor-wait' : ''} ${className}`}
     >
       {loading ? (
         <>
           <span 
-            className="w-4 h-4 border-2 border-slate-300 dark:border-slate-600 border-t-[#2563EB] rounded-full animate-spin shrink-0" 
+            className="w-4 h-4 border-2 border-slate-300 dark:border-slate-600 border-t-[#006B50] rounded-full animate-spin shrink-0" 
             aria-hidden="true" 
           />
           <span className="text-slate-600 dark:text-slate-300 font-semibold">{loadingText}</span>

@@ -108,7 +108,7 @@ function ReviewSection({ onOpenContact }) {
 
         <button
           onClick={() => setIsWriteModalOpen(true)}
-          className="px-5 py-2.5 rounded-full bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white font-semibold text-xs tracking-wider uppercase shadow-md hover:opacity-95 active:scale-95 transition-all cursor-pointer flex items-center gap-2"
+          className="px-5 py-2.5 rounded-full bg-gradient-to-r from-[#006B50] to-[#159B72] text-white font-semibold text-xs tracking-wider uppercase shadow-md hover:opacity-95 active:scale-95 transition-all cursor-pointer flex items-center gap-2"
         >
           <MessageSquarePlus className="w-4 h-4" />
           <span>Write a Review</span>
@@ -133,15 +133,15 @@ function ReviewSection({ onOpenContact }) {
                 <Star
                   key={i}
                   className={`w-4 h-4 ${
-                    i < review.rating ? 'fill-[#2563EB] text-[#2563EB]' : 'text-slate-300 dark:text-slate-700'
+                    i < review.rating ? 'fill-[#006B50] text-[#006B50]' : 'text-slate-300 dark:text-slate-700'
                   }`}
                 />
               ))}
-              <span className="ml-2 text-xs font-bold text-[#2563EB] dark:text-[#60A5FA]">{review.rating}.0</span>
+              <span className="ml-2 text-xs font-bold text-[#006B50] dark:text-[#159B72]">{review.rating}.0</span>
             </div>
 
             {review.cardName && (
-              <p className="text-[11px] font-semibold text-[#2563EB] dark:text-[#60A5FA] uppercase tracking-wider mb-2">
+              <p className="text-[11px] font-semibold text-[#006B50] dark:text-[#159B72] uppercase tracking-wider mb-2">
                 {review.cardName}
               </p>
             )}
@@ -153,7 +153,7 @@ function ReviewSection({ onOpenContact }) {
             <div className="flex items-center gap-3 mt-auto pt-4 border-t border-[#E5E7EB] dark:border-slate-800">
               {/* Avatar */}
               <div
-                className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs text-white flex-shrink-0 shadow-sm bg-gradient-to-br from-[#2563EB] to-[#3B82F6]"
+                className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs text-white flex-shrink-0 shadow-sm bg-gradient-to-br from-[#006B50] to-[#159B72]"
               >
                 {(review.user || review.name || 'U').charAt(0).toUpperCase()}
               </div>
@@ -170,10 +170,10 @@ function ReviewSection({ onOpenContact }) {
           whileHover={{ y: -4 }}
           whileTap={{ scale: 0.98 }}
           onClick={onOpenContact}
-          className="p-6 rounded-3xl bg-gradient-to-br from-[#2563EB]/5 to-[#3B82F6]/10 border border-[#2563EB]/20 text-left relative overflow-hidden group cursor-pointer flex flex-col justify-between"
+          className="p-6 rounded-3xl bg-gradient-to-br from-[#006B50]/5 to-[#159B72]/10 border border-[#006B50]/20 text-left relative overflow-hidden group cursor-pointer flex flex-col justify-between"
         >
           <div>
-            <div className="w-10 h-10 rounded-2xl bg-[#2563EB] flex items-center justify-center shadow-md text-white mb-4">
+            <div className="w-10 h-10 rounded-2xl bg-[#006B50] flex items-center justify-center shadow-md text-white mb-4">
               <Mail className="w-5 h-5 text-white" />
             </div>
 
@@ -186,8 +186,8 @@ function ReviewSection({ onOpenContact }) {
             </p>
           </div>
 
-          <div className="mt-6 pt-4 border-t border-[#2563EB]/15 flex items-center justify-between">
-            <span className="text-[11px] text-[#2563EB] dark:text-[#60A5FA] font-semibold uppercase tracking-wider group-hover:translate-x-1 transition-transform flex items-center gap-1">
+          <div className="mt-6 pt-4 border-t border-[#006B50]/15 flex items-center justify-between">
+            <span className="text-[11px] text-[#006B50] dark:text-[#159B72] font-semibold uppercase tracking-wider group-hover:translate-x-1 transition-transform flex items-center gap-1">
               <span>Get in Touch</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </span>
@@ -210,13 +210,13 @@ function ReviewSection({ onOpenContact }) {
             >
               <button
                 onClick={() => setIsWriteModalOpen(false)}
-                className="absolute top-5 right-5 w-8 h-8 rounded-full bg-[#F8FAFC] dark:bg-slate-800 border border-[#E5E7EB] dark:border-slate-700 text-[#6B7280] dark:text-slate-300 font-bold flex items-center justify-center hover:text-[#2563EB] cursor-pointer"
+                className="absolute top-5 right-5 w-8 h-8 rounded-full bg-[#FAF9F4] dark:bg-slate-800 border border-[#E5E7EB] dark:border-slate-700 text-[#6B7280] dark:text-slate-300 font-bold flex items-center justify-center hover:text-[#006B50] cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
 
               <div className="mb-6">
-                <span className="text-xs font-semibold uppercase tracking-widest text-[#2563EB] dark:text-[#60A5FA]">Community Feedback</span>
+                <span className="text-xs font-semibold uppercase tracking-widest text-[#006B50] dark:text-[#159B72]">Community Feedback</span>
                 <h3 className="text-2xl font-bold text-[#1F2937] dark:text-white mt-1">Share Your Card Experience</h3>
               </div>
 
@@ -236,7 +236,7 @@ function ReviewSection({ onOpenContact }) {
                       placeholder="e.g. Rahul Sharma"
                       value={userName}
                       onChange={(e) => setUserName(e.target.value)}
-                      className="w-full px-4 py-2.5 rounded-xl border border-[#E5E7EB] dark:border-slate-700 bg-[#F8FAFC] dark:bg-slate-900 text-xs font-normal text-[#1F2937] dark:text-white outline-none focus:border-[#2563EB]"
+                      className="w-full px-4 py-2.5 rounded-xl border border-[#E5E7EB] dark:border-slate-700 bg-[#FAF9F4] dark:bg-slate-900 text-xs font-normal text-[#1F2937] dark:text-white outline-none focus:border-[#006B50]"
                     />
                   </div>
 
@@ -246,7 +246,7 @@ function ReviewSection({ onOpenContact }) {
                       <select
                         value={userRole}
                         onChange={(e) => setUserRole(e.target.value)}
-                        className="w-full px-3 py-2.5 rounded-xl border border-[#E5E7EB] dark:border-slate-700 bg-[#F8FAFC] dark:bg-slate-900 text-xs font-normal text-[#1F2937] dark:text-white outline-none focus:border-[#2563EB] cursor-pointer"
+                        className="w-full px-3 py-2.5 rounded-xl border border-[#E5E7EB] dark:border-slate-700 bg-[#FAF9F4] dark:bg-slate-900 text-xs font-normal text-[#1F2937] dark:text-white outline-none focus:border-[#006B50] cursor-pointer"
                       >
                         <option value="Student">Student</option>
                         <option value="Working Professional">Working Professional</option>
@@ -262,7 +262,7 @@ function ReviewSection({ onOpenContact }) {
                       <select
                         value={rating}
                         onChange={(e) => setRating(Number(e.target.value))}
-                        className="w-full px-3 py-2.5 rounded-xl border border-[#E5E7EB] dark:border-slate-700 bg-[#F8FAFC] dark:bg-slate-900 text-xs font-normal text-[#1F2937] dark:text-white outline-none focus:border-[#2563EB] cursor-pointer"
+                        className="w-full px-3 py-2.5 rounded-xl border border-[#E5E7EB] dark:border-slate-700 bg-[#FAF9F4] dark:bg-slate-900 text-xs font-normal text-[#1F2937] dark:text-white outline-none focus:border-[#006B50] cursor-pointer"
                       >
                         <option value={5}>5 Stars ★★★★★ (Excellent)</option>
                         <option value={4}>4 Stars ★★★★☆ (Good)</option>
@@ -280,7 +280,7 @@ function ReviewSection({ onOpenContact }) {
                       placeholder="e.g. HDFC Platinum Debit Card"
                       value={cardName}
                       onChange={(e) => setCardName(e.target.value)}
-                      className="w-full px-4 py-2.5 rounded-xl border border-[#E5E7EB] dark:border-slate-700 bg-[#F8FAFC] dark:bg-slate-900 text-xs font-normal text-[#1F2937] dark:text-white outline-none focus:border-[#2563EB]"
+                      className="w-full px-4 py-2.5 rounded-xl border border-[#E5E7EB] dark:border-slate-700 bg-[#FAF9F4] dark:bg-slate-900 text-xs font-normal text-[#1F2937] dark:text-white outline-none focus:border-[#006B50]"
                     />
                   </div>
 
@@ -292,7 +292,7 @@ function ReviewSection({ onOpenContact }) {
                       placeholder="Share what you like or dislike about your debit card (fees, lounge access, limits, cashback)..."
                       value={reviewText}
                       onChange={(e) => setReviewText(e.target.value)}
-                      className="w-full px-4 py-2.5 rounded-xl border border-[#E5E7EB] dark:border-slate-700 bg-[#F8FAFC] dark:bg-slate-900 text-xs font-normal text-[#1F2937] dark:text-white outline-none focus:border-[#2563EB]"
+                      className="w-full px-4 py-2.5 rounded-xl border border-[#E5E7EB] dark:border-slate-700 bg-[#FAF9F4] dark:bg-slate-900 text-xs font-normal text-[#1F2937] dark:text-white outline-none focus:border-[#006B50]"
                     />
                   </div>
 
@@ -307,7 +307,7 @@ function ReviewSection({ onOpenContact }) {
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white text-xs font-semibold uppercase tracking-wider shadow-md hover:opacity-95 disabled:opacity-60 disabled:cursor-not-allowed active:scale-95 transition-all cursor-pointer flex items-center gap-1.5"
+                      className="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#006B50] to-[#159B72] text-white text-xs font-semibold uppercase tracking-wider shadow-md hover:opacity-95 disabled:opacity-60 disabled:cursor-not-allowed active:scale-95 transition-all cursor-pointer flex items-center gap-1.5"
                     >
                       {isSubmitting ? (
                         <>

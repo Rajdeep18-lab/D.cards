@@ -117,7 +117,7 @@ export const BANKS = [
     bankName: "RBL Bank",
     shortName: "RBL Bank",
     logo: "/logos/rbl.svg",
-    color: "#1e3a8a",
+    color: "#123C30",
     aliases: ["rbl", "rbl bank", "ratnakar"]
   },
   {
@@ -149,7 +149,7 @@ export const BANKS = [
     bankName: "Indian Bank",
     shortName: "Indian Bank",
     logo: "/logos/indian-bank.svg",
-    color: "#2563eb",
+    color: "#006B50",
     aliases: ["indian bank", "allahabad bank"]
   },
   {

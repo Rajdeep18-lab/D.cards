@@ -36,8 +36,8 @@ function IDFCTierBenefitsComparison() {
       {/* Header & Filter Toggle */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
         <div>
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] text-xs font-bold uppercase tracking-wider border border-[#2563EB]/20 mb-1">
-            <Scale className="w-3.5 h-3.5 text-[#2563EB]" />
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#006B50]/10 text-[#006B50] dark:text-[#159B72] text-xs font-bold uppercase tracking-wider border border-[#006B50]/20 mb-1">
+            <Scale className="w-3.5 h-3.5 text-[#006B50]" />
             PRIVILEGE MATRIX
           </span>
           <h3 className="text-xl sm:text-2xl font-extrabold text-slate-800 dark:text-white">
@@ -56,8 +56,8 @@ function IDFCTierBenefitsComparison() {
               onClick={() => setActiveFilterCategory(cat)}
               className={`px-3.5 py-1.5 rounded-xl transition-all cursor-pointer ${
                 activeFilterCategory === cat
-                  ? 'bg-[#2563EB] text-white shadow-xs'
-                  : 'bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:border-[#2563EB]'
+                  ? 'bg-[#006B50] text-white shadow-xs'
+                  : 'bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:border-[#006B50]'
               }`}
             >
               {cat}
@@ -82,8 +82,8 @@ function IDFCTierBenefitsComparison() {
                 <div>FIRST Select</div>
                 {renderStars(3.0)}
               </th>
-              <th className="p-4 font-extrabold min-w-[160px] text-center border-r border-slate-200 dark:border-slate-800 bg-[#2563EB]/5">
-                <div className="text-[#2563EB] dark:text-[#60A5FA]">FIRST Wealth</div>
+              <th className="p-4 font-extrabold min-w-[160px] text-center border-r border-slate-200 dark:border-slate-800 bg-[#006B50]/5">
+                <div className="text-[#006B50] dark:text-[#159B72]">FIRST Wealth</div>
                 {renderStars(4.0)}
               </th>
               <th className="p-4 font-extrabold min-w-[160px] text-center">
@@ -107,7 +107,7 @@ function IDFCTierBenefitsComparison() {
                 <td className="p-4 text-center border-r border-slate-200 dark:border-slate-800 font-medium">
                   {row.select}
                 </td>
-                <td className="p-4 text-center border-r border-slate-200 dark:border-slate-800 font-bold text-[#2563EB] dark:text-[#60A5FA] bg-[#2563EB]/5">
+                <td className="p-4 text-center border-r border-slate-200 dark:border-slate-800 font-bold text-[#006B50] dark:text-[#159B72] bg-[#006B50]/5">
                   {row.wealth}
                 </td>
                 <td className="p-4 text-center font-bold text-amber-600 dark:text-amber-400">
@@ -134,7 +134,7 @@ function IDFCTierBenefitsComparison() {
               onClick={() => setSelectedMobileTier(t.name)}
               className={`py-2 px-1.5 rounded-xl text-center transition-all cursor-pointer flex flex-col items-center justify-center ${
                 selectedMobileTier === t.name
-                  ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs border border-slate-200 dark:border-slate-700'
+                  ? 'bg-white dark:bg-[#1E293B] text-[#006B50] dark:text-[#159B72] shadow-xs border border-slate-200 dark:border-slate-700'
                   : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
               }`}
             >
@@ -146,7 +146,7 @@ function IDFCTierBenefitsComparison() {
 
         {/* Selected Tier Mobile Benefit Cards */}
         <div className="space-y-3">
-          <div className="flex items-center justify-between p-3 rounded-2xl bg-[#2563EB]/10 border border-[#2563EB]/20 text-[#2563EB] dark:text-[#60A5FA]">
+          <div className="flex items-center justify-between p-3 rounded-2xl bg-[#006B50]/10 border border-[#006B50]/20 text-[#006B50] dark:text-[#159B72]">
             <span className="text-xs font-black uppercase tracking-wider">{selectedMobileTier}</span>
             {renderStars(IDFC_TIER_RATINGS[selectedMobileTier] || 4.0)}
           </div>
@@ -162,7 +162,7 @@ function IDFCTierBenefitsComparison() {
                     <span className="text-[9.5px] font-bold text-slate-400 uppercase block">{item.category}</span>
                     <span className="font-extrabold text-slate-800 dark:text-white block mt-0.5">{item.benefitName}</span>
                   </div>
-                  <span className="font-bold text-[#2563EB] dark:text-[#60A5FA] text-right shrink-0 max-w-[140px]">
+                  <span className="font-bold text-[#006B50] dark:text-[#159B72] text-right shrink-0 max-w-[140px]">
                     {valText}
                   </span>
                 </div>

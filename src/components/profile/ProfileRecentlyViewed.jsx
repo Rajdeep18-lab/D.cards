@@ -37,7 +37,7 @@ function getCategoryBadge(item) {
     };
   return {
     label: '💳 Debit Card',
-    cls: 'bg-[#2563EB]/10 text-[#2563EB] dark:text-[#60A5FA] border-[#2563EB]/20',
+    cls: 'bg-[#006B50]/10 text-[#006B50] dark:text-[#159B72] border-[#006B50]/20',
   };
 }
 
@@ -73,7 +73,7 @@ function RecentItem({ item, onViewDetails, onDismiss }) {
       <div className="flex items-center gap-2 shrink-0">
         <button
           onClick={() => onViewDetails(item)}
-          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#F8FAFC] dark:bg-slate-800 border border-[#E5E7EB] dark:border-slate-700 text-xs font-bold text-[#1F2937] dark:text-white hover:border-[#2563EB]/40 hover:text-[#2563EB] transition-all cursor-pointer"
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#FAF9F4] dark:bg-slate-800 border border-[#E5E7EB] dark:border-slate-700 text-xs font-bold text-[#1F2937] dark:text-white hover:border-[#006B50]/40 hover:text-[#006B50] transition-all cursor-pointer"
         >
           View Details
           <ChevronRight className="w-3.5 h-3.5" />
@@ -123,7 +123,7 @@ export default function ProfileRecentlyViewed({
       </div>
 
       {recentItems.length === 0 ? (
-        <div className="py-16 text-center rounded-2xl bg-[#F8FAFC] dark:bg-slate-900/50 border border-dashed border-[#E5E7EB] dark:border-slate-700 space-y-3">
+        <div className="py-16 text-center rounded-2xl bg-[#FAF9F4] dark:bg-slate-900/50 border border-dashed border-[#E5E7EB] dark:border-slate-700 space-y-3">
           <div className="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto">
             <Clock className="w-6 h-6 text-slate-400 dark:text-slate-500" />
           </div>
@@ -135,7 +135,7 @@ export default function ProfileRecentlyViewed({
           </div>
           <button
             onClick={() => navigate('/')}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#2563EB] text-white text-xs font-bold hover:bg-[#1D4ED8] transition-all cursor-pointer shadow-sm"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#006B50] text-white text-xs font-bold hover:bg-[#064E3B] transition-all cursor-pointer shadow-sm"
           >
             <ExternalLink className="w-3.5 h-3.5" />
             Explore Products
