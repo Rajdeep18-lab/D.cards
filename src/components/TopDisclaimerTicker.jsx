@@ -1,10 +1,11 @@
 import React from "react";
 import { AlertTriangle } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext";
-import { FESTIVE_CONFIG } from "../config/festiveConfig";
+import { useFestivalTheme } from "../hooks/useFestivalTheme";
 
 export default function TopDisclaimerTicker() {
   const { t } = useLanguage();
+  const { isFestivalMode } = useFestivalTheme();
   const disclaimerText = t(
     'ticker.disclaimer',
     "This data is provided for informational purposes only. Please verify all account details, fees, charges, eligibility, limits and other information with the respective bank before making any financial decision."
@@ -14,7 +15,7 @@ export default function TopDisclaimerTicker() {
   // When transform reaches -50%, it seamlessly loops back to 0% with no jump or blank gap.
   const tickerItems = [0, 1, 2, 3];
 
-  const isFestive = FESTIVE_CONFIG.isFestiveEnabled;
+  const isFestive = isFestivalMode;
 
   return (
     <aside

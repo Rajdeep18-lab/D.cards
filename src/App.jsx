@@ -69,6 +69,8 @@ import { ToastProvider, useToast } from "./context/ToastContext";
 import { WishlistProvider, useWishlist } from "./context/WishlistContext";
 import { AuthProvider } from "./context/AuthContext";
 import { LocationProvider, useAppLocation } from "./context/LocationContext";
+import { FestivalThemeProvider } from "./context/FestivalThemeContext";
+import FestivalThemePreviewBar from "./components/festive/FestivalThemePreviewBar";
 import LocationSelectorModal from "./components/LocationSelectorModal";
 import { isProductAvailableInLocation } from "./data/locations";
 import { useAuth } from "./hooks/useAuth";
@@ -1398,7 +1400,10 @@ function App() {
             <WishlistProvider>
               <BrowserRouter>
                 <LocationProvider>
-                  <AppContent />
+                  <FestivalThemeProvider>
+                    <AppContent />
+                    <FestivalThemePreviewBar />
+                  </FestivalThemeProvider>
                 </LocationProvider>
               </BrowserRouter>
             </WishlistProvider>

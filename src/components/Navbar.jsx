@@ -28,6 +28,8 @@ import { useLanguage } from "../context/LanguageContext";
 import TopDisclaimerTicker from "./TopDisclaimerTicker";
 import LanguageSelector from "./LanguageSelector";
 import DiyaIllustration from "./festive/DiyaIllustration";
+import NavbarFestiveBadge from "./festive/NavbarFestiveBadge";
+import { useFestivalTheme } from "../hooks/useFestivalTheme";
 import { FESTIVE_CONFIG } from "../config/festiveConfig";
 
 function Navbar({ 
@@ -40,6 +42,7 @@ function Navbar({
   const { user, profile, logout, openAuthModal } = useAuth();
   const { wishlist } = useWishlist();
   const { t, isHindi } = useLanguage();
+  const { isFestivalMode, activeFestival } = useFestivalTheme();
   const location = useLocation();
 
   const [scrolled, setScrolled] = useState(false);
@@ -201,8 +204,8 @@ function Navbar({
                   {t('nav.tagline', 'COMPARE. CHOOSE. BENEFIT.')}
                 </span>
               </div>
-              {/* Navbar Earthen Diya next to brand logo on desktop/tablet */}
-              {FESTIVE_CONFIG.isFestiveEnabled && (
+              {/* Navbar Earthen Diya next to brand logo only during Diwali */}
+              {isFestivalMode && activeFestival?.id === 'diwali' && (
                 <div className="hidden sm:inline-flex items-center ml-1.5 shrink-0">
                   <DiyaIllustration size={20} glow={false} animate={true} />
                 </div>
@@ -388,24 +391,8 @@ function Navbar({
               )}
             </div>
 
-            {/* 8. 🪔 Dhanteras/Diwali Campaign Link */}
-            {FESTIVE_CONFIG.isFestiveEnabled && FESTIVE_CONFIG.navbarFestiveBadgeEnabled && (
-              <a
-                href="#dhanteras-hero"
-                onClick={(e) => {
-                  if (location.pathname === '/') {
-                    e.preventDefault();
-                    const el = document.getElementById('dhanteras-hero') || document.getElementById('home');
-                    if (el) el.scrollIntoView({ behavior: 'smooth' });
-                  }
-                }}
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-[#9A3412] via-[#C2410C] to-[#D97706] hover:from-[#C2410C] hover:to-[#9A3412] text-white border border-amber-300/40 text-[11px] font-bold tracking-wide shadow-sm hover:shadow-md hover:scale-105 transition-all cursor-pointer shrink-0 ml-1.5 xl:ml-2.5 mr-2 xl:mr-4 select-none"
-                title={isHindi ? 'शुभ धनतेरस व दीपावली उत्सव' : 'Shubh Dhanteras & Diwali Special'}
-              >
-                <span className="text-xs">🪔</span>
-                <span className="whitespace-nowrap">{isHindi ? 'दिवाली स्पेशल' : 'Diwali Special'}</span>
-              </a>
-            )}
+            {/* 8. Dynamic Festival Theme Badge (auto disappears in Normal Mode) */}
+            <NavbarFestiveBadge variant="desktop" />
           </nav>
 
           {/* ══════════════════════════════════════════════
@@ -647,31 +634,11 @@ function Navbar({
                 </button>
               )}
 
-              {/* Mobile Festive Greeting Banner */}
-              {FESTIVE_CONFIG.isFestiveEnabled && FESTIVE_CONFIG.navbarFestiveBadgeEnabled && (
-                <a
-                  href="#dhanteras-hero"
-                  onClick={(e) => {
-                    setIsMobileDrawerOpen(false);
-                    if (location.pathname === '/') {
-                      e.preventDefault();
-                      const el = document.getElementById('dhanteras-hero');
-                      if (el) el.scrollIntoView({ behavior: 'smooth' });
-                    }
-                  }}
-                  className="block p-3 rounded-2xl bg-gradient-to-r from-[#9A3412] via-[#C2410C] to-[#D97706] text-white border border-amber-300/40 shadow-sm text-xs font-bold select-none cursor-pointer"
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="flex items-center gap-2">
-                      <span className="text-base">🪔</span>
-                      <span>{isHindi ? 'शुभ धनतेरस व दीपावली उत्सव' : 'Shubh Dhanteras & Diwali Special'}</span>
-                    </span>
-                    <span className="text-[10px] uppercase font-black px-2 py-0.5 rounded-full bg-white/20 text-white">
-                      ➔
-                    </span>
-                  </div>
-                </a>
-              )}
+              {/* Dynamic Mobile Festive Greeting Banner (auto disappears in Normal Mode) */}
+              <NavbarFestiveBadge 
+                variant="mobile" 
+                onCloseDrawer={() => setIsMobileDrawerOpen(false)} 
+              />
 
               {/* Main Navigation Links */}
               <div>

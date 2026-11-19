@@ -18,6 +18,8 @@ import { useLanguage } from '../context/LanguageContext';
 import DhanterasHeroCampaign from '../components/festive/DhanterasHeroCampaign';
 import AuditCycleSection from '../components/festive/AuditCycleSection';
 import DiwaliCampaignBanners from '../components/festive/DiwaliCampaignBanners';
+import FestivalCampaignSection from '../components/festive/FestivalCampaignSection';
+import { useFestivalTheme } from '../hooks/useFestivalTheme';
 import { FESTIVE_CONFIG } from '../config/festiveConfig';
 
 function HomePage({
@@ -31,6 +33,7 @@ function HomePage({
   setSavingsCompareQueue
 }) {
   const { t, isHindi } = useLanguage();
+  const { isFestivalMode, activeFestival } = useFestivalTheme();
 
   const homeSchema = {
     "@context": "https://schema.org",
@@ -97,10 +100,8 @@ function HomePage({
         onViewDetails={onViewDetails} 
       />
 
-      {/* ── DHANTERAS HOMEPAGE HERO PROMOTIONAL CAMPAIGN ── */}
-      {FESTIVE_CONFIG.isFestiveEnabled && FESTIVE_CONFIG.dhanterasHeroCampaignEnabled && (
-        <DhanterasHeroCampaign />
-      )}
+      {/* ── AUTOMATIC FESTIVAL HERO PROMOTIONAL CAMPAIGN (null in Normal Mode) ── */}
+      <FestivalCampaignSection />
 
       <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-16 space-y-12 sm:space-y-16">
         {/* ── CARD OF THE MONTH PROMOTIONAL BANNER ── */}
@@ -291,8 +292,8 @@ function HomePage({
         </section>
 
         
-        {/* ── DIWALI PROMOTIONAL CAMPAIGN BANNERS ── */}
-        {FESTIVE_CONFIG.isFestiveEnabled && FESTIVE_CONFIG.diwaliCampaignBannersEnabled && (
+        {/* ── DIWALI PROMOTIONAL CAMPAIGN BANNERS (Only in Diwali Mode) ── */}
+        {isFestivalMode && activeFestival?.id === 'diwali' && (
           <DiwaliCampaignBanners />
         )}
 

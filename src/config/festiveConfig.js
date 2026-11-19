@@ -6,15 +6,15 @@
  */
 
 export const FESTIVE_CONFIG = {
-  // Master switch for all festive themes (Diwali & Dhanteras)
-  isFestiveEnabled: true,
+  // Legacy master switch (replaced by centralized FestivalThemeContext & festivalCalendar.js)
+  isFestiveEnabled: false,
 
-  // Granular feature toggles
-  dhanterasHeroCampaignEnabled: true,
+  // Granular feature toggles (all disabled to preserve original clean D.CARD design)
+  dhanterasHeroCampaignEnabled: false,
   auditCycleSectionEnabled: true,
-  diwaliCampaignBannersEnabled: true,
-  festiveAnimationsEnabled: true, // Floating diyas, golden particles, fireworks
-  navbarFestiveBadgeEnabled: true,
+  diwaliCampaignBannersEnabled: false,
+  festiveAnimationsEnabled: false,
+  navbarFestiveBadgeEnabled: false,
 
   // 15-Day Internal Information Audit Cycle Configuration
   auditCycle: {

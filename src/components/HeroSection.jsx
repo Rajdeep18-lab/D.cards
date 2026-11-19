@@ -23,13 +23,18 @@ import {
 import GlobalSearchInput from './GlobalSearchInput';
 import { useAuth } from '../hooks/useAuth';
 import { useLanguage } from '../context/LanguageContext';
-import HeroFestiveAtmosphere from './festive/HeroFestiveAtmosphere';
+import { useFestivalTheme } from '../hooks/useFestivalTheme';
+import FestivalAmbientAtmosphere from './festive/FestivalAmbientAtmosphere';
+import FestivalInteractiveCanvas from './festive/engine/FestivalInteractiveCanvas';
+import FestivalHeroArtDirection from './festive/engine/FestivalHeroArtDirection';
 import DiyaIllustration from './festive/DiyaIllustration';
 import { FESTIVE_CONFIG } from '../config/festiveConfig';
 
 const HeroVisual = memo(({ isMobile }) => {
   const shouldReduceMotion = useReducedMotion();
   const { t, isHindi } = useLanguage();
+  const { isFestivalMode, activeFestival } = useFestivalTheme();
+  const isDiwali = isFestivalMode && activeFestival?.id === 'diwali';
 
   return (
     <div className="flex-1 relative w-full mt-8 lg:mt-0 select-none max-w-[620px] lg:max-w-[580px] xl:max-w-[640px] mx-auto flex flex-col items-center justify-center p-2 sm:p-4">
@@ -44,8 +49,8 @@ const HeroVisual = memo(({ isMobile }) => {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200px] h-[200px] sm:w-[320px] sm:h-[320px] rounded-full border border-amber-400/15 dark:border-amber-400/10 pointer-events-none" />
       </div>
 
-      {/* ── FLOATING FESTIVE GOLDEN PARTICLES AROUND HERO ILLUSTRATION (Requirement B) ── */}
-      {FESTIVE_CONFIG.isFestiveEnabled && FESTIVE_CONFIG.festiveAnimationsEnabled && !shouldReduceMotion && (
+      {/* ── FLOATING FESTIVE GOLDEN PARTICLES (Only in Diwali Mode) ── */}
+      {isDiwali && !shouldReduceMotion && (
         <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden" aria-hidden="true">
           {[
             { id: 1, top: '12%', left: '8%', size: 3.5, delay: 0, duration: 5.5, dx: 6 },
@@ -155,10 +160,8 @@ const HeroVisual = memo(({ isMobile }) => {
             </div>
           </motion.div>
 
-          {/* Diya at bottom-left corner of Debit Cards Card */}
-          <div className="absolute -bottom-3 -left-2 sm:-left-3 z-30 pointer-events-none drop-shadow-[0_4px_12px_rgba(245,158,11,0.6)]">
-            <DiyaIllustration size={36} glow={true} animate={true} />
-          </div>
+          {/* Art-Directed Staging for Active Festival (null in Normal Mode) */}
+          <FestivalHeroArtDirection cardType="debit" />
         </div>
 
         {/* VISUAL 2 — SAVINGS ACCOUNTS CARD (Deep Slate Grey with Glowing Gold Border & Diya) */}
@@ -214,10 +217,8 @@ const HeroVisual = memo(({ isMobile }) => {
             </div>
           </motion.div>
 
-          {/* Diya at bottom-right corner of Savings Accounts Card */}
-          <div className="absolute -bottom-3 -right-2 sm:-right-3 z-30 pointer-events-none drop-shadow-[0_4px_12px_rgba(245,158,11,0.6)]">
-            <DiyaIllustration size={36} glow={true} animate={true} />
-          </div>
+          {/* Art-Directed Staging for Active Festival (null in Normal Mode) */}
+          <FestivalHeroArtDirection cardType="savings" />
         </div>
 
       </div>
@@ -242,6 +243,7 @@ function HeroSection({ query = '', setQuery = () => {}, onSearchSubmit = null, o
   const navigate = useNavigate();
   const { user, openAuthModal } = useAuth();
   const { t, isHindi } = useLanguage();
+  const { isFestivalMode, activeFestival, theme } = useFestivalTheme();
   const [searchVal, setSearchVal] = useState(query);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -288,19 +290,35 @@ function HeroSection({ query = '', setQuery = () => {}, onSearchSubmit = null, o
       id="home" 
       className="relative z-30 px-4 sm:px-6 lg:px-8 pt-10 pb-16 md:pt-16 md:pb-24 bg-gradient-to-b from-[#FFF9EE] via-[#F7EEDC] to-[#FFF9EE] dark:from-[#0B132B] dark:via-[#0F172A] dark:to-[#0B132B] border-b border-[#E8D6B3] dark:border-amber-900/40 overflow-hidden"
     >
-      {/* ── HERO FESTIVE DIWALI & DHANTERAS ATMOSPHERE (Mandalas, Rangoli, Floating 3D Coins, Glowing Diyas) ── */}
-      <HeroFestiveAtmosphere />
+      {/* ── AUTOMATIC FESTIVAL AMBIENT ATMOSPHERE & INTERACTIVE CANVAS ── */}
+      <FestivalAmbientAtmosphere />
+      <FestivalInteractiveCanvas />
       
       <div className="mx-auto max-w-7xl relative z-20 flex flex-col lg:flex-row items-center gap-10 lg:gap-12 text-left">
 
         {/* ── Left Column: Text Content & Input ── */}
         <div className="flex-1 flex flex-col items-start w-full space-y-6">
           
-          {/* Badge: Banking Product Discovery Platform */}
-          <span className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold tracking-widest uppercase border border-[#E8D6B3] bg-amber-500/10 text-amber-900 dark:text-[#F5DFA8] shadow-[0_2px_10px_rgba(214,166,75,0.18)] select-none">
-            <Zap className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 fill-amber-500/20" />
-            {t('home.discoveryBadge', 'BANKING PRODUCT DISCOVERY PLATFORM')}
-          </span>
+          {/* Badge: Banking Product Discovery Platform or Dynamic Art-Directed Festival Badge */}
+          {isFestivalMode && activeFestival ? (
+            <span 
+              className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold tracking-widest uppercase border backdrop-blur-md shadow-sm select-none"
+              style={{
+                borderColor: theme?.accentColor ? `${theme.accentColor}50` : 'rgba(214,166,75,0.4)',
+                background: `linear-gradient(135deg, ${theme?.primaryColor || '#800020'}22, ${theme?.secondaryColor || '#D97706'}22)`,
+                color: theme?.accentColor || '#D97706'
+              }}
+            >
+              <span className="text-sm">{activeFestival.badgeIcon}</span>
+              <span>{isHindi ? (activeFestival.badgeLabelHi || activeFestival.nameHi) : (activeFestival.badgeLabelEn || activeFestival.nameEn)}</span>
+              <span className="text-[10px] opacity-75 font-mono">• {isHindi ? 'विशेष उत्सव संस्करण' : 'FESTIVE EDITION'}</span>
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold tracking-widest uppercase border border-[#E8D6B3] bg-amber-500/10 text-amber-900 dark:text-[#F5DFA8] shadow-[0_2px_10px_rgba(214,166,75,0.18)] select-none">
+              <Zap className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 fill-amber-500/20" />
+              {t('home.discoveryBadge', 'BANKING PRODUCT DISCOVERY PLATFORM')}
+            </span>
+          )}
 
           {/* Core Headline */}
           <h1 className="w-full text-2xl xs:text-3xl sm:text-5xl lg:text-[56px] font-black leading-[1.15] sm:leading-[1.12] text-[#111827] dark:text-white tracking-tight">
