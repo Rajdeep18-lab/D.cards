@@ -39,7 +39,7 @@ function CurrentAccountCard({ account, onViewDetails, onToggleCompare, isCompare
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -4 }}
       transition={{ duration: 0.25 }}
-      className="h-full rounded-3xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-800 shadow-soft hover:shadow-xl hover:border-[#2563EB]/40 transition-all duration-300 flex flex-col justify-between overflow-hidden text-left relative group min-w-0"
+      className="h-full rounded-3xl bg-white bg-white border border-[#E0E6DC] dark:border-slate-800 shadow-soft hover:shadow-xl hover:border-[#2563EB]/40 transition-all duration-300 flex flex-col justify-between overflow-hidden text-left relative group min-w-0"
     >
       {/* Top Bar with Bank & Wishlist */}
       <div className="p-5 sm:p-6 pb-4 border-b border-slate-100 dark:border-slate-800/80">
@@ -48,12 +48,12 @@ function CurrentAccountCard({ account, onViewDetails, onToggleCompare, isCompare
             {/* Official Bank Logo */}
             <BankLogo bankName={bankName} size="md" />
             <div className="min-w-0">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[#6B7280] dark:text-slate-400 block truncate">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#445B4D] dark:text-slate-400 block truncate">
                 {bankName}
               </span>
               <Link
                 to={`/current-accounts/${accountId}`}
-                className="text-base sm:text-lg font-extrabold text-[#1F2937] dark:text-white tracking-tight leading-snug group-hover:text-[#2563EB] dark:group-hover:text-[#60A5FA] transition-colors hover:underline line-clamp-1"
+                className="text-base sm:text-lg font-extrabold text-[#14291F] dark:text-white tracking-tight leading-snug group-hover:text-[#0E5C3E] dark:group-hover:text-[#60A5FA] transition-colors hover:underline line-clamp-1"
                 title={accountName}
               >
                 {accountName}
@@ -100,7 +100,7 @@ function CurrentAccountCard({ account, onViewDetails, onToggleCompare, isCompare
                 AQB / MIN. BALANCE
               </span>
               {!details.balance.hasLocationBreakdown && (
-                <span className="text-base sm:text-lg font-black text-[#1F2937] dark:text-white tracking-tight block">
+                <span className="text-base sm:text-lg font-black text-[#14291F] dark:text-white tracking-tight block">
                   {details.balance.display}
                 </span>
               )}
@@ -185,10 +185,10 @@ function CurrentAccountCard({ account, onViewDetails, onToggleCompare, isCompare
         <span className="text-[10.5px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500 block text-left">
           KEY BUSINESS ADVANTAGES
         </span>
-        <ul className="space-y-2 text-xs text-[#1F2937] dark:text-slate-200 font-medium">
+        <ul className="space-y-2 text-xs text-[#14291F] dark:text-slate-200 font-medium">
           {highlights.map((highlight, i) => (
             <li key={i} className="flex items-start gap-2 text-left">
-              <CheckCircle2 className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#60A5FA] shrink-0 mt-0.5" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-[#0E5C3E] dark:text-[#60A5FA] shrink-0 mt-0.5" />
               <span className="leading-snug line-clamp-2">{highlight}</span>
             </li>
           ))}
@@ -198,11 +198,11 @@ function CurrentAccountCard({ account, onViewDetails, onToggleCompare, isCompare
       {/* Associated Debit Card Connection Box */}
       <div className="px-5 sm:px-6 py-3 bg-[#EFF6FF]/60 dark:bg-slate-800/50 border-t border-b border-[#2563EB]/15 flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 text-left min-w-0">
-          <div className="w-7 h-7 rounded-xl bg-[#2563EB] text-white flex items-center justify-center shrink-0 shadow-xs">
+          <div className="w-7 h-7 rounded-xl bg-[#0E5C3E] text-white flex items-center justify-center shrink-0 shadow-xs">
             <CreditCard className="w-3.5 h-3.5" />
           </div>
           <div className="min-w-0">
-            <span className="text-[9px] font-extrabold uppercase tracking-wider text-[#2563EB] dark:text-[#60A5FA] block leading-none truncate">
+            <span className="text-[9px] font-extrabold uppercase tracking-wider text-[#0E5C3E] dark:text-[#60A5FA] block leading-none truncate">
               {debitRel.label}:
             </span>
             <span className={`text-xs truncate block mt-0.5 ${debitRel.isLinked ? 'font-bold text-slate-800 dark:text-slate-100' : 'font-medium text-slate-500 dark:text-slate-400'}`}>
@@ -214,7 +214,7 @@ function CurrentAccountCard({ account, onViewDetails, onToggleCompare, isCompare
         {debitRel.isLinked && debitRel.primaryCard && onSelectDebitCard && (
           <button
             onClick={(e) => { e.stopPropagation(); onSelectDebitCard(debitRel.primaryCard); }}
-            className="text-[10.5px] font-extrabold text-[#2563EB] dark:text-[#60A5FA] hover:underline flex items-center gap-0.5 shrink-0 cursor-pointer"
+            className="text-[10.5px] font-extrabold text-[#0E5C3E] dark:text-[#60A5FA] hover:underline flex items-center gap-0.5 shrink-0 cursor-pointer"
           >
             <span>Card Info</span>
             <ChevronRight className="w-3 h-3" />
@@ -234,7 +234,7 @@ function CurrentAccountCard({ account, onViewDetails, onToggleCompare, isCompare
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
-            className="text-[#2563EB] dark:text-[#60A5FA] hover:underline font-bold inline-flex items-center gap-0.5 shrink-0"
+            className="text-[#0E5C3E] dark:text-[#60A5FA] hover:underline font-bold inline-flex items-center gap-0.5 shrink-0"
             title="Open official bank source"
           >
             <span>Official Source ↗</span>
@@ -250,7 +250,7 @@ function CurrentAccountCard({ account, onViewDetails, onToggleCompare, isCompare
           onClick={() => onToggleCompare && onToggleCompare(account)}
           className={`px-3 py-2.5 rounded-xl text-xs font-bold transition-all border cursor-pointer flex items-center justify-center gap-1.5 flex-shrink-0 min-h-[42px] ${
             isCompared
-              ? 'bg-[#2563EB] text-white border-[#2563EB] shadow-xs'
+              ? 'bg-[#0E5C3E] text-white border-[#2563EB] shadow-xs'
               : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-slate-200/80'
           }`}
         >
@@ -266,7 +266,7 @@ function CurrentAccountCard({ account, onViewDetails, onToggleCompare, isCompare
               onViewDetails(account);
             }
           }}
-          className="flex-1 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:shadow-lg hover:shadow-[#2563EB]/25 text-white font-extrabold text-xs transition-all shadow cursor-pointer active:scale-95 text-center flex items-center justify-center gap-1.5 min-h-[42px]"
+          className="flex-1 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#0E5C3E] to-[#10B981] hover:shadow-lg hover:shadow-[#2563EB]/25 text-white font-extrabold text-xs transition-all shadow cursor-pointer active:scale-95 text-center flex items-center justify-center gap-1.5 min-h-[42px]"
         >
           <span>View Details</span>
           <ChevronRight className="w-3.5 h-3.5" />

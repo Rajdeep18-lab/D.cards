@@ -20,40 +20,21 @@ export default function TopDisclaimerTicker() {
   return (
     <aside
       aria-label="Important Bank Data Disclaimer"
-      className={`w-full text-[11px] sm:text-xs py-2 overflow-hidden select-none relative z-10 shrink-0 shadow-2xs ${
-        isFestive
-          ? "bg-[#FFF9EE] dark:bg-[#0B132B] text-[#4B5563] dark:text-amber-200 border-b border-[#E8D6B3] dark:border-amber-900/40"
-          : "bg-[#B8860B] dark:bg-[#A87900] text-white border-y border-[#926B08] dark:border-[#855F00]"
-      }`}
+      className="w-full text-[11px] sm:text-xs py-2 overflow-hidden select-none relative z-10 shrink-0 shadow-2xs bg-[#EEF4EE] dark:bg-[#0C1813] text-[#14291F] dark:text-[#E2ECE5] border-b border-[#E0E6DC] dark:border-[#1F382B]"
     >
-      {/* Decorative Golden Rangoli Flourish on Right Corner (matches reference design) */}
-      {isFestive && (
-        <div className="absolute right-0 top-0 bottom-0 pointer-events-none opacity-30 flex items-center pr-2 z-20">
-          <svg width="68" height="28" viewBox="0 0 68 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M68 0C52 4 42 14 36 28C42 16 54 8 68 0Z" fill="#D6A64B" />
-            <circle cx="58" cy="12" r="2.5" fill="#D6A64B" />
-            <circle cx="48" cy="20" r="2" fill="#D6A64B" />
-            <path d="M64 4C54 10 46 18 32 28" stroke="#D6A64B" strokeWidth="1" strokeDasharray="2 2" />
-          </svg>
-        </div>
-      )}
       <div className="flex w-max animate-marquee-continuous whitespace-nowrap items-center">
         {tickerItems.map((idx) => (
           <div key={idx} className="flex items-center gap-2.5 mx-6 sm:mx-10 shrink-0">
             <span
-              className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full font-extrabold text-[10px] uppercase tracking-wider shadow-2xs ${
-                isFestive
-                  ? "bg-amber-500/15 text-amber-900 dark:text-amber-300 border border-amber-500/30"
-                  : "bg-black/25 text-white border border-white/35"
-              }`}
+              className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full font-bold text-[10px] uppercase tracking-wider shadow-2xs bg-[#0E5C3E] text-white border border-[#0E5C3E]"
             >
-              <AlertTriangle className={`w-3 h-3 shrink-0 ${isFestive ? "text-amber-600 dark:text-amber-400" : "text-amber-200"}`} />
+              <AlertTriangle className="w-3 h-3 shrink-0 text-[#34D399]" />
               <span>{t('ticker.important', 'Important')}</span>
             </span>
-            <span className="font-semibold tracking-normal leading-normal">
+            <span className="font-medium tracking-normal leading-normal text-[#14291F] dark:text-[#E2ECE5]">
               {disclaimerText}
             </span>
-            <span className={`${isFestive ? "text-amber-500/60" : "text-white/60"} select-none font-black text-sm ml-4`}>
+            <span className="text-[#10B981] select-none font-black text-sm ml-4">
               ✦
             </span>
           </div>

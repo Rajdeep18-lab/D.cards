@@ -5,57 +5,60 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        heading: ['Poppins', 'sans-serif'],
-        display: ['Poppins', 'sans-serif'],
-        serif: ['Poppins', 'sans-serif'],
+        sans: ['Plus Jakarta Sans', 'Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        heading: ['Playfair Display', 'Georgia', 'serif'],
+        display: ['Playfair Display', 'Georgia', 'serif'],
+        serif: ['Playfair Display', 'Georgia', 'serif'],
         mono: ['monospace'],
       },
 
       colors: {
-        // ── Global Diwali Festive Palette (Exact User Spec) ──
-        'diwali-ivory':       "#FFF9EE",   // Primary background: Warm Ivory
-        'diwali-cream':       "#F7EEDC",   // Secondary background: Soft Cream
-        'diwali-navy':        "#111827",   // Primary text: Deep Navy
-        'diwali-royal':       "#2455A4",   // Royal Blue
-        'diwali-purple':      "#291747",   // Deep Purple
-        'diwali-gold':        "#D6A64B",   // Premium Gold
-        'diwali-gold-light':  "#F5DFA8",   // Light Gold
-        'diwali-gold-dark':   "#B8860B",   // Dark Amber Gold
-        'diwali-border':      "#E8D6B3",   // Subtle Gold Border
+        // ── Editorial Luxury Fintech Palette ──
+        cream:               "#FAF8F5",   // Primary background: Warm Cream / Off-White
+        'cream-light':       "#FDFCF7",   // Highlight Cream
+        ivory:               "#F5F3EC",   // Secondary Surface: Soft Ivory
+        'sage-light':        "#EEF4EE",   // Secondary Surface: Very Light Sage
+        sage:                "#D8E3D7",   // Accent Sage
+        forest:              "#14291F",   // Primary text: Deep Forest Green
+        'forest-dark':       "#0E1E16",   // Deepest Forest Shadow
+        'forest-soft':       "#445B4D",   // Secondary / Muted Text
+        'emerald-rich':      "#0E5C3E",   // Primary Buttons & Actions: Rich Emerald Green
+        'emerald-hover':     "#0A4730",   // Hover Emerald Green
+        'emerald-accent':    "#10B981",   // Accent Emerald Green
+        'border-subtle':     "#E0E6DC",   // Subtle Warm Grey / Sage Border
+        'border-warm':       "#E7E4DC",   // Warm Card Border
 
-        // ── Unified Fintech & Festive Aliases ──────────────────
-        primary:      "#2455A4",   // Royal Blue (#2455A4)
-        secondary:    "#D6A64B",   // Premium Gold
-        accent:       "#D6A64B",   // Premium Gold
-        darkNavy:     "#111827",   // Deep Navy
-        lightBg:      "#FFF9EE",   // Warm Ivory Background
-        cardBg:       "#FFFFFF",   // Cards Background
-        borderLine:   "#E8D6B3",   // Subtle Gold Border
-        textDark:     "#111827",   // Deep Navy Primary Text
-        textSoft:     "#4B5563",   // Muted Text
-        hoverBlue:    "#1B4080",   // Darker Royal Blue for Hover
+        // ── Unified Aliases ──
+        primary:      "#0E5C3E",   // Rich Emerald Green
+        secondary:    "#14291F",   // Deep Forest Green
+        accent:       "#10B981",   // Emerald Accent
+        darkNavy:     "#14291F",   // Deep Forest
+        lightBg:      "#FAF8F5",   // Warm Cream
+        cardBg:       "#FFFFFF",   // Crisp Card Surface
+        borderLine:   "#E0E6DC",   // Subtle Warm Grey / Sage
+        textDark:     "#14291F",   // Deep Forest Green Text
+        textSoft:     "#445B4D",   // Muted Sage Text
+        hoverBlue:    "#0A4730",   // Button Hover
+        cta:          "#0E5C3E",   // Rich Emerald CTA
+        ctaHover:     "#0A4730",   // Rich Emerald CTA Hover
+        highlight:    "#EEF4EE",   // Soft Sage Highlight
+        neutralBg:    "#FAF8F5",   // Warm Cream
+        roseGold:     "#D8E3D7",
 
-        // Helper aliases
-        cta:          "#2455A4",
-        ctaHover:     "#1B4080",
-        highlight:    "#F5DFA8",
-        neutralBg:    "#FFF9EE",
-        roseGold:     "#D6A64B",
-
-        // Dark Mode Slate & Midnight Navy
-        darkBg:       "#0B132B",
-        darkCard:     "#1E293B",
-        darkHighlight:"#291747",
+        // Dark Mode Forest & Deep Slate
+        darkBg:       "#0C1813",   // Deep Night Forest
+        darkCard:     "#13241C",   // Dark Forest Card Surface
+        darkHighlight:"#1A2E24",
       },
 
       boxShadow: {
-        soft:      "0 4px 20px rgba(37, 99, 235, 0.06)",
-        card:      "0 4px 24px rgba(37, 99, 235, 0.05)",
-        cardHover: "0 20px 40px rgba(37, 99, 235, 0.12)",
-        indigo:    "0 8px 32px rgba(37, 99, 235, 0.15)",
-        glow:      "0 0 24px rgba(37, 99, 235, 0.25), 0 0 48px rgba(96, 165, 250, 0.15)",
-        blueGlow:  "0 10px 30px rgba(37, 99, 235, 0.3)",
+        soft:         "0 4px 20px -2px rgba(20, 41, 31, 0.05)",
+        card:         "0 4px 24px -2px rgba(20, 41, 31, 0.06)",
+        cardHover:    "0 20px 40px -4px rgba(20, 41, 31, 0.12)",
+        indigo:       "0 8px 32px rgba(14, 92, 62, 0.15)",
+        glow:         "0 0 24px rgba(16, 185, 129, 0.25), 0 0 48px rgba(14, 92, 62, 0.15)",
+        blueGlow:     "0 10px 30px rgba(14, 92, 62, 0.25)",
+        emeraldGlow:  "0 10px 30px rgba(14, 92, 62, 0.3)",
       },
 
       backgroundImage: {

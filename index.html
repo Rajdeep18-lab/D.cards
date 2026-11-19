@@ -27,35 +27,18 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="alternate icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" href="/logo-mark.png" />
 
-    <!-- Theme initialization: Light mode by default; manual preference only; prevent flash -->
+    <!-- Theme initialization: Warm Cream Editorial Luxury theme by default -->
     <script>
       (function () {
         try {
-          var saved = localStorage.getItem('dcard-theme');
-          var isDark = false;
-          if (saved === 'dark') {
-            isDark = true;
-          } else if (saved === 'light') {
-            isDark = false;
-          } else {
-            var legacy = localStorage.getItem('isDarkMode');
-            if (legacy !== null) {
-              isDark = JSON.parse(legacy) === true;
-            }
-          }
-          if (isDark) {
-            document.documentElement.classList.add('dark');
-          } else {
-            document.documentElement.classList.remove('dark');
-          }
-        } catch (e) {
           document.documentElement.classList.remove('dark');
-        }
+          localStorage.setItem('dcard-theme', 'editorial-cream');
+        } catch (e) {}
       })();
     </script>
   </head>

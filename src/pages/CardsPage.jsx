@@ -136,29 +136,29 @@ function CardsPage({
   return (
     <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 relative z-20 select-none">
       {/* Header Banner */}
-      <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#E8D6B3] dark:border-amber-900/40 pb-6 text-left">
+      <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#E0E6DC] pb-6 text-left">
         <div>
-          <span className="text-xs font-bold text-[#B8860B] dark:text-[#F5DFA8] tracking-widest uppercase block mb-1">
+          <span className="text-xs font-bold text-[#0E5C3E] tracking-widest uppercase block mb-1">
             {isHindi ? "वित्तीय सूचना डेटाबेस" : "FINANCIAL INFORMATION DATABASE"}
           </span>
-          <h1 className="text-3xl font-extrabold text-[#1F2937] dark:text-white">
+          <h1 className="font-serif text-3xl font-bold text-[#14291F]">
             {t('debitCards.title', 'Debit Cards')}
           </h1>
-          <p className="text-xs sm:text-sm text-[#6B7280] dark:text-slate-400 mt-1 font-normal">
+          <p className="text-xs sm:text-sm text-[#445B4D] mt-1 font-normal">
             {t('debitCards.subtitle', 'Compare debit cards based on fees, limits, network, benefits and features.')}
           </p>
         </div>
 
         {/* Global Search inside Cards Page */}
         <div className="w-full md:w-80">
-          <div className="relative flex items-center bg-white dark:bg-[#1E293B] border border-[#E8D6B3] dark:border-amber-900/40 rounded-xl px-3.5 py-2.5 shadow-2xs focus-within:border-[#D6A64B] transition-colors">
-            <Search className="w-4 h-4 text-[#6B7280] dark:text-slate-400 mr-2 flex-shrink-0" />
+          <div className="relative flex items-center bg-white border border-[#E0E6DC] rounded-xl px-3.5 py-2.5 shadow-xs focus-within:border-[#0E5C3E] transition-colors">
+            <Search className="w-4 h-4 text-[#445B4D] mr-2 flex-shrink-0" />
             <input
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder={isHindi ? "बैंक, कार्ड या लाभ खोजें..." : "Search bank, card or perk..."}
-              className="w-full bg-transparent border-none text-xs font-semibold text-[#1F2937] dark:text-white outline-none placeholder-[#9CA3AF]"
+              className="w-full bg-transparent border-none text-xs font-semibold text-[#14291F] outline-none placeholder-[#9CA3AF]"
             />
             {query && (
               <button
@@ -241,7 +241,7 @@ function CardsPage({
         <div className="lg:hidden col-span-1 mb-4">
           <button
             onClick={() => setIsMobileFilterOpen(true)}
-            className="w-full flex items-center justify-between p-3.5 rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-700 shadow-sm text-xs font-semibold text-[#1F2937] dark:text-white"
+            className="w-full flex items-center justify-between p-3.5 rounded-2xl bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-700 shadow-sm text-xs font-semibold text-[#14291F]"
           >
             <span className="flex items-center gap-2">
               <SlidersHorizontal className="w-4 h-4 text-[#2563EB]" />
@@ -260,10 +260,10 @@ function CardsPage({
           {/* Top Toolbar */}
           <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-[#E5E7EB] dark:border-slate-800 pb-4 text-left">
             <div>
-              <h2 className="text-lg font-extrabold text-[#1F2937] dark:text-white">
+              <h2 className="text-lg font-extrabold text-[#14291F]">
                 {isHindi ? 'सक्रिय कार्ड चयन' : 'Active Card Selection'}
               </h2>
-              <p className="text-xs text-[#6B7280] dark:text-slate-400 mt-0.5 font-normal">
+              <p className="text-xs text-[#445B4D] mt-0.5 font-normal">
                 {isHindi
                   ? `आपके मानदंडों से मेल खाते ${filteredCards.length} कार्ड प्रदर्शित`
                   : `Showing ${filteredCards.length} cards matching your filter criteria`}
@@ -273,13 +273,13 @@ function CardsPage({
             {/* Sort Selector */}
             <div className="flex items-center gap-2 select-none">
               <ArrowUpDown className="w-3.5 h-3.5 text-[#6B7280]" />
-              <span className="text-xs font-semibold text-[#6B7280] dark:text-slate-400">
+              <span className="text-xs font-semibold text-[#445B4D]">
                 {isHindi ? 'क्रमबद्ध करें:' : 'Sort By:'}
               </span>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-700 rounded-xl px-3 py-1.5 text-xs font-extrabold text-[#1F2937] dark:text-white outline-none cursor-pointer"
+                className="bg-white dark:bg-[#1E293B] border border-[#E5E7EB] dark:border-slate-700 rounded-xl px-3 py-1.5 text-xs font-extrabold text-[#14291F] outline-none cursor-pointer"
               >
                 <option value="most-popular">{isHindi ? 'लोकप्रियता (डिफ़ॉल्ट)' : 'Popularity (Default)'}</option>
                 <option value="highest-rated">{isHindi ? 'रेटिंग: उच्च से निम्न' : 'Rating: High to Low'}</option>
@@ -295,7 +295,7 @@ function CardsPage({
           {activeChipsList.length > 0 && (
             <div className="mb-6 p-4 rounded-2xl glass-card-premium border border-[#E5E7EB] dark:border-slate-800 shadow-soft text-left space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-extrabold text-[#1F2937] dark:text-white uppercase tracking-wider flex items-center gap-1.5">
+                <span className="text-[11px] font-extrabold text-[#14291F] uppercase tracking-wider flex items-center gap-1.5">
                   <Filter className="w-3.5 h-3.5 text-[#2563EB]" />
                   {isHindi ? `सक्रिय फ़िल्टर मानदंड (${activeChipsList.length})` : `Active Filter Criteria (${activeChipsList.length})`}
                 </span>
@@ -348,10 +348,10 @@ function CardsPage({
               <div className="w-16 h-16 rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center text-2xl mx-auto shadow-xs border border-rose-500/20">
                 🔍
               </div>
-              <h3 className="text-xl font-extrabold text-[#1F2937] dark:text-white">
+              <h3 className="text-xl font-extrabold text-[#14291F]">
                 {isHindi ? 'कोई डेबिट कार्ड नहीं मिला।' : 'No debit cards found.'}
               </h3>
-              <p className="text-xs text-[#6B7280] dark:text-slate-400 max-w-sm mx-auto font-normal">
+              <p className="text-xs text-[#445B4D] max-w-sm mx-auto font-normal">
                 {isHindi ? 'कृपया अपने फ़िल्टर या खोज मानदंड बदलकर पुनः प्रयास करें।' : 'Try changing your filters or search criteria.'}
               </p>
               <button
@@ -370,7 +370,7 @@ function CardsPage({
       {isMobileFilterOpen && (
         <div className="fixed inset-0 z-50 lg:hidden flex flex-col bg-white dark:bg-[#0F172A] p-4 overflow-y-auto">
           <div className="flex items-center justify-between pb-4 border-b border-[#E5E7EB] dark:border-slate-800 mb-4">
-            <h3 className="text-lg font-extrabold text-[#1F2937] dark:text-white">
+            <h3 className="text-lg font-extrabold text-[#14291F]">
               {isHindi ? 'फ़िल्टर एवं क्रमबद्ध विकल्प' : 'Filter & Sort Options'}
             </h3>
             <button
